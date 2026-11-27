@@ -1,0 +1,1742 @@
+tdc-version: 2
+type: course
+
+course "cryptography-applied" {
+  title: "Cryptographie appliquée"
+  description: """
+Ce cours explique les outils cryptographiques que tu croises tous les jours en administration système et réseau (empreintes, chiffrement, clés, certificats, TLS, GPG) et te les fait manipuler en ligne de commande avec openssl et gpg. Il s'adresse aux élèves de BTS SIO (SISR et SLAM), BTS CIEL, BUT réseaux et télécommunications ou informatique, et à toute personne qui doit installer un certificat, protéger des mots de passe ou vérifier un fichier téléchargé.
+
+À la fin, tu sauras :
+• distinguer encodage, hachage, chiffrement et signature, et choisir le bon outil pour un besoin donné ;
+• calculer et vérifier une empreinte SHA-256 sous Linux et sous Windows, et expliquer pourquoi MD5 et SHA-1 sont abandonnés ;
+• expliquer comment stocker un mot de passe (sel, fonction lente, Argon2id, bcrypt) et lire une ligne de /etc/shadow ;
+• chiffrer et déchiffrer un fichier avec AES, et expliquer le rôle du mode (ECB, CBC, CTR, GCM) et du vecteur d'initialisation ;
+• expliquer RSA, les courbes elliptiques et l'échange Diffie-Hellman, et générer des paires de clés avec openssl ;
+• créer une petite autorité de certification, signer une demande (CSR), inspecter un certificat X.509 et vérifier une chaîne de confiance ;
+• suivre une poignée de main TLS 1.3 étape par étape et diagnostiquer un problème de certificat avec openssl s_client ;
+• chiffrer, signer et vérifier avec GPG ;
+• repérer les erreurs classiques et appliquer les règles de dimensionnement de l'ANSSI.
+
+Tous les travaux pratiques se font sur une machine Debian 12 ou Ubuntu 22.04/24.04 (une machine virtuelle suffit) avec les paquets openssl et gnupg, et quelques commandes équivalentes sous Windows 10/11. Chaque chapitre contient au moins un exercice corrigé et une banque de questions tirées au hasard.
+
+Prérequis : utilisation courante du terminal Linux (cd, ls, cat, sudo, éditer un fichier), notions de réseau (adresse IP, port, DNS, HTTP). Aucune connaissance mathématique au-delà du calcul de restes (modulo) n'est demandée.
+"""
+  category: "security"
+  level: "intermediate"
+  duration: "6h"
+  icon: "Lock"
+  keywords: ["cryptographie", "chiffrement", "aes", "gcm", "rsa", "courbes elliptiques", "diffie-hellman", "sha-256", "hachage", "sel", "argon2", "bcrypt", "signature", "certificat", "x509", "pki", "tls", "openssl", "gpg", "anssi"]
+
+  module "crypto-bases" {
+    title: "Chapitre 1 : à quoi sert la cryptographie, le vocabulaire juste"
+    duration: "25min"
+    content: """
+### Quatre besoins de sécurité
+La cryptographie répond à quatre besoins. Retiens-les, car chaque outil du cours en couvre un ou plusieurs :
+
+| Besoin | Question posée | Outil typique |
+|---|---|---|
+| Confidentialité | Seul le destinataire peut-il lire ? | chiffrement (AES, RSA-OAEP) |
+| Intégrité | Le message a-t-il été modifié ? | empreinte (SHA-256), MAC (HMAC) |
+| Authenticité | Vient-il bien de la personne annoncée ? | MAC, signature numérique |
+| Non-répudiation | L'auteur peut-il nier l'avoir envoyé ? | signature numérique |
+
+Un même échange combine souvent plusieurs besoins. Une connexion HTTPS demande la confidentialité (personne ne lit ton mot de passe), l'intégrité (personne ne modifie la page) et l'authenticité du serveur (tu parles bien à ta banque).
+
+### Quatre opérations à ne pas confondre
+• **Encodage** : changer de représentation, sans aucun secret. Base64, hexadécimal, URL-encodage. N'importe qui peut décoder. Ce n'est **jamais** une protection.
+• **Hachage** : calculer une **empreinte** (hash, digest) de taille fixe à partir de données de taille quelconque. Pas de clé, pas de retour en arrière possible.
+• **Chiffrement** : transformer un texte clair en texte chiffré avec une **clé**. Avec la bonne clé, on retrouve le clair (déchiffrement).
+• **Signature** : prouver qu'un document vient du détenteur d'une clé privée et n'a pas été modifié.
+
+Vocabulaire français : on dit **chiffrer** et **déchiffrer**. « Décrypter » signifie retrouver le clair **sans** la clé (c'est ce que fait un attaquant). « Crypter » n'est pas un terme correct en français.
+
+### Symétrique ou asymétrique
+• **Symétrique** : la même clé chiffre et déchiffre. Rapide, adapté aux gros volumes. Problème : comment partager la clé sans qu'elle soit interceptée ? Exemples : AES, ChaCha20.
+• **Asymétrique** (à clé publique) : une paire de clés. La **clé publique** se diffuse librement, la **clé privée** reste secrète. Ce que l'une fait, seule l'autre peut le vérifier ou le défaire. Lent, mais résout le problème du partage. Exemples : RSA, courbes elliptiques (ECDSA, Ed25519, X25519).
+
+En pratique, on combine les deux (chiffrement **hybride**) : l'asymétrique sert à se mettre d'accord sur une clé de session, puis le symétrique chiffre les données. C'est ce que font TLS, SSH et GPG.
+
+### Le principe de Kerckhoffs
+Énoncé en 1883 par Auguste Kerckhoffs : la sécurité d'un système doit reposer uniquement sur le secret de la **clé**, pas sur le secret de l'**algorithme**. Conséquences pour toi :
+• utilise des algorithmes publics, étudiés depuis des années (AES, SHA-256, RSA, Ed25519) ;
+• n'invente jamais ton propre algorithme et ne le cache pas en pensant que c'est plus sûr ;
+• protège les clés comme des mots de passe : droits restreints, jamais dans un dépôt Git.
+
+### La taille des clés et l'aléa
+La force d'une clé symétrique se mesure en bits. Une clé de 128 bits offre 2^128 possibilités (environ 3,4 × 10^38) : une recherche exhaustive est hors de portée. L'ANSSI fixe d'ailleurs à **128 bits** la taille minimale d'une clé symétrique.
+
+Encore faut-il que la clé soit vraiment **aléatoire**. Une clé tirée par un générateur prévisible ne vaut rien, quelle que soit sa longueur. En 2008, une modification du paquet OpenSSL de Debian (CVE-2008-0166) réduisait l'aléa à quelques dizaines de milliers de clés possibles : toutes les clés SSH et TLS générées sur ces systèmes pendant presque deux ans ont dû être refaites. Utilise toujours le générateur du système : `/dev/urandom` (via `openssl rand`), le module `secrets` de Python, jamais `rand()` en C ni `Math.random()` en JavaScript.
+
+### À toi de jouer
+1. Pour chaque situation, indique le besoin principal (confidentialité, intégrité, authenticité, non-répudiation) : a) vérifier qu'une image ISO téléchargée n'est pas corrompue ; b) envoyer un bulletin de notes que seul le parent peut lire ; c) prouver qu'un contrat a été validé par le directeur ; d) s'assurer que le serveur `intranet.lycee.internal` est bien le vrai.
+2. Sur ta Debian, encode le mot `secret` en Base64, puis décode-le. Qu'en conclus-tu sur un mot de passe « protégé » en Base64 dans un fichier de configuration ?
+3. Génère une clé aléatoire de 256 bits en hexadécimal. Combien de caractères hexadécimaux obtiens-tu ?
+
+### Correction
+1. a) intégrité ; b) confidentialité ; c) non-répudiation (et authenticité) : il faut une signature ; d) authenticité du serveur, apportée par son certificat.
+2. `echo -n secret | base64` affiche `c2VjcmV0`, et `echo c2VjcmV0 | base64 -d` affiche `secret`. N'importe qui peut décoder sans aucune clé : un mot de passe en Base64 est un mot de passe en clair.
+3. `openssl rand -hex 32` : 32 octets = 256 bits, affichés en **64** caractères hexadécimaux (un caractère hexadécimal code 4 bits).
+"""
+
+    codeblock "bash" {
+      title: "Encodage et aléa : deux commandes à connaître"
+      code: """
+echo -n secret | base64          # c2VjcmV0 : encodage, aucune protection
+echo c2VjcmV0 | base64 -d        # secret
+openssl rand -hex 32             # 32 octets aléatoires (256 bits) en hexadécimal
+openssl rand -base64 24          # 24 octets aléatoires en Base64 (32 caractères)
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Un mot de passe est stocké en Base64 dans un fichier de configuration. Que peux-tu en dire ?" {
+        - "il est chiffré, il faut la clé pour le lire"
+        + "il est seulement encodé : n'importe qui peut le décoder sans clé"
+        - "il est haché, on ne peut pas retrouver l'original"
+        - "il est signé, on peut vérifier son auteur"
+        explanation: "Base64 est un encodage : une simple représentation, réversible sans aucun secret (base64 -d). Le confondre avec un chiffrement est une erreur classique dans les fichiers de configuration."
+      }
+      question "Quel terme français désigne l’opération normale du destinataire qui possède la clé ?" {
+        - "décrypter"
+        + "déchiffrer"
+        - "décoder"
+        - "décrypter ou déchiffrer, c'est identique"
+        explanation: "Le destinataire légitime déchiffre avec la clé. Décrypter, c'est retrouver le clair sans la clé, ce que tente un attaquant. Décoder s'applique à un encodage."
+      }
+      question "Quel besoin de sécurité la signature numérique apporte-t-elle et que le MAC n’apporte pas ?" {
+        - "la confidentialité"
+        - "l'intégrité"
+        + "la non-répudiation"
+        - "la disponibilité"
+        explanation: "Un MAC utilise une clé partagée : les deux parties peuvent le produire, donc aucune ne peut prouver à un tiers qui l'a créé. Une signature n'est produite que par le détenteur de la clé privée, ce qui empêche de nier."
+      }
+      question "Que dit le principe de Kerckhoffs ?" {
+        - "un algorithme doit rester secret pour être sûr"
+        + "la sécurité doit reposer sur le secret de la clé, pas de l'algorithme"
+        - "une clé doit être changée tous les jours"
+        - "il faut toujours combiner deux algorithmes différents"
+        explanation: "L'algorithme peut être public et étudié par tous ; seule la clé est secrète. C'est pour cela que les algorithmes standard (AES, SHA-256) sont publics et qu'un algorithme maison caché n'apporte aucune sécurité."
+      }
+      question "Pourquoi combine-t-on chiffrement asymétrique et symétrique dans TLS ou GPG ?" {
+        - "parce que l'asymétrique ne sait pas chiffrer de texte"
+        + "l'asymétrique règle l'échange de clé, le symétrique chiffre vite les données"
+        - "pour doubler la longueur de la clé"
+        - "parce que le symétrique est plus lent mais plus sûr"
+        explanation: "L'asymétrique est lent mais permet de partager une clé sans canal secret ; le symétrique est rapide pour les gros volumes. Le chiffrement hybride prend le meilleur des deux."
+      }
+      question "Combien de caractères affiche la commande « openssl rand -hex 16 » ?" {
+        - "16"
+        + "32"
+        - "64"
+        - "128"
+        explanation: "16 octets aléatoires, chaque octet s'écrit avec 2 caractères hexadécimaux : 32 caractères, soit 128 bits."
+      }
+      question "Quelle est la taille minimale d’une clé symétrique selon l’ANSSI ?" {
+        - "56 bits"
+        - "80 bits"
+        + "128 bits"
+        - "512 bits"
+        explanation: "Le guide de l'ANSSI sur le choix et le dimensionnement des mécanismes cryptographiques fixe 128 bits minimum. 56 bits était la clé du DES, cassée par recherche exhaustive dès la fin des années 1990."
+      }
+      question "Quel générateur utiliser pour créer une clé dans un script Python ?" {
+        - "random.randint"
+        + "le module secrets"
+        - "l'heure courante en millisecondes"
+        - "hash(nom_utilisateur)"
+        explanation: "secrets s'appuie sur le générateur cryptographique du système. random est prévisible : il sert aux simulations, pas aux clés. L'heure et un hash d'un nom sont devinables."
+      }
+      question "Dans le chiffrement asymétrique, quelle clé peut-on publier sans risque ?" {
+        - "la clé privée"
+        + "la clé publique"
+        - "la clé de session"
+        - "les deux, si elles sont longues"
+        explanation: "La clé publique est faite pour être diffusée. La clé privée ne doit jamais quitter son propriétaire, et la clé de session est un secret symétrique temporaire."
+      }
+      question "Que s’est-il passé avec le paquet OpenSSL de Debian en 2008 (CVE-2008-0166) ?" {
+        - "l'algorithme AES a été cassé"
+        - "les certificats racine ont expiré"
+        + "le générateur d'aléa était si pauvre que les clés produites étaient devinables"
+        - "SHA-1 a remplacé SHA-256 par erreur"
+        explanation: "Une modification avait supprimé presque toute la source d'aléa : seules quelques dizaines de milliers de clés étaient possibles. Une clé longue mais prévisible n'offre aucune sécurité."
+      }
+      question "Vérifier qu’une image ISO téléchargée n’est pas corrompue relève de quel besoin ?" {
+        - "la confidentialité"
+        + "l'intégrité"
+        - "la non-répudiation"
+        - "l'anonymat"
+        explanation: "On compare l'empreinte du fichier à celle publiée : c'est un contrôle d'intégrité. Pour être sûr aussi de l'origine de la liste d'empreintes, on vérifie en plus sa signature (authenticité)."
+      }
+    }
+  }
+
+  module "hachage" {
+    title: "Chapitre 2 : les fonctions de hachage, SHA-256 et les collisions"
+    duration: "35min"
+    content: """
+### Ce qu'est une fonction de hachage cryptographique
+Une fonction de hachage prend des données de n'importe quelle taille et renvoie une **empreinte** de taille fixe. SHA-256 renvoie toujours 256 bits, soit 64 caractères hexadécimaux, que l'entrée fasse 3 octets ou 4 Go.
+
+Une fonction de hachage **cryptographique** doit avoir trois propriétés :
+• **résistance à la préimage** : à partir d'une empreinte, impossible en pratique de retrouver une entrée qui la produit (sens unique) ;
+• **résistance à la seconde préimage** : à partir d'un fichier donné, impossible d'en fabriquer un autre de même empreinte ;
+• **résistance aux collisions** : impossible de trouver deux entrées quelconques de même empreinte.
+
+S'y ajoute l'**effet avalanche** : changer un seul bit de l'entrée change environ la moitié des bits de l'empreinte.
+
+```text
+printf 'abc' | openssl dgst -sha256
+SHA2-256(stdin)= ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad
+printf 'abd' | openssl dgst -sha256
+SHA2-256(stdin)= a52d159f262b2c6ddb724a61840befc36eb30c88877a4030b65cbe86298449c9
+```
+
+Une seule lettre change, et les deux empreintes n'ont plus rien en commun. Note que `echo` ajoute un retour à la ligne : `echo abc` et `printf 'abc'` ne donnent pas la même empreinte. C'est une source fréquente d'écarts dans les exercices.
+
+### Les collisions et le paradoxe des anniversaires
+Il existe forcément des collisions, puisqu'une infinité d'entrées tombent sur un nombre fini d'empreintes. La question est : combien de calculs faut-il pour en trouver une ? Pour une empreinte de n bits, une attaque générique en demande environ **2^(n/2)** (paradoxe des anniversaires : dans une classe de 23 élèves, il y a plus d'une chance sur deux que deux élèves aient la même date d'anniversaire). Pour SHA-256, cela fait 2^128 calculs : hors de portée.
+
+L'histoire montre ce qui arrive quand une fonction faiblit :
+• **MD5** (128 bits) : premières collisions publiées en 2004. En 2012, le logiciel espion Flame a utilisé une collision MD5 pour fabriquer un faux certificat qui permettait de signer du code au nom de Microsoft.
+• **SHA-1** (160 bits) : première collision publique en 2017 (attaque SHAttered, deux PDF différents de même empreinte). Les navigateurs refusent les certificats signés en SHA-1 depuis 2017.
+• **SHA-2** (SHA-256, SHA-384, SHA-512) et **SHA-3** : aucune attaque pratique connue.
+
+L'ANSSI exige une empreinte d'**au moins 256 bits** et déclare SHA-1 non conforme. MD5 et SHA-1 restent tolérables pour détecter une corruption accidentelle (un téléchargement abîmé), jamais face à un attaquant.
+
+### Usages concrets
+• **Vérifier un téléchargement** : l'éditeur publie l'empreinte SHA-256, tu recalcules et tu compares.
+• **Détecter une modification** : outils d'intégrité (AIDE, Tripwire) qui gardent l'empreinte des fichiers système.
+• **Identifier un contenu** : Git identifie chaque objet par son empreinte, les antivirus repèrent des fichiers connus par leur SHA-256.
+• **Signatures** : on signe l'empreinte d'un document, pas le document entier.
+• **Mots de passe** : avec un sel et une fonction lente, voir le chapitre 3.
+
+### Empreinte seule ou HMAC ?
+Une empreinte seule ne prouve rien face à un attaquant qui peut modifier **à la fois** le fichier et l'empreinte publiée à côté. Deux solutions :
+• publier l'empreinte par un autre canal, ou la **signer** (chapitre 6) ;
+• utiliser un **HMAC** (RFC 2104) : une empreinte calculée avec une clé secrète. Sans la clé, impossible de produire un HMAC valide. C'est un code d'authentification de message (MAC).
+
+```text
+printf 'virement 100' | openssl dgst -sha256 -hmac 'cle-partagee'
+```
+
+### Sous Windows
+```text
+certutil -hashfile C:\Users\eleve\Downloads\debian.iso SHA256
+Get-FileHash .\debian.iso -Algorithm SHA256
+```
+`Get-FileHash` utilise SHA256 par défaut. `certutil` accepte MD5, SHA1, SHA256, SHA384 et SHA512.
+
+### À toi de jouer
+1. Crée un fichier `note.txt` contenant `Note : 12/20` et calcule son empreinte SHA-256 avec `sha256sum` puis avec `openssl dgst -sha256`. Les deux résultats sont-ils identiques ?
+2. Remplace `12` par `13` et recalcule. Combien de caractères de l'empreinte sont restés à la même position (environ) ?
+3. Tu télécharges une image Debian. Le site fournit un fichier `SHA256SUMS`. Écris la commande qui vérifie seulement le fichier présent dans ton dossier.
+4. Un collègue dit : « l'empreinte est publiée sur le même serveur que l'ISO, donc la vérification protège contre un pirate qui a pris le contrôle du serveur ». A-t-il raison ?
+
+### Correction
+1. `printf 'Note : 12/20\n' > note.txt`, puis `sha256sum note.txt` et `openssl dgst -sha256 note.txt`. Les 64 caractères sont identiques : c'est le même algorithme, seule la présentation change (`SHA2-256(note.txt)=` devant chez openssl 3).
+2. L'empreinte change complètement (effet avalanche). Par hasard, environ 1 caractère sur 16 reste identique à la même position, soit 4 sur 64 en moyenne : aucune ressemblance exploitable.
+3. `sha256sum -c --ignore-missing SHA256SUMS`. La ligne attendue se termine par `: OK` ; `FAILED` signale un fichier différent. Sans `--ignore-missing`, la commande se plaint de toutes les autres images listées et absentes.
+4. Non. Un pirate qui contrôle le serveur remplace l'ISO **et** `SHA256SUMS`. L'empreinte protège contre la corruption accidentelle. Contre un attaquant, il faut vérifier la **signature** de `SHA256SUMS` (fichier `SHA256SUMS.sign`) avec la clé publique de Debian, obtenue par un autre canal : c'est l'objet du chapitre 8.
+"""
+
+    codeblock "bash" {
+      title: "Empreintes et HMAC en ligne de commande"
+      code: """
+printf 'Note : 12/20\n' > note.txt
+sha256sum note.txt                         # empreinte au format coreutils
+openssl dgst -sha256 note.txt              # même empreinte, présentation openssl
+sha256sum note.txt > note.sha256           # enregistrer l'empreinte
+sha256sum -c note.sha256                   # note.txt: OK
+sha256sum -c --ignore-missing SHA256SUMS   # vérifier une liste officielle
+openssl dgst -sha256 -hmac 'cle-partagee' note.txt   # HMAC-SHA256 avec une clé
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle est la taille de l’empreinte produite par SHA-256 ?" {
+        - "128 bits, soit 32 caractères hexadécimaux"
+        + "256 bits, soit 64 caractères hexadécimaux"
+        - "256 octets, soit 512 caractères hexadécimaux"
+        - "elle dépend de la taille du fichier"
+        explanation: "SHA-256 renvoie toujours 256 bits, quelle que soit l'entrée. Chaque caractère hexadécimal code 4 bits : 256 / 4 = 64 caractères."
+      }
+      question "Que signifie la résistance aux collisions ?" {
+        - "on ne peut pas retrouver l'entrée à partir de l'empreinte"
+        + "on ne peut pas trouver deux entrées quelconques qui ont la même empreinte"
+        - "deux fichiers identiques ont toujours la même empreinte"
+        - "l'empreinte change à chaque calcul"
+        explanation: "La résistance aux collisions porte sur deux entrées choisies librement par l'attaquant. Retrouver l'entrée à partir de l'empreinte, c'est la résistance à la préimage. Deux fichiers identiques ont la même empreinte : c'est le déterminisme, pas une propriété de sécurité."
+      }
+      question "Combien de calculs faut-il environ pour trouver une collision générique sur une empreinte de 256 bits ?" {
+        - "2^256"
+        + "2^128"
+        - "2^64"
+        - "256 × 256"
+        explanation: "Le paradoxe des anniversaires ramène la recherche de collision à environ 2^(n/2) calculs, soit 2^128 pour 256 bits, ce qui reste hors de portée."
+      }
+      question "Pourquoi « echo abc | sha256sum » et « printf abc | sha256sum » donnent-ils des empreintes différentes ?" {
+        - "echo utilise un autre algorithme"
+        + "echo ajoute un retour à la ligne à la fin"
+        - "printf convertit le texte en majuscules"
+        - "sha256sum lit les deux commandes différemment selon le shell"
+        explanation: "echo ajoute le caractère de fin de ligne, donc l'entrée fait 4 octets au lieu de 3. Un seul octet de différence suffit à changer toute l'empreinte. Utilise echo -n ou printf."
+      }
+      question "Quelle fonction de hachage reste acceptable pour une signature de certificat aujourd’hui ?" {
+        - "MD5"
+        - "SHA-1"
+        + "SHA-256"
+        - "CRC32"
+        explanation: "MD5 et SHA-1 ont des collisions pratiques et l'ANSSI exige au moins 256 bits d'empreinte. CRC32 n'est même pas une fonction cryptographique : il détecte les erreurs de transmission, pas les modifications volontaires."
+      }
+      question "La commande « sha256sum -c SHA256SUMS » affiche « debian.iso: FAILED ». Que fais-tu ?" {
+        - "tu installes quand même, l'écart vient souvent de l'horloge"
+        + "tu supprimes le fichier et tu le télécharges à nouveau, puis tu revérifies"
+        - "tu recalcules avec MD5 pour confirmer"
+        - "tu renommes le fichier pour que l'empreinte corresponde"
+        explanation: "FAILED signifie que le contenu diffère de l'empreinte publiée : fichier corrompu ou modifié. L'empreinte ne dépend ni de l'horloge ni du nom du fichier."
+      }
+      question "Quelle commande Windows calcule l’empreinte SHA-256 d’un fichier en PowerShell ?" {
+        - "Get-Hash -Sha256 fichier"
+        + "Get-FileHash .\\fichier -Algorithm SHA256"
+        - "certutil -encode fichier"
+        - "Get-Content fichier | Hash"
+        explanation: "Get-FileHash calcule l'empreinte, SHA256 étant l'algorithme par défaut. certutil -encode produit du Base64 ; c'est certutil -hashfile qui calcule une empreinte."
+      }
+      question "Quel est l’intérêt d’un HMAC par rapport à une empreinte SHA-256 seule ?" {
+        - "il est plus court"
+        - "il est réversible"
+        + "sans la clé secrète, un attaquant ne peut pas recalculer un HMAC valide"
+        - "il chiffre le message"
+        explanation: "Un attaquant peut modifier un fichier et recalculer son SHA-256. Le HMAC mélange une clé secrète au calcul : il apporte l'intégrité et l'authenticité entre détenteurs de la clé. Il ne chiffre rien."
+      }
+      question "En quelle année la première collision publique sur SHA-1 a-t-elle été publiée ?" {
+        - "1995"
+        - "2004"
+        + "2017"
+        - "2023"
+        explanation: "L'attaque SHAttered, en 2017, a produit deux PDF différents de même SHA-1. 2004 est l'année des premières collisions publiées sur MD5."
+      }
+      question "L’ISO et son fichier SHA256SUMS sont sur le même serveur. Contre quoi la vérification de l’empreinte protège-t-elle ?" {
+        - "contre un pirate qui contrôle le serveur"
+        + "contre un téléchargement corrompu"
+        - "contre l'interception du mot de passe"
+        - "contre toutes les attaques, car SHA-256 est sûr"
+        explanation: "Un pirate maître du serveur modifie les deux fichiers. Il faut alors vérifier la signature de la liste d'empreintes avec une clé obtenue ailleurs. La sûreté de SHA-256 ne compense pas une empreinte falsifiée."
+      }
+      question "Que désigne l’effet avalanche ?" {
+        - "l'empreinte grandit avec la taille du fichier"
+        + "modifier un seul bit de l'entrée change environ la moitié des bits de l'empreinte"
+        - "plusieurs fichiers donnent la même empreinte"
+        - "le calcul ralentit sur les gros fichiers"
+        explanation: "Grâce à l'effet avalanche, deux entrées proches donnent des empreintes sans aucun lien visible, ce qui empêche de deviner l'entrée par petites retouches."
+      }
+      question "Quel outil sert à surveiller la modification des fichiers système grâce aux empreintes ?" {
+        - "nmap"
+        + "AIDE"
+        - "tcpdump"
+        - "fail2ban"
+        explanation: "AIDE enregistre les empreintes des fichiers et signale toute différence lors des contrôles suivants. nmap scanne des ports, tcpdump capture le trafic, fail2ban bloque des adresses après des échecs de connexion."
+      }
+    }
+  }
+
+  module "mots-de-passe" {
+    title: "Chapitre 3 : stocker les mots de passe, sel, bcrypt et Argon2"
+    duration: "35min"
+    content: """
+### Le problème
+Une application doit vérifier un mot de passe sans le stocker en clair : si la base fuit, les mots de passe ne doivent pas être lisibles. On stocke donc une valeur dérivée, et à chaque connexion on refait le calcul pour comparer.
+
+Un simple SHA-256 du mot de passe ne suffit **pas**, pour deux raisons.
+
+### Raison 1 : sans sel, les mêmes mots de passe se voient
+Deux utilisateurs qui ont choisi `Soleil2026` ont la même empreinte. Pire, un attaquant peut précalculer les empreintes de millions de mots de passe courants (dictionnaires, tables arc-en-ciel) et les comparer en un instant à la base volée.
+
+La parade est le **sel** (salt) : une valeur aléatoire, différente pour chaque compte, ajoutée au mot de passe avant le calcul et stockée à côté de l'empreinte. Le sel n'est **pas secret**. Il empêche les précalculs et fait que deux mots de passe identiques donnent deux empreintes différentes.
+
+```text
+openssl passwd -6 -salt Sel123 'Soleil2026'
+$6$Sel123$DjEZkyxy63IqKEs6brewD06rCF42mO6CLB5xMIHWi0J0jcMxpos0SuvmA321szw9UcIxFmODvZE9mIpRNGUQq.
+openssl passwd -6 -salt AutreSel 'Soleil2026'
+$6$AutreSel$m4QC71qPAvSUAJndhRPjgN9CtVjxI5P95xBjMrTuNXZ1UQmQhgdZf79OuJG4NtaOt6HR3hmXpZkaojG/jihut0
+```
+
+### Raison 2 : SHA-256 est trop rapide
+SHA-256 est conçu pour être rapide : une carte graphique en calcule des milliards par seconde. Un mot de passe humain (8 à 12 caractères) se trouve alors en quelques heures par force brute. On utilise donc une **fonction de dérivation lente**, dont le coût est réglable :
+• **Argon2id** (RFC 9106, gagnant de la Password Hashing Competition en 2015) : coûteux en temps **et en mémoire**, ce qui gêne les cartes graphiques. C'est le premier choix de l'OWASP, avec au minimum 19 Mio de mémoire, 2 itérations et 1 fil (m=19456, t=2, p=1).
+• **scrypt** : aussi gourmand en mémoire, à défaut d'Argon2id.
+• **bcrypt** (1999) : encore très répandu. Facteur de coût d'au moins 10 (le coût est un exposant : +1 double le temps). Attention, bcrypt ne prend en compte que les **72 premiers octets** du mot de passe.
+• **PBKDF2-HMAC-SHA256** : quand une conformité FIPS est imposée ; l'OWASP recommande alors 600 000 itérations.
+
+Le bon réglage : la vérification d'un mot de passe doit prendre de l'ordre de quelques centaines de millisecondes sur ton serveur. Imperceptible pour l'utilisateur, ruineux pour un attaquant qui doit tester des milliards de candidats.
+
+### Lire /etc/shadow
+Sous Linux, les empreintes des comptes locaux sont dans `/etc/shadow` (lisible seulement par root). Le format est `$identifiant$paramètres$sel$empreinte` :
+
+| Préfixe | Algorithme | Statut |
+|---|---|---|
+| `$1$` | MD5-crypt | obsolète |
+| `$5$` / `$6$` | SHA-256-crypt / SHA-512-crypt (5 000 tours par défaut) | acceptable |
+| `$2b$` / `$2y$` | bcrypt | bon |
+| `$y$` | yescrypt (défaut de Debian 11 et suivantes, Ubuntu 22.04 et suivantes) | bon |
+
+Le facteur de coût fait partie de la chaîne stockée : on peut l'augmenter plus tard, et chaque mot de passe sera recalculé avec le nouveau coût à la prochaine connexion de l'utilisateur.
+
+### Côté Windows
+Windows stocke pour les comptes locaux et Active Directory le **hash NT** : un MD4 du mot de passe, **sans sel**. Un attaquant qui le vole peut même s'en servir directement pour s'authentifier sans connaître le mot de passe (pass-the-hash). C'est pour cela que la base SAM et le fichier NTDS.dit des contrôleurs de domaine sont des cibles prioritaires et doivent être protégés.
+
+### Ce que disent la CNIL et l'ANSSI
+• La CNIL (recommandation de 2022 sur les mots de passe) demande de ne jamais stocker un mot de passe en clair et d'utiliser une fonction de hachage dédiée aux mots de passe, avec un sel.
+• L'ANSSI (recommandations relatives à l'authentification multifacteur et aux mots de passe) recommande aussi une fonction de dérivation lente et salée, et l'authentification multifacteur pour les accès sensibles.
+• Côté utilisateur : longueur plutôt que complexité, un mot de passe différent par service, un gestionnaire de mots de passe (KeePassXC).
+
+### À toi de jouer
+1. Voici une ligne de `/etc/shadow` : `eleve:$y$j9T$Hq3...$Lk2...:20050:0:99999:7:::`. Quel algorithme est utilisé ? Le mot de passe est-il récupérable directement ?
+2. Une application PHP stocke `hash('sha256', $motdepasse)`. Cite deux défauts et la correction.
+3. Avec `openssl passwd -6`, calcule deux fois l'empreinte de `Lycee2026!` sans préciser de sel. Les résultats sont-ils identiques ? Pourquoi ?
+4. Un développeur stocke le sel dans un fichier secret séparé « pour plus de sécurité » et utilise le même sel pour tous les comptes. Qu'en penses-tu ?
+
+### Correction
+1. `$y$` : yescrypt, défaut de Debian 12. Le mot de passe n'est pas récupérable : il faut tester des candidats un par un en refaisant le calcul lent avec le même sel. Les champs suivants sont des dates et délais (dernier changement en jours depuis 1970, durée minimale, maximale, préavis).
+2. Pas de sel (deux comptes identiques se voient, précalculs possibles) et SHA-256 trop rapide (force brute massive). Correction : `password_hash($motdepasse, PASSWORD_ARGON2ID)` ou `PASSWORD_DEFAULT` (bcrypt), puis `password_verify()` à la connexion. Ces fonctions gèrent seules le sel et le coût.
+3. Non : sans `-salt`, openssl tire un sel aléatoire à chaque appel. Les deux lignes ont des sels différents, donc des empreintes différentes, et toutes deux sont valides pour vérifier le mot de passe.
+4. Mauvaise idée. Un sel unique pour tous redonne des empreintes identiques pour des mots de passe identiques et permet un précalcul pour toute la base. Le sel doit être **unique par compte**, il n'a pas besoin d'être secret. Un secret commun ajouté au calcul existe (on l'appelle un poivre, pepper), mais il s'ajoute au sel unique, il ne le remplace pas.
+"""
+
+    codeblock "bash" {
+      title: "Observer le sel et les formats d'empreinte"
+      code: """
+openssl passwd -6 'Lycee2026!'                  # SHA-512-crypt, sel aléatoire
+openssl passwd -6 'Lycee2026!'                  # autre sel, autre empreinte
+sudo grep '^eleve:' /etc/shadow | cut -d: -f2 | cut -c1-4   # préfixe : $y$ = yescrypt
+grep -E '^ENCRYPT_METHOD' /etc/login.defs       # algorithme utilisé par passwd
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "À quoi sert le sel dans le stockage d’un mot de passe ?" {
+        - "à chiffrer le mot de passe pour pouvoir le relire"
+        + "à rendre chaque empreinte unique et à empêcher les tables précalculées"
+        - "à ralentir le calcul de l'empreinte"
+        - "à remplacer le mot de passe s'il est perdu"
+        explanation: "Le sel aléatoire, propre à chaque compte, fait que deux mots de passe identiques donnent deux empreintes différentes et rend inutiles les tables précalculées. Le ralentissement vient du facteur de coût, pas du sel."
+      }
+      question "Le sel doit-il être gardé secret ?" {
+        - "oui, sinon l'empreinte se calcule à l'envers"
+        + "non, il est stocké à côté de l'empreinte ; il doit surtout être unique par compte"
+        - "oui, il doit être dans un fichier séparé chiffré"
+        - "non, et il peut être le même pour tous les comptes"
+        explanation: "Le sel n'est pas un secret : il figure en clair dans la chaîne stockée ($6$sel$...). Son rôle exige qu'il soit unique et aléatoire pour chaque compte."
+      }
+      question "Pourquoi SHA-256 seul est-il un mauvais choix pour les mots de passe ?" {
+        - "parce qu'il est réversible"
+        + "parce qu'il est très rapide, ce qui facilite la force brute"
+        - "parce que ses empreintes sont trop longues pour une base de données"
+        - "parce qu'il a des collisions connues"
+        explanation: "SHA-256 n'a pas de faiblesse connue, mais il est conçu pour être rapide : des milliards d'essais par seconde sur une carte graphique. Une fonction lente et réglable (Argon2id, bcrypt) multiplie le coût de chaque essai."
+      }
+      question "Quelle fonction l’OWASP place-t-elle en premier choix pour stocker des mots de passe ?" {
+        - "MD5 avec sel"
+        - "SHA-512"
+        + "Argon2id"
+        - "AES-256"
+        explanation: "Argon2id est recommandé en premier, avec au minimum 19 Mio de mémoire, 2 itérations et 1 fil. AES est un chiffrement, réversible avec la clé : on ne chiffre pas un mot de passe, on le dérive."
+      }
+      question "Une ligne de /etc/shadow commence par « $6$ ». Quel algorithme est utilisé ?" {
+        - "MD5-crypt"
+        - "bcrypt"
+        + "SHA-512-crypt"
+        - "yescrypt"
+        explanation: "$1$ = MD5-crypt, $2b$ = bcrypt, $5$ = SHA-256-crypt, $6$ = SHA-512-crypt, $y$ = yescrypt."
+      }
+      question "Quelle limite connue de bcrypt faut-il garder en tête ?" {
+        - "il refuse les mots de passe de plus de 8 caractères"
+        + "seuls les 72 premiers octets du mot de passe sont pris en compte"
+        - "il ne fonctionne qu'en PHP"
+        - "il n'utilise pas de sel"
+        explanation: "Au-delà de 72 octets, la suite du mot de passe est ignorée. bcrypt intègre bien un sel. Il existe dans tous les langages courants."
+      }
+      question "Tu augmentes le facteur de coût de bcrypt de 10 à 12. Combien de fois plus long devient le calcul ?" {
+        - "1,2 fois"
+        - "2 fois"
+        + "4 fois"
+        - "12 fois"
+        explanation: "Le coût est un exposant de 2 : chaque point double le nombre de tours. De 10 à 12, on multiplie par 2 × 2 = 4."
+      }
+      question "Qu’a de particulier le hash NT utilisé par Windows ?" {
+        - "il utilise Argon2id avec un sel"
+        + "c'est un MD4 du mot de passe sans sel, réutilisable par pass-the-hash"
+        - "il est chiffré par la clé TPM et donc inutilisable s'il est volé"
+        - "il change à chaque redémarrage"
+        explanation: "Le hash NT est un MD4 non salé. Volé, il permet de s'authentifier directement (pass-the-hash) sans casser le mot de passe. C'est pourquoi SAM et NTDS.dit sont des cibles prioritaires."
+      }
+      question "Combien d’itérations l’OWASP recommande-t-elle pour PBKDF2-HMAC-SHA256 ?" {
+        - "1 000"
+        - "10 000"
+        + "600 000"
+        - "6 000 000"
+        explanation: "L'OWASP recommande 600 000 itérations pour PBKDF2-HMAC-SHA256. 1 000 était une valeur courante il y a vingt ans, très insuffisante aujourd'hui."
+      }
+      question "En PHP, quelle fonction utiliser pour stocker un mot de passe ?" {
+        - "md5($mdp)"
+        - "hash('sha256', $mdp)"
+        + "password_hash($mdp, PASSWORD_ARGON2ID)"
+        - "base64_encode($mdp)"
+        explanation: "password_hash gère le sel et le coût, et password_verify fait la comparaison. md5 et sha256 seuls sont rapides et sans sel ; base64 n'est qu'un encodage."
+      }
+      question "Deux appels « openssl passwd -6 MonMotDePasse » donnent deux résultats différents. Pourquoi ?" {
+        - "l'un des deux est faux"
+        - "openssl ajoute l'heure au calcul"
+        + "un sel aléatoire différent est tiré à chaque appel"
+        - "SHA-512 n'est pas déterministe"
+        explanation: "Sans -salt, openssl tire un sel aléatoire. Les deux chaînes sont valides : le sel est stocké dedans, et la vérification refait le calcul avec ce sel."
+      }
+      question "Quel temps de vérification vise-t-on pour une fonction de dérivation de mot de passe sur un serveur ?" {
+        - "quelques nanosecondes"
+        + "de l'ordre de quelques centaines de millisecondes"
+        - "une dizaine de secondes"
+        - "une minute"
+        explanation: "Quelques centaines de millisecondes restent invisibles pour l'utilisateur et multiplient énormément le coût de la force brute. Dix secondes ou plus rendraient le service inutilisable et faciliteraient un déni de service."
+      }
+    }
+  }
+
+  module "symetrique" {
+    title: "Chapitre 4 : le chiffrement symétrique, AES et ses modes"
+    duration: "40min"
+    content: """
+### AES, le standard
+**AES** (Advanced Encryption Standard, norme FIPS 197 de 2001) est l'algorithme symétrique utilisé partout : HTTPS, Wi-Fi WPA2/WPA3, BitLocker, LUKS, VPN. C'est un **chiffrement par blocs** : il transforme un bloc de **128 bits** (16 octets) en un autre bloc de 128 bits, avec une clé de **128, 192 ou 256 bits**. Les trois tailles sont sûres aujourd'hui ; AES-256 garde de la marge face aux futurs ordinateurs quantiques.
+
+Les processeurs récents ont des instructions dédiées (AES-NI sur x86, extensions crypto sur ARM) : AES chiffre plusieurs gigaoctets par seconde. Sur les appareils sans ces instructions, on préfère **ChaCha20** (RFC 8439), un chiffrement par flot rapide en logiciel.
+
+À éviter : **DES** (clé de 56 bits, cassée), **3DES** (blocs de 64 bits, retiré), **RC4** (biais statistiques, interdit dans TLS par la RFC 7465).
+
+### Pourquoi un mode opératoire
+AES ne sait chiffrer qu'un bloc de 16 octets. Pour un fichier de 3 Mo, il faut une règle qui enchaîne les blocs : c'est le **mode opératoire**.
+
+| Mode | Principe | À retenir |
+|---|---|---|
+| ECB | chaque bloc chiffré seul, avec la même clé | **à proscrire** : deux blocs clairs identiques donnent deux blocs chiffrés identiques |
+| CBC | chaque bloc clair est combiné (XOR) au bloc chiffré précédent ; le premier avec un **IV** aléatoire | correct si l'IV est imprévisible, mais n'assure **pas** l'intégrité |
+| CTR | AES chiffre un compteur, le résultat est combiné (XOR) au clair | rapide, parallélisable ; le couple clé + nonce ne doit **jamais** resservir |
+| GCM | CTR + une étiquette d'authentification (tag) de 128 bits | **chiffrement authentifié** (AEAD) : confidentialité **et** intégrité |
+
+Le défaut d'ECB se voit à l'œil nu : une image chiffrée en ECB laisse apparaître les contours de l'image d'origine, car les zones de même couleur donnent les mêmes blocs chiffrés.
+
+### IV et nonce
+L'**IV** (vecteur d'initialisation) ou **nonce** (number used once) est une valeur publique, envoyée avec le message, qui rend chaque chiffrement différent même avec la même clé et le même clair. Il n'est pas secret, mais il a des exigences :
+• en CBC, il doit être **aléatoire et imprévisible** ;
+• en CTR et GCM, il doit être **unique** pour une clé donnée. Réutiliser un nonce GCM avec la même clé permet à un attaquant de retrouver le XOR des deux clairs et de forger des messages : c'est une faute grave.
+
+### Chiffrer n'est pas protéger l'intégrité
+En CBC ou CTR seuls, un attaquant peut modifier le texte chiffré sans connaître la clé : en CTR, inverser un bit du chiffré inverse le même bit du clair. Si le message est `virement 100`, il peut viser le chiffre. La réponse est le **chiffrement authentifié** :
+• **AES-GCM** ou **ChaCha20-Poly1305** : un seul algorithme fait les deux ;
+• à défaut, CBC puis HMAC sur le chiffré (« chiffrer puis authentifier », encrypt-then-MAC), et on vérifie le HMAC **avant** de déchiffrer.
+
+TLS 1.3 n'accepte plus que des modes AEAD (GCM, CCM, ChaCha20-Poly1305). L'ANSSI recommande aussi un mode authentifié.
+
+### Une clé à partir d'un mot de passe
+Un humain retient un mot de passe, pas 256 bits aléatoires. Pour chiffrer un fichier avec un mot de passe, on **dérive** une clé avec une fonction lente et un sel (PBKDF2, Argon2, scrypt), comme au chapitre 3. Avec `openssl enc`, ajoute toujours `-pbkdf2` : sans cette option, openssl utilise une ancienne dérivation (EVP_BytesToKey, un seul tour de hachage) et affiche un avertissement.
+
+Limite à connaître : `openssl enc` ne gère **pas** les modes authentifiés (`enc: AEAD ciphers not supported`). Pour un usage réel, préfère GPG (chapitre 8), `age` ou un conteneur chiffré (LUKS, VeraCrypt, BitLocker). `openssl enc` reste parfait pour comprendre et pour les TP.
+
+### À toi de jouer
+1. Crée `notes.txt` (une ligne de texte), chiffre-le en AES-256-CBC avec dérivation PBKDF2 à 600 000 itérations, puis déchiffre-le. Affiche les 16 premiers octets du fichier chiffré : que remarques-tu ?
+2. Crée un fichier de 32 octets contenant uniquement la lettre `A`. Chiffre-le en AES-128-ECB puis en AES-128-CBC avec la même clé, sans bourrage (`-nopad`). Compare les deux moitiés de chaque résultat.
+3. Un développeur utilise AES-256-GCM avec une clé fixe et un nonce toujours égal à zéro « car le nonce n'est pas secret ». Qu'en penses-tu ?
+4. Pourquoi le fichier chiffré fait-il 32 octets de plus que le clair dans l'exercice 1 (pour un clair de 18 octets) ?
+
+### Correction
+1. `openssl enc -aes-256-cbc -salt -pbkdf2 -iter 600000 -in notes.txt -out notes.enc`, puis `openssl enc -d -aes-256-cbc -pbkdf2 -iter 600000 -in notes.enc -out notes.dec`. `xxd notes.enc | head -1` montre `Salted__` suivi de 8 octets : openssl stocke le **sel** en clair au début du fichier. Le sel n'est pas secret, il sert à la dérivation de la clé.
+2. En ECB, les deux blocs de 16 octets chiffrés sont **identiques** : on voit que le clair se répète. En CBC, le second bloc diffère du premier, car il est mélangé au bloc chiffré précédent. C'est exactement pourquoi ECB est à proscrire.
+3. C'est une faute grave : avec GCM, le nonce n'est pas secret, mais il doit être **unique** pour chaque message chiffré avec la même clé. Un nonce répété révèle le XOR des clairs et permet de forger des tags. Il faut un nonce de 96 bits aléatoire ou un compteur jamais réutilisé, et changer de clé avant d'épuiser les nonces.
+4. 16 octets d'en-tête (`Salted__` + 8 octets de sel), puis le bourrage PKCS#7 qui complète le clair à un multiple de 16 : 18 octets deviennent 32. Total : 16 + 32 = 48 octets, soit 30 de plus que le clair. Si ton clair fait exactement 16 octets, le bourrage ajoute un bloc entier : 16 + 32 = 48 octets, 32 de plus.
+"""
+
+    codeblock "bash" {
+      title: "AES en ligne de commande : chiffrer, déchiffrer, voir le défaut d'ECB"
+      code: """
+printf 'Bulletin de notes\n' > notes.txt
+openssl enc -aes-256-cbc -salt -pbkdf2 -iter 600000 -in notes.txt -out notes.enc
+xxd notes.enc | head -1            # Salted__ puis le sel (8 octets)
+openssl enc -d -aes-256-cbc -pbkdf2 -iter 600000 -in notes.enc -out notes.dec
+# Défaut d'ECB : deux blocs clairs identiques -> deux blocs chiffrés identiques
+printf 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' > blocs.txt
+K=$(openssl rand -hex 16)
+openssl enc -aes-128-ecb -K "$K" -nopad -in blocs.txt | xxd
+openssl enc -aes-128-cbc -K "$K" -iv "$(openssl rand -hex 16)" -nopad -in blocs.txt | xxd
+openssl enc -list | grep -i aes-256    # algorithmes et modes disponibles
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle est la taille d’un bloc AES ?" {
+        - "64 bits"
+        + "128 bits"
+        - "256 bits"
+        - "elle dépend de la taille de la clé"
+        explanation: "Le bloc AES fait toujours 128 bits (16 octets). Seule la clé varie : 128, 192 ou 256 bits. Les blocs de 64 bits (DES, 3DES) sont trop petits aujourd'hui."
+      }
+      question "Pourquoi le mode ECB est-il à proscrire ?" {
+        - "il est trop lent"
+        + "deux blocs clairs identiques donnent deux blocs chiffrés identiques"
+        - "il n'accepte que des clés de 56 bits"
+        - "il nécessite un IV secret"
+        explanation: "En ECB, chaque bloc est chiffré seul : les répétitions du clair restent visibles dans le chiffré (l'image chiffrée laisse voir ses contours). ECB n'utilise pas d'IV."
+      }
+      question "Que garantit le mode GCM que le mode CBC seul ne garantit pas ?" {
+        - "une clé plus longue"
+        + "l'intégrité et l'authenticité du message grâce à une étiquette (tag)"
+        - "l'absence de nonce"
+        - "la compatibilité avec DES"
+        explanation: "GCM est un chiffrement authentifié (AEAD) : toute modification du chiffré fait échouer la vérification du tag. CBC seul assure la confidentialité, pas l'intégrité."
+      }
+      question "En AES-GCM, que doit-on absolument respecter pour le nonce ?" {
+        - "il doit rester secret"
+        + "il ne doit jamais être réutilisé avec la même clé"
+        - "il doit être égal à zéro"
+        - "il doit être identique pour l'émetteur et tous les messages"
+        explanation: "Le nonce est public mais unique par message pour une clé donnée. Le réutiliser révèle le XOR des clairs et permet de forger des messages authentifiés."
+      }
+      question "Quelle option faut-il ajouter à « openssl enc » pour une dérivation de clé correcte à partir d’un mot de passe ?" {
+        - "-base64"
+        - "-nosalt"
+        + "-pbkdf2"
+        - "-nopad"
+        explanation: "-pbkdf2 dérive la clé avec PBKDF2 et un sel ; -iter règle le nombre d'itérations. Sans elle, openssl utilise une dérivation ancienne et trop rapide. -nosalt est au contraire à éviter."
+      }
+      question "Un fichier produit par « openssl enc -salt » commence par « Salted__ ». Que contiennent les 8 octets suivants ?" {
+        - "la clé de chiffrement"
+        + "le sel utilisé pour dériver la clé"
+        - "l'empreinte du mot de passe"
+        - "la date de chiffrement"
+        explanation: "openssl range le sel en clair juste après Salted__ : il est nécessaire pour refaire la dérivation au déchiffrement. Le sel n'est pas secret ; la clé, elle, n'est jamais écrite dans le fichier."
+      }
+      question "« openssl enc -aes-256-gcm » renvoie « AEAD ciphers not supported ». Que faire pour chiffrer un fichier de façon authentifiée ?" {
+        - "passer en mode ECB"
+        + "utiliser un outil qui gère l'AEAD, comme GPG ou age"
+        - "ajouter l'option -nopad"
+        - "doubler la taille de la clé"
+        explanation: "openssl enc ne gère pas les modes authentifiés. GPG, age, ou une bibliothèque (Python cryptography, libsodium) le font. ECB n'apporte ni intégrité ni bonne confidentialité."
+      }
+      question "Quel algorithme symétrique est préféré à AES sur un appareil sans instructions AES matérielles ?" {
+        - "RC4"
+        - "DES"
+        + "ChaCha20"
+        - "MD5"
+        explanation: "ChaCha20 (avec Poly1305 pour l'intégrité) est rapide en logiciel et utilisé dans TLS 1.3. RC4 et DES sont cassés ; MD5 est une fonction de hachage, pas un chiffrement."
+      }
+      question "En mode CTR sans authentification, un attaquant inverse un bit du texte chiffré. Que se passe-t-il au déchiffrement ?" {
+        - "le déchiffrement échoue avec une erreur"
+        + "le même bit est inversé dans le texte clair, sans alerte"
+        - "tout le message devient illisible"
+        - "rien, CTR corrige l'erreur"
+        explanation: "CTR combine le clair à un flot par XOR : le bit inversé se retrouve inversé dans le clair, sans aucune détection. C'est pour cela qu'on ajoute une authentification (GCM, HMAC)."
+      }
+      question "Dans « chiffrer puis authentifier » (encrypt-then-MAC), dans quel ordre vérifie-t-on à la réception ?" {
+        - "on déchiffre, puis on vérifie le HMAC du clair"
+        + "on vérifie le HMAC du chiffré, et on déchiffre seulement s'il est valide"
+        - "on ne vérifie que si le déchiffrement échoue"
+        - "on vérifie le HMAC de la clé"
+        explanation: "Le HMAC porte sur le chiffré : on le vérifie d'abord et on rejette tout message modifié sans même le déchiffrer, ce qui évite des attaques sur le déchiffrement (oracle de bourrage)."
+      }
+      question "Quelles tailles de clé AES existent ?" {
+        - "56, 112 et 168 bits"
+        + "128, 192 et 256 bits"
+        - "1024, 2048 et 4096 bits"
+        - "64, 128 et 512 bits"
+        explanation: "AES accepte des clés de 128, 192 et 256 bits. 56/112/168 correspondent à DES et 3DES ; 1024 à 4096 bits sont des tailles de clés RSA."
+      }
+      question "Pourquoi un fichier clair de 16 octets donne-t-il 32 octets de données chiffrées en AES-CBC avec openssl ?" {
+        - "AES double toujours la taille"
+        + "le bourrage PKCS#7 ajoute un bloc entier quand le clair est déjà un multiple de 16"
+        - "openssl ajoute la clé à la fin"
+        - "le mode CBC chiffre chaque bloc deux fois"
+        explanation: "Le bourrage est obligatoire pour que le déchiffreur sache où s'arrête le clair : si la taille est déjà un multiple de 16, un bloc de 16 octets de bourrage est ajouté. L'en-tête Salted__ et le sel s'y ajoutent dans le fichier."
+      }
+    }
+  }
+
+  module "asymetrique" {
+    title: "Chapitre 5 : RSA, courbes elliptiques et Diffie-Hellman"
+    duration: "40min"
+    content: """
+### L'idée de la clé publique
+Le chiffrement symétrique bute sur une question : comment deux machines qui ne se sont jamais vues partagent-elles une clé secrète à travers Internet ? La cryptographie asymétrique (1976-1977) répond avec une **paire de clés** liées mathématiquement : on peut calculer la clé publique à partir de la privée, mais pas l'inverse en pratique.
+
+Deux usages, à ne pas inverser :
+• **chiffrer pour quelqu'un** : on chiffre avec **sa clé publique**, seul lui déchiffre avec **sa clé privée** ;
+• **signer** : on signe avec **sa propre clé privée**, tout le monde vérifie avec **sa clé publique** (chapitre 6).
+
+### RSA en miniature
+RSA (1977) repose sur la difficulté de **factoriser** un grand nombre produit de deux nombres premiers. Avec de tout petits nombres, pour comprendre :
+1. on choisit deux premiers p = 5 et q = 11, donc **n = p × q = 55** (le module) ;
+2. φ(n) = (p - 1) × (q - 1) = 4 × 10 = 40 ;
+3. on choisit l'exposant public **e = 3** (premier avec 40) ;
+4. on calcule l'exposant privé **d** tel que e × d = 1 modulo 40 : d = 27, car 3 × 27 = 81 = 2 × 40 + 1.
+
+Clé publique (n = 55, e = 3), clé privée (d = 27). Pour chiffrer m = 2 : c = 2^3 mod 55 = **8**. Pour déchiffrer : 8^27 mod 55 = **2**. On retrouve le message.
+
+Qui connaît p et q recalcule d immédiatement. Avec n = 55, c'est trivial ; avec un n de 2048 bits (617 chiffres décimaux), aucune méthode connue ne factorise en un temps raisonnable sur un ordinateur classique.
+
+Dans la vraie vie :
+• e vaut presque toujours **65537** ;
+• le message n'est jamais chiffré « nu » : on ajoute un bourrage aléatoire. Pour chiffrer, **OAEP** ; pour signer, **PSS**. L'ancien bourrage PKCS#1 v1.5 pour le chiffrement est sujet à l'attaque de Bleichenbacher (1998), revenue en 2017 sous le nom ROBOT ;
+• RSA ne chiffre que de petits messages (moins que la taille du module) : il sert à transporter une clé symétrique, pas un fichier.
+
+### Les courbes elliptiques
+La cryptographie sur **courbes elliptiques** (ECC) repose sur un autre problème difficile (le logarithme discret sur une courbe). Son intérêt : des clés bien plus courtes pour la même sécurité.
+
+| Sécurité visée | RSA / DH classique | Courbe elliptique |
+|---|---|---|
+| 128 bits | 3072 bits | 256 bits (P-256, Curve25519) |
+| 192 bits | 7680 bits | 384 bits (P-384) |
+
+Les noms à connaître : **P-256** et **P-384** (courbes du NIST), **Curve25519** avec **X25519** (échange de clés) et **Ed25519** (signature). Ed25519 est le type de clé SSH recommandé aujourd'hui (`ssh-keygen -t ed25519`). L'ANSSI publie aussi la courbe française FRP256v1.
+
+### Diffie-Hellman : se mettre d'accord sur un secret en public
+Diffie-Hellman (1976) permet à deux parties de calculer **le même secret** en n'échangeant que des valeurs publiques. Exemple jouet avec p = 23 et g = 5 (publics) :
+1. Alice choisit a = 6 (secret) et envoie A = 5^6 mod 23 = **8** ;
+2. Bob choisit b = 15 (secret) et envoie B = 5^15 mod 23 = **19** ;
+3. Alice calcule 19^6 mod 23 = **2** ; Bob calcule 8^15 mod 23 = **2**.
+
+Les deux ont le secret 2, que l'espion, qui n'a vu que 23, 5, 8 et 19, ne sait pas calculer avec de vrais nombres de 2048 bits ou plus. Sur courbe elliptique, c'est **ECDHE** (X25519 dans TLS 1.3).
+
+Deux points essentiels :
+• Diffie-Hellman seul **n'authentifie personne**. Un attaquant au milieu (man-in-the-middle) fait un échange avec Alice et un autre avec Bob. Il faut donc **signer** les valeurs échangées : dans TLS, le serveur signe avec la clé de son certificat.
+• En version **éphémère** (DHE, ECDHE : un nouveau secret à chaque connexion), le vol ultérieur de la clé privée du serveur ne permet pas de déchiffrer les échanges passés enregistrés. C'est la **confidentialité persistante** (forward secrecy). TLS 1.3 l'impose.
+
+### Et les ordinateurs quantiques
+Un ordinateur quantique suffisamment grand casserait RSA, DH et ECC (algorithme de Shor). Il n'existe pas aujourd'hui, mais un attaquant peut **enregistrer maintenant** pour déchiffrer plus tard. Le NIST a normalisé en 2024 **ML-KEM** (FIPS 203, échange de clé) et **ML-DSA** (FIPS 204, signature). L'ANSSI recommande une approche **hybride** (classique + post-quantique) pour les données qui doivent rester confidentielles au-delà de 2030. Les navigateurs et OpenSSL 3.5 utilisent déjà l'échange hybride X25519MLKEM768. AES-256 et SHA-256 restent, eux, considérés comme sûrs.
+
+### À toi de jouer
+1. Génère une clé RSA de 3072 bits, extrais la clé publique et affiche l'exposant public.
+2. Chiffre `notes.txt` (moins de 300 octets) avec la clé publique en RSA-OAEP, puis déchiffre avec la clé privée. Quelle est la taille du fichier chiffré ?
+3. Génère deux clés X25519 (Alice et Bob), échange les clés publiques et calcule le secret partagé de chaque côté. Les résultats sont-ils égaux ?
+4. Avec p = 23 et g = 5, Alice choisit a = 4 et Bob b = 3. Calcule A, B et le secret commun.
+
+### Correction
+1. `openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:3072 -out rsa.key`, `openssl pkey -in rsa.key -pubout -out rsa.pub`, puis `openssl rsa -in rsa.key -noout -text | grep publicExponent` affiche `publicExponent: 65537 (0x10001)`. Protège la clé privée : `chmod 600 rsa.key`.
+2. `openssl pkeyutl -encrypt -pubin -inkey rsa.pub -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256 -in notes.txt -out notes.rsa`, puis `-decrypt -inkey rsa.key` avec les mêmes options. Le chiffré fait **384 octets** : la taille du module (3072 / 8), quelle que soit la taille du clair. En lançant deux fois le chiffrement, tu obtiens deux chiffrés différents, grâce au bourrage aléatoire d'OAEP.
+3. Voir le bloc de code : les deux commandes `pkeyutl -derive` affichent la même valeur de 32 octets. Seules les clés publiques ont circulé.
+4. A = 5^4 mod 23 = 625 mod 23 = **4** ; B = 5^3 mod 23 = 125 mod 23 = **10**. Alice : 10^4 mod 23 = 10000 mod 23 = **18** ; Bob : 4^3 mod 23 = 64 mod 23 = **18**. Secret commun : 18.
+"""
+
+    codeblock "bash" {
+      title: "Paires de clés RSA, EC, Ed25519 et échange X25519"
+      code: """
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:3072 -out rsa.key
+openssl pkey -in rsa.key -pubout -out rsa.pub
+openssl pkeyutl -encrypt -pubin -inkey rsa.pub -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256 -in notes.txt -out notes.rsa
+openssl pkeyutl -decrypt -inkey rsa.key -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256 -in notes.rsa
+openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -out ec.key
+openssl genpkey -algorithm ed25519 -out ed.key
+# Échange de clés X25519
+openssl genpkey -algorithm X25519 -out alice.key ; openssl pkey -in alice.key -pubout -out alice.pub
+openssl genpkey -algorithm X25519 -out bob.key   ; openssl pkey -in bob.key -pubout -out bob.pub
+openssl pkeyutl -derive -inkey alice.key -peerkey bob.pub | xxd -p
+openssl pkeyutl -derive -inkey bob.key -peerkey alice.pub | xxd -p   # même valeur
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Tu veux envoyer un fichier confidentiel à Léa. Avec quelle clé chiffres-tu ?" {
+        - "ta clé privée"
+        + "la clé publique de Léa"
+        - "la clé privée de Léa"
+        - "ta clé publique"
+        explanation: "On chiffre avec la clé publique du destinataire : seule sa clé privée peut déchiffrer. Chiffrer avec ta clé privée reviendrait à signer : tout le monde pourrait lire avec ta clé publique."
+      }
+      question "Sur quel problème mathématique repose la sécurité de RSA ?" {
+        - "le calcul d’une empreinte"
+        + "la difficulté de factoriser un grand nombre en produit de deux premiers"
+        - "le logarithme discret sur une courbe elliptique"
+        - "la recherche de collisions"
+        explanation: "Qui factorise n retrouve p et q, puis la clé privée d. Le logarithme discret sur courbe est la base de l'ECC, pas de RSA."
+      }
+      question "Avec p = 5, q = 11 et e = 3, quelle est la clé privée d ?" {
+        - "3"
+        - "11"
+        + "27"
+        - "40"
+        explanation: "φ(n) = 4 × 10 = 40, et il faut e × d = 1 modulo 40 : 3 × 27 = 81 = 2 × 40 + 1. Donc d = 27."
+      }
+      question "Quel exposant public RSA est utilisé presque partout ?" {
+        - "3"
+        - "17"
+        + "65537"
+        - "2048"
+        explanation: "65537 (0x10001) est la valeur standard : assez grand pour éviter certaines attaques, et rapide à calculer. 2048 est une taille de module, pas un exposant."
+      }
+      question "Quel bourrage utiliser pour chiffrer avec RSA ?" {
+        - "aucun, le message est chiffré tel quel"
+        - "PKCS#1 v1.5"
+        + "OAEP"
+        - "PKCS#7"
+        explanation: "OAEP ajoute un aléa et résiste aux attaques connues. PKCS#1 v1.5 pour le chiffrement est vulnérable à l'attaque de Bleichenbacher. PKCS#7 est le bourrage des chiffrements par blocs comme AES-CBC."
+      }
+      question "Une clé sur courbe elliptique de 256 bits offre une sécurité comparable à quelle clé RSA ?" {
+        - "256 bits"
+        - "1024 bits"
+        + "3072 bits"
+        - "15360 bits"
+        explanation: "Les deux visent environ 128 bits de sécurité. C'est l'intérêt de l'ECC : des clés et signatures bien plus courtes et des calculs plus rapides."
+      }
+      question "Quel est le rôle de X25519 ?" {
+        - "signer des certificats"
+        + "réaliser un échange de clés Diffie-Hellman sur la courbe Curve25519"
+        - "calculer une empreinte"
+        - "chiffrer des fichiers par blocs"
+        explanation: "X25519 sert à l'échange de clés (ECDH). Ed25519, sur la même famille de courbes, sert à la signature."
+      }
+      question "Pourquoi Diffie-Hellman seul ne protège-t-il pas contre l’attaque de l’homme du milieu ?" {
+        - "parce que le secret échangé est trop court"
+        + "parce qu’il n’authentifie pas les participants"
+        - "parce qu’il envoie le secret en clair"
+        - "parce qu’il ne fonctionne qu’en IPv4"
+        explanation: "L'attaquant peut faire un échange avec chacun et relayer. Il faut signer les valeurs échangées (le serveur TLS signe avec la clé de son certificat). Le secret, lui, ne circule jamais."
+      }
+      question "Que garantit la confidentialité persistante (forward secrecy) ?" {
+        - "les certificats n’expirent jamais"
+        + "le vol futur de la clé privée du serveur ne permet pas de déchiffrer les sessions passées"
+        - "les mots de passe sont stockés avec un sel"
+        - "le serveur garde les clés de session pour les rejouer"
+        explanation: "Avec un échange éphémère (ECDHE), chaque session a sa propre clé, effacée ensuite. La clé privée du certificat ne sert qu'à signer, pas à transporter la clé de session."
+      }
+      question "Avec p = 23, g = 5 et le secret a = 6, quelle valeur publique Alice envoie-t-elle ?" {
+        - "6"
+        + "8"
+        - "19"
+        - "30"
+        explanation: "A = 5^6 mod 23 = 15625 mod 23 = 8. 19 serait la valeur de Bob pour b = 15. Le secret a n'est jamais envoyé."
+      }
+      question "Un fichier de 50 octets chiffré en RSA-OAEP avec une clé de 3072 bits fait quelle taille ?" {
+        - "50 octets"
+        - "66 octets"
+        + "384 octets"
+        - "3072 octets"
+        explanation: "Le chiffré RSA a toujours la taille du module : 3072 bits = 384 octets. RSA ne sert donc qu'à chiffrer de petites valeurs, comme une clé symétrique."
+      }
+      question "Quel algorithme le NIST a-t-il normalisé en 2024 pour l’échange de clés post-quantique ?" {
+        - "SHA-3"
+        - "Ed25519"
+        + "ML-KEM"
+        - "AES-512"
+        explanation: "ML-KEM (FIPS 203) est le mécanisme d'échange de clés post-quantique, déjà utilisé en hybride avec X25519 (X25519MLKEM768). AES-512 n'existe pas."
+      }
+    }
+  }
+
+  module "signatures-x509" {
+    title: "Chapitre 6 : signatures numériques et certificats X.509"
+    duration: "35min"
+    content: """
+### Comment marche une signature
+Signer un document se fait en deux temps :
+1. on calcule l'**empreinte** du document (SHA-256) ;
+2. on transforme cette empreinte avec sa **clé privée** : le résultat est la signature.
+
+Pour vérifier, le destinataire recalcule l'empreinte du document reçu et vérifie, avec la **clé publique** du signataire, que la signature correspond. Si un seul octet du document a changé, ou si la signature a été produite avec une autre clé, la vérification échoue.
+
+Une signature apporte l'**intégrité**, l'**authenticité** et la **non-répudiation**. Elle n'apporte **pas** la confidentialité : le document signé reste lisible.
+
+Algorithmes courants : **RSA-PSS** (ou RSA PKCS#1 v1.5, encore très utilisé pour les signatures), **ECDSA** (P-256, P-384), **Ed25519**. Attention, ECDSA exige un nombre aléatoire neuf à chaque signature : en 2010, Sony a réutilisé la même valeur pour signer les jeux de la PlayStation 3, et la clé privée a pu être recalculée. Ed25519 évite ce piège (le nombre est dérivé du message).
+
+### Le problème que résout le certificat
+Une signature prouve qu'un document vient du détenteur d'une clé privée. Mais comment savoir que la clé publique de `intranet.lycee.internal` appartient vraiment au lycée et pas à un attaquant ? Il faut un tiers de confiance qui atteste : « cette clé publique appartient à ce nom ». Cette attestation signée, c'est le **certificat**.
+
+### Le contenu d'un certificat X.509
+Le format standard est **X.509 v3** (RFC 5280). Les champs à savoir lire :
+
+| Champ | Contenu |
+|---|---|
+| Version | 3 (v3), seule version qui autorise les extensions |
+| Serial Number | numéro unique attribué par l'autorité |
+| Signature Algorithm | algorithme de la signature de l'autorité (ex. `ecdsa-with-SHA256`) |
+| Issuer | l'émetteur, c'est-à-dire l'autorité qui a signé |
+| Validity | `Not Before` et `Not After` : période de validité |
+| Subject | le titulaire (ex. `CN=intranet.lycee.internal`) |
+| Subject Public Key Info | la clé publique du titulaire et son algorithme |
+| Extensions | SAN, Basic Constraints, Key Usage, Extended Key Usage, etc. |
+
+Les extensions importantes :
+• **Subject Alternative Name** (SAN) : la liste des noms DNS ou adresses IP couverts. Les navigateurs ne regardent **que** le SAN, plus le CN : un certificat sans SAN est refusé.
+• **Basic Constraints** : `CA:TRUE` pour une autorité, `CA:FALSE` pour un serveur.
+• **Key Usage** et **Extended Key Usage** : usages permis (`Digital Signature`, `TLS Web Server Authentication`, `Code Signing`…).
+• **CRL Distribution Points** et **Authority Information Access** : où vérifier la révocation (chapitre 7).
+
+### Formats de fichiers
+• **PEM** : texte Base64 entre `-----BEGIN CERTIFICATE-----` et `-----END CERTIFICATE-----`. Extensions `.pem`, `.crt`, `.cer`, `.key`. Format habituel sous Linux (Apache, Nginx).
+• **DER** : le même contenu en binaire. Extensions `.der`, `.cer`. Fréquent sous Windows.
+• **PKCS#12** : un seul fichier protégé par mot de passe qui contient le certificat, la chaîne **et la clé privée**. Extensions `.p12`, `.pfx`. Utilisé pour importer un certificat dans Windows, IIS ou un navigateur. Il contient la clé privée : traite-le comme un secret.
+
+Un `.cer` peut donc être en PEM ou en DER : ouvre-le avec un éditeur de texte pour savoir (texte lisible = PEM).
+
+### Le certificat autosigné
+Un certificat dont l'émetteur est lui-même (Issuer = Subject) est **autosigné**. C'est normal pour une autorité racine. Pour un serveur, il chiffre bien la connexion, mais il ne prouve rien sur l'identité : le navigateur affiche une alerte, et apprendre aux utilisateurs à cliquer « Continuer » les habitue à accepter une vraie attaque.
+
+### À toi de jouer
+1. Signe `notes.txt` avec ta clé `rsa.key` du chapitre 5 (signature SHA-256), vérifie avec `rsa.pub`, puis ajoute une ligne au fichier et vérifie à nouveau.
+2. Récupère le certificat de `www.debian.org` et affiche : sujet, émetteur, dates de validité, noms du SAN, empreinte SHA-256.
+3. Convertis ce certificat de PEM en DER. Lequel des deux fichiers peux-tu lire avec `cat` ?
+4. Dans la sortie de `openssl x509 -text`, tu lis `Basic Constraints: critical CA:TRUE` sur le certificat installé sur un serveur web. Est-ce normal ?
+
+### Correction
+1. `openssl dgst -sha256 -sign rsa.key -out notes.sig notes.txt`, puis `openssl dgst -sha256 -verify rsa.pub -signature notes.sig notes.txt` affiche `Verified OK`. Après modification, le même contrôle affiche `Verification failure` : l'empreinte a changé.
+2. `openssl s_client -connect www.debian.org:443 -servername www.debian.org </dev/null 2>/dev/null | openssl x509 -out debian.pem`, puis `openssl x509 -in debian.pem -noout -subject -issuer -dates -ext subjectAltName -fingerprint -sha256`. Le sujet contient `CN=www.debian.org`, l'émetteur est une autorité intermédiaire (au moment de la rédaction, celle de Let's Encrypt).
+3. `openssl x509 -in debian.pem -outform der -out debian.der`. Le PEM se lit avec `cat` (Base64 entre les lignes BEGIN et END) ; le DER est binaire, illisible.
+4. Non. `CA:TRUE` signifie que ce certificat peut signer d'autres certificats : il ne doit pas servir de certificat de serveur. Un certificat de serveur porte `CA:FALSE` (ou pas de Basic Constraints) et l'usage `TLS Web Server Authentication`.
+"""
+
+    codeblock "bash" {
+      title: "Signer, vérifier et inspecter un certificat"
+      code: """
+openssl dgst -sha256 -sign rsa.key -out notes.sig notes.txt
+openssl dgst -sha256 -verify rsa.pub -signature notes.sig notes.txt      # Verified OK
+# Récupérer et lire le certificat d'un site
+openssl s_client -connect www.debian.org:443 -servername www.debian.org </dev/null 2>/dev/null | openssl x509 -out debian.pem
+openssl x509 -in debian.pem -noout -subject -issuer -dates
+openssl x509 -in debian.pem -noout -ext subjectAltName,basicConstraints,keyUsage,extendedKeyUsage
+openssl x509 -in debian.pem -noout -fingerprint -sha256
+openssl x509 -in debian.pem -noout -text | less                       # tout le contenu
+openssl x509 -in debian.pem -outform der -out debian.der              # PEM -> DER
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Avec quelle clé signe-t-on un document ?" {
+        - "la clé publique du destinataire"
+        + "sa propre clé privée"
+        - "sa propre clé publique"
+        - "une clé symétrique partagée"
+        explanation: "La signature se produit avec la clé privée du signataire, et chacun la vérifie avec sa clé publique. Une clé symétrique partagée donnerait un MAC, sans non-répudiation."
+      }
+      question "Qu’est-ce qu’on transforme réellement avec la clé privée lors d’une signature ?" {
+        - "le document entier, octet par octet"
+        + "l’empreinte du document"
+        - "la clé publique du signataire"
+        - "le nom du fichier"
+        explanation: "On signe l'empreinte (SHA-256 par exemple), courte et de taille fixe. Si le document change, l'empreinte change et la signature ne correspond plus."
+      }
+      question "Une signature numérique garantit-elle la confidentialité du document ?" {
+        - "oui, le document devient illisible sans la clé"
+        + "non, le document signé reste lisible par tous"
+        - "oui, si la clé fait plus de 2048 bits"
+        - "seulement avec ECDSA"
+        explanation: "Une signature apporte intégrité, authenticité et non-répudiation. Pour la confidentialité, il faut en plus chiffrer."
+      }
+      question "Quel champ d’un certificat les navigateurs utilisent-ils pour vérifier le nom du site ?" {
+        - "le Common Name (CN) du sujet uniquement"
+        + "l’extension Subject Alternative Name (SAN)"
+        - "le champ Issuer"
+        - "le numéro de série"
+        explanation: "Les navigateurs ne regardent que le SAN. Un certificat qui n'indique le nom que dans le CN est refusé. Issuer désigne l'autorité émettrice."
+      }
+      question "Que signifie « CA:TRUE » dans l’extension Basic Constraints ?" {
+        - "le certificat a été vérifié par une autorité"
+        + "le certificat peut signer d’autres certificats"
+        - "le certificat est valide en France"
+        - "le certificat est autosigné"
+        explanation: "CA:TRUE désigne une autorité de certification. Un certificat de serveur doit porter CA:FALSE. Un certificat autosigné se reconnaît à Issuer = Subject."
+      }
+      question "Quel format contient le certificat ET la clé privée, protégés par un mot de passe ?" {
+        - "PEM"
+        - "DER"
+        + "PKCS#12 (.p12 ou .pfx)"
+        - "CSR"
+        explanation: "PKCS#12 regroupe clé privée, certificat et chaîne dans un fichier chiffré par mot de passe, utilisé surtout sous Windows. Il doit être protégé comme un secret."
+      }
+      question "Un fichier commence par « -----BEGIN CERTIFICATE----- ». Dans quel format est-il ?" {
+        - "DER"
+        + "PEM"
+        - "PKCS#12"
+        - "JSON"
+        explanation: "PEM est du Base64 encadré par des lignes BEGIN et END. DER est la forme binaire du même contenu."
+      }
+      question "Quelle commande affiche les dates de validité d’un certificat ?" {
+        - "openssl x509 -in cert.pem -noout -serial"
+        + "openssl x509 -in cert.pem -noout -dates"
+        - "openssl req -in cert.pem -verify"
+        - "openssl dgst -sha256 cert.pem"
+        explanation: "-dates affiche notBefore et notAfter. -serial donne le numéro de série ; dgst calcule l'empreinte du fichier, pas sa validité."
+      }
+      question "« openssl dgst -sha256 -verify cle.pub -signature f.sig f.txt » affiche « Verification failure ». Quelle cause est possible ?" {
+        - "le fichier f.txt a été renommé"
+        + "f.txt a été modifié après la signature"
+        - "la clé publique est trop longue"
+        - "SHA-256 n’est pas déterministe"
+        explanation: "Une modification du contenu change l'empreinte. Le nom du fichier n'entre pas dans le calcul. L'autre cause courante : la signature a été faite avec une autre clé privée."
+      }
+      question "Pourquoi la réutilisation du nombre aléatoire dans ECDSA est-elle grave ?" {
+        - "elle rend les signatures plus longues"
+        + "elle permet de recalculer la clé privée à partir de deux signatures"
+        - "elle empêche la vérification"
+        - "elle n’a aucune conséquence"
+        explanation: "C'est ce qui est arrivé à Sony en 2010 avec la PlayStation 3. Ed25519 dérive ce nombre du message et de la clé, ce qui supprime ce risque."
+      }
+      question "Comment reconnaît-on un certificat autosigné ?" {
+        - "il n’a pas de date d’expiration"
+        + "l’émetteur (Issuer) est identique au sujet (Subject)"
+        - "il est au format DER"
+        - "il porte l’extension SAN"
+        explanation: "Un certificat autosigné est signé par sa propre clé : Issuer = Subject. C'est normal pour une racine, mais pas pour un serveur public."
+      }
+      question "Quelle norme définit le format des certificats utilisés sur Internet ?" {
+        - "PKCS#7"
+        + "X.509 v3, profil de la RFC 5280"
+        - "RFC 2104"
+        - "FIPS 197"
+        explanation: "Les certificats suivent X.509 v3, profilé par la RFC 5280. La RFC 2104 définit HMAC et FIPS 197 définit AES."
+      }
+    }
+  }
+
+  module "pki" {
+    title: "Chapitre 7 : PKI et chaîne de confiance, créer sa propre autorité"
+    duration: "40min"
+    content: """
+### La chaîne de confiance
+Une **PKI** (infrastructure à clé publique, Public Key Infrastructure) est l'ensemble des autorités, règles et outils qui émettent, publient et révoquent des certificats. Sur Internet, elle s'organise en chaîne :
+
+```text
+Autorité racine (Root CA)           autosignée, rangée dans le magasin de confiance
+  └─ Autorité intermédiaire        signée par la racine, signe les certificats au quotidien
+       └─ Certificat du serveur    www.debian.org, signé par l'intermédiaire
+```
+
+Pour accepter le certificat d'un serveur, le client remonte la chaîne : le certificat du serveur est-il signé par l'intermédiaire ? L'intermédiaire par la racine ? La racine est-elle dans **mon** magasin de confiance ? Il vérifie aussi, à chaque niveau, les dates de validité, le nom (SAN) pour le certificat final, les usages et l'état de révocation.
+
+Pourquoi un intermédiaire ? La clé privée de la racine est précieuse : elle reste **hors ligne**, dans un boîtier matériel (HSM) au coffre. L'intermédiaire, lui, travaille en ligne ; s'il est compromis, on le révoque sans toucher à la racine installée sur des milliards d'appareils.
+
+### Le magasin de confiance
+Chaque système livre une liste de racines de confiance :
+• Debian/Ubuntu : paquet `ca-certificates`, fichiers dans `/etc/ssl/certs/` ;
+• Windows : magasin « Autorités de certification racines de confiance » (`certlm.msc` pour l'ordinateur, `certmgr.msc` pour l'utilisateur) ;
+• Firefox utilise son propre magasin (NSS), indépendant du système.
+
+Ajouter une racine dans ce magasin revient à lui faire confiance pour **tous** les sites. Ne le fais que pour une autorité que tu maîtrises, celle de ton établissement par exemple.
+
+### La demande de certificat (CSR)
+Pour obtenir un certificat, le serveur :
+1. génère sa paire de clés (la clé privée ne quitte jamais le serveur) ;
+2. crée une **CSR** (Certificate Signing Request, format PKCS#10) qui contient sa clé publique, le nom demandé et les SAN, signée par sa clé privée ;
+3. envoie la CSR à l'autorité, qui vérifie qu'il contrôle bien le nom, puis renvoie le certificat signé.
+
+Sur Internet, **Let's Encrypt** automatise tout cela avec le protocole **ACME** (RFC 8555) et des clients comme `certbot` : le serveur prouve qu'il contrôle le domaine (défi HTTP-01 ou DNS-01) et reçoit un certificat gratuit, valable 90 jours, renouvelé automatiquement.
+
+La durée maximale des certificats publics baisse : 398 jours jusqu'au 15 mars 2026, **200 jours** depuis, puis 100 jours à partir de mars 2027 et 47 jours en mars 2029 (décision du CA/Browser Forum, vote SC-081). Le renouvellement automatique devient indispensable.
+
+### La révocation
+Un certificat dont la clé privée a fuité doit être **révoqué** avant sa date d'expiration. Deux mécanismes :
+• **CRL** (liste de révocation) : liste signée des numéros de série révoqués, téléchargée périodiquement ;
+• **OCSP** : question en ligne « ce certificat est-il révoqué ? ». Le serveur peut joindre lui-même une réponse OCSP récente (OCSP stapling).
+
+Let's Encrypt a arrêté OCSP en 2025 au profit des CRL : la tendance est aux certificats courts, qui limitent la durée d'une clé volée.
+
+Enfin, la **transparence des certificats** (Certificate Transparency, RFC 6962) : chaque certificat public est inscrit dans des journaux publics. Tu peux chercher sur crt.sh tous les certificats émis pour ton domaine et repérer un certificat que tu n'as pas demandé.
+
+### Lire les erreurs de vérification d'openssl
+| Code | Message | Cause habituelle |
+|---|---|---|
+| 10 | certificate has expired | date dépassée, ou horloge du client fausse |
+| 18 | self-signed certificate | certificat autosigné présenté par le serveur |
+| 19 | self-signed certificate in certificate chain | racine inconnue du client (autorité interne non installée) |
+| 20 | unable to get local issuer certificate | émetteur introuvable dans le magasin de confiance |
+| 21 | unable to verify the first certificate | le serveur n'envoie pas le certificat intermédiaire |
+| 62 | hostname mismatch | le nom demandé n'est pas dans le SAN (avec `-verify_hostname`) |
+
+### À toi de jouer
+Le lycée veut une autorité interne pour ses services `*.lycee.internal`.
+1. Crée une autorité racine `CA Lycee` (clé EC P-256, 10 ans).
+2. Sur le serveur, crée une clé et une CSR pour `intranet.lycee.internal` avec ce nom en SAN. Vérifie la signature de la CSR.
+3. Signe la CSR avec l'autorité (397 jours), en recopiant les extensions de la CSR.
+4. Vérifie le certificat obtenu avec puis sans l'autorité. Explique les deux résultats.
+5. Installe la racine dans le magasin de confiance d'un poste Debian et d'un poste Windows.
+
+### Correction
+1. `openssl req -x509 -new -newkey ec -pkeyopt ec_paramgen_curve:P-256 -noenc -keyout ca.key -out ca.crt -days 3650 -subj "/C=FR/O=Lycee/CN=CA Lycee"`. La commande crée un certificat autosigné avec `CA:TRUE`. Protège `ca.key` (`chmod 600`) ; dans la vraie vie, elle serait chiffrée et rangée hors ligne.
+2. `openssl req -new -newkey ec -pkeyopt ec_paramgen_curve:P-256 -noenc -keyout web.key -out web.csr -subj "/CN=intranet.lycee.internal" -addext "subjectAltName=DNS:intranet.lycee.internal"`, puis `openssl req -in web.csr -noout -verify` affiche `Certificate request self-signature verify OK`.
+3. `openssl x509 -req -in web.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out web.crt -days 397 -sha256 -copy_extensions copy`. Sans `-copy_extensions copy`, le SAN de la CSR serait perdu et les navigateurs refuseraient le certificat.
+4. `openssl verify -CAfile ca.crt web.crt` affiche `web.crt: OK`. Sans `-CAfile`, `openssl verify web.crt` échoue avec l'erreur 20 : la racine du lycée n'est pas dans le magasin du système.
+5. Debian : `sudo cp ca.crt /usr/local/share/ca-certificates/ca-lycee.crt` puis `sudo update-ca-certificates` (le fichier doit finir par `.crt`). Windows, dans un PowerShell administrateur : `Import-Certificate -FilePath .\ca.crt -CertStoreLocation Cert:\LocalMachine\Root`. En domaine Active Directory, on la déploie plutôt par stratégie de groupe (GPO). Firefox demande une importation séparée ou l'option qui lui fait utiliser le magasin du système.
+"""
+
+    codeblock "bash" {
+      title: "Une autorité interne en cinq commandes"
+      code: """
+# 1. Autorité racine (certificat autosigné, CA:TRUE)
+openssl req -x509 -new -newkey ec -pkeyopt ec_paramgen_curve:P-256 -noenc -keyout ca.key -out ca.crt -days 3650 -subj "/C=FR/O=Lycee/CN=CA Lycee"
+# 2. Clé et CSR du serveur, avec le SAN
+openssl req -new -newkey ec -pkeyopt ec_paramgen_curve:P-256 -noenc -keyout web.key -out web.csr -subj "/CN=intranet.lycee.internal" -addext "subjectAltName=DNS:intranet.lycee.internal"
+openssl req -in web.csr -noout -verify -subject
+# 3. Signature par l'autorité
+openssl x509 -req -in web.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out web.crt -days 397 -sha256 -copy_extensions copy
+# 4. Vérification de la chaîne
+openssl verify -CAfile ca.crt web.crt
+# 5. Paquet PKCS#12 pour Windows / IIS (demande un mot de passe)
+openssl pkcs12 -export -inkey web.key -in web.crt -certfile ca.crt -out web.p12
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Pourquoi la clé privée d’une autorité racine est-elle gardée hors ligne ?" {
+        - "parce qu’elle est trop grande pour un serveur"
+        + "parce que sa compromission obligerait à remplacer la racine sur tous les appareils"
+        - "parce que la loi interdit les racines en ligne"
+        - "parce qu’elle ne sert qu’une fois"
+        explanation: "La racine est inscrite dans les magasins de confiance de nombreux appareils. Les intermédiaires font le travail quotidien et peuvent être révoqués sans toucher à la racine."
+      }
+      question "Que contient une CSR ?" {
+        - "la clé privée du serveur et son certificat"
+        + "la clé publique du serveur, le nom demandé, signés par la clé privée du serveur"
+        - "la liste des certificats révoqués"
+        - "le certificat de l’autorité racine"
+        explanation: "La CSR (PKCS#10) transporte la clé publique et l'identité demandée. La clé privée ne quitte jamais le serveur ; la signature de la CSR prouve seulement qu'il la possède."
+      }
+      question "openssl s_client affiche « verify error:num=21:unable to verify the first certificate ». Quelle est la cause la plus probable ?" {
+        - "le certificat a expiré"
+        + "le serveur n’envoie pas le certificat intermédiaire"
+        - "le nom du site n’est pas dans le SAN"
+        - "le serveur utilise TLS 1.3"
+        explanation: "Le client ne peut pas relier le certificat du serveur à une racine connue, faute d'intermédiaire. On corrige en configurant le serveur avec la chaîne complète (fullchain). L'expiration donne l'erreur 10, le mauvais nom l'erreur 62."
+      }
+      question "Quel protocole utilise Let’s Encrypt pour délivrer automatiquement les certificats ?" {
+        - "OCSP"
+        - "LDAP"
+        + "ACME"
+        - "SCEP"
+        explanation: "ACME (RFC 8555), mis en œuvre par certbot et d'autres clients, prouve le contrôle du domaine et récupère le certificat. OCSP sert à la révocation."
+      }
+      question "Quelle est la durée maximale d’un certificat de serveur public délivré depuis le 15 mars 2026 ?" {
+        - "398 jours"
+        + "200 jours"
+        - "47 jours"
+        - "5 ans"
+        explanation: "Le vote SC-081 du CA/Browser Forum a fixé 200 jours à partir du 15 mars 2026, puis 100 jours en 2027 et 47 jours en 2029. 398 jours était la limite précédente."
+      }
+      question "Quelle commande Debian ajoute une autorité interne au magasin de confiance du système ?" {
+        - "sudo cp ca.crt /etc/ssl/private/ && reboot"
+        + "copier ca.crt dans /usr/local/share/ca-certificates/ puis sudo update-ca-certificates"
+        - "openssl verify -CAfile ca.crt"
+        - "sudo apt install ca.crt"
+        explanation: "update-ca-certificates reconstruit /etc/ssl/certs à partir des fichiers .crt de /usr/local/share/ca-certificates. openssl verify ne fait qu'une vérification ponctuelle."
+      }
+      question "Quel est le rôle de l’option « -copy_extensions copy » lors de la signature d’une CSR ?" {
+        - "copier la clé privée dans le certificat"
+        + "reprendre dans le certificat les extensions de la CSR, dont le SAN"
+        - "dupliquer le certificat pour la sauvegarde"
+        - "copier la chaîne de l’autorité"
+        explanation: "Par défaut, openssl x509 -req ignore les extensions de la CSR. Sans le SAN, le certificat serait refusé par les navigateurs."
+      }
+      question "Un poste affiche « certificate has expired » sur tous les sites HTTPS, même récents. Que vérifies-tu en premier ?" {
+        - "la longueur des clés RSA des sites"
+        + "la date et l’heure du poste"
+        - "la version de Base64"
+        - "le cache DNS"
+        explanation: "Si l'horloge du poste est fausse (pile de la carte mère morte, NTP absent), tous les certificats paraissent expirés ou pas encore valides. Corrige l'heure et la synchronisation NTP."
+      }
+      question "À quoi sert la transparence des certificats (Certificate Transparency) ?" {
+        - "à chiffrer les certificats"
+        + "à inscrire chaque certificat public dans des journaux publics consultables"
+        - "à supprimer les certificats expirés"
+        - "à rendre la clé privée visible"
+        explanation: "Grâce aux journaux CT, le propriétaire d'un domaine peut repérer (par exemple sur crt.sh) un certificat émis à son insu, signe d'une erreur ou d'une compromission d'autorité."
+      }
+      question "Que permet OCSP ?" {
+        - "obtenir un nouveau certificat"
+        + "demander en ligne si un certificat est révoqué"
+        - "chiffrer la clé privée"
+        - "convertir un certificat en DER"
+        explanation: "OCSP répond sur l'état d'un certificat. La CRL fournit la même information sous forme de liste. ACME, lui, sert à obtenir un certificat."
+      }
+      question "Ajouter une racine dans le magasin de confiance d’un poste, qu’est-ce que cela implique ?" {
+        - "seul le site de cette autorité est concerné"
+        + "le poste fera confiance à tout certificat signé par cette autorité, pour n’importe quel nom"
+        - "les autres racines sont supprimées"
+        - "cela n’a d’effet que sur Firefox"
+        explanation: "Une racine de confiance peut signer pour n'importe quel domaine. C'est pour cela qu'on n'ajoute que des autorités maîtrisées, et que des logiciels malveillants tentent d'en installer."
+      }
+      question "« openssl verify web.crt » échoue avec l’erreur 20, mais « openssl verify -CAfile ca.crt web.crt » affiche OK. Pourquoi ?" {
+        - "le certificat est expiré"
+        + "l’autorité interne n’est pas dans le magasin de confiance du système"
+        - "la clé du certificat est trop courte"
+        - "le fichier web.crt est au format DER"
+        explanation: "Avec -CAfile, on fournit la racine à la commande ; sans elle, openssl cherche l'émetteur dans /etc/ssl/certs et ne le trouve pas. Il faut installer la racine pour que tout le système lui fasse confiance."
+      }
+    }
+  }
+
+  module "gpg" {
+    title: "Chapitre 8 : GPG, chiffrer et signer des fichiers et des messages"
+    duration: "35min"
+    content: """
+### OpenPGP et GnuPG
+**OpenPGP** (RFC 9580, qui remplace la RFC 4880) est un format standard pour chiffrer et signer fichiers et messages. **GnuPG** (commande `gpg`) en est l'implémentation libre, installée sur Debian et Ubuntu (paquet `gnupg`) et disponible sous Windows avec Gpg4win (interface Kleopatra).
+
+On le croise partout en administration :
+• les dépôts APT sont signés : `apt` refuse un dépôt dont la signature ne correspond pas à une clé de confiance ;
+• les images Debian, les archives de logiciels libres et les releases publient un fichier de signature `.sign`, `.sig` ou `.asc` ;
+• les commits Git peuvent être signés (`git commit -S`) ;
+• on peut échanger des courriels ou des fichiers chiffrés (Thunderbird gère OpenPGP en natif).
+
+GPG fait du chiffrement **hybride** : une clé de session symétrique aléatoire chiffre le fichier, et cette clé est chiffrée avec la clé publique de chaque destinataire.
+
+### Les clés GPG
+Une clé GPG est un ensemble : une **clé principale** (qui signe et certifie) et des **sous-clés** (souvent une pour chiffrer), plus une ou plusieurs identités (`Nom <adresse>`). On désigne une clé sans ambiguïté par son **empreinte** (fingerprint) de 40 caractères hexadécimaux. Les 8 ou 16 derniers caractères (identifiant court ou long) ne suffisent pas à identifier une clé avec certitude : des collisions sur l'identifiant court ont déjà été fabriquées.
+
+Selon la version, `gpg` crée par défaut une clé RSA 3072 (GnuPG 2.2, Debian 12) ou une clé Ed25519 avec une sous-clé Cv25519 (GnuPG 2.4, Ubuntu 24.04). L'algorithme `future-default` demande les courbes elliptiques sur les deux versions.
+
+À la création, GnuPG range un **certificat de révocation** dans `~/.gnupg/openpgp-revocs.d/`. Sauvegarde-le hors de la machine : si tu perds la clé ou sa phrase de passe, c'est lui qui permet d'annoncer que la clé ne doit plus être utilisée.
+
+### Le modèle de confiance : la toile de confiance
+X.509 s'appuie sur des autorités hiérarchiques. OpenPGP utilise plutôt la **toile de confiance** (web of trust) : chacun vérifie lui-même l'empreinte de la clé de ses correspondants (en personne, par téléphone, sur un site officiel en HTTPS) puis la **signe** pour indiquer « j'ai vérifié que cette clé appartient à cette personne ».
+
+Quand `gpg --verify` affiche `Good signature` suivi de `WARNING: This key is not certified with a trusted signature!`, cela veut dire : la signature est mathématiquement valide, **mais** tu n'as pas encore attesté que la clé appartient bien à la personne annoncée. C'est à toi de comparer l'empreinte avec une source fiable.
+
+### Vérifier une image Debian, la bonne méthode
+Le chapitre 2 a montré que l'empreinte seule ne protège pas contre un serveur piraté. La méthode complète :
+1. télécharger l'ISO, `SHA256SUMS` et `SHA256SUMS.sign` ;
+2. récupérer la clé de signature des CD Debian ; son empreinte, publiée sur la page de vérification de debian.org, est `DF9B 9C49 EAA9 2984 3258 9D76 DA87 E80D 6294 BE9B` ;
+3. vérifier la signature : `gpg --verify SHA256SUMS.sign SHA256SUMS` doit afficher `Good signature from "Debian CD signing key"` ;
+4. vérifier l'empreinte de l'ISO : `sha256sum -c --ignore-missing SHA256SUMS`.
+
+### À toi de jouer
+Travaille en binôme (ou simule deux personnes avec deux dossiers GnuPG grâce à la variable `GNUPGHOME`).
+1. Chacun crée une paire de clés pour une adresse fictive en `lycee.example`, valable un an, et affiche son empreinte.
+2. Échangez vos clés publiques (export en ASCII), importez celle de l'autre et vérifiez l'empreinte de vive voix.
+3. Chiffre `bulletin.txt` pour ton binôme, en ASCII. Peux-tu toi-même le relire ?
+4. Signe `compte-rendu.pdf` avec une signature détachée ; ton binôme la vérifie, puis modifie un octet du PDF et vérifie à nouveau.
+5. Chiffre un fichier avec un simple mot de passe, sans paire de clés.
+
+### Correction
+1. `gpg --quick-generate-key "Eleve Test <eleve@lycee.example>" future-default default 1y` (une phrase de passe est demandée), puis `gpg --fingerprint eleve@lycee.example`. La sortie montre `pub ed25519 [SC]` (signature et certification), la ligne de l'empreinte et `sub cv25519 [E]` (chiffrement).
+2. `gpg --armor --export eleve@lycee.example > eleve.asc`, envoi du fichier, puis `gpg --import lea.asc` et `gpg --fingerprint lea@lycee.example`. Si les 40 caractères correspondent à ce que Léa lit à voix haute : `gpg --sign-key lea@lycee.example`.
+3. `gpg --armor --encrypt --recipient lea@lycee.example bulletin.txt` crée `bulletin.txt.asc`. Tu ne peux pas le relire, car il est chiffré pour la clé de Léa seulement. Ajoute `--recipient` avec ta propre adresse pour pouvoir le relire (ou `--encrypt-to` dans ta configuration).
+4. `gpg --armor --detach-sign compte-rendu.pdf` crée `compte-rendu.pdf.asc`. Vérification : `gpg --verify compte-rendu.pdf.asc compte-rendu.pdf` affiche `Good signature`. Après modification : `BAD signature`.
+5. `gpg --symmetric --cipher-algo AES256 notes.txt` crée `notes.txt.gpg` ; `gpg --decrypt notes.txt.gpg > notes.txt` redemande le mot de passe. GPG dérive la clé de la phrase de passe avec un sel, et ajoute un contrôle d'intégrité.
+"""
+
+    codeblock "bash" {
+      title: "Les commandes GPG du quotidien"
+      code: """
+gpg --quick-generate-key "Eleve Test <eleve@lycee.example>" future-default default 1y
+gpg --list-keys                      # clés publiques connues
+gpg --list-secret-keys               # tes clés privées
+gpg --fingerprint eleve@lycee.example
+gpg --armor --export eleve@lycee.example > eleve.asc     # partager sa clé publique
+gpg --import lea.asc                                       # importer une clé
+gpg --armor --encrypt --recipient lea@lycee.example bulletin.txt
+gpg --decrypt bulletin.txt.asc > bulletin.txt
+gpg --armor --detach-sign compte-rendu.pdf                # crée compte-rendu.pdf.asc
+gpg --verify compte-rendu.pdf.asc compte-rendu.pdf
+gpg --symmetric --cipher-algo AES256 notes.txt            # chiffrement par mot de passe
+# Vérifier une image Debian
+gpg --keyserver keyring.debian.org --recv-keys DF9B9C49EAA9298432589D76DA87E80D6294BE9B
+gpg --verify SHA256SUMS.sign SHA256SUMS
+sha256sum -c --ignore-missing SHA256SUMS
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Comment identifier une clé GPG sans ambiguïté ?" {
+        - "par le nom de son propriétaire"
+        - "par son identifiant court de 8 caractères"
+        + "par son empreinte complète de 40 caractères hexadécimaux"
+        - "par sa date de création"
+        explanation: "Les identifiants courts ont subi des collisions fabriquées, et n'importe qui peut créer une clé au nom de quelqu'un. Seule l'empreinte complète, vérifiée par un autre canal, identifie la clé."
+      }
+      question "Que signifie « Good signature » suivi de « WARNING: This key is not certified with a trusted signature! » ?" {
+        - "la signature est fausse"
+        + "la signature est valide, mais tu n’as pas attesté que la clé appartient à la personne"
+        - "la clé a été révoquée"
+        - "le fichier est chiffré"
+        explanation: "Mathématiquement, le fichier a bien été signé par cette clé. L'avertissement rappelle de vérifier l'empreinte de la clé auprès d'une source fiable."
+      }
+      question "Quelle commande crée une signature détachée en ASCII de rapport.pdf ?" {
+        - "gpg --encrypt rapport.pdf"
+        + "gpg --armor --detach-sign rapport.pdf"
+        - "gpg --clearsign --recipient rapport.pdf"
+        - "gpg --export rapport.pdf"
+        explanation: "--detach-sign produit un fichier séparé (rapport.pdf.asc avec --armor). --clearsign convient aux textes, pas aux PDF ; --encrypt chiffre sans signer."
+      }
+      question "Tu chiffres un fichier avec « --recipient lea@lycee.example » seulement. Peux-tu le relire ?" {
+        - "oui, avec ta clé privée"
+        + "non, seule la clé privée de Léa permet de le déchiffrer"
+        - "oui, avec la clé publique de Léa"
+        - "oui, GPG garde une copie en clair"
+        explanation: "Le fichier est chiffré pour la clé de Léa. Pour le relire, ajoute ta propre adresse comme destinataire supplémentaire."
+      }
+      question "À quoi sert le certificat de révocation créé avec la clé GPG ?" {
+        - "à renouveler la date d’expiration"
+        + "à annoncer que la clé ne doit plus être utilisée, même si la clé privée est perdue"
+        - "à chiffrer les sauvegardes"
+        - "à signer les clés des autres"
+        explanation: "Si la clé est volée ou la phrase de passe oubliée, publier ce certificat signale la clé comme révoquée. D'où l'intérêt de le sauvegarder hors de la machine."
+      }
+      question "Quel modèle de confiance OpenPGP utilise-t-il principalement ?" {
+        - "une autorité racine unique"
+        + "la toile de confiance : chacun vérifie et signe les clés de ses correspondants"
+        - "un serveur DNS"
+        - "aucun, toutes les clés sont fiables"
+        explanation: "La toile de confiance repose sur des vérifications personnelles d'empreintes. X.509 repose, lui, sur des autorités hiérarchiques."
+      }
+      question "Quelle option chiffre un fichier avec un simple mot de passe ?" {
+        - "--encrypt"
+        + "--symmetric"
+        - "--sign"
+        - "--armor"
+        explanation: "--symmetric dérive une clé de la phrase de passe. --encrypt utilise la clé publique d'un destinataire ; --armor ne fait que produire du texte ASCII."
+      }
+      question "Pourquoi vérifier la signature de SHA256SUMS en plus de l’empreinte de l’ISO ?" {
+        - "pour accélérer l’installation"
+        + "parce qu’un pirate qui contrôle le serveur peut remplacer l’ISO et SHA256SUMS, mais pas signer avec la clé Debian"
+        - "parce que sha256sum ne fonctionne pas sur les ISO"
+        - "parce que la signature remplace l’empreinte"
+        explanation: "La signature, vérifiée avec une clé dont l'empreinte vient d'une source fiable, prouve l'origine de la liste. L'empreinte, ensuite, relie l'ISO à cette liste."
+      }
+      question "Quelle commande exporte ta clé publique dans un fichier texte à envoyer ?" {
+        - "gpg --export-secret-keys > cle.asc"
+        + "gpg --armor --export eleve@lycee.example > eleve.asc"
+        - "gpg --list-keys > eleve.asc"
+        - "gpg --fingerprint > eleve.asc"
+        explanation: "--export avec --armor produit la clé publique en ASCII. --export-secret-keys exporterait ta clé privée : à ne jamais envoyer."
+      }
+      question "Comment GPG chiffre-t-il un gros fichier pour un destinataire ?" {
+        - "entièrement avec RSA"
+        + "avec une clé de session symétrique, elle-même chiffrée par la clé publique du destinataire"
+        - "en le hachant avec SHA-256"
+        - "avec la clé privée de l’expéditeur"
+        explanation: "C'est un chiffrement hybride, comme TLS : rapide grâce au symétrique, sans partage préalable grâce à l'asymétrique."
+      }
+      question "Une sortie de « gpg --list-keys » montre « sub cv25519 [E] ». Que signifie [E] ?" {
+        - "expirée"
+        + "sous-clé utilisée pour le chiffrement (encryption)"
+        - "clé exportée"
+        - "clé d’entreprise"
+        explanation: "Les lettres indiquent les usages : S signature, C certification, E chiffrement, A authentification. Une clé expirée est signalée par [expired]."
+      }
+      question "Quelle commande vérifie la signature détachée doc.pdf.asc ?" {
+        - "gpg --decrypt doc.pdf"
+        + "gpg --verify doc.pdf.asc doc.pdf"
+        - "gpg --sign doc.pdf.asc"
+        - "sha256sum -c doc.pdf.asc"
+        explanation: "--verify prend la signature puis le fichier signé. sha256sum -c lit une liste d'empreintes, pas une signature OpenPGP."
+      }
+    }
+  }
+
+  module "tls" {
+    title: "Chapitre 9 : TLS pas à pas, de la poignée de main au diagnostic"
+    duration: "40min"
+    content: """
+### TLS, ce qu'il protège
+**TLS** (Transport Layer Security) chiffre et authentifie une connexion TCP : HTTPS (port 443), IMAPS (993), SMTP avec STARTTLS (587), LDAPS (636), et bien d'autres. Il assemble tout ce que tu as vu : échange de clés Diffie-Hellman (chapitre 5), certificat et chaîne de confiance (chapitres 6 et 7), chiffrement authentifié (chapitre 4).
+
+Les versions :
+
+| Version | Statut |
+|---|---|
+| SSL 2.0, SSL 3.0 | interdits (attaque POODLE en 2014 sur SSL 3.0) |
+| TLS 1.0, TLS 1.1 | obsolètes depuis la RFC 8996 (2021), refusés par les navigateurs |
+| TLS 1.2 (RFC 5246, 2008) | acceptable, bien configuré |
+| TLS 1.3 (RFC 8446, 2018) | recommandé |
+
+### La poignée de main TLS 1.3, étape par étape
+1. **ClientHello** (en clair) : le client annonce les versions qu'il accepte (`supported_versions`), ses suites de chiffrement, ses groupes d'échange de clés et envoie **déjà** sa part Diffie-Hellman (`key_share`, par exemple X25519). Il indique le nom du site visé dans l'extension **SNI** (Server Name Indication), ce qui permet à un serveur d'héberger plusieurs sites sur une même adresse IP.
+2. **ServerHello** (en clair) : le serveur choisit la version, la suite et envoie **sa** part Diffie-Hellman. Les deux côtés calculent alors le même secret, d'où ils dérivent les clés de chiffrement (avec HKDF). **Tout ce qui suit est chiffré.**
+3. **EncryptedExtensions** : paramètres complémentaires (par exemple le protocole applicatif ALPN, `h2` pour HTTP/2).
+4. **Certificate** : la chaîne de certificats du serveur (certificat + intermédiaires).
+5. **CertificateVerify** : une **signature** de toute la conversation jusque-là, faite avec la clé privée du certificat. C'est elle qui prouve que le serveur possède la clé, et qui empêche l'homme du milieu de remplacer les parts Diffie-Hellman.
+6. **Finished** (serveur puis client) : un HMAC sur l'ensemble de la poignée de main. Si un message a été modifié en route, les deux côtés s'en aperçoivent.
+7. Les données applicatives (la requête HTTP) circulent, chiffrées en AES-GCM ou ChaCha20-Poly1305.
+
+Il suffit d'**un aller-retour** (1-RTT), contre deux en TLS 1.2. Le client vérifie entre-temps le certificat : chaîne jusqu'à une racine de confiance, dates, nom demandé présent dans le SAN.
+
+Ce qu'un observateur du réseau voit encore : les adresses IP, le port, le nom du site dans le SNI (sauf si l'extension ECH, Encrypted Client Hello, est utilisée), le volume et le rythme des échanges.
+
+### Les suites de chiffrement
+En TLS 1.3, une suite ne désigne plus que le chiffrement authentifié et la fonction de hachage. Les principales : `TLS_AES_128_GCM_SHA256`, `TLS_AES_256_GCM_SHA384`, `TLS_CHACHA20_POLY1305_SHA256`. L'échange de clés est toujours éphémère (confidentialité persistante obligatoire).
+
+En TLS 1.2, la suite décrit tout : `ECDHE-RSA-AES256-GCM-SHA384` signifie échange **ECDHE**, authentification par certificat **RSA**, chiffrement **AES-256-GCM**, hachage **SHA-384**. À refuser : les suites sans ECDHE ni DHE (échange RSA statique, pas de confidentialité persistante), les modes CBC anciens, RC4, 3DES, les suites `NULL` (sans chiffrement) et `EXPORT`.
+
+### Un serveur web correctement configuré
+Exemple pour Nginx, en accord avec les recommandations de l'ANSSI sur TLS :
+
+```text
+server {
+    listen 443 ssl;
+    server_name intranet.lycee.internal;
+    ssl_certificate     /etc/ssl/lycee/fullchain.pem;   # certificat + intermédiaires
+    ssl_certificate_key /etc/ssl/lycee/web.key;         # chmod 600, propriétaire root
+    ssl_protocols TLSv1.2 TLSv1.3;
+    add_header Strict-Transport-Security "max-age=63072000" always;
+}
+```
+
+L'en-tête **HSTS** (RFC 6797) indique au navigateur de n'utiliser que HTTPS pour ce site pendant la durée indiquée (ici deux ans), ce qui bloque les attaques qui ramènent la victime en HTTP.
+
+### Diagnostiquer avec openssl s_client
+`openssl s_client` se comporte comme un client TLS et affiche tout ce qui se passe :
+
+```text
+openssl s_client -connect www.debian.org:443 -servername www.debian.org -brief </dev/null
+CONNECTION ESTABLISHED
+Protocol version: TLSv1.3
+Ciphersuite: TLS_AES_256_GCM_SHA384
+Peer certificate: CN=www.debian.org
+Verification: OK
+```
+
+Le `</dev/null` ferme la connexion juste après la poignée de main. Options utiles : `-showcerts` (afficher toute la chaîne envoyée), `-tls1_2` ou `-tls1_3` (forcer une version), `-verify_hostname nom` (vérifier le nom), `-CAfile ca.crt` (fournir une autorité interne), `-starttls smtp` (serveur de messagerie). Sous Windows, `Test-NetConnection` vérifie seulement que le port répond ; pour TLS, utilise openssl (fourni avec Git pour Windows) ou les outils du navigateur (cadenas, puis détails du certificat).
+
+### À toi de jouer
+1. Avec ton autorité du chapitre 7, lance un serveur de test : `openssl s_server -accept 8443 -cert web.crt -key web.key -www`. Dans un autre terminal, connecte-toi avec `s_client` sans `-CAfile`, puis avec. Note les codes d'erreur.
+2. Ajoute `-verify_hostname www.lycee.internal`. Que se passe-t-il ?
+3. Vérifie que ton serveur refuse TLS 1.1. Quelle version et quelle suite sont négociées si tu forces TLS 1.2 ?
+4. Un utilisateur se plaint : « le site fonctionne dans Firefox mais `curl https://intranet.lycee.internal` échoue avec `unable to get local issuer certificate` ». Explique et propose deux corrections.
+
+### Correction
+1. Sans `-CAfile` : `verify error:num=20:unable to get local issuer certificate` puis `num=21:unable to verify the first certificate` (le client ne connaît pas la racine du lycée). Avec `-CAfile ca.crt` : `Verify return code: 0 (ok)`.
+2. `verify error:num=62:hostname mismatch` : le certificat ne couvre que `intranet.lycee.internal`. Note que `s_client` continue la connexion malgré l'erreur ; un navigateur, lui, bloquerait.
+3. `-tls1_1` échoue : OpenSSL 3 refuse TLS 1.1 par défaut (niveau de sécurité). Avec `-tls1_2`, la sortie indique `Protocol: TLSv1.2` et une suite comme `ECDHE-ECDSA-AES256-GCM-SHA384` (certificat ECDSA, échange ECDHE).
+4. Firefox fait peut-être confiance à la racine (importée à la main), mais `curl` utilise le magasin du système, qui ne la contient pas. Autre cause fréquente : le serveur n'envoie pas l'intermédiaire, et Firefox le complète grâce à son cache. Corrections : installer la racine dans le magasin système (`update-ca-certificates`), et configurer le serveur avec la chaîne complète (`fullchain.pem`). Jamais `curl -k`, qui désactive toute vérification.
+"""
+
+    codeblock "bash" {
+      title: "Diagnostic TLS avec openssl s_client"
+      code: """
+openssl s_client -connect www.debian.org:443 -servername www.debian.org -brief </dev/null
+openssl s_client -connect www.debian.org:443 -servername www.debian.org -showcerts </dev/null   # chaîne envoyée
+openssl s_client -connect intranet.lycee.internal:443 -CAfile ca.crt -verify_hostname intranet.lycee.internal </dev/null 2>&1 | grep -i verify
+openssl s_client -connect intranet.lycee.internal:443 -tls1_2 </dev/null 2>/dev/null | grep -E 'Protocol|Cipher is'
+openssl s_client -connect mail.lycee.internal:587 -starttls smtp -brief </dev/null
+# Date d'expiration du certificat d'un site
+openssl s_client -connect www.debian.org:443 -servername www.debian.org </dev/null 2>/dev/null | openssl x509 -noout -enddate
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelles versions de TLS un serveur devrait-il accepter aujourd’hui ?" {
+        - "SSL 3.0 et TLS 1.0"
+        - "TLS 1.0, 1.1 et 1.2"
+        + "TLS 1.2 et TLS 1.3"
+        - "TLS 1.3 et SSL 2.0"
+        explanation: "TLS 1.0 et 1.1 sont dépréciés par la RFC 8996, SSL est cassé. TLS 1.3 est recommandé, TLS 1.2 reste acceptable s'il est bien configuré."
+      }
+      question "Dans TLS 1.3, à partir de quel message la poignée de main est-elle chiffrée ?" {
+        - "dès le ClientHello"
+        + "juste après le ServerHello"
+        - "après le message Finished seulement"
+        - "jamais, seule la requête HTTP est chiffrée"
+        explanation: "Après ServerHello, les deux côtés ont échangé leurs parts Diffie-Hellman et dérivent les clés : EncryptedExtensions, Certificate, CertificateVerify et Finished sont chiffrés."
+      }
+      question "Quel est le rôle du message CertificateVerify ?" {
+        - "envoyer la liste des autorités racines"
+        + "prouver, par une signature, que le serveur possède la clé privée de son certificat"
+        - "demander au client son mot de passe"
+        - "choisir la suite de chiffrement"
+        explanation: "Le certificat est public : n'importe qui peut le renvoyer. La signature de la conversation avec la clé privée prouve la possession de la clé et lie l'échange Diffie-Hellman à l'identité du serveur."
+      }
+      question "À quoi sert l’extension SNI dans le ClientHello ?" {
+        - "à chiffrer le nom du site"
+        + "à indiquer le nom du site visé, pour qu’un serveur héberge plusieurs sites sur une même IP"
+        - "à négocier la version HTTP"
+        - "à transmettre le certificat du client"
+        explanation: "Le SNI permet au serveur de présenter le bon certificat. Il circule en clair, sauf avec Encrypted Client Hello. La négociation HTTP/2 passe par ALPN."
+      }
+      question "Que signifie la suite TLS 1.2 « ECDHE-RSA-AES256-GCM-SHA384 » ?" {
+        - "chiffrement RSA des données, hachage AES"
+        + "échange ECDHE, certificat RSA, chiffrement AES-256-GCM, hachage SHA-384"
+        - "échange RSA statique, chiffrement ECDHE"
+        - "signature ECDHE, chiffrement SHA-384"
+        explanation: "Chaque morceau a un rôle : ECDHE pour la clé de session (confidentialité persistante), RSA pour l'authentification du serveur, AES-256-GCM pour les données, SHA-384 pour la dérivation."
+      }
+      question "Combien d’allers-retours la poignée de main TLS 1.3 complète demande-t-elle ?" {
+        - "aucun"
+        + "un"
+        - "deux"
+        - "quatre"
+        explanation: "Le client envoie sa part Diffie-Hellman dès le ClientHello : un seul aller-retour suffit (1-RTT). TLS 1.2 en demandait deux."
+      }
+      question "Que fait l’en-tête HTTP Strict-Transport-Security ?" {
+        - "il chiffre les cookies"
+        + "il demande au navigateur de n’utiliser que HTTPS pour ce site pendant une durée donnée"
+        - "il désactive TLS 1.0"
+        - "il renouvelle le certificat"
+        explanation: "HSTS (RFC 6797) empêche le retour en HTTP non chiffré, et donc les attaques qui interceptent la première requête HTTP. max-age donne la durée en secondes."
+      }
+      question "Quel fichier faut-il indiquer dans ssl_certificate de Nginx pour éviter l’erreur « unable to verify the first certificate » ?" {
+        - "la clé privée"
+        - "la racine seule"
+        + "le certificat du serveur suivi des intermédiaires (fullchain)"
+        - "la CSR"
+        explanation: "Le serveur doit envoyer sa chaîne sans la racine, que le client possède déjà. Sans intermédiaire, beaucoup de clients ne peuvent pas construire la chaîne."
+      }
+      question "Pourquoi ajoute-t-on « </dev/null » à la fin d’une commande openssl s_client ?" {
+        - "pour masquer le certificat"
+        + "pour fermer la connexion juste après la poignée de main au lieu d’attendre une saisie"
+        - "pour désactiver la vérification"
+        - "pour forcer TLS 1.3"
+        explanation: "s_client attend sinon que tu tapes une requête. L'entrée vide termine la session dès la poignée de main finie, ce qui est pratique dans un script."
+      }
+      question "Un collègue propose « curl -k » pour contourner une erreur de certificat en production. Qu’en penses-tu ?" {
+        - "c’est la bonne solution, -k accélère TLS"
+        + "c’est dangereux : -k désactive la vérification du certificat et permet l’homme du milieu"
+        - "c’est sans effet sur la sécurité, la connexion reste authentifiée"
+        - "c’est obligatoire avec une autorité interne"
+        explanation: "-k (--insecure) chiffre toujours mais n'authentifie plus le serveur : n'importe qui peut s'interposer. On installe plutôt l'autorité ou on passe --cacert ca.crt."
+      }
+      question "Que voit encore un observateur réseau d’une connexion TLS 1.3 sans ECH ?" {
+        - "le contenu des pages et les mots de passe"
+        + "les adresses IP, le port et le nom du site dans le SNI"
+        - "la clé de session"
+        - "rien du tout"
+        explanation: "Le contenu est chiffré, mais les métadonnées restent visibles : IP, port, volume et, sans ECH, le nom du site."
+      }
+      question "Quelle option de s_client vérifie que le certificat correspond bien au nom attendu ?" {
+        - "-showcerts"
+        - "-brief"
+        + "-verify_hostname"
+        - "-tls1_3"
+        explanation: "-verify_hostname fait vérifier le nom par rapport au SAN ; en cas d'écart, l'erreur 62 (hostname mismatch) apparaît. -showcerts affiche la chaîne, -brief résume la connexion."
+      }
+    }
+  }
+
+  module "synthese" {
+    title: "Chapitre 10 : erreurs classiques, règles de l'ANSSI et mini-projet de synthèse"
+    duration: "40min"
+    content: """
+### Les erreurs classiques
+La cryptographie échoue rarement parce qu'AES ou SHA-256 sont cassés. Elle échoue parce qu'elle est mal utilisée. Les erreurs que tu croiseras le plus en audit ou en stage :
+
+| Erreur | Pourquoi c'est grave | Ce qu'il faut faire |
+|---|---|---|
+| Mot de passe « protégé » en Base64 | simple encodage, lisible par tous | coffre de secrets, variable d'environnement protégée, chiffrement réel |
+| Empreinte MD5 ou SHA-1 pour la sécurité | collisions pratiques | SHA-256 ou plus |
+| Mots de passe en SHA-256 sans sel | précalculs, force brute rapide | Argon2id, scrypt, bcrypt |
+| Mode ECB | motifs du clair visibles | GCM ou ChaCha20-Poly1305 |
+| Nonce GCM réutilisé | clairs révélés, forge possible | nonce unique par message |
+| Chiffrement sans intégrité (CBC seul) | chiffré modifiable sans détection | mode authentifié (AEAD) |
+| Clé ou mot de passe écrit dans le code, poussé sur Git | secret public, souvent pour toujours dans l'historique | fichier hors dépôt, `.gitignore`, coffre ; révoquer la clé exposée |
+| `random`, `rand()`, `Math.random()` pour une clé | valeurs prévisibles | `secrets` (Python), `/dev/urandom`, `openssl rand` |
+| Algorithme « maison » | jamais étudié, presque toujours cassable | algorithmes et bibliothèques standard |
+| `curl -k`, `verify=False` en Python | plus aucune authentification du serveur | installer l'autorité, `--cacert` |
+| Certificat expiré non surveillé | service coupé du jour au lendemain | renouvellement automatique (ACME) et alerte |
+| Clé privée lisible par tous (`chmod 644`) | n'importe quel compte local la copie | `chmod 600`, propriétaire root ou le service |
+| Comparaison d'un MAC avec `==` | fuite d'information par le temps de réponse | comparaison à temps constant (`hmac.compare_digest`) |
+| Pas de sauvegarde ni de certificat de révocation | données chiffrées perdues, clé volée impossible à révoquer | sauvegarde chiffrée hors ligne, procédure de révocation |
+
+Retiens la règle d'or : **n'implémente pas toi-même** les primitives ni les protocoles. Utilise des outils et bibliothèques reconnus (OpenSSL, libsodium, la bibliothèque `cryptography` de Python, les fonctions `password_hash` de PHP) avec leurs réglages par défaut récents.
+
+### Ce que dit l'ANSSI
+Le guide de l'ANSSI « Règles et recommandations concernant le choix et le dimensionnement des mécanismes cryptographiques » fixe des tailles minimales. Les valeurs à connaître :
+
+| Mécanisme | Minimum ANSSI |
+|---|---|
+| Clé symétrique | 128 bits |
+| Taille de bloc d'un chiffrement par blocs | 128 bits (donc ni DES ni 3DES) |
+| Empreinte (fonction de hachage) | 256 bits |
+| Module RSA, groupe Diffie-Hellman classique | 2048 bits pour un usage jusqu'à fin 2030, 3072 bits au-delà (3072 recommandé dès maintenant) |
+| Exposant public RSA | supérieur à 2^16 (65537 convient) |
+| Courbe elliptique | ordre du sous-groupe de 256 bits |
+
+S'y ajoutent : préférer les modes de chiffrement authentifiés, utiliser un générateur d'aléa cryptographique, protéger et renouveler les clés, et, pour des données qui doivent rester confidentielles après 2030, prévoir une **hybridation post-quantique** (ML-KEM avec un échange classique).
+
+Pour TLS, les recommandations de l'ANSSI sur TLS demandent en résumé : TLS 1.3 de préférence, TLS 1.2 toléré, jamais SSL ni TLS 1.0/1.1 ; échange de clés éphémère (ECDHE) ; suites AEAD (AES-GCM, ChaCha20-Poly1305) ; certificats signés en SHA-256 ou plus avec des clés conformes au tableau ci-dessus. Pour les mots de passe, la CNIL et l'ANSSI convergent : fonction lente et salée, jamais de stockage en clair, authentification multifacteur pour les accès sensibles.
+
+### À toi de jouer
+Mini-projet guidé : sécuriser l'intranet du lycée. Situation : le lycée héberge `intranet.lycee.internal` sur une Debian 12 avec Nginx. Il est aujourd'hui en HTTP. On te demande de le passer en HTTPS proprement, et de livrer la configuration de façon vérifiable.
+
+1. Crée l'autorité interne `CA Lycee` (P-256, 10 ans) et protège sa clé.
+2. Crée la clé et la CSR du serveur (SAN `intranet.lycee.internal`), signe-la pour 397 jours, construis `fullchain.pem`.
+3. Configure Nginx : TLS 1.2 et 1.3 seulement, HSTS, redirection du port 80 vers 443. Teste avec `nginx -t`.
+4. Vérifie avec `openssl s_client` : chaîne valide avec l'autorité, nom correct, TLS 1.1 refusé.
+5. Écris une commande qui alerte si le certificat expire dans moins de 30 jours.
+6. Livre l'archive de configuration avec son empreinte SHA-256 et une signature GPG détachée.
+
+### Correction
+1. `openssl req -x509 -new -newkey ec -pkeyopt ec_paramgen_curve:P-256 -noenc -keyout ca.key -out ca.crt -days 3650 -subj "/O=Lycee/CN=CA Lycee"` puis `chmod 600 ca.key`. Idéalement, la clé de l'autorité est conservée hors du serveur web.
+2. `openssl req -new -newkey ec -pkeyopt ec_paramgen_curve:P-256 -noenc -keyout web.key -out web.csr -subj "/CN=intranet.lycee.internal" -addext "subjectAltName=DNS:intranet.lycee.internal"`, puis `openssl x509 -req -in web.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out web.crt -days 397 -sha256 -copy_extensions copy`. Ici, sans intermédiaire, `fullchain.pem` contient seulement `web.crt` (la racine n'est jamais envoyée) ; avec une autorité intermédiaire : `cat web.crt intermediaire.crt > fullchain.pem`. Copie dans `/etc/ssl/lycee/`, `chmod 600 web.key`.
+3. Un bloc `server` sur le port 80 avec `return 301 https://$host$request_uri;`, et le bloc 443 du chapitre 9 (`ssl_protocols TLSv1.2 TLSv1.3;`, en-tête HSTS). `sudo nginx -t` doit afficher `syntax is ok` et `test is successful`, puis `sudo systemctl reload nginx`.
+4. `openssl s_client -connect intranet.lycee.internal:443 -CAfile ca.crt -verify_hostname intranet.lycee.internal -brief </dev/null` doit afficher `Verification: OK` et `TLSv1.3`. Avec `-tls1_1`, la poignée de main échoue. Installe ensuite `ca.crt` sur les postes (update-ca-certificates, GPO).
+5. `openssl x509 -in /etc/ssl/lycee/web.crt -noout -checkend 2592000 || echo "Certificat à renouveler"`. `-checkend` prend un nombre de secondes (30 × 86 400 = 2 592 000) et renvoie un code de sortie non nul si le certificat expire dans ce délai : la commande se place facilement dans une tâche cron.
+6. `tar czf conf-intranet.tar.gz -C /etc/nginx sites-available`, `sha256sum conf-intranet.tar.gz > conf-intranet.sha256`, `gpg --armor --detach-sign conf-intranet.tar.gz`. Le destinataire vérifie `gpg --verify conf-intranet.tar.gz.asc conf-intranet.tar.gz` puis `sha256sum -c conf-intranet.sha256`. L'archive ne contient pas `web.key` : une clé privée ne voyage pas.
+
+### Pour aller plus loin
+• Règles et recommandations concernant le choix et le dimensionnement des mécanismes cryptographiques, et Recommandations de sécurité relatives à TLS, ANSSI : https://cyber.gouv.fr
+• RFC 8446, The Transport Layer Security (TLS) Protocol Version 1.3, IETF : https://www.rfc-editor.org/rfc/rfc8446
+• RFC 5280, Internet X.509 Public Key Infrastructure Certificate and CRL Profile, IETF : https://www.rfc-editor.org/rfc/rfc5280
+• Password Storage Cheat Sheet et Cryptographic Storage Cheat Sheet, OWASP : https://cheatsheetseries.owasp.org
+• Recommandation relative aux mots de passe (délibération n° 2022-100), CNIL : https://www.cnil.fr
+• Documentation des commandes openssl (pages de manuel openssl-req, openssl-x509, openssl-s_client), OpenSSL Project : https://docs.openssl.org, et manuel de GnuPG : https://www.gnupg.org/documentation/
+"""
+
+    codeblock "bash" {
+      title: "Vérifications de fin de mini-projet"
+      code: """
+sudo nginx -t
+openssl verify -CAfile ca.crt /etc/ssl/lycee/web.crt
+openssl s_client -connect intranet.lycee.internal:443 -CAfile ca.crt -verify_hostname intranet.lycee.internal -brief </dev/null
+openssl s_client -connect intranet.lycee.internal:443 -tls1_1 </dev/null      # doit échouer
+curl -sI http://intranet.lycee.internal | head -3                              # 301 vers https
+openssl x509 -in /etc/ssl/lycee/web.crt -noout -checkend 2592000 || echo "Certificat à renouveler"
+ls -l /etc/ssl/lycee/web.key                                                   # -rw------- root root
+"""
+    }
+
+    quiz {
+      pick: 10
+      question "Un fichier de configuration contient « password: U2VjcmV0MjAyNg== ». Que conclus-tu ?" {
+        - "le mot de passe est chiffré en AES"
+        + "le mot de passe est seulement encodé en Base64, donc lisible par tous"
+        - "c’est une empreinte SHA-256"
+        - "c’est une signature GPG"
+        explanation: "Le = final et l'alphabet sont typiques de Base64. Un base64 -d suffit à lire le mot de passe : ce n'est aucune protection."
+      }
+      question "Quelle taille minimale de module RSA l’ANSSI fixe-t-elle pour un usage au-delà de 2030 ?" {
+        - "1024 bits"
+        - "2048 bits"
+        + "3072 bits"
+        - "8192 bits"
+        explanation: "2048 bits restent admis pour un usage qui ne dépasse pas fin 2030 ; au-delà, il faut 3072 bits, taille d'ailleurs recommandée dès maintenant."
+      }
+      question "Quelle taille minimale d’empreinte l’ANSSI impose-t-elle pour une fonction de hachage ?" {
+        - "128 bits"
+        - "160 bits"
+        + "256 bits"
+        - "512 bits"
+        explanation: "256 bits minimum : SHA-256, SHA-384, SHA-512 ou SHA-3 conviennent. SHA-1 (160 bits) et MD5 (128 bits) sont exclus."
+      }
+      question "Pourquoi 3DES n’est-il plus conforme aux règles de l’ANSSI, même avec une clé de 168 bits ?" {
+        - "parce qu’il est trop lent"
+        + "parce que sa taille de bloc n’est que de 64 bits"
+        - "parce qu’il n’existe pas sous Linux"
+        - "parce qu’il utilise SHA-1"
+        explanation: "L'ANSSI exige des blocs de 128 bits minimum. Avec des blocs de 64 bits, des collisions de blocs apparaissent après quelques dizaines de gigaoctets (attaque Sweet32)."
+      }
+      question "Tu dois stocker les mots de passe d’une application web. Quel choix est correct ?" {
+        - "AES-256 avec une clé dans le code"
+        - "SHA-256 avec un sel commun à tous les comptes"
+        + "Argon2id avec un sel unique par compte"
+        - "MD5 appliqué deux fois"
+        explanation: "Une fonction lente et coûteuse en mémoire, avec un sel unique, rend la force brute très coûteuse. Un chiffrement réversible ou un hachage rapide ne conviennent pas."
+      }
+      question "Quel mode de chiffrement apporte à la fois confidentialité et intégrité ?" {
+        - "ECB"
+        - "CBC"
+        - "CTR"
+        + "GCM"
+        explanation: "GCM est un mode AEAD avec une étiquette d'authentification. ECB est à proscrire ; CBC et CTR seuls n'assurent pas l'intégrité."
+      }
+      question "Une clé API a été poussée par erreur sur un dépôt Git public, puis supprimée dans le commit suivant. Que fais-tu ?" {
+        - "rien, le commit suivant l’a effacée"
+        + "révoquer la clé et en créer une nouvelle, car elle reste dans l’historique"
+        - "rendre le dépôt privé et garder la clé"
+        - "chiffrer le dépôt en Base64"
+        explanation: "L'historique Git conserve la clé et des robots parcourent les dépôts publics en quelques minutes. Toute clé exposée est considérée comme compromise : on la révoque."
+      }
+      question "Pourquoi la clé privée d’un certificat de serveur doit-elle avoir les droits 600 ?" {
+        - "pour que Nginx puisse la modifier"
+        + "pour qu’aucun autre compte local ne puisse la lire et usurper le serveur"
+        - "parce qu’openssl refuse les autres droits"
+        - "pour accélérer la poignée de main"
+        explanation: "Avec la clé privée, un attaquant peut se faire passer pour le serveur. Seul le propriétaire (root ou le compte du service) doit pouvoir la lire."
+      }
+      question "Que renvoie « openssl x509 -noout -checkend 2592000 » si le certificat expire dans 10 jours ?" {
+        - "un code de sortie 0 et « Certificate will not expire »"
+        + "un code de sortie non nul et « Certificate will expire »"
+        - "la date exacte d’expiration"
+        - "une erreur de syntaxe"
+        explanation: "2 592 000 secondes = 30 jours. Le certificat expire avant : la commande l'indique et renvoie 1, ce qui permet de déclencher une alerte dans un script."
+      }
+      question "Dans TLS 1.3, qu’est-ce qui garantit la confidentialité persistante ?" {
+        - "le certificat RSA de 4096 bits"
+        + "l’échange de clés éphémère (ECDHE) à chaque connexion"
+        - "l’en-tête HSTS"
+        - "la révocation OCSP"
+        explanation: "Chaque session dérive sa clé d'un échange Diffie-Hellman éphémère, effacé ensuite. La clé du certificat sert seulement à signer."
+      }
+      question "Un poste affiche « self-signed certificate in certificate chain » en se connectant à un service interne. Quelle est la bonne correction ?" {
+        - "désactiver la vérification des certificats"
+        + "installer la racine de l’autorité interne dans le magasin de confiance du poste"
+        - "passer le serveur en HTTP"
+        - "regénérer la clé du serveur"
+        explanation: "Le client reçoit une chaîne qui se termine par une racine qu'il ne connaît pas. On déploie la racine interne (update-ca-certificates, GPO) ; désactiver la vérification ouvre la porte à l'homme du milieu."
+      }
+      question "Quelle commande génère une CSR avec le nom intranet.lycee.internal dans le SAN ?" {
+        - "openssl x509 -req -in web.csr -CA ca.crt"
+        + "openssl req -new -key web.key -out web.csr -subj /CN=intranet.lycee.internal -addext subjectAltName=DNS:intranet.lycee.internal"
+        - "openssl genpkey -algorithm RSA -out web.csr"
+        - "openssl verify -CAfile ca.crt web.csr"
+        explanation: "openssl req -new crée la demande, -addext ajoute le SAN. openssl x509 -req signe une CSR existante, genpkey crée une clé, verify vérifie un certificat."
+      }
+      question "Tu dois envoyer un fichier à Léa et prouver que c’est toi qui l’envoies, sans que personne d’autre ne le lise. Que fais-tu avec GPG ?" {
+        - "tu signes avec la clé publique de Léa"
+        + "tu signes avec ta clé privée et tu chiffres pour la clé publique de Léa"
+        - "tu chiffres avec ta clé privée"
+        - "tu chiffres en symétrique et envoies le mot de passe dans le même courriel"
+        explanation: "gpg --sign --encrypt --recipient lea@lycee.example : la signature (ta clé privée) prouve l'origine, le chiffrement (sa clé publique) assure la confidentialité."
+      }
+      question "Combien de calculs faut-il environ pour trouver une collision sur une empreinte de 160 bits comme SHA-1 par force brute générique ?" {
+        - "2^160"
+        + "2^80"
+        - "2^40"
+        - "160 × 2"
+        explanation: "Le paradoxe des anniversaires donne environ 2^(n/2) = 2^80. Les attaques réelles contre SHA-1 font encore mieux, ce qui explique son abandon."
+      }
+      question "Quel algorithme de signature évite par construction le problème du nombre aléatoire réutilisé d’ECDSA ?" {
+        - "RSA PKCS#1 v1.5 avec MD5"
+        + "Ed25519"
+        - "AES-GCM"
+        - "HMAC-SHA256"
+        explanation: "Ed25519 dérive ce nombre du message et de la clé. AES-GCM chiffre, HMAC est un MAC à clé partagée, et MD5 est à proscrire."
+      }
+      question "Que recommande l’ANSSI pour des données qui doivent rester confidentielles au-delà de 2030 ?" {
+        - "passer à RSA 1024 bits"
+        + "une approche hybride combinant échange classique et post-quantique (ML-KEM)"
+        - "abandonner le chiffrement symétrique"
+        - "utiliser uniquement SHA-1"
+        explanation: "Face au risque « enregistrer maintenant, déchiffrer plus tard », l'ANSSI recommande l'hybridation post-quantique. AES-256 et SHA-256 restent adaptés."
+      }
+      question "En Python, quelle comparaison utiliser pour vérifier un HMAC reçu ?" {
+        - "hmac_recu == hmac_calcule"
+        + "hmac.compare_digest(hmac_recu, hmac_calcule)"
+        - "hmac_recu in hmac_calcule"
+        - "len(hmac_recu) == len(hmac_calcule)"
+        explanation: "compare_digest compare en temps constant. Une comparaison classique s'arrête au premier caractère différent, et le temps de réponse peut aider un attaquant à deviner la valeur."
+      }
+      question "Quel fichier ne doit jamais faire partie d’une archive de configuration envoyée à un collègue ?" {
+        - "le fichier de configuration Nginx"
+        - "le certificat du serveur"
+        + "la clé privée du serveur"
+        - "le certificat de l’autorité racine"
+        explanation: "Les certificats sont publics par nature. La clé privée reste sur le serveur ; si elle doit être déplacée, c'est chiffrée (PKCS#12 protégé) et par un canal maîtrisé."
+      }
+      question "Dans la poignée de main TLS 1.3, quel message contient la part Diffie-Hellman du client ?" {
+        - "Finished"
+        - "Certificate"
+        + "ClientHello, dans l’extension key_share"
+        - "EncryptedExtensions"
+        explanation: "Le client envoie sa part dès le premier message, ce qui permet la poignée de main en un aller-retour. Certificate et EncryptedExtensions viennent du serveur."
+      }
+      question "Un développeur a écrit son propre algorithme de chiffrement et le garde secret « pour plus de sûreté ». Que lui réponds-tu ?" {
+        - "c’est une bonne pratique si le code est obscurci"
+        + "c’est contraire au principe de Kerckhoffs : il faut un algorithme standard et étudié"
+        - "c’est acceptable s’il utilise des clés de 4096 bits"
+        - "c’est obligatoire pour la conformité ANSSI"
+        explanation: "La sécurité doit reposer sur la clé, pas sur le secret de l'algorithme. Un algorithme maison n'a pas été analysé et se casse presque toujours ; l'ANSSI recommande des mécanismes standard."
+      }
+    }
+  }
+}

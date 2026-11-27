@@ -1,0 +1,1989 @@
+tdc-version: 2
+type: course
+
+course "pare-feu-et-filtrage" {
+  title: "Pare-feu et filtrage réseau"
+  description: """
+Ce cours explique ce que fait un pare-feu, comment il décide de laisser passer ou de bloquer un paquet, puis te fait écrire, tester et dépanner de vraies politiques de filtrage sous Linux (nftables, iptables, ufw), sous Windows (netsh, PowerShell) et sur une appliance comme pfSense. Il s'adresse aux élèves de bac pro CIEL, BTS SIO SISR, BTS CIEL et BUT réseaux, et à toute personne qui protège un petit réseau.
+
+À la fin, tu sauras :
+• expliquer le rôle d'un pare-feu, ses limites, et distinguer filtrage sans état et avec état ;
+• écrire une règle complète (source, destination, protocole, port, action) et prévoir l'effet de l'ordre des règles et de la politique par défaut ;
+• construire une matrice de flux pour une petite entreprise avec un LAN, une DMZ et un réseau invités ;
+• mettre en place du NAT (masquerade, redirection de port) et expliquer ce qu'il protège et ce qu'il ne protège pas ;
+• configurer un pare-feu d'hôte Linux avec nftables ou ufw, et un poste Windows avec PowerShell ou netsh ;
+• décrire le fonctionnement d'une appliance pfSense (interfaces, règles, NAT, journaux) ;
+• journaliser les rejets et diagnostiquer méthodiquement un flux bloqué.
+
+Le cours s'appuie sur un labo que tu montes toi-même : une ou deux machines virtuelles Debian 12, si possible une machine Windows 10/11 et, pour le chapitre 8, une machine virtuelle pfSense CE. Chaque chapitre contient un exercice pratique corrigé et une banque de questions tirées au hasard.
+
+Prérequis : adressage IPv4 et masques, notions de TCP/UDP et de ports, utilisation courante du terminal Linux (sudo, éditer un fichier, systemctl) et de PowerShell.
+"""
+  category: "security"
+  level: "intermediate"
+  duration: "7h"
+  icon: "Security"
+  keywords: ["pare-feu", "firewall", "filtrage", "nftables", "iptables", "ufw", "netfilter", "conntrack", "nat", "dmz", "pfsense", "windows defender firewall", "netsh", "new-netfirewallrule", "matrice de flux", "anssi", "journalisation"]
+
+  module "role-pare-feu" {
+    title: "Chapitre 1 : à quoi sert un pare-feu"
+    duration: "25min"
+    content: """
+### Le problème que le pare-feu résout
+Un réseau relie des machines qui n'ont pas toutes le même niveau de confiance : les postes des élèves, les serveurs de la vie scolaire, la box vers Internet, le Wi-Fi invités. Sans contrôle, n'importe quelle machine peut joindre n'importe quel service de n'importe quelle autre. Une seule machine infectée peut alors scanner et attaquer tout le reste.
+
+Un **pare-feu** (firewall) est un équipement ou un logiciel placé sur le chemin des paquets, qui applique une **politique de filtrage** : une liste de règles qui disent quels **flux** sont autorisés et lesquels sont bloqués. Un flux se décrit par qui parle à qui, avec quel protocole et sur quel port : « les postes du VLAN 10 peuvent joindre le serveur web 192.168.30.10 en TCP 443 ».
+
+### Les zones de confiance
+On découpe le réseau en **zones** (segments) de même niveau de confiance, et le pare-feu se place entre elles :
+
+```text
+            Internet (zone non fiable)
+                   │
+            ┌──────┴──────┐
+            │  pare-feu   │───── DMZ (serveurs exposés : web, messagerie)
+            └──────┬──────┘
+         ┌─────────┼──────────┐
+       LAN       serveurs    invités
+     (postes)    internes    (Wi-Fi)
+```
+
+Le principe de base est celui du **moindre privilège** : chaque zone n'obtient que les flux dont elle a besoin pour travailler. Tout le reste est interdit. C'est le modèle de la **liste blanche** (« tout ce qui n'est pas explicitement autorisé est interdit »), recommandé par l'ANSSI.
+
+### Les différents types de pare-feu
+| Type | Où il se place | Ce qu'il voit | Exemple |
+|---|---|---|---|
+| Pare-feu réseau | entre deux zones, sur le chemin du trafic | les paquets qui traversent (couches 3 et 4) | pfSense, OPNsense, Stormshield, un routeur Linux avec nftables |
+| Pare-feu d'hôte | sur la machine elle-même | le trafic qui entre et sort de cette machine | nftables ou ufw sur un serveur Debian, pare-feu Windows Defender |
+| Pare-feu applicatif web (WAF) | devant une application web | le contenu HTTP (URL, paramètres) | ModSecurity, services de reverse proxy |
+
+Les deux premiers sont complémentaires : le pare-feu réseau protège les frontières entre zones, le pare-feu d'hôte protège chaque machine même contre ses voisines dans la même zone. On parle de **défense en profondeur** : plusieurs barrières indépendantes valent mieux qu'une seule.
+
+Ce cours traite des pare-feu réseau et d'hôte, qui filtrent sur les en-têtes IP, TCP, UDP et ICMP. Les pare-feu dits « de nouvelle génération » ajoutent l'identification des applications et des utilisateurs, mais reposent sur les mêmes bases.
+
+### Ce qu'un pare-feu ne fait pas
+• Il ne corrige pas une application vulnérable : si le port 443 du serveur web est ouvert à Internet, une faille dans le site reste exploitable à travers ce port.
+• Il ne voit pas le contenu chiffré (HTTPS, SSH) sans dispositif spécial de déchiffrement.
+• Il ne protège pas contre ce qui ne passe pas par lui : une clé USB, un poste branché directement sur la box, un flux entre deux machines du même segment (sans pare-feu d'hôte).
+• Il ne remplace ni les mises à jour, ni les mots de passe robustes, ni la sauvegarde.
+
+### Le vocabulaire des actions
+• **Accepter** (accept, allow, pass) : le paquet continue son chemin.
+• **Jeter** (drop, block) : le paquet est supprimé sans rien dire à l'émetteur, qui attend jusqu'à l'expiration de son délai (timeout).
+• **Rejeter** (reject) : le paquet est supprimé et le pare-feu renvoie un refus (TCP RST ou message ICMP « port injoignable »). L'émetteur sait tout de suite que c'est bloqué.
+• **Journaliser** (log) : écrire une trace du paquet, en plus de la décision.
+
+Sur l'interface tournée vers Internet, on préfère jeter (on ne donne aucune information à un scanner). Sur les réseaux internes, rejeter fait gagner du temps : l'application échoue tout de suite au lieu de rester bloquée. C'est la recommandation de la documentation pfSense.
+
+### À toi de jouer
+1. Le lycée a trois réseaux : postes des élèves (VLAN 20), serveurs de la vie scolaire (VLAN 30), Wi-Fi invités (VLAN 90). Pour chacun des besoins suivants, dis s'il faut l'autoriser et précise le flux (source, destination, protocole, port) : a) les élèves consultent des sites web ; b) les invités accèdent au partage de fichiers SMB du serveur de la vie scolaire ; c) les élèves utilisent l'ENT hébergé sur le serveur 192.168.30.10 en HTTPS.
+2. Sur ta machine Debian, vérifie si un pare-feu d'hôte est actif : `sudo nft list ruleset`. Sur Windows, ouvre PowerShell en administrateur et tape `Get-NetFirewallProfile | Format-Table Name, Enabled`. Note ce que tu observes.
+3. Un collègue affirme : « on a un pare-feu, donc le serveur web exposé à Internet est protégé ». Donne deux raisons pour lesquelles cette phrase est fausse.
+
+### Correction
+1. a) Autorisé : source VLAN 20, destination Internet, TCP 80 et 443 (et la résolution DNS vers le résolveur interne en UDP/TCP 53). b) Interdit : SMB (TCP 445) n'a aucune raison d'être accessible depuis le Wi-Fi invités ; le réseau invités ne doit joindre qu'Internet. c) Autorisé : source VLAN 20, destination 192.168.30.10, TCP 443, et rien d'autre vers ce serveur.
+2. Sur une Debian 12 fraîchement installée, `nft list ruleset` n'affiche souvent rien : aucune règle, donc tout est accepté. Sur Windows, les trois profils (Domain, Private, Public) affichent normalement `Enabled : True`. Si un profil est à `False`, le pare-feu est désactivé pour les réseaux de ce type.
+3. Le pare-feu laisse justement passer le port 443 vers ce serveur : une faille de l'application web (injection, mot de passe faible sur l'interface d'administration) reste exploitable par ce chemin autorisé. Et le pare-feu ne voit pas le contenu chiffré en HTTPS. Il faut aussi mettre à jour le serveur, durcir l'application et isoler le serveur dans une DMZ pour limiter les dégâts s'il est compromis.
+"""
+
+    quiz {
+      pick: 5
+      question "Qu’est-ce qu’une politique de filtrage ?" {
+        - "la liste des adresses IP attribuées par le serveur DHCP"
+        + "l’ensemble ordonné des règles qui disent quels flux sont autorisés ou bloqués"
+        - "le choix du protocole de routage entre deux zones"
+        - "la configuration du chiffrement des connexions VPN"
+        explanation: "Une politique de filtrage est la liste des règles appliquées par le pare-feu. Chaque règle décrit un flux (source, destination, protocole, port) et une action. Le DHCP, le routage et le VPN sont d'autres fonctions, même si un équipement peut les cumuler."
+      }
+      question "Que signifie le modèle de la liste blanche ?" {
+        - "tout est autorisé sauf ce qui figure dans une liste d’interdictions"
+        + "tout ce qui n’est pas explicitement autorisé est interdit"
+        - "seuls les sites web d’une liste sont accessibles en HTTP"
+        - "les adresses IP de la liste sont exemptées de journalisation"
+        explanation: "En liste blanche, on n'écrit que des autorisations, et une interdiction finale bloque tout le reste. C'est le modèle recommandé par l'ANSSI. Le modèle inverse (liste noire) oublie toujours un cas."
+      }
+      question "Quelle est la différence entre jeter (drop) et rejeter (reject) un paquet ?" {
+        - "drop journalise le paquet, reject ne le journalise pas"
+        + "drop supprime sans répondre, reject supprime et renvoie un refus à l’émetteur"
+        - "drop ne concerne que l’UDP, reject que le TCP"
+        - "il n’y a aucune différence visible pour l’émetteur"
+        explanation: "Avec drop, l'émetteur ne reçoit rien et attend l'expiration de son délai. Avec reject, il reçoit un TCP RST ou un ICMP de type port injoignable et échoue immédiatement. La journalisation est une action séparée."
+      }
+      question "Sur l’interface tournée vers Internet, quelle action est en général préférée pour les paquets bloqués ?" {
+        - "reject, pour prévenir poliment les scanners"
+        + "drop, pour ne donner aucune information à l’extérieur"
+        - "accept avec journalisation"
+        - "redirection vers un serveur interne"
+        explanation: "Sur le WAN, jeter silencieusement ne révèle rien et ne génère pas de trafic de réponse. Sur les réseaux internes, reject est souvent préférable pour que les applications échouent vite."
+      }
+      question "Quel type de pare-feu protège un serveur contre une autre machine du même VLAN ?" {
+        - "le pare-feu réseau placé entre le VLAN et Internet"
+        + "le pare-feu d’hôte installé sur le serveur"
+        - "le pare-feu applicatif web placé devant le site"
+        - "aucun, c’est impossible dans un même VLAN"
+        explanation: "Le trafic entre deux machines du même VLAN ne traverse pas le pare-feu réseau. Seul un pare-feu d'hôte (nftables, ufw, pare-feu Windows) peut le filtrer. C'est l'intérêt de la défense en profondeur."
+      }
+      question "Le port TCP 443 du serveur web est ouvert à Internet. Que ne peut pas faire le pare-feu réseau ?" {
+        - "bloquer les autres ports du serveur"
+        - "limiter l’accès à ce serveur depuis le LAN"
+        + "empêcher l’exploitation d’une faille du site web à travers ce port autorisé"
+        - "journaliser les connexions entrantes"
+        explanation: "Un pare-feu réseau filtre sur les en-têtes (adresses, ports) : tout ce qui passe par le port autorisé arrive à l'application, y compris une attaque. Il faut aussi mettre à jour et durcir l'application, ou ajouter un WAF."
+      }
+      question "Qu’est-ce que la défense en profondeur ?" {
+        - "placer le pare-feu le plus loin possible d’Internet"
+        - "utiliser un seul pare-feu très puissant"
+        + "superposer plusieurs protections indépendantes pour qu’une seule défaillance ne suffise pas"
+        - "chiffrer toutes les communications internes"
+        explanation: "Pare-feu réseau, pare-feu d'hôte, mises à jour, comptes à moindre privilège, sauvegardes : chaque couche couvre les failles des autres. Le chiffrement est une couche possible parmi d'autres."
+      }
+      question "Pourquoi une DMZ est-elle une zone à part ?" {
+        - "parce que les serveurs y ont des adresses publiques obligatoirement"
+        + "parce que ses serveurs exposés à Internet sont les plus susceptibles d’être compromis"
+        - "parce que le Wi-Fi n’y fonctionne pas"
+        - "parce qu’elle remplace le pare-feu d’hôte"
+        explanation: "Un serveur accessible depuis Internet reçoit des attaques en permanence. En le plaçant dans une zone séparée, on empêche qu'une compromission donne un accès direct au LAN. Les adresses publiques n'y sont pas obligatoires grâce au NAT."
+      }
+      question "Un pare-feu réseau classique de couches 3 et 4 prend ses décisions à partir de quoi ?" {
+        - "du contenu des pages web consultées"
+        + "des adresses IP, du protocole et des ports des paquets"
+        - "du nom de l’utilisateur connecté sur le poste"
+        - "des adresses MAC uniquement"
+        explanation: "Il lit les en-têtes IP (adresses, protocole) et TCP/UDP (ports, drapeaux). Lire le contenu HTTP est le travail d'un WAF ; identifier l'utilisateur est une fonction ajoutée par certains pare-feu de nouvelle génération."
+      }
+      question "Pourquoi le Wi-Fi invités doit-il être une zone séparée du LAN ?" {
+        - "pour que les invités aient un meilleur débit"
+        + "parce que les appareils des invités ne sont pas maîtrisés et ne doivent joindre qu’Internet"
+        - "parce que le Wi-Fi ne peut pas transporter de TCP"
+        - "pour pouvoir y désactiver le DHCP"
+        explanation: "Les appareils personnels peuvent être infectés ou mal configurés. Le réseau invités n'a donc besoin que d'Internet (et d'un DNS) ; tout accès au LAN ou aux serveurs doit être interdit."
+      }
+      question "Un poste reçoit immédiatement « Connection refused » en essayant de joindre un port. Laquelle de ces explications est possible ?" {
+        - "un pare-feu jette (drop) silencieusement le paquet"
+        + "un pare-feu rejette (reject) le paquet, ou aucun service n’écoute sur ce port"
+        - "le câble réseau est débranché"
+        - "le serveur DNS ne répond pas"
+        explanation: "Un refus immédiat signifie qu'une réponse est revenue : soit un reject du pare-feu, soit un RST du système parce qu'aucun programme n'écoute. Un drop donnerait un délai dépassé (timeout), pas un refus."
+      }
+      question "Lequel de ces dispositifs est un pare-feu d’hôte ?" {
+        - "une appliance pfSense entre le LAN et Internet"
+        - "un commutateur avec des VLAN"
+        + "le pare-feu Windows Defender d’un poste de travail"
+        - "un routeur de la box Internet"
+        explanation: "Le pare-feu Windows Defender filtre le trafic de la machine sur laquelle il tourne. pfSense et la box sont des pare-feu réseau ; un commutateur sépare les VLAN mais ne filtre pas les flux entre eux."
+      }
+    }
+  }
+
+  module "etat-sans-etat" {
+    title: "Chapitre 2 : filtrage sans état et avec état"
+    duration: "35min"
+    content: """
+### Un paquet ne voyage jamais seul
+Quand un poste ouvre une page web, il n'envoie pas un seul paquet. TCP commence par une poignée de main en trois temps (three-way handshake) :
+
+```text
+poste 192.168.20.15:51234                 serveur 203.0.113.10:443
+        │ ── SYN ─────────────────────────────▶ │
+        │ ◀──────────────────────── SYN, ACK ── │
+        │ ── ACK ─────────────────────────────▶ │
+        │ ◀═════════ données dans les deux sens ═▶│
+```
+
+Le port source du poste (`51234`) est un **port éphémère**, choisi au hasard dans une plage : `32768` à `60999` par défaut sous Linux (`/proc/sys/net/ipv4/ip_local_port_range`), `49152` à `65535` sous Windows, qui suit la plage recommandée par l'IANA. Le serveur répond depuis son port `443` vers ce port éphémère.
+
+Pour que la connexion marche, le pare-feu doit laisser passer **l'aller et le retour**. Toute la question est : comment autoriser le retour sans ouvrir la porte à n'importe quoi ?
+
+### Le filtrage sans état (stateless)
+Un filtre **sans état** examine chaque paquet isolément, sans mémoire de ce qui précède. Pour laisser passer le retour, il faut une deuxième règle :
+
+| N° | Source | Port src | Destination | Port dst | Proto | Action |
+|---|---|---|---|---|---|---|
+| 1 | 192.168.20.0/24 | tous | Internet | 443 | TCP | accepter |
+| 2 | Internet | 443 | 192.168.20.0/24 | tous | TCP | accepter |
+
+La règle 2 est dangereuse : n'importe quelle machine d'Internet qui choisit `443` comme port **source** peut envoyer des paquets vers tous les ports des postes. On peut la restreindre aux paquets qui portent le drapeau ACK (c'est le mot-clé `established` des listes de contrôle d'accès Cisco), mais un attaquant peut fabriquer un paquet avec ACK. Pour UDP, il n'y a même pas de drapeau.
+
+Le filtrage sans état reste utile quand il faut aller très vite ou n'a pas besoin de finesse : listes de contrôle d'accès (ACL) d'un routeur ou d'un commutateur, blocage grossier d'un réseau entier.
+
+### Le filtrage avec état (stateful)
+Un pare-feu **avec état** tient une **table des connexions** (state table). Quand le premier paquet d'un flux est accepté par une règle, il crée une entrée (adresses, ports, protocole). Les paquets suivants et les réponses sont reconnus comme faisant partie de cette connexion et acceptés sans relire toute la politique.
+
+Sous Linux, c'est le module **conntrack** de Netfilter qui fait ce suivi. Chaque paquet reçoit un **état** :
+
+| État | Signification |
+|---|---|
+| `new` | premier paquet d'une connexion que le pare-feu ne connaît pas encore |
+| `established` | paquet d'une connexion déjà vue dans les deux sens |
+| `related` | paquet lié à une connexion existante sans en faire partie : message ICMP d'erreur, connexion de données FTP |
+| `invalid` | paquet qui ne correspond à aucun état cohérent (ACK sans connexion, en-tête incohérent) : à jeter |
+| `untracked` | paquet exclu volontairement du suivi |
+
+Avec un pare-feu avec état, la politique s'écrit simplement :
+
+```text
+1. accepter tout paquet established ou related
+2. jeter tout paquet invalid
+3. accepter new de 192.168.20.0/24 vers Internet en TCP 443
+4. (politique par défaut) jeter le reste
+```
+
+La règle 1 laisse passer toutes les réponses, mais **seulement** pour les connexions ouvertes par une règle autorisée. Un paquet venu d'Internet qui prétend être une réponse sans connexion correspondante sera `invalid` ou `new`, donc jeté.
+
+### Et l'UDP, qui n'a pas de connexion ?
+UDP n'a ni poignée de main ni fin de connexion. Le pare-feu crée quand même une entrée quand il voit passer un premier datagramme autorisé (par exemple une requête DNS vers `9.9.9.9:53`) et accepte la réponse qui revient de `9.9.9.9:53` vers le même port source. L'entrée expire après un délai d'inactivité (une trentaine de secondes par défaut sous Linux pour un échange UDP simple). Même chose pour ICMP : la réponse à un `ping` (echo reply) est reconnue grâce à l'identifiant de la requête.
+
+### Voir la table des états
+Sous Linux, installe l'outil `conntrack` (paquet `conntrack`) :
+
+```bash
+sudo apt install conntrack
+sudo conntrack -L | head -n 5
+```
+
+Exemple de ligne :
+
+```text
+tcp      6 431999 ESTABLISHED src=192.168.20.15 dst=203.0.113.10 sport=51234 dport=443 src=203.0.113.10 dst=192.168.20.15 sport=443 dport=51234 [ASSURED] mark=0 use=1
+```
+
+On lit : protocole TCP (numéro 6), secondes restantes avant expiration, état TCP, puis le sens aller et le sens retour attendu. Sur pfSense, la même table se consulte dans Diagnostics > States.
+
+### Le cas des protocoles à plusieurs connexions
+Certains protocoles anciens ouvrent une deuxième connexion dont le port est annoncé dans la première (FTP actif et passif, SIP). Le pare-feu doit lire le contenu pour la reconnaître comme `related` : c'est le rôle des **assistants** (helpers) de conntrack, comme `nf_conntrack_ftp`. Sur les noyaux récents, ils ne sont plus attachés automatiquement : il faut les activer explicitement dans les règles. En pratique, préfère SFTP (une seule connexion SSH, port 22) à FTP.
+
+### Limites du suivi d'état
+• La table a une taille limitée (`net.netfilter.nf_conntrack_max` sous Linux) : une inondation de paquets SYN peut la remplir et faire refuser les connexions légitimes.
+• Quand on recharge des règles, les connexions déjà établies restent acceptées par la règle `established` : couper un flux en cours peut demander de vider l'entrée (`conntrack -D`).
+
+### À toi de jouer
+1. Un poste `192.168.20.15` interroge le résolveur `192.168.10.10` en UDP 53. Écris les règles nécessaires avec un filtre **sans état** (deux règles), puis avec un filtre **avec état**. Laquelle des deux versions accepte un datagramme venant de `192.168.10.10:53` alors que le poste n'a rien demandé ?
+2. Sur ta Debian, installe `conntrack`, lance `curl -sI https://example.com` puis immédiatement `sudo conntrack -L -p tcp --dport 443`. Repère l'état et les deux sens de la connexion.
+3. Un paquet TCP avec seulement le drapeau ACK arrive d'Internet vers le port 22 d'un serveur, sans connexion correspondante dans la table. Quel état conntrack lui attribue-t-il, et que doit en faire la politique ?
+
+### Correction
+1. Sans état : règle 1, accepter UDP de `192.168.20.15` (port quelconque) vers `192.168.10.10` port 53 ; règle 2, accepter UDP de `192.168.10.10` port 53 vers `192.168.20.15` (port quelconque). Avec état : accepter `established,related`, puis accepter `new` en UDP de `192.168.20.15` vers `192.168.10.10` port 53. Seule la version sans état accepte un datagramme non sollicité venant du port 53 : la règle 2 ne vérifie pas qu'une question a été posée. La version avec état le classe `new` dans le sens serveur vers poste, qu'aucune règle n'autorise.
+2. Tu dois voir une ligne `tcp 6 ... ESTABLISHED src=<ton IP> dst=<IP de example.com> sport=<port éphémère> dport=443 src=<IP de example.com> dst=<ton IP> sport=443 dport=<port éphémère> ...`. Si la commande ne montre rien, la connexion est déjà fermée : l'état est passé à `TIME_WAIT` puis l'entrée a expiré. Relance `curl` et la commande plus vite, ou ouvre une connexion qui dure (`ssh`).
+3. Le paquet n'appartient à aucune connexion connue et n'est pas un début de connexion valide. Avec le réglage par défaut de Linux (`net.netfilter.nf_conntrack_tcp_loose = 1`), conntrack le classe `new`, pour pouvoir reprendre des connexions ouvertes avant le démarrage du suivi ; avec ce réglage à `0`, il le classe `invalid`. Dans tous les cas, la politique doit le jeter : règle `ct state invalid drop`, puis aucune règle n'autorise un `new` vers le port 22 depuis Internet.
+"""
+
+    codeblock "bash" {
+      title: "Observer le suivi des connexions sous Linux"
+      code: """
+sudo apt install conntrack
+# toutes les connexions suivies, en continu
+sudo conntrack -E
+# seulement les connexions TCP vers le port 443
+sudo conntrack -L -p tcp --dport 443
+# nombre d'entrées et taille maximale de la table
+sudo sysctl net.netfilter.nf_conntrack_count net.netfilter.nf_conntrack_max
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Que fait un pare-feu sans état ?" {
+        - "il garde en mémoire chaque connexion pour reconnaître les réponses"
+        + "il examine chaque paquet isolément, sans mémoire des paquets précédents"
+        - "il ne filtre que l’UDP"
+        - "il refuse systématiquement toutes les réponses"
+        explanation: "Sans état, chaque paquet est comparé aux règles indépendamment. Pour laisser passer les réponses, il faut des règles explicites pour le sens retour, souvent trop larges."
+      }
+      question "Quel est le danger d’une règle sans état « accepter tout paquet TCP venant du port source 443 » ?" {
+        - "elle bloque les réponses HTTPS légitimes"
+        + "n’importe quelle machine qui choisit 443 comme port source peut joindre tous les ports internes"
+        - "elle ralentit fortement le pare-feu"
+        - "elle empêche la résolution DNS"
+        explanation: "Le port source est choisi par l'émetteur : un attaquant peut prendre 443 et traverser cette règle vers n'importe quel port. Un pare-feu avec état n'accepte que les réponses à des connexions réellement ouvertes."
+      }
+      question "Dans conntrack, quel état reçoit le premier paquet SYN d’une nouvelle connexion ?" {
+        - "established"
+        - "related"
+        + "new"
+        - "invalid"
+        explanation: "Le premier paquet d'un flux inconnu est new. Il devient established quand le trafic a été vu dans les deux sens. related désigne un paquet lié à une connexion existante, comme une erreur ICMP."
+      }
+      question "Un message ICMP « destination injoignable » renvoyé à propos d’une connexion TCP en cours est classé comment par conntrack ?" {
+        - "new"
+        + "related"
+        - "invalid"
+        - "untracked"
+        explanation: "Il ne fait pas partie de la connexion TCP elle-même mais s'y rapporte : c'est related. C'est pourquoi on écrit toujours established,related ensemble dans la première règle."
+      }
+      question "Que doit-on faire des paquets dans l’état invalid ?" {
+        - "les accepter pour ne pas casser les connexions"
+        + "les jeter"
+        - "les rediriger vers le port 80"
+        - "les marquer untracked"
+        explanation: "Un paquet invalid ne correspond à aucun état cohérent : il est soit corrompu, soit fabriqué. La bonne pratique est ct state invalid drop, juste après la règle established,related."
+      }
+      question "Quelle est la plage de ports éphémères par défaut sous Linux ?" {
+        - "1 à 1023"
+        - "1024 à 4999"
+        + "32768 à 60999"
+        - "49152 à 65535"
+        explanation: "Linux utilise 32768 à 60999 par défaut (ip_local_port_range). 49152 à 65535 est la plage recommandée par l'IANA et utilisée par Windows ; 1 à 1023 sont les ports bien connus."
+      }
+      question "Comment un pare-feu avec état gère-t-il les réponses UDP, alors qu’UDP n’a pas de connexion ?" {
+        - "il ne peut pas : il faut toujours une règle sans état pour le retour"
+        + "il crée une entrée au premier datagramme autorisé et accepte la réponse correspondante jusqu’à expiration"
+        - "il convertit l’UDP en TCP"
+        - "il accepte tout l’UDP entrant"
+        explanation: "conntrack crée une pseudo-connexion à partir des adresses et ports, et accepte le datagramme retour qui correspond. L'entrée expire après un délai d'inactivité."
+      }
+      question "Quelle commande affiche la table des connexions suivies sous Linux ?" {
+        - "nft list states"
+        + "conntrack -L"
+        - "ss -s"
+        - "iptables -L states"
+        explanation: "conntrack -L (paquet conntrack) liste les entrées. ss affiche les sockets de la machine elle-même, pas ce que suit le pare-feu ; les deux autres commandes n'existent pas sous cette forme."
+      }
+      question "Pourquoi FTP pose-t-il problème à un pare-feu avec état ?" {
+        - "FTP n’utilise que l’UDP"
+        + "il ouvre une deuxième connexion de données dont le port est annoncé dans la première"
+        - "FTP chiffre toujours ses connexions"
+        - "FTP n’utilise aucun port fixe"
+        explanation: "La connexion de contrôle (port 21) annonce le port de la connexion de données. Il faut un assistant (nf_conntrack_ftp) pour la reconnaître comme related. SFTP évite ce problème en passant tout par une seule connexion SSH."
+      }
+      question "Pourquoi la règle « accepter established,related » est-elle placée en premier ?" {
+        - "parce qu’elle doit bloquer les connexions établies"
+        + "parce qu’elle traite l’essentiel du trafic tout de suite, sans parcourir toute la politique"
+        - "parce que nftables refuse toute autre position"
+        - "parce qu’elle remplace la politique par défaut"
+        explanation: "La grande majorité des paquets appartient à des connexions déjà acceptées. Les traiter en tête évite de relire toutes les règles à chaque paquet. Ce n'est pas obligatoire syntaxiquement, mais c'est la pratique standard."
+      }
+      question "Une attaque inonde le pare-feu de paquets SYN depuis des milliers d’adresses. Quelle ressource risque d’être saturée ?" {
+        - "la plage de ports éphémères du serveur DNS"
+        + "la table des connexions suivies (conntrack)"
+        - "la table ARP du commutateur"
+        - "le fichier de journalisation de ufw"
+        explanation: "Chaque SYN accepté crée une entrée. Quand la table atteint nf_conntrack_max, les nouvelles connexions sont refusées, y compris les légitimes. On surveille nf_conntrack_count et on limite le débit des nouvelles connexions."
+      }
+      question "Tu retires une règle qui autorisait SSH, mais une session SSH déjà ouverte continue de fonctionner. Pourquoi ?" {
+        - "la règle n’a pas été retirée"
+        + "la session est established et reste acceptée par la règle established,related"
+        - "SSH contourne toujours le pare-feu"
+        - "le pare-feu ne filtre pas le port 22"
+        explanation: "Les paquets d'une connexion déjà établie sont acceptés par la règle d'état, sans repasser par la règle supprimée. Pour couper la session, il faut supprimer l'entrée avec conntrack -D ou attendre sa fermeture."
+      }
+    }
+  }
+
+  module "regles-ordre" {
+    title: "Chapitre 3 : écrire des règles, ordre et politique par défaut"
+    duration: "35min"
+    content: """
+### Les critères d'une règle
+Une règle de filtrage associe des **critères** (ce qu'on reconnaît dans le paquet) à une **action**. Les critères courants :
+
+| Critère | Exemples | Remarque |
+|---|---|---|
+| Interface et sens | entrée sur `eth1`, sortie vers le WAN | sur quelle carte arrive ou part le paquet |
+| Adresse source | `192.168.20.0/24`, un hôte, un groupe d'adresses | qui ouvre la connexion |
+| Adresse destination | `192.168.30.10`, `any` | qui la reçoit |
+| Protocole | TCP, UDP, ICMP, ICMPv6 | numéro de protocole IP (6, 17, 1, 58) |
+| Port destination | `443`, `53`, plage `8000-8080` | le service visé |
+| Port source | rarement utile | choisi au hasard par le client |
+| État | `new`, `established`, `related` | pare-feu avec état seulement |
+
+L'action est accepter, jeter, rejeter, éventuellement journaliser. Une bonne règle est **la plus étroite possible** : un hôte plutôt qu'un réseau, un port plutôt qu'une plage, et pas de `any` quand une valeur précise est connue. L'ANSSI recommande d'éviter `any` dans les règles d'autorisation.
+
+### Les ports à connaître
+| Service | Protocole et port |
+|---|---|
+| SSH, SFTP | TCP 22 |
+| DNS | UDP et TCP 53 |
+| DHCP | UDP 67 (serveur) et 68 (client) |
+| HTTP / HTTPS | TCP 80 / TCP 443 (et UDP 443 pour HTTP/3) |
+| NTP | UDP 123 |
+| SMTP / soumission / IMAPS | TCP 25 / TCP 587 / TCP 993 |
+| LDAP / LDAPS / Kerberos | TCP et UDP 389 / TCP 636 / TCP et UDP 88 |
+| SMB (partage Windows) | TCP 445 |
+| RDP (Bureau à distance) | TCP 3389 (et UDP 3389) |
+| Syslog | UDP 514 |
+| SNMP | UDP 161 (requêtes) et 162 (traps) |
+
+### L'ordre des règles : la première qui correspond gagne
+Sur la plupart des pare-feu (nftables dans une chaîne, iptables, ufw, pfSense, Stormshield, ACL Cisco), les règles sont lues **de haut en bas** et la **première règle qui correspond** décide (first match). Les suivantes ne sont pas consultées.
+
+Exemple de politique pour le serveur `192.168.30.10` :
+
+| N° | Source | Destination | Proto/port | Action |
+|---|---|---|---|---|
+| 1 | 192.168.20.0/24 | 192.168.30.10 | TCP 443 | accepter |
+| 2 | 192.168.20.0/24 | 192.168.30.0/24 | tous | jeter |
+| 3 | 192.168.20.66 | 192.168.30.10 | TCP 22 | accepter |
+
+La règle 3 ne sert à rien : le poste `192.168.20.66` est dans `192.168.20.0/24`, donc son paquet SSH est déjà jeté par la règle 2. On dit que la règle 3 est **masquée** (shadowed). La correction : placer les règles les plus précises **avant** les règles générales, donc la règle 3 avant la règle 2.
+
+Attention, deux exceptions à connaître :
+• le **pare-feu Windows** ne fonctionne pas par ordre : quand plusieurs règles correspondent, une règle de **blocage explicite l'emporte** sur une règle d'autorisation ;
+• dans nftables, une règle qui ne fait que **journaliser** ou **compter** ne termine pas l'évaluation : le paquet continue vers les règles suivantes.
+
+### La politique par défaut
+Que se passe-t-il pour un paquet qui ne correspond à **aucune** règle ? C'est la **politique par défaut** (default policy) qui décide :
+• **refus par défaut** (default deny) : tout ce qui n'est pas autorisé est bloqué. C'est le modèle de la liste blanche, à utiliser partout ;
+• **autorisation par défaut** (default allow) : tout ce qui n'est pas interdit passe. Pratique, mais chaque oubli est une faille.
+
+Dans nftables, c'est `policy drop` sur la chaîne ; dans iptables, `iptables -P INPUT DROP` ; dans ufw, `ufw default deny incoming` ; sur pfSense, une règle de refus implicite en fin de liste. L'ANSSI recommande de ne pas compter seulement sur ce refus implicite, et d'écrire une **règle finale explicite** d'interdiction **avec journalisation**, pour garder une trace de ce qui est bloqué.
+
+### Entrée, sortie, transit
+Sur une machine Linux, Netfilter distingue trois situations :
+• le paquet est **destiné à la machine** : chaîne `input` ;
+• le paquet est **émis par la machine** : chaîne `output` ;
+• le paquet **traverse** la machine qui fait routeur : chaîne `forward`.
+
+Un pare-feu d'hôte travaille surtout sur `input` (et parfois `output`) ; un pare-feu réseau sous Linux travaille sur `forward`. Le filtrage en **sortie** (egress filtering) est souvent oublié : pourtant, interdire à un serveur de se connecter à n'importe quoi sur Internet empêche un logiciel malveillant d'appeler son serveur de commande ou d'envoyer des données.
+
+### La matrice de flux
+Avant d'écrire la moindre règle, on dresse une **matrice de flux** : un tableau qui liste chaque flux autorisé, avec sa justification. C'est le document de référence, celui qu'on relit lors d'une revue.
+
+| Source | Destination | Service | Justification | Demandeur, date |
+|---|---|---|---|---|
+| LAN 192.168.20.0/24 | résolveur 192.168.10.10 | DNS UDP/TCP 53 | résolution de noms | réseau, 2026-09 |
+| LAN | Internet | HTTP, HTTPS | navigation | direction, 2026-09 |
+| admin 192.168.99.5 | serveurs 192.168.30.0/24 | SSH TCP 22 | administration | réseau, 2026-09 |
+
+### Avertissement : ne te coupe pas la branche
+Appliquer une politique `drop` sur `input` d'un serveur administré à distance **sans avoir autorisé SSH avant** coupe ta propre session. Avant toute modification à distance : garde un accès console (hyperviseur, iLO, écran), ajoute d'abord la règle SSH, et teste dans une seconde session avant de fermer la première.
+
+### À toi de jouer
+Voici la politique d'entrée (dans l'ordre) d'un serveur `192.168.30.20`, avec une politique par défaut `drop` :
+
+```text
+1. accepter established,related
+2. accepter TCP 22 depuis 192.168.99.0/24
+3. jeter tout depuis 192.168.20.0/24
+4. accepter TCP 443 depuis 192.168.0.0/16
+5. accepter ICMP echo-request depuis 192.168.99.0/24
+```
+
+1. Que devient : a) une connexion HTTPS depuis `192.168.20.15` ; b) un `ping` depuis `192.168.99.5` ; c) un SSH depuis `192.168.10.4` ; d) une connexion HTTPS depuis `192.168.10.4` ?
+2. Les élèves (`192.168.20.0/24`) doivent pouvoir joindre le serveur en HTTPS. Propose la modification minimale.
+3. Rédige la ligne de la matrice de flux correspondant à la règle 2.
+
+### Correction
+1. a) Jetée par la règle 3 : la règle 4 n'est jamais atteinte pour ce réseau. b) Acceptée par la règle 5 (aucune règle avant ne jette `192.168.99.0/24`). c) Aucune règle ne correspond (la règle 2 ne concerne que `192.168.99.0/24`) : politique par défaut, jetée. d) Acceptée par la règle 4, car `192.168.10.4` est dans `192.168.0.0/16`.
+2. Ajouter avant la règle 3 une règle « accepter TCP 443 depuis 192.168.20.0/24 », ou déplacer la règle 4 avant la règle 3. La première solution est plus lisible : elle garde l'intention de la règle 3 (le réseau des élèves n'a droit qu'à HTTPS).
+3. Source : réseau d'administration `192.168.99.0/24` ; destination : serveur `192.168.30.20` ; service : SSH TCP 22 ; justification : administration du serveur ; demandeur et date : responsable réseau, date de la demande. Mieux encore : limiter la source au seul poste d'administration plutôt qu'au réseau entier.
+"""
+
+    quiz {
+      pick: 5
+      question "Sur un pare-feu qui applique la règle de la première correspondance, que se passe-t-il quand un paquet correspond à la règle 2 ?" {
+        - "le pare-feu lit toutes les règles et applique la plus restrictive"
+        + "l’action de la règle 2 est appliquée et les règles suivantes ne sont pas lues"
+        - "l’action de la dernière règle correspondante est appliquée"
+        - "le paquet est journalisé puis jeté"
+        explanation: "En first match, la première règle qui correspond décide. C'est le fonctionnement de nftables (dans une chaîne), iptables, ufw et pfSense. Le pare-feu Windows fait exception : un blocage explicite l'emporte."
+      }
+      question "Qu’est-ce qu’une règle masquée (shadowed) ?" {
+        - "une règle désactivée temporairement"
+        + "une règle qui ne s’applique jamais parce qu’une règle placée avant capture déjà tous ses paquets"
+        - "une règle qui ne journalise pas"
+        - "une règle cachée à l’administrateur"
+        explanation: "Si une règle générale placée plus haut correspond déjà à tous les paquets d'une règle plus précise, celle-ci n'est jamais atteinte. On corrige en mettant les règles précises avant les générales."
+      }
+      question "Quelle politique par défaut correspond au modèle de la liste blanche ?" {
+        - "accepter tout ce qui ne correspond à aucune règle"
+        + "bloquer tout ce qui ne correspond à aucune règle"
+        - "journaliser sans bloquer"
+        - "rediriger vers le serveur DNS"
+        explanation: "En liste blanche, seules les règles d'autorisation laissent passer quelque chose ; le reste est bloqué par la politique par défaut, idéalement doublée d'une règle finale explicite journalisée."
+      }
+      question "Pourquoi l’ANSSI recommande-t-elle une règle finale explicite d’interdiction avec journalisation ?" {
+        - "parce que la politique par défaut est toujours accept"
+        + "pour garder une trace des flux bloqués et rendre la politique lisible"
+        - "parce que les pare-feu ne savent pas bloquer sans règle"
+        - "pour accélérer le traitement des paquets"
+        explanation: "Le refus implicite ne laisse souvent aucune trace. Une règle finale journalisée permet de voir ce qui est bloqué, de repérer des attaques et de diagnostiquer un flux légitime oublié."
+      }
+      question "Un poste 192.168.20.66 est concerné par « 1. jeter tout depuis 192.168.20.0/24 » puis « 2. accepter TCP 22 depuis 192.168.20.66 ». Son SSH passe-t-il ?" {
+        - "oui, car la règle 2 est plus précise"
+        + "non, la règle 1 le jette avant que la règle 2 soit lue"
+        - "oui, car les règles d’autorisation passent toujours en premier"
+        - "cela dépend de l’heure"
+        explanation: "En first match, la précision n'entre pas en compte : seul l'ordre compte. Il faut placer la règle 2 avant la règle 1."
+      }
+      question "Sur une machine Linux qui route entre deux réseaux, quelle chaîne voit les paquets qui la traversent ?" {
+        - "input"
+        - "output"
+        + "forward"
+        - "postrouting seulement"
+        explanation: "forward traite les paquets qui ne sont ni destinés à la machine ni émis par elle. input concerne les paquets qui lui sont destinés, output ceux qu'elle émet."
+      }
+      question "Quel est l’intérêt du filtrage en sortie (egress) sur un serveur ?" {
+        - "accélérer les téléchargements de mises à jour"
+        + "empêcher un programme malveillant de contacter librement Internet"
+        - "remplacer le filtrage en entrée"
+        - "éviter d’utiliser un pare-feu avec état"
+        explanation: "Un serveur n'a besoin de joindre que quelques destinations (dépôts de mise à jour, DNS, NTP). Bloquer le reste gêne l'exfiltration de données et les connexions vers un serveur de commande."
+      }
+      question "Quel port faut-il ouvrir pour le partage de fichiers Windows (SMB) moderne ?" {
+        - "UDP 137"
+        - "TCP 139"
+        + "TCP 445"
+        - "TCP 3389"
+        explanation: "SMB moderne passe directement sur TCP 445. 137 et 139 appartiennent à l'ancien NetBIOS ; 3389 est le Bureau à distance (RDP)."
+      }
+      question "Pour qu’un client résolve tous les noms de façon fiable, quel flux DNS faut-il autoriser ?" {
+        - "UDP 53 seulement"
+        - "TCP 53 seulement"
+        + "UDP et TCP 53"
+        - "TCP 853 seulement"
+        explanation: "Les questions passent en UDP, mais les réponses tronquées sont reposées en TCP. Bloquer le TCP 53 crée des pannes sur les réponses volumineuses seulement. 853 est DNS over TLS, une variante."
+      }
+      question "Quelle règle respecte le mieux le principe du moindre privilège ?" {
+        - "accepter tout depuis 192.168.0.0/16 vers 192.168.30.0/24"
+        - "accepter TCP de any vers 192.168.30.10"
+        + "accepter TCP 22 depuis 192.168.99.5 vers 192.168.30.10"
+        - "accepter TCP 1-65535 depuis 192.168.99.0/24 vers any"
+        explanation: "Une source précise, une destination précise et un seul port : c'est la règle la plus étroite. Les autres ouvrent des réseaux ou des ports entiers sans nécessité."
+      }
+      question "Tu administres un serveur en SSH à distance et tu passes la chaîne input en policy drop sans autre règle. Que se passe-t-il ?" {
+        - "rien, SSH est toujours autorisé"
+        + "les nouveaux paquets vers le serveur sont jetés et tu risques de perdre l’accès"
+        - "seul le trafic sortant est bloqué"
+        - "le serveur redémarre"
+        explanation: "Sans règle established,related ni règle SSH, tout le trafic entrant est jeté, y compris ta session. Il faut autoriser SSH d'abord et garder un accès console."
+      }
+      question "À quoi sert une matrice de flux ?" {
+        - "à mesurer le débit de chaque flux"
+        + "à lister et justifier chaque flux autorisé avant d’écrire les règles"
+        - "à remplacer la table des connexions du pare-feu"
+        - "à attribuer des adresses IP aux zones"
+        explanation: "La matrice de flux est le document de référence : source, destination, service, justification, demandeur et date. Elle permet de revoir la politique et de supprimer les règles devenues inutiles."
+      }
+      question "Dans nftables, une règle qui contient seulement « log prefix » et pas de verdict :" {
+        - "jette le paquet après l’avoir journalisé"
+        + "journalise le paquet puis laisse l’évaluation continuer avec les règles suivantes"
+        - "accepte le paquet après l’avoir journalisé"
+        - "est refusée par nft"
+        explanation: "log n'est pas un verdict : le paquet continue son chemin dans la chaîne. Pour journaliser puis jeter, on écrit log prefix ... drop sur la même règle."
+      }
+    }
+  }
+
+  module "nat-dmz" {
+    title: "Chapitre 4 : NAT et DMZ"
+    duration: "35min"
+    content: """
+### Pourquoi traduire les adresses
+Les réseaux internes utilisent des **adresses privées** (RFC 1918) : `10.0.0.0/8`, `172.16.0.0/12` et `192.168.0.0/16`. Ces adresses ne sont pas routées sur Internet. Pour qu'un poste `192.168.20.15` puisse consulter un site, le routeur de sortie remplace l'adresse source privée par son adresse publique : c'est la **traduction d'adresses** (NAT, Network Address Translation).
+
+La forme la plus courante, décrite dans la RFC 3022, traduit aussi les **ports** pour que des centaines de postes partagent une seule adresse publique : on l'appelle NAPT ou PAT (Port Address Translation). Le routeur garde une table de correspondance :
+
+| Interne | Publique (après NAT) | Destination |
+|---|---|---|
+| 192.168.20.15:51234 | 198.51.100.7:40001 | 203.0.113.10:443 |
+| 192.168.20.16:51234 | 198.51.100.7:40002 | 203.0.113.10:443 |
+
+Quand la réponse revient vers `198.51.100.7:40002`, le routeur sait qu'elle est pour `192.168.20.16:51234`.
+
+### Les deux grandes familles
+• **NAT source** (SNAT) : on modifie l'adresse **source** des paquets qui sortent. Le **masquerading** (masquerade) est un SNAT qui prend automatiquement l'adresse de l'interface de sortie : pratique quand cette adresse change (box, DHCP).
+• **NAT destination** (DNAT) : on modifie l'adresse **destination** des paquets qui entrent. C'est la **redirection de port** (port forwarding) : un paquet qui arrive sur `198.51.100.7:443` est renvoyé vers le serveur web interne `192.168.50.10:443`.
+
+Dans Netfilter, le DNAT se fait **avant** le routage (hook `prerouting`), le SNAT **après** (hook `postrouting`). Conséquence pratique : dans la chaîne `forward`, on écrit les règles de filtrage avec l'adresse **interne** du serveur (après DNAT) et l'adresse **privée** du poste (avant SNAT).
+
+### Le NAT n'est pas un pare-feu
+Le NAT donne un effet de protection : une connexion venue d'Internet ne peut pas atteindre un poste interne s'il n'existe aucune entrée dans la table. Mais :
+• ce n'est pas son rôle, et une redirection de port ouverte par erreur (ou automatiquement par UPnP) expose une machine ;
+• en IPv6, on n'utilise en général pas de NAT : chaque poste a une adresse publique, et seul le pare-feu avec état le protège ;
+• le NAT ne filtre rien en sortie.
+
+La règle : **toujours un vrai filtrage**, même derrière un NAT. Et désactive l'UPnP sur les routeurs d'un réseau professionnel.
+
+### La DMZ
+Une **DMZ** (zone démilitarisée) est un réseau à part où l'on place les serveurs **joignables depuis Internet** : site web, relais de messagerie, serveur VPN, reverse proxy. Comme ils sont exposés, ils sont les plus susceptibles d'être compromis. La DMZ sert à **contenir** cette compromission : depuis la DMZ, on ne doit pas pouvoir joindre le LAN.
+
+Deux architectures courantes :
+• **un pare-feu à trois interfaces** (WAN, LAN, DMZ) : simple et répandu dans les PME ;
+• **deux pare-feu en série** : un pare-feu externe entre Internet et la DMZ, un pare-feu interne entre la DMZ et le LAN. Plus robuste, surtout si les deux sont de marques différentes.
+
+Les flux typiques :
+
+| Source | Destination | Autorisé ? |
+|---|---|---|
+| Internet | serveur web DMZ, TCP 443 | oui (DNAT + règle) |
+| LAN | serveur web DMZ, TCP 443 | oui |
+| admin (LAN) | DMZ, SSH TCP 22 | oui, depuis le poste d'administration seulement |
+| DMZ | LAN, tout | **non** |
+| DMZ | Internet, mises à jour (HTTP/HTTPS vers les dépôts) | oui, de préférence restreint |
+| DMZ | base de données interne, TCP 3306 | seulement si indispensable, vers une seule machine |
+
+Le principe : les connexions sont ouvertes **vers** la DMZ, rarement **depuis** la DMZ.
+
+### Le problème du « hairpin »
+Un poste du LAN qui tape l'adresse publique `198.51.100.7` du site de l'entreprise arrive sur le routeur par l'intérieur. Sans configuration particulière (NAT reflection ou hairpin NAT), la redirection de port ne s'applique qu'au trafic venant du WAN, et le site ne s'affiche pas. La solution propre est un **DNS interne** qui donne directement l'adresse privée du serveur aux postes du LAN (« split DNS »).
+
+### Avec nftables
+Un routeur Linux qui fait sortir le LAN (`eth1`) par le WAN (`eth0`) et publie un serveur web de la DMZ :
+
+```text
+table ip nat {
+    chain prerouting {
+        type nat hook prerouting priority dstnat; policy accept;
+        iifname "eth0" tcp dport 443 dnat to 192.168.50.10
+    }
+    chain postrouting {
+        type nat hook postrouting priority srcnat; policy accept;
+        oifname "eth0" masquerade
+    }
+}
+```
+
+N'oublie pas d'activer le routage : `net.ipv4.ip_forward = 1` (dans un fichier de `/etc/sysctl.d/`), et d'autoriser le flux dans la chaîne `forward` de la table de filtrage : sans cela, le DNAT est fait mais le paquet est jeté.
+
+### À toi de jouer
+1. La PME a une seule adresse publique `198.51.100.7`, un LAN `192.168.20.0/24` et une DMZ `192.168.50.0/24` avec un serveur web `192.168.50.10` (TCP 443) et un relais de messagerie `192.168.50.20` (TCP 25). Écris la liste des traductions d'adresses nécessaires (type, interface, critères, nouvelle adresse).
+2. Écris ensuite les règles de la chaîne `forward` (dans l'ordre) qui vont avec, sous forme de tableau, avec une politique par défaut `drop`.
+3. Un collègue propose de « mettre le serveur web en DMZ » dans la box Internet, une option qui redirige tous les ports vers une machine. Qu'en penses-tu ?
+
+### Correction
+1. SNAT : masquerade en sortie sur l'interface WAN pour `192.168.20.0/24` et `192.168.50.0/24`. DNAT : entrée WAN, TCP 443 vers `192.168.50.10` ; entrée WAN, TCP 25 vers `192.168.50.20`.
+2. Ordre proposé : 1) accepter `established,related` ; 2) jeter `invalid` ; 3) accepter WAN vers `192.168.50.10` TCP 443 ; 4) accepter WAN vers `192.168.50.20` TCP 25 ; 5) accepter LAN vers `192.168.50.0/24` TCP 443 ; 6) accepter LAN vers Internet (sortie WAN) TCP 80 et 443, et DNS vers le résolveur ; 7) accepter DMZ vers Internet TCP 80 et 443 (mises à jour) et `192.168.50.20` vers Internet TCP 25 (envoi du courrier) ; 8) journaliser et jeter le reste. Aucune règle de la DMZ vers le LAN.
+3. L'option « DMZ » des box est trompeuse : elle redirige **tous** les ports non utilisés vers une seule machine, qui reste souvent dans le même réseau que les postes. C'est l'inverse d'une vraie DMZ : la machine est entièrement exposée et, si elle est compromise, l'attaquant est déjà dans le LAN. Il faut une redirection port par port et une zone séparée par un pare-feu.
+"""
+
+    quiz {
+      pick: 5
+      question "Laquelle de ces plages est une plage d’adresses privées de la RFC 1918 ?" {
+        - "100.64.0.0/10"
+        + "172.16.0.0/12"
+        - "169.254.0.0/16"
+        - "192.0.2.0/24"
+        explanation: "Les plages RFC 1918 sont 10.0.0.0/8, 172.16.0.0/12 et 192.168.0.0/16. 100.64.0.0/10 est réservé au NAT des opérateurs (RFC 6598), 169.254.0.0/16 aux adresses locales automatiques, 192.0.2.0/24 à la documentation."
+      }
+      question "Qu’est-ce que le masquerading ?" {
+        - "un DNAT qui cache le serveur interne"
+        + "un SNAT qui prend automatiquement l’adresse de l’interface de sortie"
+        - "le chiffrement des adresses IP"
+        - "le blocage des paquets ICMP"
+        explanation: "masquerade est une forme de NAT source : l'adresse source est remplacée par celle de l'interface de sortie, même si elle change. On l'utilise sur les liaisons à adresse dynamique."
+      }
+      question "Une redirection de port (port forwarding) est un exemple de :" {
+        - "NAT source"
+        + "NAT destination"
+        - "filtrage sans état"
+        - "VLAN"
+        explanation: "On modifie l'adresse (et parfois le port) de destination des paquets entrants pour les envoyer à un serveur interne : c'est du DNAT."
+      }
+      question "Dans Netfilter, à quel moment le DNAT est-il appliqué ?" {
+        - "dans postrouting, après la décision de routage"
+        + "dans prerouting, avant la décision de routage"
+        - "dans output uniquement"
+        - "après la chaîne forward"
+        explanation: "Le DNAT doit changer la destination avant que le noyau décide où envoyer le paquet : il se fait donc en prerouting (priorité dstnat). Le SNAT se fait en postrouting."
+      }
+      question "Après un DNAT de 198.51.100.7:443 vers 192.168.50.10:443, quelle adresse de destination écris-tu dans la règle forward ?" {
+        - "198.51.100.7"
+        + "192.168.50.10"
+        - "l’adresse de l’interface LAN"
+        - "aucune, le DNAT suffit"
+        explanation: "Le DNAT a lieu en prerouting, avant forward : la règle de filtrage voit déjà l'adresse interne. Sans règle forward, le paquet traduit serait jeté par la politique drop."
+      }
+      question "Pourquoi le NAT ne remplace-t-il pas un pare-feu ?" {
+        - "parce qu’il ne fonctionne qu’en IPv6"
+        + "parce qu’il ne filtre pas le trafic et qu’une redirection ouverte expose une machine"
+        - "parce qu’il chiffre les paquets"
+        - "parce qu’il empêche toute connexion sortante"
+        explanation: "Le NAT traduit des adresses ; l'effet de protection est un effet de bord. Une redirection mal pensée ou ouverte par UPnP expose une machine, et le NAT ne filtre rien en sortie. En IPv6, il n'y a généralement pas de NAT."
+      }
+      question "Quel flux doit être interdit dans une architecture DMZ correcte ?" {
+        - "Internet vers le serveur web de la DMZ en TCP 443"
+        - "LAN vers la DMZ en TCP 443"
+        + "DMZ vers le LAN, tous services"
+        - "poste d’administration vers la DMZ en SSH"
+        explanation: "Si un serveur de la DMZ est compromis, il ne doit pas pouvoir atteindre le LAN. Les connexions sont ouvertes vers la DMZ, rarement depuis elle, et jamais largement vers le LAN."
+      }
+      question "Que fait l’option « DMZ » d’une box Internet grand public ?" {
+        - "elle crée un réseau isolé avec son propre pare-feu"
+        + "elle redirige tous les ports entrants non utilisés vers une seule machine"
+        - "elle bloque tout le trafic entrant"
+        - "elle active le filtrage avec état"
+        explanation: "Malgré son nom, elle expose entièrement une machine qui reste souvent dans le même réseau que les autres. Ce n'est pas une DMZ au sens de la sécurité."
+      }
+      question "Les postes du LAN n’arrivent pas à ouvrir le site de l’entreprise par son adresse publique, alors que tout Internet y arrive. Quelle est la solution propre ?" {
+        - "désactiver le pare-feu"
+        + "un DNS interne qui donne l’adresse privée du serveur aux postes du LAN"
+        - "ajouter une deuxième adresse publique"
+        - "passer le serveur dans le LAN"
+        explanation: "C'est le problème du hairpin : la redirection ne s'applique qu'au trafic venant du WAN. Un split DNS évite le détour ; le NAT reflection est une autre solution, moins propre."
+      }
+      question "Tu as configuré un DNAT correct, mais les connexions depuis Internet échouent. Que vérifies-tu ?" {
+        - "le serveur DHCP du LAN"
+        + "l’activation du routage (ip_forward) et la règle d’autorisation dans la chaîne forward"
+        - "la présence d’un masquerade sur l’interface LAN"
+        - "la taille du fichier de journalisation"
+        explanation: "Le DNAT change seulement la destination. Il faut que le routage soit actif et que le filtrage de transit autorise le flux vers l'adresse interne."
+      }
+      question "Pourquoi faut-il désactiver l’UPnP sur le routeur d’un réseau professionnel ?" {
+        - "parce qu’il ralentit le DHCP"
+        + "parce qu’il permet à un logiciel interne d’ouvrir lui-même des redirections de port"
+        - "parce qu’il empêche le masquerading"
+        - "parce qu’il est incompatible avec IPv4"
+        explanation: "Avec UPnP, n'importe quel programme du LAN, y compris malveillant, peut demander au routeur d'ouvrir un port vers lui, sans contrôle de l'administrateur."
+      }
+      question "Quelle RFC décrit le NAT traditionnel avec traduction de ports (NAPT) ?" {
+        - "RFC 1918"
+        + "RFC 3022"
+        - "RFC 2131"
+        - "RFC 7766"
+        explanation: "La RFC 3022 décrit le NAT traditionnel, dont le NAPT. La RFC 1918 définit les plages privées, la RFC 2131 le DHCP, la RFC 7766 le DNS sur TCP."
+      }
+      question "Quel avantage apporte une architecture à deux pare-feu en série autour de la DMZ ?" {
+        - "elle supprime le besoin de NAT"
+        + "un attaquant doit franchir deux équipements distincts pour atteindre le LAN"
+        - "elle permet de se passer de règles en sortie"
+        - "elle double le débit Internet"
+        explanation: "Le pare-feu externe protège la DMZ, le pare-feu interne protège le LAN de la DMZ. Une faille dans l'un ne suffit pas, surtout s'ils sont de marques différentes."
+      }
+    }
+  }
+
+  module "nftables-iptables" {
+    title: "Chapitre 5 : Netfilter sous Linux avec nftables et iptables"
+    duration: "40min"
+    content: """
+### Netfilter, nftables, iptables : qui est qui ?
+Sous Linux, le filtrage est fait dans le noyau par **Netfilter**. On le pilote avec un outil en espace utilisateur :
+• **nftables** (commande `nft`) : l'outil actuel, par défaut depuis Debian 10. Une seule syntaxe pour IPv4, IPv6, ARP et ponts ;
+• **iptables** (et `ip6tables`) : l'outil historique, encore très présent dans la documentation et les scripts. Sur Debian 12, la commande `iptables` est en réalité `iptables-nft` : elle écrit des règles nftables avec l'ancienne syntaxe. `iptables -V` affiche `(nf_tables)` ;
+• **ufw**, **firewalld** : des interfaces simplifiées qui génèrent ces règles (chapitre 6).
+
+Règle d'or : **un seul outil par machine**. Mélanger des règles nftables écrites à la main, ufw et un script iptables donne une politique que plus personne ne comprend.
+
+### L'organisation de nftables
+• Une **table** appartient à une **famille** : `ip` (IPv4), `ip6` (IPv6), `inet` (les deux à la fois, le plus pratique), `arp`, `bridge`, `netdev`.
+• Une table contient des **chaînes**. Une chaîne de base (base chain) est accrochée à un point du parcours des paquets (**hook**) : `prerouting`, `input`, `forward`, `output`, `postrouting`. Elle a un **type** (`filter`, `nat`, `route`), une **priorité** (`filter` vaut 0, `dstnat` -100, `srcnat` 100 ; la plus petite passe en premier) et une **politique** (`accept`, valeur par défaut, ou `drop`).
+• Une chaîne contient des **règles**, lues dans l'ordre. Chaque règle a un **identifiant** (handle) stable, visible avec `nft -a`.
+
+### Une politique complète pour un serveur
+Sur Debian 12, la configuration se trouve dans `/etc/nftables.conf` et est chargée par le service `nftables` (souvent non activé par défaut). Voici une politique pour un serveur web `192.168.30.20` administré depuis le réseau `192.168.99.0/24` :
+
+```text
+#!/usr/sbin/nft -f
+flush ruleset
+
+table inet filtre {
+    chain input {
+        type filter hook input priority filter; policy drop;
+
+        ct state established,related accept
+        ct state invalid drop
+        iif "lo" accept
+
+        # ICMP : ping limité, et voisinage IPv6 indispensable
+        icmp type echo-request limit rate 5/second accept
+        icmpv6 type { echo-request, nd-neighbor-solicit, nd-neighbor-advert, nd-router-advert } accept
+
+        # administration
+        ip saddr 192.168.99.0/24 tcp dport 22 accept comment "SSH depuis le réseau admin"
+
+        # service public
+        tcp dport { 80, 443 } accept comment "site web"
+
+        # règle finale explicite, journalisée sans inonder les journaux
+        limit rate 5/minute log prefix "nft-input-drop: " level info
+        counter drop
+    }
+
+    chain forward {
+        type filter hook forward priority filter; policy drop;
+    }
+
+    chain output {
+        type filter hook output priority filter; policy accept;
+    }
+}
+```
+
+Points à remarquer :
+• `flush ruleset` en tête : recharger le fichier **remplace** toutes les règles, y compris celles ajoutées par d'autres logiciels (Docker, par exemple) ;
+• `{ 80, 443 }` est un **ensemble** (set) anonyme : une seule règle pour plusieurs ports ;
+• `comment` documente la règle directement dans la configuration ;
+• `limit rate 5/minute` avant `log` évite qu'un scan remplisse le disque de journaux ;
+• l'ICMPv6 de découverte des voisins ne doit jamais être bloqué en entrée, sinon IPv6 cesse de fonctionner.
+
+### Les commandes du quotidien
+```bash
+sudo nft -c -f /etc/nftables.conf      # vérifie la syntaxe sans rien appliquer
+sudo nft -f /etc/nftables.conf         # applique le fichier
+sudo systemctl enable --now nftables   # chargement au démarrage
+sudo nft list ruleset                  # affiche toutes les règles actives
+sudo nft -a list chain inet filtre input   # avec les handles
+```
+
+Modifier à chaud (non persistant tant que le fichier n'est pas mis à jour) :
+
+```bash
+# ajoute une règle AVANT la règle de handle 12
+sudo nft insert rule inet filtre input handle 12 ip saddr 192.168.30.40 tcp dport 3306 accept
+# supprime la règle de handle 15
+sudo nft delete rule inet filtre input handle 15
+```
+
+Piège classique : `nft add rule` ajoute **à la fin** de la chaîne. Si la dernière règle est `counter drop`, la nouvelle règle n'est jamais atteinte. Utilise `insert` avec un handle, ou modifie le fichier et recharge-le.
+
+### Le NAT avec nftables
+On reprend l'exemple du chapitre 4, en ajoutant une table `nat` :
+
+```text
+table ip nat {
+    chain prerouting {
+        type nat hook prerouting priority dstnat; policy accept;
+        iifname "eth0" tcp dport 443 dnat to 192.168.50.10
+    }
+    chain postrouting {
+        type nat hook postrouting priority srcnat; policy accept;
+        oifname "eth0" ip saddr { 192.168.20.0/24, 192.168.50.0/24 } masquerade
+    }
+}
+```
+
+### Les mêmes règles avec iptables
+Tu rencontreras encore iptables dans des scripts et des sujets d'examen. Équivalences :
+
+```bash
+sudo iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+sudo iptables -A INPUT -m conntrack --ctstate INVALID -j DROP
+sudo iptables -A INPUT -i lo -j ACCEPT
+sudo iptables -A INPUT -s 192.168.99.0/24 -p tcp --dport 22 -j ACCEPT
+sudo iptables -A INPUT -p tcp -m multiport --dports 80,443 -j ACCEPT
+sudo iptables -A INPUT -m limit --limit 5/min -j LOG --log-prefix "ipt-input-drop: "
+sudo iptables -P INPUT DROP          # la politique en DERNIER quand on travaille à distance
+sudo iptables -L INPUT -n -v --line-numbers
+sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 443 -j DNAT --to-destination 192.168.50.10
+```
+
+Différences à retenir : `-A` ajoute à la fin, `-I INPUT 3` insère en position 3, `-D INPUT 3` supprime la règle 3 ; IPv6 demande des règles séparées avec `ip6tables` ; les règles se perdent au redémarrage, sauf avec le paquet `iptables-persistent` (`iptables-save > /etc/iptables/rules.v4`). Pour convertir une règle, `iptables-translate` affiche son équivalent nftables.
+
+**Attention** : `iptables -F` (vider les règles) sur une chaîne dont la politique est `DROP` coupe immédiatement tout accès distant. Avant de vider, remets la politique à `ACCEPT`, ou travaille depuis la console.
+
+### Activer le routage
+Pour un pare-feu réseau sous Linux, le routage doit être activé :
+
+```bash
+echo 'net.ipv4.ip_forward = 1' | sudo tee /etc/sysctl.d/99-routage.conf
+sudo sysctl --system
+```
+
+### À toi de jouer
+Sur une VM Debian 12 **à laquelle tu as un accès console** :
+1. Écris `/etc/nftables.conf` pour un serveur qui accepte : SSH depuis `192.168.99.0/24` seulement, DNS (UDP et TCP 53) depuis `192.168.0.0/16`, ping limité, et rien d'autre en entrée. Vérifie la syntaxe, applique, active le service.
+2. Depuis une autre machine, teste le SSH et le DNS, puis un port non autorisé (`nc -zv <IP> 3306`). Que constates-tu pour ce dernier ?
+3. Ajoute à chaud une règle qui autorise HTTPS depuis `192.168.20.0/24`, au bon endroit. Puis rends-la permanente.
+
+### Correction
+1. Dans la chaîne `input` (politique `drop`) : `ct state established,related accept`, `ct state invalid drop`, `iif "lo" accept`, les deux lignes ICMP du modèle, `ip saddr 192.168.99.0/24 tcp dport 22 accept`, `ip saddr 192.168.0.0/16 meta l4proto { tcp, udp } th dport 53 accept`, puis `limit rate 5/minute log prefix "nft-input-drop: " level info` et `counter drop`. Ensuite : `sudo nft -c -f /etc/nftables.conf` (aucune sortie si tout va bien), `sudo nft -f /etc/nftables.conf`, `sudo systemctl enable --now nftables`. Variante plus lisible pour le DNS : deux règles, `udp dport 53 accept` et `tcp dport 53 accept`, chacune avec `ip saddr 192.168.0.0/16`.
+2. SSH et DNS répondent depuis les bons réseaux. Pour le port 3306, `nc -zv` reste bloqué puis affiche un dépassement de délai (`timed out`) : le paquet est jeté (`drop`), sans réponse. Sur le serveur, `sudo journalctl -k | grep nft-input-drop` montre la trace, et le compteur de la dernière règle augmente (`sudo nft list chain inet filtre input`).
+3. `sudo nft -a list chain inet filtre input` pour trouver le handle de la règle `limit rate ... log`, puis `sudo nft insert rule inet filtre input handle <ce handle> ip saddr 192.168.20.0/24 tcp dport 443 accept`. Pour la rendre permanente, ajoute la même ligne dans `/etc/nftables.conf` avant la règle de journalisation, vérifie avec `nft -c -f`, puis recharge. Ne fais pas `nft list ruleset > /etc/nftables.conf` sans relire : tu perdrais tes commentaires de fichier et tu y copierais les règles d'autres logiciels.
+"""
+
+    codeblock "bash" {
+      title: "Tester une configuration nftables sans risquer de perdre l'accès"
+      code: """
+# 1. vérifier la syntaxe
+sudo nft -c -f /etc/nftables.conf
+# 2. programmer un retour arrière dans 2 minutes (paquet at)
+echo 'nft flush ruleset' | sudo at now + 2 minutes
+# 3. appliquer
+sudo nft -f /etc/nftables.conf
+# 4. si l'accès SSH fonctionne toujours, annuler le retour arrière
+sudo atq
+sudo atrm <numéro de la tâche>
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Sur Debian 12, que se passe-t-il réellement quand tu tapes une commande iptables ?" {
+        - "elle pilote un ancien module du noyau indépendant de nftables"
+        + "iptables-nft traduit la commande en règles nftables dans le noyau"
+        - "elle échoue, iptables a été supprimé"
+        - "elle modifie seulement le fichier /etc/iptables/rules.v4"
+        explanation: "Depuis Debian 10, iptables est la variante iptables-nft : même syntaxe, mais les règles sont écrites dans nftables. iptables -V affiche (nf_tables)."
+      }
+      question "Quelle famille de tables nftables traite à la fois IPv4 et IPv6 ?" {
+        - "ip"
+        - "ip6"
+        + "inet"
+        - "netdev"
+        explanation: "La famille inet regroupe IPv4 et IPv6 dans les mêmes chaînes. ip ne voit que l'IPv4, ip6 que l'IPv6, netdev travaille au niveau de l'interface avant le routage."
+      }
+      question "Quelle commande vérifie un fichier nftables sans l’appliquer ?" {
+        - "nft list ruleset"
+        + "nft -c -f /etc/nftables.conf"
+        - "nft -a -f /etc/nftables.conf"
+        - "systemctl status nftables"
+        explanation: "L'option -c (--check) analyse les commandes sans rien modifier. -a affiche les handles dans une liste, list ruleset affiche les règles actives."
+      }
+      question "Tu ajoutes une règle avec « nft add rule inet filtre input tcp dport 8080 accept » et elle ne fonctionne pas. La chaîne se termine par « counter drop ». Pourquoi ?" {
+        - "le port 8080 est réservé"
+        + "add place la règle après counter drop, elle n’est jamais atteinte"
+        - "nft exige le protocole udp pour le port 8080"
+        - "il faut redémarrer le serveur"
+        explanation: "add ajoute en fin de chaîne. Le paquet est déjà jeté par counter drop. Il faut utiliser insert avec le handle de la règle de fin, ou modifier le fichier."
+      }
+      question "Dans une chaîne nftables, que vaut la politique si on ne précise rien ?" {
+        - "drop"
+        + "accept"
+        - "reject"
+        - "la chaîne est refusée"
+        explanation: "La politique par défaut d'une chaîne de base est accept. Il faut écrire explicitement policy drop pour obtenir un refus par défaut."
+      }
+      question "Pourquoi accepte-t-on certains types ICMPv6 (nd-neighbor-solicit, nd-neighbor-advert) en entrée ?" {
+        - "pour autoriser le ping uniquement"
+        + "parce que la découverte des voisins en dépend, sans elle IPv6 ne fonctionne plus"
+        - "parce qu’ils transportent le DNS"
+        - "parce que nftables les bloque même avec accept"
+        explanation: "En IPv6, la découverte des voisins (équivalent d'ARP) passe par ICMPv6. Les bloquer empêche de joindre la passerelle et les voisins."
+      }
+      question "Quelle commande iptables affiche les règles de INPUT avec leurs numéros et compteurs, sans résolution de noms ?" {
+        - "iptables -S"
+        + "iptables -L INPUT -n -v --line-numbers"
+        - "iptables -F INPUT"
+        - "iptables -P INPUT"
+        explanation: "-L liste, -n évite la résolution DNS, -v ajoute les compteurs, --line-numbers numérote. -F vide la chaîne, une action destructrice."
+      }
+      question "Tu administres un serveur à distance. Dans quel ordre dois-tu appliquer « iptables -P INPUT DROP » et la règle qui autorise SSH ?" {
+        + "d’abord la règle SSH et la règle established, puis la politique DROP"
+        - "d’abord la politique DROP, puis la règle SSH"
+        - "l’ordre n’a aucune importance"
+        - "la politique DROP n’a pas d’effet sur SSH"
+        explanation: "Si la politique passe à DROP avant que SSH soit autorisé, la session est coupée immédiatement. On autorise d'abord, on restreint ensuite."
+      }
+      question "Quel est le danger de « iptables -F » sur un serveur distant dont la politique INPUT est DROP ?" {
+        - "aucun, la politique est remise à ACCEPT"
+        + "toutes les règles d’autorisation disparaissent, la politique DROP coupe l’accès"
+        - "le serveur redémarre"
+        - "les règles NAT sont effacées mais pas le filtrage"
+        explanation: "-F vide les règles mais ne change pas la politique. Avec DROP, plus rien n'est accepté, ta session SSH comprise."
+      }
+      question "Quel rôle joue « limit rate 5/minute » placé avant « log » ?" {
+        - "il limite le débit de la connexion journalisée"
+        + "il limite le nombre de lignes de journal pour éviter d’inonder le disque"
+        - "il bloque les paquets au-delà de 5 par minute"
+        - "il retarde la journalisation de 5 minutes"
+        explanation: "La règle ne correspond (et donc ne journalise) que tant que le débit reste sous 5 paquets par minute. Le drop de la règle suivante s'applique dans tous les cas."
+      }
+      question "Comment rendre persistantes des règles iptables sur Debian ?" {
+        - "elles le sont toujours automatiquement"
+        + "avec le paquet iptables-persistent et iptables-save vers /etc/iptables/rules.v4"
+        - "avec iptables -P SAVE"
+        - "en les copiant dans /etc/hosts"
+        explanation: "Les règles iptables vivent en mémoire. iptables-persistent recharge /etc/iptables/rules.v4 (et rules.v6) au démarrage."
+      }
+      question "Pourquoi recharger un fichier qui commence par « flush ruleset » peut-il casser Docker ?" {
+        - "parce que Docker refuse nftables"
+        + "parce que flush ruleset supprime aussi les règles créées par Docker"
+        - "parce que Docker utilise le port 22"
+        - "parce que flush ruleset arrête le service Docker"
+        explanation: "flush ruleset vide toutes les tables, y compris celles des autres logiciels. Il faut redémarrer Docker ou ne vider que ses propres tables."
+      }
+      question "Quel outil convertit une règle iptables en syntaxe nftables ?" {
+        - "nft -c"
+        + "iptables-translate"
+        - "iptables-save"
+        - "nft monitor"
+        explanation: "iptables-translate affiche l'équivalent nftables d'une commande iptables. iptables-save exporte les règles actuelles, nft monitor affiche les événements."
+      }
+    }
+  }
+
+  module "ufw" {
+    title: "Chapitre 6 : ufw, le pare-feu simplifié de Debian et Ubuntu"
+    duration: "25min"
+    content: """
+### Pourquoi ufw
+**ufw** (Uncomplicated Firewall) est une interface qui génère des règles Netfilter à partir de commandes courtes. Il est installé (mais inactif) sur Ubuntu ; sur Debian, il s'installe avec `sudo apt install ufw`. Il convient très bien à un pare-feu d'hôte : un serveur, un poste Linux. Pour un routeur avec NAT et plusieurs zones, nftables directement ou une appliance comme pfSense sont plus adaptés.
+
+Comme pour nftables : n'utilise pas ufw en même temps que des règles nftables écrites à la main sur la même machine.
+
+### Configurer un serveur, dans le bon ordre
+```bash
+sudo apt install ufw
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow from 192.168.99.0/24 to any port 22 proto tcp
+sudo ufw allow 443/tcp
+sudo ufw enable
+```
+
+L'ordre compte : les règles d'autorisation, et surtout SSH, sont posées **avant** `ufw enable`. À l'activation, ufw prévient que la commande peut couper les connexions SSH existantes et demande confirmation.
+
+Vérification :
+
+```text
+$ sudo ufw status verbose
+Status: active
+Logging: on (low)
+Default: deny (incoming), allow (outgoing), disabled (routed)
+New profiles: skip
+
+To                         Action      From
+--                         ------      ----
+22/tcp                     ALLOW IN    192.168.99.0/24
+443/tcp                    ALLOW IN    Anywhere
+443/tcp (v6)               ALLOW IN    Anywhere (v6)
+```
+
+On lit les politiques par défaut (entrant, sortant, routé), le niveau de journalisation, puis les règles. ufw crée automatiquement la version IPv6 d'une règle sans adresse (si `IPV6=yes` dans `/etc/default/ufw`, la valeur par défaut). Le suivi d'état est intégré : ufw accepte déjà les réponses des connexions établies, tu n'as pas à l'écrire.
+
+### Les actions
+| Commande | Effet |
+|---|---|
+| `ufw allow 443/tcp` | accepte |
+| `ufw deny 3306/tcp` | jette (drop) |
+| `ufw reject 3306/tcp` | rejette avec une réponse |
+| `ufw limit ssh/tcp` | accepte, mais refuse une adresse qui ouvre 6 connexions ou plus en 30 secondes |
+| `ufw allow OpenSSH` | utilise un **profil d'application** (`ufw app list` les affiche) |
+
+### L'ordre des règles et leur suppression
+ufw applique, lui aussi, la **première règle qui correspond**. Les nouvelles règles sont ajoutées à la fin. Pour bloquer un poste précis malgré une autorisation plus large, il faut l'insérer avant :
+
+```text
+$ sudo ufw status numbered
+     To                         Action      From
+     --                         ------      ----
+[ 1] 22/tcp                     ALLOW IN    192.168.99.0/24
+[ 2] 443/tcp                    ALLOW IN    Anywhere
+[ 3] 443/tcp (v6)               ALLOW IN    Anywhere (v6)
+
+$ sudo ufw insert 2 deny from 192.168.20.66 to any port 443 proto tcp
+$ sudo ufw delete 4
+```
+
+Attention : après une insertion ou une suppression, les numéros changent. Relance toujours `ufw status numbered` avant un `ufw delete <n>`. On peut aussi supprimer par le texte de la règle : `sudo ufw delete allow 443/tcp`.
+
+### Journalisation
+`ufw logging low|medium|high|full` (ou `off`) règle le niveau. Au niveau `low` (par défaut), ufw journalise les paquets bloqués par la politique par défaut, avec une limite de débit, et les paquets des règles marquées `log`. Les lignes sont envoyées au journal du noyau : sur un système avec rsyslog (Ubuntu), dans `/var/log/ufw.log` ; sur Debian 12, qui n'installe plus rsyslog par défaut, avec `journalctl -k`.
+
+```text
+[UFW BLOCK] IN=ens18 OUT= MAC=... SRC=192.168.20.15 DST=192.168.30.20 LEN=60 TOS=0x00 PREC=0x00 TTL=63 ID=4242 DF PROTO=TCP SPT=51234 DPT=3306 WINDOW=64240 RES=0x00 SYN URGP=0
+```
+
+Champs utiles : `IN` (interface d'entrée), `SRC` et `DST` (adresses), `PROTO`, `SPT` et `DPT` (ports source et destination), `SYN` (début de connexion). Cette ligne se lit : « le poste 192.168.20.15 a essayé d'ouvrir une connexion vers le port 3306 (MySQL) du serveur, et ufw l'a bloquée ».
+
+### Ce que ufw cache
+• Les fichiers : règles de l'utilisateur dans `/etc/ufw/user.rules` et `user6.rules`, règles préalables (ICMP, DHCP, état) dans `/etc/ufw/before.rules`. On ne modifie `before.rules` que si on sait pourquoi.
+• Le trafic routé : désactivé par défaut (`disabled (routed)`). Les règles `ufw route allow ...` ne servent que si la machine route.
+• Docker publie ses ports avec ses propres règles, qui ne passent pas par les règles d'entrée de ufw : un conteneur lancé avec `-p 8080:80` peut être joignable malgré `ufw default deny incoming`. Vérifie toujours depuis une autre machine.
+
+### Remettre à zéro
+`sudo ufw reset` désactive ufw et supprime toutes les règles (une copie de sauvegarde des fichiers est conservée). À faire depuis la console, pas à distance sans précaution.
+
+### À toi de jouer
+Sur une VM Debian 12 avec un accès console :
+1. Installe ufw et configure : refus par défaut en entrée, SSH autorisé depuis ton réseau seulement, HTTP et HTTPS ouverts à tous, et SSH protégé contre les essais en rafale. Active, puis affiche l'état détaillé.
+2. Bloque le poste `192.168.20.66` sur HTTPS uniquement. Vérifie que la règle est bien placée avant l'autorisation générale.
+3. Depuis une autre machine, tente une connexion vers le port 3306. Retrouve la ligne correspondante dans les journaux et explique chaque champ important.
+
+### Correction
+1. `sudo apt install ufw`, `sudo ufw default deny incoming`, `sudo ufw default allow outgoing`, `sudo ufw limit from 192.168.99.0/24 to any port 22 proto tcp` (`limit` accepte la même syntaxe complète qu'`allow`), `sudo ufw allow 80/tcp`, `sudo ufw allow 443/tcp`, `sudo ufw enable`, puis `sudo ufw status verbose`. Le résultat attendu affiche `Default: deny (incoming), allow (outgoing), disabled (routed)` et des lignes `LIMIT IN` pour le port 22 et `ALLOW IN` pour 80 et 443.
+2. `sudo ufw status numbered` pour repérer le numéro de la règle `443/tcp ALLOW IN Anywhere` (par exemple 3), puis `sudo ufw insert 3 deny from 192.168.20.66 to any port 443 proto tcp`. Un nouveau `ufw status numbered` doit montrer la règle `DENY IN 192.168.20.66` juste au-dessus de l'autorisation. Si tu l'avais ajoutée avec `ufw deny ...` sans `insert`, elle serait en fin de liste et sans effet.
+3. `sudo journalctl -k | grep 'UFW BLOCK'` (ou `/var/log/ufw.log` sur Ubuntu). On y lit l'interface d'entrée (`IN=`), l'adresse du poste de test (`SRC=`), celle du serveur (`DST=`), `PROTO=TCP`, `DPT=3306` et le drapeau `SYN` : c'est une tentative d'ouverture de connexion bloquée par la politique par défaut.
+"""
+
+    quiz {
+      pick: 5
+      question "Quelle commande ufw pose le refus par défaut du trafic entrant ?" {
+        - "ufw deny all"
+        + "ufw default deny incoming"
+        - "ufw block incoming"
+        - "ufw policy drop"
+        explanation: "ufw default deny incoming fixe la politique par défaut en entrée. Les autres formes n'existent pas dans ufw."
+      }
+      question "Pourquoi faut-il autoriser SSH avant de lancer ufw enable sur un serveur distant ?" {
+        - "parce qu’ufw refuse de s’activer sans règle SSH"
+        + "parce qu’une fois activé avec refus par défaut, ufw bloque les nouvelles connexions SSH"
+        - "parce que ufw enable redémarre le serveur"
+        - "parce que SSH utilise l’UDP"
+        explanation: "Avec deny incoming, sans règle SSH, la prochaine connexion (ou la session si elle est coupée) est bloquée. ufw prévient d'ailleurs que la commande peut perturber les connexions SSH."
+      }
+      question "Que fait « ufw limit ssh/tcp » ?" {
+        - "il limite le débit de chaque session SSH"
+        + "il refuse une adresse qui ouvre 6 connexions ou plus en 30 secondes"
+        - "il limite SSH aux adresses du réseau local"
+        - "il désactive SSH après 30 secondes d’inactivité"
+        explanation: "limit accepte les connexions mais bloque une adresse source trop insistante. Utile contre les essais de mots de passe en rafale."
+      }
+      question "Dans la sortie « ufw status verbose », que signifie « disabled (routed) » ?" {
+        - "le serveur n’a pas de route par défaut"
+        + "le filtrage du trafic qui traverse la machine (routé) n’est pas géré par ufw"
+        - "toutes les connexions sortantes sont bloquées"
+        - "IPv6 est désactivé"
+        explanation: "C'est la politique du trafic routé (forward). Elle est désactivée par défaut, car la plupart des machines qui utilisent ufw ne routent pas."
+      }
+      question "Tu veux bloquer 192.168.20.66 alors qu’une règle autorise déjà 443/tcp depuis partout. Quelle commande est correcte ?" {
+        - "ufw deny from 192.168.20.66 to any port 443 proto tcp"
+        + "ufw insert 1 deny from 192.168.20.66 to any port 443 proto tcp"
+        - "ufw reject 443/tcp"
+        - "ufw delete 192.168.20.66"
+        explanation: "La règle de blocage doit être placée avant l'autorisation, car la première correspondance gagne. ufw deny sans insert ajoute la règle à la fin, où elle ne sert à rien."
+      }
+      question "Pourquoi relancer « ufw status numbered » avant chaque « ufw delete <n> » ?" {
+        - "parce que la commande delete l’exige"
+        + "parce que les numéros changent après chaque insertion ou suppression"
+        - "pour recharger les règles"
+        - "pour activer la journalisation"
+        explanation: "Les règles sont renumérotées. Supprimer de mémoire la règle 4 après une autre suppression peut retirer la mauvaise règle."
+      }
+      question "Sur Debian 12 sans rsyslog, où lis-tu les blocages journalisés par ufw ?" {
+        - "dans /etc/ufw/user.rules"
+        + "dans le journal du noyau, avec journalctl -k"
+        - "dans /var/log/apache2/error.log"
+        - "avec ufw show logs"
+        explanation: "ufw journalise via le noyau. Sur Ubuntu, rsyslog les copie dans /var/log/ufw.log ; sur Debian 12, qui n'installe plus rsyslog par défaut, on utilise journalctl -k."
+      }
+      question "Dans une ligne [UFW BLOCK], que désigne DPT=3306 ?" {
+        - "le numéro de la règle qui a bloqué"
+        + "le port de destination visé, ici MySQL"
+        - "le port source choisi par le client"
+        - "la durée du blocage en secondes"
+        explanation: "SPT est le port source, DPT le port de destination. 3306 est le port de MySQL et MariaDB."
+      }
+      question "Faut-il écrire une règle pour accepter les réponses des connexions établies avec ufw ?" {
+        - "oui, sinon aucune réponse ne revient"
+        + "non, ufw intègre déjà le suivi d’état"
+        - "oui, mais seulement pour l’UDP"
+        - "non, car ufw est un pare-feu sans état"
+        explanation: "Les règles préalables de ufw (before.rules) acceptent déjà le trafic established et related. Tu n'écris que les autorisations de nouvelles connexions."
+      }
+      question "Un conteneur Docker publié avec -p 8080:80 est joignable malgré ufw default deny incoming. Pourquoi ?" {
+        - "ufw ne filtre que l’UDP"
+        + "Docker crée ses propres règles de NAT et de transit, qui ne passent pas par les règles d’entrée de ufw"
+        - "le port 8080 est toujours ouvert sous Linux"
+        - "Docker désactive ufw au démarrage"
+        explanation: "Le trafic vers un conteneur est redirigé puis routé : il passe par forward et les chaînes de Docker, pas par les règles input de ufw. Il faut le vérifier depuis une autre machine."
+      }
+      question "Quelle différence entre « ufw deny » et « ufw reject » ?" {
+        - "deny journalise, reject non"
+        + "deny jette sans réponse, reject renvoie un refus à l’émetteur"
+        - "deny concerne l’entrée, reject la sortie"
+        - "aucune"
+        explanation: "deny correspond à drop : l'émetteur attend son délai. reject répond tout de suite par un refus."
+      }
+      question "Que fait « ufw reset » ?" {
+        - "il recharge les règles sans les modifier"
+        + "il désactive ufw et supprime toutes les règles"
+        - "il remet les compteurs à zéro"
+        - "il redémarre le serveur"
+        explanation: "ufw reset revient à l'état d'origine (avec une sauvegarde des fichiers). À faire avec précaution, de préférence depuis la console."
+      }
+    }
+  }
+
+  module "pare-feu-windows" {
+    title: "Chapitre 7 : le pare-feu Windows avec PowerShell et netsh"
+    duration: "35min"
+    content: """
+### Le pare-feu Windows Defender
+Windows 10, Windows 11 et Windows Server intègrent un pare-feu d'hôte avec état : le **pare-feu Windows Defender avec fonctions avancées de sécurité** (Windows Defender Firewall with Advanced Security). Il se gère de quatre façons :
+• la console graphique `wf.msc` ;
+• PowerShell, avec le module **NetSecurity** (`Get-NetFirewallRule`, `New-NetFirewallRule`...) ;
+• la commande `netsh advfirewall`, plus ancienne, toujours présente ;
+• les **stratégies de groupe** (GPO) dans un domaine Active Directory : Configuration ordinateur > Stratégies > Paramètres Windows > Paramètres de sécurité > Pare-feu Windows Defender avec fonctions avancées de sécurité.
+
+Toutes les commandes de ce chapitre se lancent dans une console **en administrateur**.
+
+### Les trois profils
+Windows applique un jeu de réglages différent selon le type de réseau auquel la carte est connectée :
+
+| Profil | Quand | Attitude attendue |
+|---|---|---|
+| Domaine (Domain) | la machine joint un contrôleur de son domaine AD | réseau de l'entreprise |
+| Privé (Private) | réseau déclaré de confiance par l'utilisateur | maison, petit bureau |
+| Public | tout autre réseau (par défaut pour un nouveau réseau) | Wi-Fi d'une gare, d'un hôtel : le plus strict |
+
+```powershell
+Get-NetConnectionProfile                    # quel profil pour quelle carte
+Set-NetConnectionProfile -InterfaceAlias "Ethernet" -NetworkCategory Private
+Get-NetFirewallProfile -PolicyStore ActiveStore | Format-Table Name, Enabled, DefaultInboundAction, DefaultOutboundAction
+```
+
+Par défaut, pour chaque profil : pare-feu **activé**, entrant **bloqué** sauf règle, sortant **autorisé** sauf règle. Remarque : sans `-PolicyStore ActiveStore`, `Get-NetFirewallProfile` affiche souvent `NotConfigured` pour les actions par défaut, ce qui veut dire « valeur par défaut de Windows », pas « aucun filtrage ».
+
+Une panne fréquente : une règle créée pour le profil Domaine alors que la carte est classée en Public. La règle existe, mais ne s'applique pas.
+
+### L'ordre des règles : pas de « première correspondance »
+Contrairement à nftables ou pfSense, les règles du pare-feu Windows **ne sont pas ordonnées**. Quand plusieurs règles correspondent à un paquet, Windows applique une priorité : une règle de **blocage explicite l'emporte** sur une règle d'autorisation (la seule exception concerne les règles de contournement authentifié par IPsec). Conséquence : pour bloquer un poste précis tout en autorisant son réseau, une règle `Block` suffit, quelle que soit sa position ; mais pour autoriser un poste dans un réseau bloqué par une règle `Block`, il faut réduire la règle de blocage.
+
+### Créer une règle avec PowerShell
+Autoriser le Bureau à distance seulement depuis le réseau d'administration, sur le profil Domaine :
+
+```powershell
+New-NetFirewallRule -DisplayName "RDP depuis admin" -Direction Inbound -Protocol TCP -LocalPort 3389 -RemoteAddress 192.168.99.0/24 -Action Allow -Profile Domain
+```
+
+Autres exemples :
+
+```powershell
+# autoriser le ping entrant (ICMPv4 type 8, echo request)
+New-NetFirewallRule -DisplayName "Ping entrant" -Direction Inbound -Protocol ICMPv4 -IcmpType 8 -Action Allow
+# bloquer un programme en sortie
+New-NetFirewallRule -DisplayName "Bloquer appli" -Direction Outbound -Program "C:\Outils\appli.exe" -Action Block
+# lire une règle et ses filtres
+Get-NetFirewallRule -DisplayName "RDP depuis admin" | Get-NetFirewallPortFilter
+Get-NetFirewallRule -DisplayName "RDP depuis admin" | Get-NetFirewallAddressFilter
+# modifier, désactiver, supprimer
+Set-NetFirewallRule -DisplayName "RDP depuis admin" -RemoteAddress 192.168.99.5
+Disable-NetFirewallRule -DisplayName "Ping entrant"
+Remove-NetFirewallRule -DisplayName "Bloquer appli"
+```
+
+`-RemoteAddress` accepte une adresse, une plage (`192.168.99.10-192.168.99.20`), un réseau en notation CIDR, ou des mots-clés comme `LocalSubnet`. Windows fournit aussi des groupes de règles prédéfinies (Bureau à distance, partage de fichiers et d'imprimantes) ; leurs noms d'affichage sont **traduits** dans la langue du système, ce qui compte quand on écrit un script pour un Windows en français.
+
+### Les mêmes opérations avec netsh
+```text
+netsh advfirewall show allprofiles
+netsh advfirewall firewall add rule name="RDP depuis admin" dir=in action=allow protocol=TCP localport=3389 remoteip=192.168.99.0/24 profile=domain
+netsh advfirewall firewall show rule name="RDP depuis admin"
+netsh advfirewall firewall delete rule name="RDP depuis admin"
+netsh advfirewall set allprofiles state on
+```
+
+Microsoft recommande `netsh advfirewall` plutôt que l'ancien contexte `netsh firewall`, et PowerShell pour les scripts récents.
+
+### Journaliser les rejets
+Par défaut, le pare-feu Windows ne journalise rien. Pour enregistrer les paquets bloqués :
+
+```powershell
+Set-NetFirewallProfile -Profile Domain,Private,Public -LogBlocked True -LogMaxSizeKilobytes 16384 -LogFileName "%SystemRoot%\System32\LogFiles\Firewall\pfirewall.log"
+```
+
+Ou avec netsh : `netsh advfirewall set allprofiles logging droppedconnections enable`. La taille maximale est de 4 096 Ko par défaut (32 767 Ko au plus). Le fichier commence par une ligne `#Fields:` qui donne l'ordre des colonnes : date, heure, action (`ALLOW` ou `DROP`), protocole, adresses et ports source et destination, puis des détails TCP et ICMP. Exemple :
+
+```text
+2026-11-26 10:14:03 DROP TCP 192.168.20.15 192.168.30.20 51234 3389 52 S 1203949811 0 64240 - - - RECEIVE
+```
+
+Le fichier se lit avec `Get-Content` (il faut une console administrateur) : `Get-Content $env:SystemRoot\System32\LogFiles\Firewall\pfirewall.log -Tail 20`.
+
+### Tester depuis un client Windows
+```powershell
+Test-NetConnection -ComputerName 192.168.30.20 -Port 3389
+```
+
+La ligne `TcpTestSucceeded : True` indique que la connexion TCP s'est ouverte ; `False` signale un blocage, un service arrêté ou un problème de route.
+
+### À toi de jouer
+Sur une machine Windows 10/11 ou Windows Server 2022 (machine de test) :
+1. Affiche le profil de ta carte réseau et les réglages effectifs des trois profils.
+2. Crée une règle qui autorise le ping entrant uniquement depuis ton réseau local, vérifie-la depuis une autre machine, puis désactive-la.
+3. Active la journalisation des paquets bloqués pour tous les profils. Depuis une autre machine, tente une connexion vers le port 445 ou 3389, puis retrouve la ligne correspondante dans le fichier journal.
+4. Un collègue a créé une règle « Allow » pour TCP 8080 depuis `192.168.20.0/24`, mais il existe aussi une règle « Block » pour TCP 8080 depuis toutes les adresses. Le service est-il joignable depuis `192.168.20.15` ?
+
+### Correction
+1. `Get-NetConnectionProfile` affiche `NetworkCategory : Private`, `Public` ou `DomainAuthenticated`. `Get-NetFirewallProfile -PolicyStore ActiveStore | Format-Table Name, Enabled, DefaultInboundAction, DefaultOutboundAction` doit montrer `True`, `Block`, `Allow` pour chaque profil sur une machine non modifiée.
+2. `New-NetFirewallRule -DisplayName "Ping LAN" -Direction Inbound -Protocol ICMPv4 -IcmpType 8 -RemoteAddress LocalSubnet -Action Allow`. Le `ping` depuis une machine du même réseau répond ; depuis un autre réseau, il reste sans réponse (délai dépassé). Puis `Disable-NetFirewallRule -DisplayName "Ping LAN"`.
+3. `Set-NetFirewallProfile -Profile Domain,Private,Public -LogBlocked True`, puis `Get-Content $env:SystemRoot\System32\LogFiles\Firewall\pfirewall.log -Tail 20`. On trouve une ligne `DROP TCP <IP du client> <IP de la machine> <port éphémère> 3389 ... RECEIVE`. Si rien n'apparaît, vérifie que le port n'est pas autorisé par une règle existante (le Bureau à distance ou le partage de fichiers peuvent être déjà ouverts).
+4. Non : dans le pare-feu Windows, un blocage explicite l'emporte sur une autorisation, quel que soit l'ordre de création. Il faut restreindre la règle « Block » (par exemple aux adresses hors de `192.168.20.0/24`) ou la supprimer.
+"""
+
+    quiz {
+      pick: 5
+      question "Quel profil Windows s’applique par défaut à un nouveau réseau inconnu ?" {
+        - "Domaine"
+        - "Privé"
+        + "Public"
+        - "Aucun, le pare-feu est désactivé"
+        explanation: "Un réseau inconnu est classé Public, le profil le plus strict. Le profil Domaine n'est choisi que si la machine joint un contrôleur de son domaine."
+      }
+      question "Quelles sont les actions par défaut d’un profil du pare-feu Windows non modifié ?" {
+        - "entrant autorisé, sortant bloqué"
+        + "entrant bloqué sauf règle, sortant autorisé sauf règle"
+        - "entrant et sortant bloqués"
+        - "entrant et sortant autorisés"
+        explanation: "La documentation Microsoft indique Block pour DefaultInboundAction et Allow pour DefaultOutboundAction quand on gère un ordinateur."
+      }
+      question "Deux règles correspondent au même paquet : une règle Allow et une règle Block. Que fait le pare-feu Windows ?" {
+        - "il applique la règle créée en premier"
+        - "il applique la règle la plus précise"
+        + "il bloque, car un blocage explicite l’emporte sur une autorisation"
+        - "il autorise, car les règles Allow sont prioritaires"
+        explanation: "Les règles Windows ne sont pas ordonnées. Un Block explicite gagne sur un Allow, sauf règle de contournement authentifié IPsec."
+      }
+      question "Quelle commande PowerShell crée une règle autorisant TCP 3389 depuis 192.168.99.0/24 ?" {
+        - "Add-FirewallPort -Port 3389 -From 192.168.99.0/24"
+        + "New-NetFirewallRule -DisplayName RDP -Direction Inbound -Protocol TCP -LocalPort 3389 -RemoteAddress 192.168.99.0/24 -Action Allow"
+        - "Set-NetFirewallProfile -AllowPort 3389"
+        - "New-NetFirewallRule -Port 3389 -Allow"
+        explanation: "New-NetFirewallRule prend la direction, le protocole, le port local, l'adresse distante et l'action. Les autres commandes ou paramètres n'existent pas sous cette forme."
+      }
+      question "Une règle d’autorisation existe pour le profil Domaine, mais le service reste injoignable. Get-NetConnectionProfile indique NetworkCategory : Public. Quelle est la cause ?" {
+        - "le service n’écoute pas"
+        + "la carte est classée en profil Public, la règle Domaine ne s’applique pas"
+        - "la règle doit être redémarrée"
+        - "le pare-feu Windows ne gère pas le profil Domaine"
+        explanation: "Une règle ne s'applique qu'aux profils qu'elle cible. Il faut corriger le classement du réseau (la machine doit joindre son domaine) ou étendre la règle aux bons profils."
+      }
+      question "Quel est le chemin par défaut du journal du pare-feu Windows ?" {
+        - "C:\\Windows\\Logs\\firewall.txt"
+        + "%SystemRoot%\\System32\\LogFiles\\Firewall\\pfirewall.log"
+        - "C:\\ProgramData\\Defender\\fw.log"
+        - "il n’existe pas de fichier, seulement l’Observateur d’événements"
+        explanation: "Le journal texte est pfirewall.log dans System32\\LogFiles\\Firewall. Il faut activer LogBlocked ou LogAllowed pour qu'il se remplisse."
+      }
+      question "Quelle commande netsh active la journalisation des connexions bloquées sur tous les profils ?" {
+        - "netsh firewall set logging on"
+        + "netsh advfirewall set allprofiles logging droppedconnections enable"
+        - "netsh advfirewall firewall log enable"
+        - "netsh advfirewall show logging"
+        explanation: "Dans le contexte advfirewall, set allprofiles logging droppedconnections enable active la trace des rejets. netsh firewall est l'ancien contexte, déconseillé."
+      }
+      question "Que signifie TcpTestSucceeded : False dans la sortie de Test-NetConnection ?" {
+        - "la machine distante n’existe pas dans le DNS"
+        + "la connexion TCP vers le port n’a pas pu s’ouvrir"
+        - "le ping a échoué mais le port est ouvert"
+        - "le test n’a pas été lancé en administrateur"
+        explanation: "Le test TCP a échoué : port bloqué par un pare-feu, service arrêté ou problème de routage. Il reste à trouver lequel, avec les journaux et une capture."
+      }
+      question "Pourquoi un script qui active un groupe de règles prédéfini par son nom d’affichage peut-il échouer sur un Windows en français ?" {
+        - "parce que les groupes n’existent qu’en anglais"
+        + "parce que les noms d’affichage des groupes sont traduits dans la langue du système"
+        - "parce que PowerShell n’accepte pas les accents"
+        - "parce que netsh est obligatoire en français"
+        explanation: "Les noms affichés comme Bureau à distance sont localisés. Un script écrit avec le nom anglais ne les trouve pas ; il faut utiliser le nom adapté ou le paramètre de groupe non traduit."
+      }
+      question "Sans -PolicyStore ActiveStore, Get-NetFirewallProfile affiche DefaultInboundAction : NotConfigured. Qu’est-ce que cela signifie ?" {
+        - "le pare-feu ne filtre plus rien en entrée"
+        + "aucune valeur explicite n’est posée, Windows applique son défaut (blocage en entrée)"
+        - "la machine n’a pas de carte réseau"
+        - "une GPO a désactivé le pare-feu"
+        explanation: "NotConfigured signifie que le réglage n'est pas défini dans ce magasin : la valeur par défaut s'applique. ActiveStore montre la valeur effective."
+      }
+      question "Quelle est la taille maximale par défaut du fichier journal du pare-feu Windows ?" {
+        - "1 024 Ko"
+        + "4 096 Ko"
+        - "32 767 Ko"
+        - "illimitée"
+        explanation: "La valeur par défaut est 4 096 Ko. On peut la monter jusqu'à 32 767 Ko avec -LogMaxSizeKilobytes ou netsh ... logging maxfilesize."
+      }
+      question "Comment déployer les mêmes règles de pare-feu sur les 200 postes d’un domaine Active Directory ?" {
+        - "en lançant netsh à la main sur chaque poste"
+        + "avec une stratégie de groupe (GPO) dans la section Pare-feu Windows Defender"
+        - "en copiant pfirewall.log sur chaque poste"
+        - "c’est impossible, les règles sont locales"
+        explanation: "Les GPO appliquent la même politique à tous les ordinateurs ciblés et la réappliquent régulièrement. C'est la méthode normale en entreprise."
+      }
+    }
+  }
+
+  module "pfsense-politique" {
+    title: "Chapitre 8 : pfSense et la politique de filtrage d'une petite entreprise"
+    duration: "40min"
+    content: """
+### Une appliance de pare-feu
+Dans une PME ou un lycée, le pare-feu réseau est souvent une **appliance** : un boîtier dédié ou une machine virtuelle avec un système spécialisé et une interface web. **pfSense** (édition libre pfSense CE) en est un exemple très répandu dans les formations : il repose sur FreeBSD et son filtre de paquets **pf**. **OPNsense**, issu de pfSense, fonctionne sur les mêmes principes. Les appliances commerciales (Stormshield, Fortinet, etc.) aussi.
+
+Une appliance regroupe : filtrage avec état, NAT, routage, DHCP, résolveur DNS, VPN, journaux, et une interface web pour tout configurer.
+
+### Interfaces et zones
+À l'installation, pfSense demande au moins deux interfaces : **WAN** (vers Internet) et **LAN** (réseau interne, `192.168.1.1/24` par défaut). On ajoute ensuite des interfaces **OPT** (cartes physiques ou VLAN) que l'on renomme : DMZ, INVITES, ADMIN. Chaque interface est une zone.
+
+### Les règles par défaut
+• Sur le **LAN** : une règle **anti-verrouillage** (anti-lockout) qui garantit l'accès à l'interface web depuis le LAN, et des règles « Default allow LAN to any » (IPv4 et IPv6) qui laissent le LAN sortir partout.
+• Sur le **WAN** : aucune règle d'autorisation, donc tout ce qui arrive d'Internet est bloqué ; les options « Block private networks » et « Block bogon networks » sont cochées par défaut.
+• Sur une **nouvelle interface OPT** : aucune règle, donc tout ce qui en vient est bloqué.
+
+La règle « LAN to any » est pratique pour démarrer, mais contraire au moindre privilège : dans une vraie politique, on la remplace par des règles précises.
+
+### Comment pfSense évalue les règles
+Trois principes, décrits dans la documentation de Netgate :
+1. Les règles sont attachées à l'interface **par laquelle le trafic entre** dans le pare-feu. Un flux du LAN vers la DMZ s'autorise dans l'onglet **LAN**, pas dans l'onglet DMZ. La réponse revient grâce à la table des états.
+2. Dans chaque onglet d'interface, les règles sont lues de haut en bas et la **première qui correspond** décide (les règles flottantes, Floating, suivent une logique à part).
+3. Ce qui ne correspond à aucune règle est **bloqué** par la règle de refus implicite.
+
+On construit les règles dans Firewall > Rules, onglet de l'interface. Les **alias** (Firewall > Aliases) donnent un nom à un groupe d'adresses ou de ports (`SRV_WEB`, `PORTS_WEB` = 80, 443) : les règles deviennent lisibles et une modification se fait à un seul endroit.
+
+### NAT dans pfSense
+• **NAT sortant** (Firewall > NAT > Outbound) : en mode automatique, pfSense fait du masquerading pour les réseaux internes vers le WAN.
+• **Redirection de port** (Firewall > NAT > Port Forward) : on choisit l'interface WAN, le protocole, le port public et l'adresse interne. pfSense peut créer automatiquement la règle de filtrage associée sur le WAN.
+
+### Une politique pour une PME de 20 postes
+Zones :
+
+| Zone | Réseau | Contenu |
+|---|---|---|
+| LAN | 192.168.10.0/24 | postes des salariés |
+| SERVEURS | 192.168.20.0/24 | contrôleur de domaine et DNS `192.168.20.10`, fichiers `192.168.20.11` |
+| DMZ | 192.168.50.0/24 | serveur web `192.168.50.10` |
+| INVITES | 192.168.90.0/24 | Wi-Fi des visiteurs |
+| ADMIN | 192.168.99.0/24 | poste d'administration `192.168.99.5` |
+
+L'ANSSI, dans sa note sur la définition d'une politique de filtrage, propose d'organiser les règles par catégories, dans cet ordre :
+1. les flux **autorisés vers le pare-feu** lui-même (administration depuis ADMIN, supervision), journalisés ;
+2. les flux **émis par le pare-feu** (vers le serveur de journaux, NTP, sauvegarde), journalisés ;
+3. l'**interdiction de tout autre accès au pare-feu**, journalisée ;
+4. les **flux métier** autorisés (la liste blanche) ;
+5. les règles « **antiparasites** » : des flux bruyants et sans intérêt qu'on bloque sans les journaliser (diffusions NetBIOS, par exemple) ;
+6. l'**interdiction finale** explicite, journalisée.
+
+La matrice de flux de la PME (catégorie 4) :
+
+| Interface d'entrée | Source | Destination | Service | Action |
+|---|---|---|---|---|
+| LAN | LAN | 192.168.20.10 | DNS 53, Kerberos 88, LDAP 389, SMB 445... (flux AD) | accepter |
+| LAN | LAN | 192.168.20.11 | SMB TCP 445 | accepter |
+| LAN | LAN | Internet | HTTP, HTTPS | accepter |
+| LAN | LAN | DMZ 192.168.50.10 | HTTPS | accepter |
+| SERVEURS | 192.168.20.10 | Internet | DNS 53 (résolution externe) | accepter |
+| SERVEURS | SERVEURS | Internet | HTTP, HTTPS (mises à jour) | accepter |
+| WAN | Internet | 192.168.50.10 (après redirection) | HTTPS | accepter |
+| DMZ | 192.168.50.10 | Internet | HTTP, HTTPS (mises à jour) | accepter |
+| INVITES | INVITES | 192.168.90.1 (pfSense) | DNS 53 | accepter |
+| INVITES | INVITES | réseaux privés (alias RFC 1918) | tout | bloquer |
+| INVITES | INVITES | Internet | HTTP, HTTPS | accepter |
+| ADMIN | 192.168.99.5 | tous les réseaux internes | SSH 22, RDP 3389, HTTPS 443 | accepter |
+
+Remarques :
+• les postes du LAN n'ont pas le droit d'utiliser un DNS externe : ils passent par le contrôleur de domaine, ce qui permet de journaliser et de filtrer les noms ;
+• aucune règle de la DMZ vers le LAN ou les SERVEURS ;
+• dans l'onglet INVITES, la règle de blocage vers les réseaux privés est placée **avant** l'autorisation vers Internet, sinon « Internet » (souvent écrit `any`) inclurait aussi les réseaux internes ;
+• chaque règle porte une description : date, raison, demandeur.
+
+### Faire vivre la politique
+Une politique se dégrade : on ajoute des règles « provisoires » qui restent, plus personne ne sait à quoi sert la règle 37. L'ANSSI recommande de documenter chaque règle, de prévoir une revue régulière et de supprimer les règles dont l'utilité n'est plus claire. Sur pfSense, exporte la configuration (Diagnostics > Backup & Restore) avant chaque changement important.
+
+### Les journaux et outils de pfSense
+• Status > System Logs > Firewall : les paquets bloqués par la règle par défaut (journalisés par défaut) et par les règles où l'option « Log » est cochée ;
+• Diagnostics > States : la table des états ;
+• Diagnostics > Packet Capture : une capture de trafic sur une interface, comme tcpdump ;
+• Diagnostics > Ping et Traceroute depuis le pare-feu.
+
+### À toi de jouer
+1. Dans ton labo pfSense (deux interfaces suffisent : WAN et LAN, plus une OPT si possible), remplace la règle « Default allow LAN to any » par trois règles : DNS vers pfSense, HTTP et HTTPS vers Internet, ICMP echo vers Internet. Teste depuis un poste du LAN : navigation, `ping 9.9.9.9`, puis `nc -zv 9.9.9.9 853` ou `Test-NetConnection 9.9.9.9 -Port 853`.
+2. Pour la PME décrite plus haut, un salarié demande à joindre depuis le LAN une imprimante placée dans le réseau INVITES. Que réponds-tu, et quelle solution proposes-tu ?
+3. Sur l'onglet INVITES, un stagiaire a écrit dans cet ordre : « 1. accepter INVITES vers any HTTP, HTTPS ; 2. bloquer INVITES vers alias RFC1918 ». Un invité peut-il ouvrir l'interface web HTTPS du serveur `192.168.20.11` ?
+
+### Correction
+1. Dans Firewall > Rules > LAN : désactiver (ou supprimer) les règles « Default allow LAN to any », en gardant la règle anti-verrouillage. Ajouter : source « LAN net », destination « LAN address », TCP/UDP 53, pass ; source « LAN net », destination any, TCP, ports 80 et 443 (alias `PORTS_WEB`), pass ; source « LAN net », destination any, ICMP echo request, pass. Appliquer. La navigation et le ping fonctionnent, la connexion vers le port 853 échoue : elle est bloquée par la règle implicite, visible dans Status > System Logs > Firewall.
+2. Une imprimante d'entreprise n'a rien à faire dans le réseau des invités, qui n'est pas maîtrisé. La bonne réponse n'est pas d'ouvrir un flux du LAN vers INVITES, mais de **déplacer l'imprimante** dans une zone interne (LAN ou un VLAN imprimantes) et d'autoriser seulement l'impression (par exemple IPP en TCP 631, ou TCP 9100) depuis le LAN.
+3. Oui : la règle 1 correspond (`any` inclut `192.168.20.11`) et accepte avant que la règle 2 ne soit lue. Il faut placer le blocage vers l'alias RFC 1918 en premier, puis l'autorisation vers Internet.
+"""
+
+    quiz {
+      pick: 5
+      question "Sur pfSense, dans quel onglet de règles autorise-t-on un flux qui va du LAN vers la DMZ ?" {
+        + "l’onglet LAN, car c’est l’interface par laquelle le trafic entre"
+        - "l’onglet DMZ, car c’est la destination"
+        - "les deux onglets obligatoirement"
+        - "l’onglet WAN"
+        explanation: "pfSense filtre à l'entrée des interfaces : un flux initié depuis le LAN s'autorise sur l'onglet LAN. La réponse revient grâce à la table des états."
+      }
+      question "Quelles règles pfSense crée-t-il sur l’interface LAN à l’installation ?" {
+        - "aucune, tout est bloqué"
+        + "une règle anti-verrouillage et des règles autorisant le LAN vers toute destination"
+        - "une règle bloquant tout le trafic sortant"
+        - "une redirection de port vers l’interface web"
+        explanation: "La règle anti-lockout garantit l'accès à l'interface web, et « Default allow LAN to any » laisse le LAN sortir partout, en IPv4 et en IPv6."
+      }
+      question "Tu crées une interface OPT pour la DMZ sans y ajouter de règle. Que se passe-t-il pour le trafic qui en vient ?" {
+        - "il est entièrement autorisé"
+        + "il est bloqué par la règle de refus implicite"
+        - "il est autorisé seulement vers Internet"
+        - "il est redirigé vers le LAN"
+        explanation: "Une nouvelle interface n'a aucune règle d'autorisation : tout ce qui y entre est bloqué. Il faut écrire les flux voulus."
+      }
+      question "À quoi servent les alias dans pfSense ?" {
+        - "à renommer les interfaces"
+        + "à nommer un groupe d’adresses ou de ports pour rendre les règles lisibles et faciles à modifier"
+        - "à créer des comptes administrateurs"
+        - "à remplacer les règles NAT"
+        explanation: "Un alias comme SRV_WEB ou PORTS_WEB se modifie à un seul endroit et clarifie les règles."
+      }
+      question "Sur l’onglet INVITES, pourquoi la règle de blocage vers les réseaux privés doit-elle précéder l’autorisation vers Internet ?" {
+        - "parce que pfSense lit les règles de bas en haut"
+        + "parce que la destination any de l’autorisation inclut aussi les réseaux internes"
+        - "parce que les blocages sont toujours prioritaires sur pfSense"
+        - "pour accélérer la navigation"
+        explanation: "En first match, une autorisation vers any placée en premier laisserait passer les invités vers le LAN et les serveurs. Le blocage doit être lu d'abord."
+      }
+      question "Selon le modèle de l’ANSSI, quelle catégorie de règles vient en premier ?" {
+        - "les flux métier des utilisateurs"
+        + "les flux autorisés vers le pare-feu lui-même, comme son administration"
+        - "l’interdiction finale"
+        - "les règles antiparasites"
+        explanation: "Le modèle commence par protéger le pare-feu : flux d'administration vers lui, flux qu'il émet, puis interdiction de tout autre accès au pare-feu. Viennent ensuite les flux métier, les antiparasites et l'interdiction finale."
+      }
+      question "Que sont les règles antiparasites dans le modèle de l’ANSSI ?" {
+        - "des règles qui bloquent les virus"
+        + "des blocages de flux bruyants et sans intérêt, volontairement non journalisés"
+        - "des règles qui autorisent les mises à jour"
+        - "des règles NAT"
+        explanation: "Certains flux (diffusions, découverte réseau) bloqués en permanence rempliraient les journaux. On les bloque sans les journaliser, juste avant l'interdiction finale."
+      }
+      question "Où consulte-t-on, sur pfSense, les paquets bloqués par la règle par défaut ?" {
+        - "Diagnostics > States"
+        + "Status > System Logs > Firewall"
+        - "Firewall > Aliases"
+        - "System > Package Manager"
+        explanation: "Le journal du pare-feu est dans Status > System Logs > Firewall. Diagnostics > States montre les connexions en cours."
+      }
+      question "Pourquoi interdire aux postes du LAN d’utiliser un DNS externe directement ?" {
+        - "parce que les DNS externes sont plus lents"
+        + "pour qu’ils passent par le résolveur interne, qui peut journaliser et filtrer les noms"
+        - "parce que le DNS externe ne fonctionne qu’en IPv6"
+        - "parce que pfSense ne sait pas router le port 53"
+        explanation: "Forcer le DNS interne garde la maîtrise de la résolution (journaux, filtrage, noms internes) et ferme un canal souvent utilisé par les logiciels malveillants."
+      }
+      question "Quelle est la règle de pfSense qui garantit l’accès à l’interface web depuis le LAN ?" {
+        - "la règle Block bogon networks"
+        + "la règle anti-verrouillage (anti-lockout)"
+        - "la règle de NAT sortant automatique"
+        - "la règle flottante par défaut"
+        explanation: "La règle anti-lockout évite de se couper l'accès à l'administration depuis le LAN par erreur."
+      }
+      question "Que fait le NAT sortant en mode automatique sur pfSense ?" {
+        - "il redirige les ports entrants vers le LAN"
+        + "il traduit les adresses des réseaux internes vers l’adresse WAN pour sortir sur Internet"
+        - "il bloque tout le trafic sortant"
+        - "il attribue des adresses DHCP"
+        explanation: "En automatique, pfSense crée les traductions source nécessaires pour les réseaux internes vers le WAN, comme un masquerade."
+      }
+      question "Un salarié demande un accès du LAN vers une imprimante branchée sur le Wi-Fi invités. Quelle réponse est la meilleure ?" {
+        - "ouvrir tout le trafic du LAN vers INVITES"
+        + "déplacer l’imprimante dans une zone interne et n’autoriser que le port d’impression"
+        - "mettre le poste du salarié dans INVITES"
+        - "désactiver le pare-feu pour l’imprimante"
+        explanation: "Un équipement de l'entreprise n'a pas sa place dans un réseau non maîtrisé. On le place dans une zone interne et on autorise seulement le flux d'impression nécessaire."
+      }
+      question "Pourquoi exporter la configuration de pfSense avant un changement important ?" {
+        - "pour accélérer l’application des règles"
+        + "pour pouvoir revenir à l’état précédent si le changement casse quelque chose"
+        - "parce que pfSense l’exige avant chaque modification"
+        - "pour vider les journaux"
+        explanation: "Une sauvegarde (Diagnostics > Backup & Restore) permet un retour arrière rapide. C'est aussi un élément de la documentation."
+      }
+    }
+  }
+
+  module "journaliser-diagnostiquer" {
+    title: "Chapitre 9 : journaliser et diagnostiquer un blocage"
+    duration: "40min"
+    content: """
+### Pourquoi journaliser
+Les journaux du pare-feu servent à trois choses :
+• **diagnostiquer** : savoir si un flux légitime est bloqué, et par quelle règle ;
+• **détecter** : repérer un scan, des essais de connexion répétés, un poste qui tente de joindre des adresses inhabituelles ;
+• **enquêter** après un incident : reconstituer qui a parlé à qui, et quand.
+
+Que journaliser ? Pas tout : journaliser chaque paquet accepté produit des volumes ingérables. La pratique courante, conforme aux recommandations de l'ANSSI : journaliser **les refus** (règle finale), **les accès au pare-feu lui-même** et **les flux sensibles** (administration, accès depuis Internet). Les flux « parasites » connus sont bloqués sans être journalisés.
+
+### Des journaux exploitables
+• **L'heure exacte** : tous les équipements doivent être synchronisés par NTP, sinon on ne peut pas recouper les journaux du pare-feu, du serveur et du poste.
+• **La centralisation** : les journaux restés sur l'équipement disparaissent avec lui, ou sont effacés par un attaquant. On les envoie vers un serveur de journaux (syslog en UDP ou TCP 514, ou mieux en TCP avec TLS), et pfSense le permet dans Status > System Logs > Settings.
+• **La durée de conservation** : une adresse IP associée à une personne est une donnée personnelle. La CNIL, dans sa recommandation de 2021 sur la journalisation, préconise une conservation **entre six mois et un an** dans la plupart des cas, sauf obligation légale ou justification particulière.
+• **Des préfixes parlants** : `log prefix "nft-input-drop: "` permet de filtrer facilement avec `grep`.
+
+### Lire les symptômes côté client
+Avant d'ouvrir un journal, observe **comment** la connexion échoue :
+
+| Symptôme | Cause probable |
+|---|---|
+| attente puis délai dépassé (timed out) | un pare-feu **jette** (drop) les paquets, ou le serveur ne peut pas répondre (route de retour absente) |
+| refus immédiat (Connection refused) | aucun service n'écoute sur ce port, **ou** un pare-feu **rejette** (reject) |
+| « No route to host » ou « hôte injoignable » | pas de route, machine éteinte, ou rejet ICMP d'un pare-feu |
+| la connexion s'ouvre puis se coupe | filtrage applicatif, problème de MTU, état expiré |
+
+Outils de test côté client :
+
+```bash
+nc -zv 192.168.30.20 443          # test d'un port TCP (paquet netcat-openbsd)
+curl -v https://192.168.30.20/    # test HTTP détaillé
+sudo traceroute -T -p 443 192.168.30.20   # chemin réseau avec des paquets TCP SYN
+```
+
+```powershell
+Test-NetConnection -ComputerName 192.168.30.20 -Port 443
+```
+
+### Une méthode en cinq étapes
+On remonte le chemin du paquet, du service vers le client, et on prouve chaque étape :
+
+1. **Le service écoute-t-il, et sur quelle adresse ?** Sur le serveur : `sudo ss -tlnp` (Linux) ou `Get-NetTCPConnection -State Listen -LocalPort 443` (Windows). Un service qui écoute sur `127.0.0.1:443` n'est joignable que depuis la machine elle-même : ce n'est pas un problème de pare-feu.
+2. **Le paquet arrive-t-il sur le serveur ?** Capture sur le serveur : `sudo tcpdump -ni ens18 tcp port 443`. Si le SYN du client n'apparaît pas, il est bloqué **avant** (pare-feu réseau, routage). S'il apparaît sans réponse, c'est le serveur (pare-feu d'hôte ou route de retour).
+3. **Le pare-feu d'hôte bloque-t-il ?** Journaux (`journalctl -k | grep nft-input-drop`, `[UFW BLOCK]`, `pfirewall.log`) et compteurs des règles (`sudo nft list chain inet filtre input`).
+4. **Le pare-feu réseau bloque-t-il ?** Journaux de l'appliance (pfSense : Status > System Logs > Firewall, avec un filtre sur l'adresse source), table des états, capture sur l'interface d'entrée puis sur l'interface de sortie.
+5. **La réponse revient-elle par le même chemin ?** Si le serveur a une autre passerelle par défaut que le pare-feu, la réponse prend un autre chemin (routage asymétrique) : le pare-feu avec état voit un SYN sans jamais voir la suite, et la connexion échoue.
+
+### Lire une capture tcpdump
+```text
+10:14:03.120 IP 192.168.20.15.51234 > 192.168.30.20.443: Flags [S], seq 1203949811, win 64240, length 0
+10:14:04.150 IP 192.168.20.15.51234 > 192.168.30.20.443: Flags [S], seq 1203949811, win 64240, length 0
+10:14:06.230 IP 192.168.20.15.51234 > 192.168.30.20.443: Flags [S], seq 1203949811, win 64240, length 0
+```
+
+Le SYN (`Flags [S]`) arrive et est **réémis** sans jamais recevoir de SYN-ACK (`Flags [S.]`) : le serveur ne répond pas. Avec un service arrêté, on verrait une réponse `Flags [R.]` (RST) immédiate. Ici, le paquet arrive mais rien ne repart : le pare-feu d'hôte le jette, ou la réponse part ailleurs.
+
+### Suivre un paquet dans nftables
+nftables peut indiquer, règle par règle, ce qui arrive à un paquet. On marque les paquets à suivre dans une table dédiée, puis on observe :
+
+```bash
+sudo nft add table inet trace_debug
+sudo nft 'add chain inet trace_debug pre { type filter hook prerouting priority -301; }'
+sudo nft add rule inet trace_debug pre ip saddr 192.168.20.15 tcp dport 443 meta nftrace set 1
+sudo nft monitor trace
+```
+
+La sortie montre chaque chaîne traversée et la règle qui a décidé (`verdict drop`, `policy drop`...). Pense à supprimer la table après le diagnostic : `sudo nft delete table inet trace_debug`.
+
+### Côté Windows
+• Le fichier `pfirewall.log`, une fois `LogBlocked` activé (chapitre 7) ;
+• l'Observateur d'événements : Journaux des applications et des services > Microsoft > Windows > Windows Firewall With Advanced Security > Firewall, qui trace notamment les changements de règles ;
+• pour connaître les paquets refusés dans le journal Sécurité (événements 5152 et 5157), il faut activer l'audit de la plateforme de filtrage avec `auditpol` ; le nom des sous-catégories est traduit sur un Windows en français, et ce réglage produit beaucoup d'événements.
+
+### À toi de jouer
+Situation : depuis le poste `192.168.20.15`, l'intranet `https://192.168.30.20` ne s'affiche plus depuis ce matin. Le navigateur reste longtemps en chargement puis affiche une erreur de délai dépassé. Un `ping 192.168.30.20` répond.
+1. Que t'apprennent déjà les symptômes ?
+2. Sur le serveur, `sudo ss -tlnp | grep 443` affiche `LISTEN 0 511 0.0.0.0:443 ... users:(("nginx",...))`. Puis `sudo tcpdump -ni ens18 tcp port 443` montre trois SYN du poste et aucune réponse. Où se trouve le problème ?
+3. `sudo nft list chain inet filtre input` montre que le compteur de la règle `counter drop` augmente à chaque essai, et que la règle `tcp dport { 80, 443 } accept` a disparu après une modification faite hier soir. Corrige, et indique comment éviter que cela se reproduise.
+
+### Correction
+1. Un délai dépassé (et non un refus) indique que des paquets sont **jetés** quelque part, ou que la réponse ne revient pas. Le `ping` qui répond prouve que la machine est allumée et routable, et que l'ICMP est autorisé : le problème est spécifique au port 443.
+2. Le service écoute bien sur toutes les adresses (`0.0.0.0:443`), et les SYN arrivent jusqu'à l'interface du serveur : le pare-feu réseau et le routage aller sont hors de cause. Le serveur ne répond pas : soit son pare-feu d'hôte jette les paquets, soit sa réponse part par une autre route. La capture ne montrant aucun SYN-ACK sortant, on regarde d'abord le pare-feu d'hôte.
+3. Réinsérer la règle à chaud avant la règle finale (`sudo nft -a list chain inet filtre input` pour le handle, puis `sudo nft insert rule inet filtre input handle <n> tcp dport { 80, 443 } accept`), puis corriger `/etc/nftables.conf` et vérifier avec `nft -c -f`. Pour éviter la récidive : garder la configuration dans un dépôt Git ou au moins en sauvegarde datée, tracer chaque modification (date, auteur, raison), tester après chaque changement depuis un poste client, et surveiller les journaux de la règle finale (une hausse soudaine des refus vers le port 443 aurait donné l'alerte).
+"""
+
+    quiz {
+      pick: 5
+      question "Une connexion échoue après une longue attente (timeout). Quelle hypothèse privilégies-tu ?" {
+        - "aucun service n’écoute sur le port"
+        + "un pare-feu jette les paquets, ou la réponse ne revient pas"
+        - "le pare-feu rejette avec un TCP RST"
+        - "le nom DNS est mal écrit"
+        explanation: "Sans aucune réponse, le client attend son délai : c'est la signature d'un drop ou d'une route de retour absente. Un service absent ou un reject donnent un refus immédiat."
+      }
+      question "« sudo ss -tlnp » montre que le service écoute sur 127.0.0.1:8080. Les postes du LAN n’y accèdent pas. Quelle est la cause ?" {
+        - "le pare-feu bloque le port 8080"
+        + "le service n’écoute que sur l’interface locale, il n’est pas joignable depuis le réseau"
+        - "le port 8080 est réservé à l’administration"
+        - "il manque une règle NAT"
+        explanation: "127.0.0.1 est l'adresse de boucle locale. Le service doit écouter sur 0.0.0.0 ou sur l'adresse de la carte réseau. Ce n'est pas un problème de pare-feu."
+      }
+      question "Dans tcpdump, que signifient des « Flags [S] » répétés sans aucun « Flags [S.] » en retour ?" {
+        - "la connexion est établie"
+        + "le client réémet son SYN car il ne reçoit pas de SYN-ACK"
+        - "le serveur a refusé avec un RST"
+        - "le client a fermé la connexion"
+        explanation: "[S] est un SYN, [S.] un SYN-ACK, [R.] un RST. Des SYN répétés sans réponse montrent que le paquet est jeté ou que la réponse se perd."
+      }
+      question "La capture sur le serveur ne montre aucun SYN du client. Où chercher le blocage ?" {
+        - "dans le pare-feu d’hôte du serveur"
+        + "avant le serveur : pare-feu réseau ou routage sur le chemin"
+        - "dans la configuration du service web"
+        - "dans le cache DNS du serveur"
+        explanation: "Si le paquet n'atteint pas l'interface du serveur, rien sur le serveur ne peut l'expliquer : il faut remonter le chemin, en commençant par le pare-feu réseau."
+      }
+      question "Pourquoi synchroniser tous les équipements avec NTP est-il important pour les journaux ?" {
+        - "parce que NTP chiffre les journaux"
+        + "pour pouvoir recouper dans le temps les traces du pare-feu, des serveurs et des postes"
+        - "parce que syslog refuse les messages sans NTP"
+        - "pour réduire la taille des fichiers"
+        explanation: "Lors d'une enquête, on compare des événements venant de plusieurs sources. Des horloges décalées rendent la chronologie fausse."
+      }
+      question "Quelle durée de conservation des journaux la CNIL recommande-t-elle dans la plupart des cas ?" {
+        - "un mois"
+        + "entre six mois et un an"
+        - "cinq ans"
+        - "sans limite de durée"
+        explanation: "La recommandation de la CNIL de 2021 préconise six mois à un an, sauf obligation légale ou justification particulière. Conserver sans limite est une pratique à éviter."
+      }
+      question "Pourquoi envoyer les journaux du pare-feu vers un serveur central ?" {
+        - "pour accélérer le pare-feu"
+        + "pour qu’ils survivent à une panne ou à un effacement par un attaquant, et pour les recouper"
+        - "parce que le pare-feu ne peut pas stocker de fichier"
+        - "pour les rendre publics"
+        explanation: "Des journaux gardés seulement sur l'équipement peuvent disparaître avec lui ou être effacés par un intrus. Un serveur central permet aussi de corréler plusieurs sources."
+      }
+      question "Quel est le rôle de « meta nftrace set 1 » suivi de « nft monitor trace » ?" {
+        - "bloquer les paquets d’une adresse"
+        + "suivre règle par règle le parcours des paquets marqués et voir quelle règle décide"
+        - "enregistrer une capture au format pcap"
+        - "remettre les compteurs à zéro"
+        explanation: "nftrace marque les paquets choisis ; nft monitor trace affiche chaque chaîne traversée et le verdict. C'est l'outil le plus précis pour savoir pourquoi un paquet est jeté."
+      }
+      question "Un serveur a pour passerelle par défaut la box, alors que le trafic des clients arrive par le pare-feu. Quel problème peut apparaître ?" {
+        - "aucun, la passerelle n’a pas d’effet sur les réponses"
+        + "un routage asymétrique : le pare-feu avec état ne voit pas la réponse et coupe la connexion"
+        - "le serveur ne peut plus résoudre les noms"
+        - "le DHCP cesse de fonctionner"
+        explanation: "La réponse part par la box : le pare-feu voit un SYN sans la suite de la poignée de main, et rejette les paquets suivants comme invalides."
+      }
+      question "Faut-il journaliser tous les paquets acceptés par le pare-feu ?" {
+        - "oui, c’est obligatoire"
+        + "non, on journalise surtout les refus, les accès au pare-feu et les flux sensibles"
+        - "non, il ne faut jamais journaliser"
+        - "oui, mais seulement en UDP"
+        explanation: "Tout journaliser produit des volumes ingérables et noie l'information utile. On cible les refus, l'administration et les flux exposés."
+      }
+      question "« nc -zv 192.168.30.20 22 » affiche « Connection refused » immédiatement. Que peux-tu conclure ?" {
+        - "le paquet est jeté silencieusement"
+        + "une réponse est revenue : aucun service n’écoute, ou un pare-feu rejette"
+        - "la machine est éteinte"
+        - "le DNS ne répond pas"
+        explanation: "Un refus immédiat suppose une réponse (RST ou ICMP). Il reste à savoir si elle vient du système (pas de service) ou d'un pare-feu en reject : la capture et les journaux tranchent."
+      }
+      question "Sur Windows, que faut-il activer pour voir les événements 5152 et 5157 de paquets refusés dans le journal Sécurité ?" {
+        - "rien, ils sont toujours présents"
+        + "l’audit de la plateforme de filtrage Windows avec auditpol"
+        - "le profil Public"
+        - "le service DHCP"
+        explanation: "Ces événements dépendent de la stratégie d'audit de la plateforme de filtrage. Ils sont volumineux : on les active pour un diagnostic ciblé."
+      }
+      question "Pourquoi utiliser un préfixe comme « nft-input-drop: » dans les règles de journalisation ?" {
+        - "parce que nftables l’exige"
+        + "pour retrouver facilement les lignes du pare-feu dans le journal du noyau"
+        - "pour chiffrer les journaux"
+        - "pour bloquer plus vite les paquets"
+        explanation: "Le préfixe est ajouté au début de chaque ligne : un simple grep isole les refus de cette règle parmi tous les messages du noyau."
+      }
+    }
+  }
+
+  module "synthese" {
+    title: "Chapitre 10 : synthèse, mini-projet guidé"
+    duration: "60min"
+    content: """
+### Le projet
+Tu protèges le petit réseau d'une PME de 20 postes avec un pare-feu réseau et des pare-feu d'hôte. Le labo minimal : une VM pfSense (ou une VM Debian qui route) avec trois interfaces, une VM Debian serveur web dans la DMZ, un client Linux ou Windows dans le LAN.
+
+| Zone | Réseau | Machines |
+|---|---|---|
+| WAN | réseau de ta box ou NAT de l'hyperviseur | adresse WAN du pare-feu |
+| LAN | 192.168.10.0/24 | pare-feu `.1`, client `.50` |
+| DMZ | 192.168.50.0/24 | pare-feu `.1`, serveur web `192.168.50.10` |
+
+À livrer :
+• une matrice de flux justifiée ;
+• la politique du pare-feu réseau, organisée selon le modèle de l'ANSSI ;
+• une redirection de port HTTPS vers le serveur web ;
+• un pare-feu d'hôte nftables (ou ufw) sur le serveur web ;
+• la journalisation des refus et une fiche de recette (tests et résultats).
+
+### Étape 1 : la matrice de flux
+Commence sur papier, avant toute configuration :
+
+| N° | Entrée | Source | Destination | Service | Justification |
+|---|---|---|---|---|---|
+| 1 | LAN | client d'administration `192.168.10.50` | pare-feu | HTTPS 443, SSH 22 | administration |
+| 2 | LAN | LAN | pare-feu | DNS 53 | résolution |
+| 3 | LAN | LAN | Internet | HTTP, HTTPS | navigation |
+| 4 | LAN | LAN | `192.168.50.10` | HTTPS | site depuis l'intérieur |
+| 5 | LAN | `192.168.10.50` | `192.168.50.10` | SSH 22 | administration du serveur |
+| 6 | WAN | Internet | `192.168.50.10` (redirection) | HTTPS | site public |
+| 7 | DMZ | `192.168.50.10` | pare-feu | DNS 53 | résolution |
+| 8 | DMZ | `192.168.50.10` | Internet | HTTP, HTTPS | mises à jour Debian |
+
+Tout le reste est interdit, en particulier la DMZ vers le LAN.
+
+### Étape 2 : le pare-feu réseau
+Sur pfSense :
+1. Crée les alias `SRV_WEB` (`192.168.50.10`), `PORTS_WEB` (80, 443), `RFC1918` (les trois plages privées).
+2. Onglet LAN : garde la règle anti-verrouillage et remplace « allow LAN to any » par, dans l'ordre : les règles 1 et 2, les règles 4 et 5, un blocage journalisé du LAN vers le réseau DMZ, puis la règle 3 avec la destination « any ». Sans ce blocage placé avant, « any » inclurait aussi la DMZ.
+3. Onglet DMZ : règle 7, puis un blocage de `SRV_WEB` vers `RFC1918` (journalisé), puis la règle 8 vers « any ».
+4. Firewall > NAT > Port Forward : WAN, TCP, port 443, vers `SRV_WEB` port 443, avec la règle de filtrage associée.
+5. Vérifie que le NAT sortant automatique couvre le LAN et la DMZ.
+
+### Étape 3 : le pare-feu d'hôte du serveur web
+Même si le pare-feu réseau filtre, le serveur a sa propre politique : SSH depuis `192.168.10.50` seulement, HTTPS (et HTTP s'il redirige vers HTTPS) depuis partout, ping limité, refus journalisé. Reprends le modèle nftables du chapitre 5, ou avec ufw :
+
+```bash
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow from 192.168.10.50 to any port 22 proto tcp
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw enable
+```
+
+### Étape 4 : la journalisation
+• pfSense : coche « Log » sur les règles de blocage que tu as ajoutées et sur la règle d'administration ; si tu as un serveur syslog, configure l'envoi à distance.
+• Serveur : vérifie que la règle finale journalise (`nft-input-drop:` ou `[UFW BLOCK]`).
+• Tous : heure synchronisée (NTP).
+
+### Étape 5 : la recette
+Chaque test a un résultat **attendu** et un résultat **obtenu**. Exemple de fiche :
+
+| Test | Commande | Attendu |
+|---|---|---|
+| navigation depuis le LAN | `curl -sI https://example.com` sur le client | réponse HTTP |
+| site interne depuis le LAN | `curl -kI https://192.168.50.10` | réponse HTTP |
+| SSH serveur depuis le poste admin | `ssh admin@192.168.50.10` | connexion |
+| SSH serveur depuis un autre poste du LAN | `nc -zv 192.168.50.10 22` | délai dépassé, ligne de refus dans les journaux |
+| DMZ vers LAN | depuis le serveur : `nc -zv 192.168.10.50 22` | délai dépassé, refus journalisé sur l'onglet DMZ |
+| mises à jour du serveur | `sudo apt update` | téléchargement réussi |
+| site depuis l'extérieur | depuis une machine côté WAN : `curl -kI https://<adresse WAN>` | réponse HTTP |
+| port non publié | depuis le WAN : `nc -zv <adresse WAN> 22` | délai dépassé |
+
+### Étape 6 : la documentation
+Une page suffit : schéma des zones, matrice de flux, liste des règles avec leur description, emplacement des journaux et durée de conservation, procédure de retour arrière (sauvegarde de configuration pfSense, copie datée de `/etc/nftables.conf`).
+
+### À toi de jouer
+Réalise les étapes 1 à 6. Puis réponds :
+1. Le test « DMZ vers LAN » réussit alors qu'il devrait échouer. Quelles sont les deux causes les plus probables ?
+2. Le site fonctionne depuis le LAN mais pas depuis l'extérieur. Liste dans l'ordre ce que tu vérifies.
+3. Pourquoi garder un pare-feu d'hôte sur le serveur alors que pfSense filtre déjà ?
+
+### Correction
+1. Soit une règle d'autorisation trop large sur l'onglet DMZ (par exemple la règle 8 avec une destination « any » placée **avant** le blocage vers `RFC1918`), soit une règle « any to any » restée sur l'onglet DMZ. Corrige l'ordre ou la règle, puis vérifie que le refus apparaît dans Status > System Logs > Firewall.
+2. Dans l'ordre : la redirection de port (interface WAN, protocole TCP, port 443, adresse `192.168.50.10`) et sa règle de filtrage associée sur le WAN ; les journaux du pare-feu pendant un essai depuis l'extérieur (le paquet est-il bloqué ?) ; une capture sur l'interface DMZ (le SYN arrive-t-il au serveur ?) ; le pare-feu d'hôte du serveur ; la passerelle par défaut du serveur (doit être `192.168.50.1`, sinon routage asymétrique). Si le test vient d'un poste du LAN qui vise l'adresse WAN, pense aussi au problème du hairpin.
+3. Par défense en profondeur : si une règle du pare-feu réseau est trop large (erreur, modification non revue), le serveur reste protégé ; et le pare-feu d'hôte filtre aussi ce qui ne traverse pas pfSense, comme les autres machines de la DMZ, qui pourraient être compromises.
+
+### Pour aller plus loin
+• ANSSI, « Recommandations pour la définition d'une politique de filtrage réseau d'un pare-feu », et « Recommandations et méthodologie pour le nettoyage d'une politique de filtrage réseau d'un pare-feu » (cyber.gouv.fr).
+• CNIL, recommandation relative aux mesures de journalisation (délibération n° 2021-122 du 14 octobre 2021), cnil.fr.
+• Projet Netfilter, wiki nftables : « Simple ruleset for a workstation », « Performing Network Address Translation », « Ruleset debug/tracing » (wiki.nftables.org) et page de manuel `man nft`.
+• Page de manuel `man ufw` (Ubuntu et Debian).
+• Microsoft Learn : documentation du pare-feu Windows (règles et priorités) et module PowerShell NetSecurity (`New-NetFirewallRule`, `Set-NetFirewallProfile`).
+• Netgate, documentation pfSense : « Firewall Fundamentals », « Rule Methodology », NAT et journaux (docs.netgate.com).
+"""
+
+    quiz {
+      pick: 10
+      question "Quelle règle doit figurer en tête d’une politique avec état ?" {
+        - "jeter tout le trafic"
+        + "accepter les paquets established et related"
+        - "accepter le port 22 depuis partout"
+        - "journaliser tous les paquets"
+        explanation: "Elle accepte les réponses et la suite des connexions déjà autorisées, et traite l'essentiel du trafic rapidement. Les autres règles ne concernent alors que les nouvelles connexions."
+      }
+      question "Dans un pare-feu en first match, la règle « bloquer 192.168.20.0/24 » est en position 2 et « autoriser 192.168.20.66 en TCP 443 » en position 5. Que se passe-t-il pour 192.168.20.66 ?" {
+        - "il est autorisé, la règle 5 est plus précise"
+        + "il est bloqué par la règle 2"
+        - "il est autorisé pour HTTPS seulement"
+        - "la politique par défaut décide"
+        explanation: "La règle 2 correspond la première et décide. La règle 5 est masquée : il faut la remonter avant la règle 2."
+      }
+      question "Quelle différence fondamentale distingue le pare-feu Windows de nftables pour l’évaluation des règles ?" {
+        - "Windows applique la dernière règle correspondante"
+        + "Windows n’ordonne pas les règles : un blocage explicite l’emporte sur une autorisation"
+        - "Windows lit les règles de haut en bas comme nftables"
+        - "Windows ignore les règles de blocage"
+        explanation: "nftables lit les règles d'une chaîne dans l'ordre. Windows applique une priorité : le Block explicite gagne, sauf contournement authentifié IPsec."
+      }
+      question "Un client reçoit un délai dépassé en joignant 192.168.50.10:443 depuis Internet. La capture sur l’interface DMZ du pare-feu montre le SYN traduit vers 192.168.50.10 et aucune réponse. Que vérifies-tu ensuite ?" {
+        - "la redirection de port sur le WAN"
+        + "le pare-feu d’hôte du serveur et sa passerelle par défaut"
+        - "le DNS public du site"
+        - "la règle anti-verrouillage du LAN"
+        explanation: "Le paquet traverse le pare-feu et sort vers la DMZ : la redirection et la règle WAN fonctionnent. Il reste le serveur (pare-feu d'hôte, service) et le chemin de retour."
+      }
+      question "Quelle commande nftables affiche les règles avec leurs handles ?" {
+        - "nft list ruleset -c"
+        + "nft -a list chain inet filtre input"
+        - "nft show handles"
+        - "nft monitor trace"
+        explanation: "L'option -a ajoute les handles, nécessaires pour insert et delete. nft monitor trace sert au suivi des paquets marqués."
+      }
+      question "Quel flux doit rester interdit entre la DMZ et le LAN ?" {
+        - "aucun, la DMZ est une zone de confiance"
+        + "tout flux initié depuis la DMZ vers le LAN, sauf exception très précise et justifiée"
+        - "seulement le ping"
+        - "seulement le DNS"
+        explanation: "Un serveur exposé peut être compromis. L'empêcher d'ouvrir des connexions vers le LAN est le but même de la DMZ."
+      }
+      question "Pourquoi le NAT ne suffit-il pas à protéger un réseau ?" {
+        - "parce qu’il n’existe pas en IPv4"
+        + "parce qu’il ne filtre rien, qu’une redirection l’ouvre et qu’en IPv6 on s’en passe en général"
+        - "parce qu’il bloque les réponses"
+        - "parce qu’il chiffre les adresses"
+        explanation: "Le NAT traduit des adresses. La protection doit venir d'une politique de filtrage avec état, en IPv4 comme en IPv6."
+      }
+      question "Sur ufw, quelle commande place un blocage avant une autorisation existante en position 2 ?" {
+        - "ufw deny from 192.168.20.66"
+        + "ufw insert 2 deny from 192.168.20.66"
+        - "ufw prepend 2 deny from 192.168.20.66"
+        - "ufw move 2 deny"
+        explanation: "insert N place la règle à la position N, donc avant l'ancienne règle N. ufw deny l'ajouterait en fin de liste."
+      }
+      question "Quelle commande PowerShell active la journalisation des paquets bloqués sur tous les profils ?" {
+        - "Enable-NetFirewallLog -All"
+        + "Set-NetFirewallProfile -Profile Domain,Private,Public -LogBlocked True"
+        - "New-NetFirewallRule -Log Blocked"
+        - "Set-NetFirewallRule -LogBlocked True"
+        explanation: "La journalisation se règle par profil avec Set-NetFirewallProfile et le paramètre LogBlocked. Les autres commandes ou paramètres n'existent pas."
+      }
+      question "Sur pfSense, un flux du réseau INVITES vers Internet doit être autorisé. Dans quel onglet ?" {
+        - "WAN"
+        + "INVITES"
+        - "LAN"
+        - "Floating obligatoirement"
+        explanation: "Le trafic entre par l'interface INVITES : c'est là que la règle s'écrit. La réponse revient grâce à la table des états."
+      }
+      question "Quel est le danger d’un « iptables -P INPUT DROP » tapé à distance avant toute règle ?" {
+        - "aucun"
+        + "la session SSH en cours et les suivantes sont bloquées"
+        - "le serveur arrête de router"
+        - "les journaux sont effacés"
+        explanation: "Sans règle established ni règle SSH, la politique DROP s'applique immédiatement à tout le trafic entrant, dont ta session."
+      }
+      question "Un paquet arrive sur un pare-feu avec état et ne correspond à aucune connexion connue ; il porte le seul drapeau ACK. Que doit faire une bonne politique ?" {
+        - "l’accepter, c’est une réponse"
+        + "le jeter : il est invalid, ou new sans règle d’autorisation"
+        - "le rediriger vers le serveur web"
+        - "le journaliser puis l’accepter"
+        explanation: "Un ACK sans connexion correspondante n'est pas une réponse légitime. Il est jeté par la règle invalid ou, à défaut, par la politique par défaut."
+      }
+      question "Pourquoi forcer le serveur web de la DMZ à utiliser le pare-feu comme passerelle par défaut ?" {
+        - "pour que le DHCP fonctionne"
+        + "pour que les réponses repassent par le pare-feu et éviter un routage asymétrique"
+        - "pour accélérer HTTPS"
+        - "parce que la DMZ n’a pas d’adresse"
+        explanation: "Le pare-feu avec état doit voir l'aller et le retour d'une connexion. Si la réponse prend un autre chemin, la connexion échoue."
+      }
+      question "Quel port faut-il ouvrir pour un site HTTPS classique ?" {
+        - "TCP 80"
+        + "TCP 443"
+        - "UDP 53"
+        - "TCP 8443 obligatoirement"
+        explanation: "HTTPS utilise TCP 443 (HTTP/3 ajoute UDP 443). TCP 80 sert à HTTP, souvent seulement pour rediriger vers HTTPS."
+      }
+      question "Pourquoi l’ANSSI recommande-t-elle d’éviter « any » dans les règles d’autorisation ?" {
+        - "parce que any est interdit par la loi"
+        + "parce qu’une règle large ouvre plus de flux que nécessaire et casse la segmentation"
+        - "parce que les pare-feu ne comprennent pas any"
+        - "parce que any désactive la journalisation"
+        explanation: "Chaque any élargit la règle à toutes les adresses ou tous les services. Le moindre privilège demande des sources, destinations et services précis."
+      }
+      question "Quelle chaîne nftables faut-il configurer pour filtrer le trafic qu’un routeur Linux fait passer entre le LAN et la DMZ ?" {
+        - "input"
+        - "output"
+        + "forward"
+        - "prerouting de la table nat"
+        explanation: "Le trafic qui traverse la machine passe par forward. prerouting de type nat sert au DNAT, pas au filtrage."
+      }
+      question "Tu dois prouver qu’un flux est bien bloqué après ta modification. Quelle preuve est la plus solide ?" {
+        - "la règle apparaît dans la liste"
+        + "un test depuis un poste concerné échoue et une ligne de refus apparaît dans les journaux"
+        - "le collègue dit que ça marche"
+        - "le pare-feu n’a pas redémarré"
+        explanation: "La présence d'une règle ne prouve rien (elle peut être masquée ou mal placée). Un test réel et la trace dans les journaux confirment l'effet."
+      }
+      question "Quelle durée de conservation des journaux de connexion la CNIL recommande-t-elle en général ?" {
+        - "48 heures"
+        - "un mois"
+        + "entre six mois et un an"
+        - "dix ans"
+        explanation: "La recommandation de la CNIL de 2021 retient six mois à un an dans la plupart des cas. Une durée plus longue doit être justifiée."
+      }
+      question "Pourquoi un pare-feu d’hôte reste-t-il utile sur un serveur placé derrière un pare-feu réseau ?" {
+        - "parce que le pare-feu réseau ne filtre pas HTTPS"
+        + "parce qu’il protège aussi contre les erreurs de règles réseau et contre les machines de la même zone"
+        - "parce qu’il remplace les mises à jour"
+        - "parce qu’il accélère le serveur"
+        explanation: "C'est la défense en profondeur : une erreur sur le pare-feu réseau ne suffit plus, et le trafic entre machines d'une même zone est aussi filtré."
+      }
+      question "Une matrice de flux doit contenir, pour chaque flux autorisé :" {
+        - "seulement le port de destination"
+        + "la source, la destination, le service, la justification, le demandeur et la date"
+        - "le débit maximal et la latence"
+        - "le mot de passe du service"
+        explanation: "La justification et le demandeur permettent la revue : une règle dont personne ne sait plus à quoi elle sert peut être supprimée."
+      }
+    }
+  }
+}

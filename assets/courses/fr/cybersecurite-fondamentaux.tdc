@@ -1,0 +1,1777 @@
+tdc-version: 2
+type: course
+
+course "cybersecurity-basics" {
+  title: "Cybersécurité : les fondamentaux"
+  description: """
+Ce cours pose les bases de la sécurité des systèmes d'information : ce qu'on protège, contre qui, avec quels moyens, et ce qu'on fait quand une attaque réussit quand même. Il s'adresse aux élèves de bac pro CIEL, BTS SIO (SISR et SLAM), BTS CIEL et BUT, et à toute personne qui s'occupe de quelques postes et serveurs dans une petite structure.
+
+À la fin, tu sauras :
+• classer les besoins d'une information selon la disponibilité, l'intégrité, la confidentialité et la traçabilité (DICT) ;
+• employer correctement les mots vulnérabilité, menace, risque et exploit, et lire un avis de sécurité (CVE, score CVSS) ;
+• reconnaître un hameçonnage, une manœuvre d'ingénierie sociale, un rançongiciel, une attaque par force brute, une interception et un déni de service ;
+• appliquer la défense en profondeur sur un poste et un serveur Debian ou Windows : mises à jour, pare-feu, moindre privilège, journaux ;
+• choisir une politique de mots de passe conforme aux recommandations de la CNIL, utiliser un gestionnaire et activer l'authentification multifacteur ;
+• mettre en place des sauvegardes 3-2-1 et vérifier qu'elles se restaurent ;
+• réagir à un incident dans le bon ordre (isoler, préserver les preuves, se faire aider, déclarer) ;
+• situer tes actions dans le cadre légal : articles 323-1 et suivants du Code pénal, RGPD.
+
+Chaque chapitre part d'une situation réelle (le lycée, une PME de 20 postes, ton propre ordinateur), propose un exercice pratique avec sa correction, et se termine par une banque de questions tirées au hasard. Les manipulations se font sur ta machine ou dans des machines virtuelles qui t'appartiennent, jamais sur un système tiers.
+
+Prérequis : aucun en sécurité. Il est utile de savoir ouvrir un terminal (Linux ou PowerShell) et ce qu'est une adresse IP.
+"""
+  category: "security"
+  level: "beginner"
+  duration: "6h"
+  icon: "Security"
+  keywords: ["cybersécurité", "dict", "disponibilité", "intégrité", "confidentialité", "traçabilité", "vulnérabilité", "menace", "risque", "exploit", "cve", "hameçonnage", "phishing", "rançongiciel", "ransomware", "force brute", "homme du milieu", "déni de service", "ingénierie sociale", "défense en profondeur", "mfa", "mot de passe", "gestionnaire de mots de passe", "sauvegarde 3-2-1", "incident", "cybermalveillance", "17cyber", "rgpd", "code pénal", "anssi", "cnil"]
+
+  module "dict" {
+    title: "Chapitre 1 : ce qu'on protège, la triade DIC et la traçabilité"
+    duration: "30min"
+    content: """
+### Protéger quoi, exactement ?
+La sécurité informatique ne protège pas « l'ordinateur » en général. Elle protège des **biens** (on dit aussi actifs, assets) : des informations (les notes des élèves, la comptabilité, les fichiers clients) et les moyens qui les traitent (serveurs, postes, réseau, comptes, logiciels, personnes). Avant de choisir une protection, il faut savoir **ce que l'on craint pour chaque bien**. Pour cela, on utilise quatre critères, que l'on retrouve dans les référentiels de l'ANSSI, dans la norme ISO/IEC 27001 et dans les épreuves du BTS SIO.
+
+### Les trois critères de base : DIC
+| Critère | Question à se poser | Exemple d'atteinte |
+|---|---|---|
+| **Disponibilité** | L'information ou le service est-il accessible quand on en a besoin ? | le serveur de fichiers est chiffré par un rançongiciel ; le site web tombe sous un déni de service |
+| **Intégrité** | L'information est-elle exacte et complète, non modifiée sans autorisation ? | un élève modifie sa note dans le logiciel de vie scolaire ; un RIB est changé dans un courriel de fournisseur |
+| **Confidentialité** | L'information n'est-elle accessible qu'aux personnes autorisées ? | le fichier des élèves est envoyé par erreur à une liste externe ; un mot de passe circule en clair sur le Wi-Fi |
+
+En anglais, on parle de la triade **CIA** (Confidentiality, Integrity, Availability). En français, on écrit **DIC**.
+
+### Le quatrième critère : la traçabilité (ou preuve)
+La **traçabilité** répond à la question : « peut-on savoir qui a fait quoi, et quand ? ». Elle repose sur des **journaux** (logs) horodatés, sur des comptes nominatifs (un compte par personne, pas de compte « stagiaire » partagé) et sur des horloges synchronisées (NTP). On parle alors de **DICT**. Certains référentiels ajoutent l'**authenticité** (l'information vient bien de son auteur) et la **non-répudiation** (l'auteur ne peut pas nier) : ces deux notions s'appuient sur la traçabilité et sur la signature électronique.
+
+Sans traçabilité, un incident reste un mystère : on sait que le fichier a disparu, on ne sait ni quand, ni par quel compte, ni depuis quelle machine.
+
+### Évaluer un besoin de sécurité
+On note le besoin de chaque bien sur une échelle simple, par exemple de 1 (faible) à 4 (très fort), critère par critère :
+
+| Bien | D | I | C | T |
+|---|---|---|---|---|
+| Site web public du lycée | 2 | 3 | 1 | 2 |
+| Logiciel de notes | 3 | 4 | 3 | 4 |
+| Dossiers médicaux de l'infirmerie | 2 | 4 | 4 | 3 |
+| Wi-Fi invités | 1 | 1 | 1 | 2 |
+
+Le site public n'a presque aucun besoin de confidentialité (tout le monde peut le lire), mais son intégrité compte : une page défigurée nuit à l'image de l'établissement. Pour les notes, l'intégrité et la traçabilité sont maximales : une note modifiée doit être détectée et attribuée.
+
+Ce tableau décide des mesures : un besoin fort en disponibilité appelle des sauvegardes et de la redondance ; un besoin fort en confidentialité appelle du chiffrement et des droits d'accès stricts ; un besoin fort en intégrité appelle des contrôles d'empreinte et des droits en écriture limités ; un besoin fort en traçabilité appelle des journaux conservés et protégés.
+
+### L'intégrité vérifiée par une empreinte
+Une **fonction de hachage** (SHA-256 par exemple) calcule une empreinte de taille fixe à partir d'un fichier. Un seul octet modifié donne une empreinte totalement différente. Les éditeurs publient l'empreinte de leurs images d'installation : tu la compares à celle de ton téléchargement avant d'installer.
+
+Une empreinte prouve l'intégrité **si tu l'as obtenue par un canal de confiance** (le site officiel en HTTPS, idéalement un fichier signé). Si un attaquant contrôle à la fois le fichier et l'empreinte affichée à côté, il remplace les deux.
+
+### À toi de jouer
+1. Sous Linux, crée un fichier, calcule son empreinte, modifie un caractère, recalcule-la. Fais la même chose sous Windows avec PowerShell.
+2. Pour une PME de 20 postes, attribue un besoin D, I, C, T (de 1 à 4) à ces trois biens : la messagerie, le fichier des salaires, l'imprimante de l'accueil. Justifie la valeur la plus haute de chaque ligne.
+3. Classe chaque situation selon le critère principalement atteint : (a) un stagiaire supprime par erreur un dossier partagé sans sauvegarde ; (b) une clé USB contenant la liste des élèves est perdue dans le bus ; (c) un compte « admin » partagé par trois techniciens a supprimé un utilisateur et personne ne sait qui ; (d) un pirate change le montant d'une facture PDF avant son envoi.
+
+### Correction
+1. Sous Linux :
+```bash
+echo "note de Lina : 14" > notes.txt
+sha256sum notes.txt
+sed -i 's/14/18/' notes.txt
+sha256sum notes.txt
+```
+Les deux empreintes (64 caractères hexadécimaux) n'ont rien en commun. Sous Windows : `Set-Content notes.txt "note de Lina : 14"`, puis `Get-FileHash .\notes.txt` (SHA-256 par défaut), puis modifie le fichier et recommence.
+2. Exemple raisonnable : messagerie D3 I3 C3 T3 (outil de travail quotidien, contient des échanges internes) ; salaires D2 I4 C4 T4 (une erreur ou une fuite a des conséquences humaines et légales, chaque modification doit être attribuée) ; imprimante de l'accueil D2 I1 C2 T1 (une panne gêne, mais les données qu'elle traite sont peu sensibles ; attention toutefois aux documents oubliés dans le bac et à la mémoire interne de certains modèles). Ce qui compte est la justification, pas le chiffre exact.
+3. (a) disponibilité (le dossier n'est plus accessible) ; (b) confidentialité (des données personnelles peuvent être lues par n'importe qui) ; (c) traçabilité (impossible d'attribuer l'action, le compte partagé en est la cause) ; (d) intégrité (le contenu a été modifié sans autorisation).
+"""
+
+    codeblock "bash" {
+      title: "Vérifier une image téléchargée avec la liste d'empreintes de l'éditeur"
+      code: """
+# Dans le dossier qui contient l'image ISO et le fichier SHA256SUMS de l'éditeur
+sha256sum -c SHA256SUMS --ignore-missing
+# Résultat attendu : debian-12.x.y-amd64-netinst.iso: OK
+# Sous PowerShell :
+# (Get-FileHash .\image.iso -Algorithm SHA256).Hash
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Que signifient les lettres DIC ?" {
+        - "Détection, Investigation, Correction"
+        + "Disponibilité, Intégrité, Confidentialité"
+        - "Donnée, Information, Connaissance"
+        - "Défense, Identification, Contrôle"
+        explanation: "DIC désigne les trois critères de sécurité de base : disponibilité, intégrité, confidentialité. En anglais on dit CIA. Les autres propositions mélangent des étapes de réponse à incident ou des notions sans rapport."
+      }
+      question "Un rançongiciel chiffre le serveur de fichiers : quel critère est atteint en premier ?" {
+        + "la disponibilité"
+        - "la confidentialité"
+        - "la traçabilité"
+        - "la non-répudiation"
+        explanation: "Les fichiers chiffrés ne sont plus utilisables : c'est d'abord une atteinte à la disponibilité. Beaucoup de groupes volent aussi les données avant de chiffrer (double extorsion), ce qui touche ensuite la confidentialité."
+      }
+      question "Un élève modifie sa note dans le logiciel de vie scolaire. Quel critère est atteint ?" {
+        - "la disponibilité"
+        + "l'intégrité"
+        - "la confidentialité"
+        - "l'authenticité du serveur"
+        explanation: "La note existe toujours et reste accessible, mais elle n'est plus exacte : c'est l'intégrité. Si en plus personne ne peut dire quel compte l'a modifiée, la traçabilité est aussi en défaut."
+      }
+      question "À quelle question répond la traçabilité ?" {
+        - "l'information est-elle chiffrée ?"
+        - "le service répond-il en moins d'une seconde ?"
+        + "qui a fait quoi, et quand ?"
+        - "la sauvegarde est-elle complète ?"
+        explanation: "La traçabilité permet d'attribuer une action à un compte et à un moment, grâce à des journaux horodatés et à des comptes nominatifs. Le chiffrement relève de la confidentialité, le temps de réponse de la disponibilité."
+      }
+      question "Pourquoi un compte « admin » partagé par plusieurs techniciens nuit-il à la sécurité ?" {
+        - "parce qu'il ralentit les connexions"
+        + "parce qu'on ne peut plus attribuer une action à une personne"
+        - "parce que Windows interdit les comptes partagés"
+        - "parce qu'il empêche les sauvegardes"
+        explanation: "Les journaux indiquent le compte, pas la personne derrière le clavier. Avec un compte partagé, la traçabilité disparaît, et le mot de passe circule entre plusieurs personnes. Il faut un compte nominatif par technicien."
+      }
+      question "Quelle commande calcule l’empreinte SHA-256 d’un fichier sous Linux ?" {
+        - "md5 fichier"
+        - "hash -256 fichier"
+        + "sha256sum fichier"
+        - "gpg --sha fichier"
+        explanation: "sha256sum (paquet coreutils) affiche l'empreinte SHA-256. md5 n'est pas la bonne commande sous Linux et MD5 n'est plus jugé sûr contre une modification volontaire. Les deux autres commandes n'existent pas sous cette forme."
+      }
+      question "Quel algorithme Get-FileHash utilise-t-il si tu ne précises rien ?" {
+        - "MD5"
+        - "SHA-1"
+        + "SHA-256"
+        - "SHA-512"
+        explanation: "Get-FileHash utilise SHA-256 par défaut ; l'option -Algorithm permet d'en choisir un autre. MD5 et SHA-1 restent disponibles mais ne sont plus recommandés pour vérifier l'intégrité face à un attaquant."
+      }
+      question "Tu télécharges une image ISO et son empreinte depuis un miroir inconnu, en HTTP. L’empreinte correspond. Que peux-tu conclure ?" {
+        - "l'image est authentique, puisque les empreintes sont identiques"
+        + "seulement que le fichier n'a pas été abîmé pendant le transfert, pas qu'il est authentique"
+        - "que l'image est chiffrée"
+        - "que l'image est exempte de virus"
+        explanation: "Si l'attaquant contrôle le miroir, il remplace l'image et l'empreinte. L'empreinte n'apporte une garantie que si elle vient d'un canal de confiance (site officiel en HTTPS, fichier signé par l'éditeur)."
+      }
+      question "Un fichier de 2 Go et un fichier de 2 octets passent dans SHA-256. Que dire de leurs empreintes ?" {
+        - "celle du gros fichier est beaucoup plus longue"
+        + "elles ont la même longueur : 256 bits, soit 64 caractères hexadécimaux"
+        - "celle du petit fichier est vide"
+        - "elles ont une longueur proportionnelle au fichier"
+        explanation: "Une fonction de hachage produit une empreinte de taille fixe. Pour SHA-256, 256 bits, affichés en 64 caractères hexadécimaux, quelle que soit la taille de l'entrée."
+      }
+      question "Pour le site web public d’un lycée, quel besoin est en général le plus faible ?" {
+        - "l'intégrité"
+        - "la disponibilité"
+        + "la confidentialité"
+        - "la traçabilité des modifications"
+        explanation: "Les pages publiques sont faites pour être lues par tous : leur confidentialité n'a presque pas d'enjeu. Leur intégrité compte (une page défigurée), ainsi que la traçabilité des modifications."
+      }
+      question "Pourquoi faut-il synchroniser l’horloge des serveurs (NTP) pour la traçabilité ?" {
+        - "pour accélérer les sauvegardes"
+        + "pour pouvoir comparer et ordonner les événements de plusieurs journaux"
+        - "pour que les certificats soient gratuits"
+        - "parce que le pare-feu refuse les machines sans NTP"
+        explanation: "Une enquête croise les journaux du pare-feu, du serveur et du poste. Si les horloges divergent de plusieurs minutes, l'ordre des événements devient faux. Une horloge très fausse casse aussi la vérification des certificats, mais ce n'est pas la raison principale ici."
+      }
+      question "Une clé USB contenant la liste des élèves est perdue. Quel critère est d’abord en jeu ?" {
+        - "la disponibilité, car la clé n'est plus là"
+        + "la confidentialité, car n'importe qui peut lire les données"
+        - "l'intégrité, car la clé peut être abîmée"
+        - "aucun, si une copie existe ailleurs"
+        explanation: "Si une copie existe, la disponibilité n'est pas vraiment touchée. Le danger est la lecture des données personnelles par un tiers. Le chiffrement du support (BitLocker To Go, VeraCrypt, LUKS) aurait évité ce risque."
+      }
+    }
+  }
+
+  module "vocabulaire-risque" {
+    title: "Chapitre 2 : vulnérabilité, menace, risque et exploit"
+    duration: "30min"
+    content: """
+### Quatre mots qu'on confond souvent
+| Terme | Définition simple | Exemple au lycée |
+|---|---|---|
+| **Vulnérabilité** (vulnerability) | une faiblesse d'un bien : défaut de logiciel, mauvaise configuration, mauvaise pratique | le serveur web n'a pas reçu de mise à jour depuis deux ans ; le mot de passe Wi-Fi est affiché dans le hall |
+| **Menace** (threat) | ce qui peut exploiter une faiblesse : une source (un acteur, un événement) avec une intention ou une cause | un groupe criminel qui diffuse des rançongiciels ; un élève curieux ; une inondation du local technique |
+| **Exploit** | le moyen technique (code, procédure) qui tire parti d'une vulnérabilité précise | un script public qui exécute du code à distance sur la version non corrigée du serveur web |
+| **Risque** | la possibilité qu'une menace exploite une vulnérabilité et cause un dommage, estimée par sa vraisemblance et sa gravité | « un rançongiciel entre par le serveur web non mis à jour et chiffre les données de vie scolaire » |
+
+Une vulnérabilité seule ne fait pas de dégâts. Une menace seule non plus. Le **risque** naît de leur rencontre sur un bien qui a de la valeur. On le décrit sous forme de scénario : *qui* (source de menace), *par où* (vulnérabilité), *quoi* (bien et critère DICT atteint), *conséquence*.
+
+### Estimer un risque
+La méthode française de référence, **EBIOS Risk Manager** (ANSSI), estime chaque scénario selon deux axes :
+• la **gravité** : l'importance des conséquences si le scénario se réalise (de minime à critique) ;
+• la **vraisemblance** : la chance qu'il se réalise (de peu vraisemblable à quasi certain).
+
+On place les scénarios dans une grille gravité × vraisemblance. En cours de BTS, on simplifie souvent par un produit : risque = gravité × vraisemblance, chacune notée de 1 à 4. Un risque noté 12 ou 16 se traite en priorité.
+
+### Que faire d'un risque ?
+Il y a quatre réponses possibles :
+• **réduire** : ajouter une mesure (mise à jour, MFA, sauvegarde) qui baisse la vraisemblance ou la gravité ;
+• **transférer** : en confier une partie à un tiers (assurance cyber, hébergeur sous contrat) ;
+• **éviter** : renoncer à l'activité risquée (ne plus exposer un service sur Internet) ;
+• **accepter** : décider en connaissance de cause de vivre avec un risque faible, et l'écrire.
+
+Le **risque résiduel** est ce qui reste après les mesures. Il n'est jamais nul. La direction doit l'accepter explicitement : ce n'est pas au technicien de décider seul.
+
+### Les vulnérabilités connues : CVE et CVSS
+Quand une vulnérabilité de logiciel est rendue publique, elle reçoit un identifiant **CVE** (Common Vulnerabilities and Exposures), de la forme `CVE-année-numéro` (par exemple `CVE-2021-44228`, la faille Log4Shell de la bibliothèque Java Log4j). Le programme CVE est géré par l'organisme américain MITRE, avec le soutien de l'agence américaine CISA.
+
+Sa gravité technique est souvent notée par le **CVSS** (Common Vulnerability Scoring System), de 0 à 10 :
+| Score CVSS | Sévérité |
+|---|---|
+| 0,0 | aucune |
+| 0,1 à 3,9 | faible |
+| 4,0 à 6,9 | moyenne |
+| 7,0 à 8,9 | haute |
+| 9,0 à 10,0 | critique |
+
+Le score CVSS mesure la gravité **technique** de la faille, pas ton risque : une faille notée 9,8 sur un logiciel que tu n'utilises pas ne te concerne pas ; une faille notée 6,5 sur ton VPN exposé à Internet peut être ta priorité.
+
+En France, le **CERT-FR** (rattaché à l'ANSSI) publie des avis et des alertes de sécurité sur `cert.ssi.gouv.fr`. Une alerte signale une faille activement exploitée : on applique le correctif ou le contournement sans attendre.
+
+### Une faille « zero-day »
+Un **zero-day** (0-day) est une vulnérabilité exploitée avant que l'éditeur ait publié un correctif. Les mises à jour ne protègent pas contre elle ; ce sont les autres couches (moindre privilège, segmentation, détection, sauvegardes) qui limitent les dégâts. C'est l'argument central de la défense en profondeur (chapitre 5).
+
+### À toi de jouer
+1. Pour chaque élément, dis s'il s'agit d'une vulnérabilité, d'une menace, d'un exploit ou d'un risque : (a) « le partage réseau `Profs` est accessible en écriture à tous les élèves » ; (b) « un élève peut supprimer les sujets d'examen déposés par les professeurs » ; (c) « un groupe criminel qui envoie des courriels piégés aux établissements scolaires » ; (d) « un module Metasploit qui cible une version précise de Samba ».
+2. Écris deux scénarios de risque pour une PME de 20 postes dont le seul serveur est un NAS accessible depuis Internet pour le télétravail. Note gravité et vraisemblance de 1 à 4, calcule le produit, propose une réponse (réduire, transférer, éviter, accepter) pour chacun.
+3. Un avis du CERT-FR concerne une faille CVSS 9,8 dans un logiciel de pare-feu que la PME n'utilise pas, et une faille CVSS 7,5 dans le système du NAS. Laquelle traites-tu en premier et pourquoi ?
+
+### Correction
+1. (a) vulnérabilité (une mauvaise configuration des droits) ; (b) risque (un scénario avec un dommage) ; (c) menace (une source qui a l'intention de nuire) ; (d) exploit (le moyen technique qui exploite une faille précise).
+2. Exemple :
+• Scénario 1 : « un attaquant exploite une faille non corrigée du NAS exposé, chiffre les fichiers et les sauvegardes stockées sur le NAS ». Gravité 4, vraisemblance 3, risque 12. Réponse : réduire (mises à jour automatiques, accès uniquement par VPN avec MFA, sauvegarde hors ligne) ; on peut aussi éviter en retirant l'exposition directe à Internet.
+• Scénario 2 : « un salarié réutilise sur le NAS un mot de passe déjà divulgué dans une fuite ; un attaquant se connecte et copie le fichier clients ». Gravité 3, vraisemblance 3, risque 9. Réponse : réduire (MFA, mot de passe unique dans un gestionnaire, blocage après échecs).
+3. La faille du NAS (7,5), car elle touche un équipement réellement présent et exposé. Le score CVSS 9,8 ne compte pas si le logiciel n'est pas installé. Le risque dépend du contexte, pas seulement du score.
+"""
+
+    quiz {
+      pick: 5
+      question "Le mot de passe du Wi-Fi est affiché dans le hall d’accueil. Qu’est-ce que c’est ?" {
+        + "une vulnérabilité"
+        - "une menace"
+        - "un exploit"
+        - "un risque résiduel"
+        explanation: "C'est une faiblesse (ici une mauvaise pratique) qui pourrait être exploitée. La menace serait la personne mal intentionnée qui en profite ; le risque, le scénario complet avec ses conséquences."
+      }
+      question "Qu’appelle-t-on un exploit ?" {
+        - "une attaque réussie publiée dans la presse"
+        - "un logiciel antivirus"
+        + "un code ou une procédure qui tire parti d'une vulnérabilité précise"
+        - "un rapport d'audit de sécurité"
+        explanation: "Un exploit est l'outil concret qui exploite une faille donnée, souvent pour une version précise d'un logiciel. Il n'a de sens que si la vulnérabilité est présente."
+      }
+      question "Comment estime-t-on un risque dans EBIOS Risk Manager ?" {
+        - "par le score CVSS de la faille"
+        + "par sa gravité et sa vraisemblance"
+        - "par le nombre de postes du réseau"
+        - "par le prix des mesures de sécurité"
+        explanation: "EBIOS RM évalue chaque scénario selon la gravité de ses conséquences et sa vraisemblance. Le CVSS note seulement la gravité technique d'une faille, sans tenir compte de ton contexte."
+      }
+      question "Gravité 3 et vraisemblance 4, sur des échelles de 1 à 4. Quel est le niveau de risque avec la règle du produit ?" {
+        - "7"
+        + "12"
+        - "34"
+        - "1"
+        explanation: "Avec la règle simplifiée risque = gravité × vraisemblance, on obtient 3 × 4 = 12, sur un maximum de 16. C'est un risque à traiter en priorité."
+      }
+      question "Souscrire une assurance cyber est une façon de :" {
+        - "réduire le risque"
+        + "transférer une partie du risque"
+        - "éviter le risque"
+        - "supprimer la vulnérabilité"
+        explanation: "L'assurance prend en charge une partie des conséquences financières : c'est un transfert. Elle n'empêche pas l'attaque et ne corrige aucune faille, donc elle ne remplace pas les mesures de réduction."
+      }
+      question "Qu’est-ce que le risque résiduel ?" {
+        - "le risque avant toute mesure"
+        + "le risque qui reste après l'application des mesures"
+        - "un risque qui a déjà eu lieu"
+        - "un risque dont la gravité est nulle"
+        explanation: "Aucune mesure ne supprime totalement un risque. Ce qui reste doit être connu et accepté par la direction, par écrit."
+      }
+      question "Quel format a un identifiant de vulnérabilité publique ?" {
+        - "CERT-FR-2024-ALE-001"
+        + "CVE-2021-44228"
+        - "CVSS-9.8"
+        - "ISO-27001-A12"
+        explanation: "Les vulnérabilités publiques ont un identifiant CVE-année-numéro. CERT-FR-… désigne un avis ou une alerte du CERT-FR, CVSS est un système de notation, ISO 27001 une norme."
+      }
+      question "Un score CVSS de 7,5 correspond à quelle sévérité ?" {
+        - "moyenne"
+        + "haute"
+        - "critique"
+        - "faible"
+        explanation: "L'échelle CVSS : 0,1-3,9 faible, 4,0-6,9 moyenne, 7,0-8,9 haute, 9,0-10,0 critique. 7,5 est donc haute."
+      }
+      question "Une faille notée CVSS 9,8 vise un logiciel absent de ton parc. Que fais-tu ?" {
+        - "tu la traites avant toutes les autres, car son score est le plus haut"
+        + "tu notes qu'elle ne te concerne pas et tu traites d'abord les failles de tes logiciels exposés"
+        - "tu installes le logiciel pour pouvoir le corriger"
+        - "tu désactives Internet par précaution"
+        explanation: "Le CVSS mesure la gravité technique d'une faille, pas ton risque. Sans le logiciel, pas de vulnérabilité chez toi ; la priorité va aux failles des équipements réellement présents et exposés."
+      }
+      question "Qu’est-ce qu’une vulnérabilité zero-day ?" {
+        - "une faille corrigée le jour même de sa découverte"
+        + "une faille exploitée avant qu'un correctif de l'éditeur existe"
+        - "une faille sans aucune gravité"
+        - "une faille qui ne touche que les systèmes neufs"
+        explanation: "Zero-day signifie que les défenseurs ont eu zéro jour pour corriger. Les mises à jour ne suffisent pas ; d'autres couches (moindre privilège, segmentation, détection, sauvegardes) limitent les dégâts."
+      }
+      question "Quel organisme publie en France les avis et alertes de sécurité informatique pour tous ?" {
+        - "la CNIL"
+        + "le CERT-FR, rattaché à l'ANSSI"
+        - "l'Afnic"
+        - "l'Arcom"
+        explanation: "Le CERT-FR publie avis et alertes sur cert.ssi.gouv.fr. La CNIL protège les données personnelles, l'Afnic gère le .fr, l'Arcom régule l'audiovisuel et le numérique."
+      }
+      question "Un groupe criminel qui envoie des courriels piégés à des lycées est :" {
+        - "une vulnérabilité"
+        + "une source de menace"
+        - "un exploit"
+        - "un risque accepté"
+        explanation: "C'est un acteur qui a l'intention de nuire : une source de menace. Il cherchera des vulnérabilités (personnes crédules, postes non à jour) pour réaliser ses objectifs."
+      }
+      question "Qui doit accepter le risque résiduel dans une organisation ?" {
+        - "le technicien qui a installé les mesures"
+        - "le fournisseur de l'antivirus"
+        + "la direction, responsable de l'activité"
+        - "personne, il est accepté automatiquement"
+        explanation: "Accepter un risque est une décision qui engage l'organisation. Le technicien l'explique et le documente, mais c'est la direction qui décide et signe."
+      }
+    }
+  }
+
+  module "attaques-humaines" {
+    title: "Chapitre 3 : hameçonnage et ingénierie sociale"
+    duration: "35min"
+    content: """
+### L'humain, première porte d'entrée
+Beaucoup d'attaques ne commencent pas par une faille technique, mais par une personne qu'on pousse à agir : cliquer, ouvrir, saisir un mot de passe, valider un virement. C'est l'**ingénierie sociale** (social engineering) : manipuler quelqu'un en jouant sur des ressorts humains.
+
+| Levier | Formule typique |
+|---|---|
+| Urgence | « votre compte sera supprimé dans 24 heures » |
+| Autorité | « c'est la direction, je compte sur votre discrétion » |
+| Peur | « une amende de 135 € est en attente de paiement » |
+| Gain | « vous avez droit à un remboursement de 287,50 € » |
+| Curiosité ou confiance | « voici les photos de la sortie », venant d'un compte connu piraté |
+
+### L'hameçonnage (phishing)
+L'**hameçonnage** est un message (courriel, SMS, messagerie, appel) qui imite un organisme de confiance pour te faire saisir des identifiants ou des coordonnées bancaires sur un faux site, ou ouvrir une pièce jointe piégée. Ses variantes :
+• **SMS** : on parle de smishing (« votre colis est en attente, réglez 1,99 € ») ;
+• **appel téléphonique** : vishing, souvent un faux conseiller bancaire ;
+• **hameçonnage ciblé** (spear phishing) : un message préparé pour une personne précise, avec son nom, sa fonction, des détails réels ;
+• **QR code** piégé (quishing), collé sur une affiche ou envoyé dans un PDF.
+
+### Lire une adresse web sans se tromper
+Le vrai propriétaire d'un lien est le **nom de domaine** placé juste avant le premier `/` qui suit `https://`. On le lit **de droite à gauche** à partir de l'extension :
+
+| Lien | Domaine réel | Verdict |
+|---|---|---|
+| `https://www.impots.gouv.fr/accueil` | `impots.gouv.fr` | légitime |
+| `https://impots.gouv.fr.remboursement-dossier.com/login` | `remboursement-dossier.com` | piège : `impots.gouv.fr` n'est qu'un sous-domaine |
+| `https://ameli-fr.info/connexion` | `ameli-fr.info` | piège : ressemble à ameli.fr |
+| `https://www.paypa1.com` | `paypa1.com` | piège : chiffre 1 à la place du l |
+
+Le cadenas (HTTPS) prouve seulement que la connexion est chiffrée avec le site affiché, **pas** que ce site est honnête : les escrocs obtiennent des certificats gratuits comme tout le monde.
+
+### Lire les en-têtes d'un courriel
+L'expéditeur affiché se falsifie facilement. Les en-têtes complets (dans Thunderbird : Affichage > Source du message ; dans Outlook : Fichier > Propriétés) en disent plus. Le champ `Authentication-Results`, ajouté par le serveur qui reçoit, résume les contrôles :
+```text
+Authentication-Results: mx.lycee-exemple.fr;
+       spf=fail (sender IP is 203.0.113.45) smtp.mailfrom=banque-exemple.fr;
+       dkim=none;
+       dmarc=fail action=quarantine header.from=banque-exemple.fr
+Return-Path: <bounce@mailer-promo.example>
+```
+• **SPF** vérifie que le serveur d'envoi est autorisé par le domaine ;
+• **DKIM** vérifie une signature du message posée par le domaine ;
+• **DMARC** dit quoi faire si ces contrôles échouent pour le domaine affiché dans `From`.
+Ici, SPF et DMARC échouent pour `banque-exemple.fr` et le `Return-Path` pointe ailleurs : le message ne vient pas de la banque. À l'inverse, des contrôles réussis prouvent seulement que le message vient bien du domaine affiché ; un escroc qui possède `banque-exemp1e.fr` aura des contrôles valides pour son propre domaine.
+
+### L'ingénierie sociale sans ordinateur
+• **Fraude au président** (ou FOVI, faux ordre de virement international) : un faux dirigeant demande à la comptabilité un virement urgent et confidentiel.
+• **Fraude au changement de RIB** : un faux fournisseur annonce de nouvelles coordonnées bancaires.
+• **Faux support technique** : une fenêtre bloque le navigateur et affiche un numéro à appeler ; le « technicien » demande à prendre la main sur le poste.
+• **Talonnage** (tailgating) : suivre quelqu'un qui badge pour entrer dans un local.
+La parade commune : **vérifier par un autre canal**, avec des coordonnées que tu connais déjà (l'annuaire interne, le numéro au dos de la carte bancaire), jamais celles fournies dans le message.
+
+### Que faire face à un message suspect ?
+• Ne clique pas, ne réponds pas, n'ouvre pas la pièce jointe.
+• Signale-le : courriel sur **Signal Spam** (`signal-spam.fr`), SMS par transfert au **33700**, site frauduleux sur **Phishing Initiative** ; en entreprise, au service informatique selon la procédure interne.
+• Si tu as déjà saisi un mot de passe : change-le immédiatement, ainsi que partout où tu l'as réutilisé, et active la double authentification. Si tu as donné ta carte bancaire : fais opposition auprès de ta banque.
+• Conserve le message comme preuve en cas de plainte.
+
+### À toi de jouer
+1. Donne le domaine réel et ton verdict pour : (a) `https://connexion.laposte.fr.suivi-colis.net/` ; (b) `https://moncompte.ameli.fr/` ; (c) `https://www.education.gouv.fr@203.0.113.7/` ; (d) `http://xn--pple-43d.com/` (affiché `аpple.com` avec un « а » cyrillique).
+2. La secrétaire de la PME reçoit ce courriel, apparemment du gérant : « Je suis en rendez-vous, je ne peux pas téléphoner. Il faut régler aujourd'hui le fournisseur ci-dessous, nouveau RIB en pièce jointe. Restez discrète. » Liste les signaux d'alerte et la conduite à tenir.
+3. Écris trois règles courtes à afficher en salle des professeurs pour réduire le risque d'hameçonnage.
+
+### Correction
+1. (a) `suivi-colis.net` : piège, `connexion.laposte.fr` n'est qu'un préfixe ; (b) `ameli.fr` : légitime (`moncompte` est un sous-domaine d'`ameli.fr`) ; (c) l'hôte réel est `203.0.113.7` : tout ce qui précède `@` est un nom d'utilisateur ignoré, c'est un piège ; (d) le domaine réel est `xn--pple-43d.com`, un nom internationalisé qui imite `apple.com` (attaque homographe) : piège.
+2. Signaux : urgence, demande de discrétion, impossibilité de joindre le demandeur, changement de RIB, pièce jointe. Conduite : ne pas payer ; appeler le gérant sur son numéro habituel (pas celui du courriel) ; appeler le fournisseur avec les coordonnées déjà connues ; garder le message et prévenir le prestataire informatique ; vérifier les en-têtes (`Authentication-Results`, `Return-Path`). Une procédure écrite « tout changement de RIB est confirmé par téléphone, à deux personnes » évite ce piège.
+3. Exemples : « Je lis le domaine de droite à gauche avant de saisir un mot de passe. » ; « Une demande urgente d'argent ou d'identifiants se vérifie par téléphone, avec un numéro que je connais déjà. » ; « Je signale tout message douteux à l'adresse interne prévue, même si j'ai déjà cliqué : plus on le sait tôt, moins il y a de dégâts. »
+"""
+
+    quiz {
+      pick: 5
+      question "Quel est le domaine réel de https://impots.gouv.fr.remboursement-dossier.com/login ?" {
+        - "impots.gouv.fr"
+        - "gouv.fr"
+        + "remboursement-dossier.com"
+        - "login"
+        explanation: "Le domaine se lit de droite à gauche avant le premier / : ici remboursement-dossier.com. impots.gouv.fr n'est qu'un sous-domaine choisi par l'escroc pour tromper l'œil."
+      }
+      question "Que prouve le cadenas HTTPS dans la barre d’adresse ?" {
+        - "que le site est officiel et honnête"
+        + "que la connexion est chiffrée avec le site dont le nom est affiché"
+        - "que le site a été contrôlé par l'ANSSI"
+        - "que le site ne contient aucun virus"
+        explanation: "Le cadenas garantit le chiffrement et l'identité du nom de domaine affiché, rien de plus. Un faux site obtient un certificat gratuit pour son propre domaine en quelques minutes."
+      }
+      question "Comment s’appelle l’hameçonnage par SMS ?" {
+        - "le vishing"
+        + "le smishing"
+        - "le spoofing"
+        - "le pharming"
+        explanation: "Smishing vient de SMS + phishing. Le vishing passe par la voix (appel), le spoofing désigne l'usurpation d'une adresse, le pharming la redirection d'un nom de domaine vers un faux site."
+      }
+      question "Où transférer un SMS frauduleux en France ?" {
+        - "au 17"
+        + "au 33700"
+        - "au 3018"
+        - "au 112"
+        explanation: "Le 33700 recueille gratuitement les SMS et appels indésirables ou frauduleux. Le 17 et le 112 sont des numéros d'urgence, le 3018 est le numéro national contre le cyberharcèlement des jeunes."
+      }
+      question "Un courriel affiche spf=fail et dmarc=fail pour le domaine de ta banque. Que conclus-tu ?" {
+        - "le message est authentique mais mal configuré, tu peux cliquer"
+        + "le message n'a probablement pas été envoyé par un serveur autorisé par ta banque"
+        - "le message est chiffré"
+        - "ta boîte aux lettres est piratée"
+        explanation: "SPF vérifie que le serveur d'envoi est autorisé par le domaine, DMARC applique la politique du domaine affiché. Un double échec indique une usurpation probable de l'expéditeur."
+      }
+      question "Un message réussit SPF, DKIM et DMARC pour le domaine banque-exemp1e.fr. Est-il sûr ?" {
+        - "oui, les trois contrôles prouvent qu'il est honnête"
+        + "non, cela prouve seulement qu'il vient de ce domaine, qui imite celui de la banque"
+        - "oui, si le cadenas est présent"
+        - "non, car DKIM est obsolète"
+        explanation: "Les contrôles vérifient l'origine par rapport au domaine affiché. L'escroc qui possède banque-exemp1e.fr (avec un chiffre 1) passe ces contrôles pour son domaine : il faut aussi lire le nom lui-même."
+      }
+      question "Quelle est la parade principale contre la fraude au président ?" {
+        - "installer un antivirus plus récent"
+        - "répondre au courriel pour demander confirmation"
+        + "vérifier la demande par un autre canal, avec un numéro déjà connu"
+        - "chiffrer les courriels de la comptabilité"
+        explanation: "Répondre au courriel revient à demander confirmation à l'escroc. Le rappel sur un numéro connu (annuaire interne) et la double validation des virements cassent le scénario."
+      }
+      question "Dans https://www.education.gouv.fr@203.0.113.7/, quel hôte ton navigateur contacte-t-il ?" {
+        - "www.education.gouv.fr"
+        + "203.0.113.7"
+        - "education.gouv.fr puis 203.0.113.7"
+        - "aucun, l'adresse est invalide"
+        explanation: "Ce qui précède @ dans une URL est un nom d'utilisateur. Le navigateur se connecte à l'hôte placé après @, ici 203.0.113.7. Les navigateurs récents avertissent souvent, mais le piège existe toujours dans des outils et des courriels."
+      }
+      question "Qu’est-ce que le spear phishing ?" {
+        - "un hameçonnage envoyé à des millions d'adresses"
+        + "un hameçonnage préparé pour une personne précise, avec des détails réels"
+        - "un hameçonnage par QR code"
+        - "un virus qui se propage par clé USB"
+        explanation: "Le hameçonnage ciblé exploite des informations sur la victime (nom, poste, collègues, projets) pour être crédible. Il est plus rare mais réussit beaucoup plus souvent qu'un envoi de masse."
+      }
+      question "Tu as saisi ton mot de passe de messagerie sur un faux site. Quelle est la première action ?" {
+        - "attendre de voir si quelque chose se passe"
+        - "supprimer le courriel d'hameçonnage pour ne plus le voir"
+        + "changer ce mot de passe, et partout où il était réutilisé, puis activer la double authentification"
+        - "désinstaller le navigateur"
+        explanation: "L'escroc peut utiliser le mot de passe dans les minutes qui suivent. Le changer tout de suite coupe son accès ; garder le courriel sert de preuve et aide le service informatique."
+      }
+      question "Une fenêtre bloque ton navigateur et affiche « Virus détecté, appelez le support Microsoft au 09… ». De quoi s’agit-il ?" {
+        - "d'une vraie alerte de Windows Defender"
+        + "d'une arnaque au faux support technique"
+        - "d'une mise à jour obligatoire"
+        - "d'un message du fournisseur d'accès"
+        explanation: "Microsoft n'affiche jamais de numéro à appeler dans une page web. Il faut fermer l'onglet ou le navigateur (au besoin par le gestionnaire des tâches) et ne jamais laisser un inconnu prendre la main sur le poste."
+      }
+      question "Quel levier psychologique utilise « votre compte sera supprimé dans 24 heures » ?" {
+        - "le gain"
+        - "la curiosité"
+        + "l'urgence"
+        - "la réciprocité"
+        explanation: "L'urgence empêche de prendre le temps de vérifier. C'est le levier le plus fréquent dans l'hameçonnage ; un vrai service laisse en général un délai raisonnable et des moyens de contact connus."
+      }
+      question "Qu’est-ce que le talonnage (tailgating) ?" {
+        - "intercepter des paquets sur un réseau Wi-Fi"
+        + "entrer dans un local protégé en suivant une personne autorisée"
+        - "envoyer des courriels avec une fausse adresse"
+        - "deviner un mot de passe par essais successifs"
+        explanation: "Le talonnage contourne le contrôle d'accès physique en profitant de la politesse (tenir la porte). La parade : chacun badge, et on accompagne les visiteurs."
+      }
+    }
+  }
+
+  module "attaques-techniques" {
+    title: "Chapitre 4 : rançongiciel, force brute, homme du milieu et déni de service"
+    duration: "40min"
+    content: """
+### Le rançongiciel (ransomware)
+Un **rançongiciel** chiffre les fichiers d'une machine, puis de tout le réseau qu'il atteint, et réclame une rançon (souvent en cryptomonnaie) contre la clé de déchiffrement. Les groupes actuels pratiquent la **double extorsion** : ils copient d'abord les données, puis menacent de les publier si la victime ne paie pas.
+
+Déroulé typique d'une attaque contre une PME ou une collectivité :
+1. **Entrée** : pièce jointe piégée, mot de passe volé sur un accès distant (RDP, VPN), faille non corrigée d'un équipement exposé.
+2. **Installation et reconnaissance** : l'attaquant cherche les comptes administrateurs, les serveurs et surtout les **sauvegardes**.
+3. **Propagation** : il se déplace de machine en machine avec les droits obtenus (mouvement latéral).
+4. **Destruction des sauvegardes accessibles**, puis **chiffrement** de tout, souvent la nuit ou un week-end.
+
+Plusieurs jours ou semaines peuvent séparer l'entrée du chiffrement. Des journaux surveillés permettent de couper l'attaque avant la dernière étape. Les recommandations officielles (Cybermalveillance.gouv.fr, ANSSI) sont de **ne pas payer** : le paiement ne garantit ni la récupération ni la non-publication, et il finance de nouvelles attaques. La vraie protection, c'est une sauvegarde **hors ligne** restaurable (chapitre 8).
+
+### La force brute et ses cousines
+• **Force brute** : essayer toutes les combinaisons possibles. Efficace seulement contre des secrets courts.
+• **Attaque par dictionnaire** : essayer une liste de mots de passe probables (`123456`, `azerty`, `Lycee2024!`).
+• **Pulvérisation** (password spraying) : essayer **un** mot de passe courant sur **beaucoup** de comptes, pour passer sous le seuil de blocage de chaque compte.
+• **Bourrage d'identifiants** (credential stuffing) : réutiliser des couples identifiant/mot de passe issus de fuites d'autres sites. Il réussit à chaque fois qu'une personne réutilise son mot de passe.
+
+Toute machine qui expose SSH sur Internet reçoit des milliers d'essais par jour. Les traces se lisent dans les journaux :
+```text
+$ sudo journalctl -u ssh --since today | grep "Failed password" | tail -3
+nov. 26 03:12:41 srv sshd[2210]: Failed password for invalid user admin from 203.0.113.50 port 51122 ssh2
+nov. 26 03:12:44 srv sshd[2212]: Failed password for root from 203.0.113.50 port 51188 ssh2
+nov. 26 03:12:47 srv sshd[2214]: Failed password for invalid user test from 203.0.113.50 port 51230 ssh2
+```
+`invalid user` signale un compte qui n'existe pas sur la machine : l'attaquant essaie une liste de noms. Sous Debian 12, le fichier `/var/log/auth.log` n'existe plus par défaut (rsyslog n'est plus installé) : on lit le journal de systemd avec `journalctl`.
+
+Sous Windows, chaque échec d'ouverture de session crée l'événement **4625** dans le journal Sécurité, chaque succès l'événement **4624**, et un compte verrouillé l'événement **4740**.
+
+### L'homme du milieu (man-in-the-middle)
+L'attaquant se place **entre** la victime et le service, lit et peut modifier ce qui passe. Moyens courants sur un réseau local :
+• **usurpation ARP** (ARP spoofing) : l'attaquant annonce que l'adresse IP de la passerelle correspond à sa propre adresse MAC ; tout le trafic sortant passe par lui ;
+• **faux point d'accès Wi-Fi** (evil twin) portant le même nom que le Wi-Fi du lycée ou d'une gare ;
+• **faux serveur DHCP** qui distribue sa propre passerelle et son propre DNS.
+
+Indice côté victime : dans la table ARP, deux adresses IP différentes (la passerelle et une autre machine) affichent la **même MAC**.
+```text
+$ ip neigh
+192.168.10.254 dev eth0 lladdr 08:00:27:aa:bb:cc REACHABLE
+192.168.10.37  dev eth0 lladdr 08:00:27:aa:bb:cc STALE
+```
+Protection : le chiffrement de bout en bout (**HTTPS**, SSH, VPN) rend le trafic illisible et toute modification détectable, **à condition de ne jamais accepter un avertissement de certificat**. Sur le réseau : DHCP snooping et inspection ARP dynamique sur les commutateurs, Wi-Fi WPA2/WPA3 Entreprise. La technique **HSTS** permet à un site d'imposer HTTPS au navigateur et empêche de rétrograder la connexion en HTTP.
+
+### Le déni de service (DoS) et sa version distribuée (DDoS)
+Le but n'est pas de voler, mais de **rendre un service indisponible** en l'épuisant.
+| Type | Principe | Exemple |
+|---|---|---|
+| Volumétrique | saturer le lien réseau | des milliers de machines piratées (un botnet) envoient des gigabits par seconde ; amplification par des serveurs DNS ou NTP mal configurés |
+| Protocolaire | épuiser les tables d'un équipement ou d'un système | inondation SYN (SYN flood) : des demandes de connexion TCP jamais terminées |
+| Applicatif | épuiser l'application | des milliers de recherches coûteuses par seconde sur un site web |
+
+Un **DDoS** (distributed) vient de très nombreuses sources : bloquer une adresse IP ne suffit pas. Une petite structure ne peut pas absorber seule une attaque volumétrique ; on s'appuie sur l'hébergeur ou un service d'atténuation, et on évite de devenir soi-même un amplificateur (pas de résolveur DNS ouvert sur Internet).
+
+Signe d'une inondation SYN sur un serveur Linux : un grand nombre de connexions dans l'état `SYN-RECV`.
+```text
+$ ss -tn state syn-recv | wc -l
+4087
+```
+
+### À toi de jouer
+Le serveur Debian de la PME, accessible en SSH depuis Internet, est lent depuis ce matin. Tu obtiens ceci :
+```text
+$ sudo journalctl -u ssh --since "1 hour ago" | grep -c "Failed password"
+5214
+$ sudo journalctl -u ssh --since "1 hour ago" | grep "Failed password" | grep -oE 'from [0-9.]+' | sort | uniq -c | sort -rn | head -3
+   4980 from 198.51.100.23
+    150 from 203.0.113.9
+     84 from 192.0.2.77
+$ sudo journalctl -u ssh --since "1 hour ago" | grep "Accepted"
+nov. 26 08:02:11 srv sshd[1201]: Accepted publickey for compta from 192.168.10.21 port 50544 ssh2
+```
+1. De quel type d'attaque s'agit-il ? A-t-elle réussi ?
+2. Quelles sont les trois adresses à surveiller, et pourquoi bloquer seulement la première ne suffit pas ?
+3. Propose trois mesures durables.
+4. Sur un poste Windows, quelle commande PowerShell affiche les 10 derniers échecs d'ouverture de session ?
+
+### Correction
+1. Une attaque par force brute ou par dictionnaire sur SSH : plus de 5 000 échecs en une heure. La seule connexion acceptée vient d'une adresse interne (`192.168.10.21`) avec une **clé publique**, pour le compte `compta` : rien n'indique un succès de l'attaquant. Vérifie quand même que cette connexion était prévue.
+2. `198.51.100.23` (4 980 essais), `203.0.113.9` et `192.0.2.77`. Les attaquants utilisent souvent plusieurs adresses ; bloquer une IP déplace le problème. Il faut des mesures qui rendent les essais inutiles.
+3. Désactiver l'authentification SSH par mot de passe et n'accepter que les clés (`PasswordAuthentication no` dans `/etc/ssh/sshd_config`, vérifier avec `sudo sshd -t`, puis `sudo systemctl reload ssh`, en gardant une session ouverte pour ne pas perdre la main) ; ne pas exposer SSH à Internet, mais le rendre accessible par un VPN ; installer fail2ban, qui bannit temporairement les adresses après plusieurs échecs (chapitre 5).
+4. En PowerShell lancé en administrateur :
+```text
+Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4625} -MaxEvents 10
+```
+"""
+
+    quiz {
+      pick: 5
+      question "Qu’est-ce que la double extorsion pratiquée par les groupes de rançongiciel ?" {
+        - "chiffrer deux fois les mêmes fichiers"
+        + "voler les données avant de les chiffrer, puis menacer de les publier"
+        - "demander deux rançons à deux personnes différentes"
+        - "attaquer à la fois le poste et le téléphone"
+        explanation: "Les attaquants copient d'abord les données, puis chiffrent. Même avec de bonnes sauvegardes, la victime subit alors une menace de publication, donc une atteinte à la confidentialité."
+      }
+      question "Que recommandent Cybermalveillance.gouv.fr et l’ANSSI au sujet de la rançon ?" {
+        - "la payer rapidement pour limiter les dégâts"
+        - "négocier une remise avant de payer"
+        + "ne pas la payer"
+        - "la payer seulement si les sauvegardes sont détruites"
+        explanation: "Le paiement ne garantit ni le déchiffrement ni la non-publication, et il finance de nouvelles attaques. On isole, on porte plainte, on restaure depuis une sauvegarde saine."
+      }
+      question "Pourquoi les attaquants cherchent-ils les sauvegardes avant de lancer le chiffrement ?" {
+        - "pour les copier et les revendre en priorité"
+        + "pour les détruire et empêcher la victime de restaurer sans payer"
+        - "parce qu'elles contiennent les mots de passe en clair"
+        - "pour accélérer le chiffrement"
+        explanation: "Une victime qui peut restaurer n'a pas besoin de payer. C'est pourquoi une copie hors ligne, inaccessible depuis le réseau, est indispensable."
+      }
+      question "Un attaquant essaie « Printemps2025! » sur les 400 comptes de l’établissement. Comment s’appelle cette technique ?" {
+        - "la force brute"
+        + "la pulvérisation de mots de passe (password spraying)"
+        - "le bourrage d'identifiants"
+        - "l'homme du milieu"
+        explanation: "Un seul mot de passe probable sur beaucoup de comptes : chaque compte ne subit qu'un ou deux essais et ne se verrouille pas. Le bourrage d'identifiants réutilise des couples issus de fuites."
+      }
+      question "Quel type d’attaque réussit grâce à la réutilisation d’un même mot de passe sur plusieurs sites ?" {
+        - "le déni de service"
+        - "l'usurpation ARP"
+        + "le bourrage d'identifiants (credential stuffing)"
+        - "l'inondation SYN"
+        explanation: "Les couples identifiant/mot de passe volés sur un site sont essayés automatiquement sur d'autres. Un mot de passe unique par site, stocké dans un gestionnaire, annule cette attaque."
+      }
+      question "Dans « Failed password for invalid user admin from 203.0.113.50 », que signifie invalid user ?" {
+        - "le mot de passe est trop court"
+        + "le compte admin n'existe pas sur cette machine"
+        - "le compte admin est verrouillé"
+        - "l'adresse IP est bannie"
+        explanation: "sshd indique invalid user quand le nom de compte essayé n'existe pas. L'attaquant parcourt une liste de noms courants (admin, test, oracle…)."
+      }
+      question "Sous Debian 12, où lire les échecs de connexion SSH par défaut ?" {
+        - "dans /var/log/auth.log, toujours présent"
+        + "avec journalctl -u ssh, car rsyslog n'est plus installé par défaut"
+        - "dans /etc/ssh/sshd_config"
+        - "avec la commande last -f"
+        explanation: "Debian 12 n'installe plus rsyslog, donc /var/log/auth.log n'est pas créé. Les messages de sshd sont dans le journal systemd. sshd_config est un fichier de configuration, pas un journal."
+      }
+      question "Quel identifiant d’événement Windows correspond à un échec d’ouverture de session ?" {
+        - "4624"
+        + "4625"
+        - "4740"
+        - "4720"
+        explanation: "4625 : échec d'ouverture de session. 4624 : succès. 4740 : compte verrouillé. 4720 : compte utilisateur créé."
+      }
+      question "Dans la table ARP d’un poste, la passerelle et une autre machine ont la même adresse MAC. Que soupçonnes-tu ?" {
+        - "un déni de service"
+        + "une usurpation ARP en vue d'une attaque de l'homme du milieu"
+        - "un rançongiciel"
+        - "un serveur DHCP en panne"
+        explanation: "L'attaquant annonce sa MAC pour l'IP de la passerelle : le trafic sortant passe par lui. Deux IP qui partagent la même MAC, dont la passerelle, sont un signe classique."
+      }
+      question "Que fait HSTS ?" {
+        - "il chiffre les courriels de bout en bout"
+        + "il impose au navigateur d'utiliser HTTPS pour un site, ce qui empêche le retour en HTTP"
+        - "il bloque les adresses IP des botnets"
+        - "il remplace le certificat du site"
+        explanation: "Avec HSTS, le site indique au navigateur de ne plus jamais lui parler en HTTP pendant une durée donnée. Un attaquant placé au milieu ne peut plus rétrograder la connexion vers HTTP."
+      }
+      question "Un navigateur affiche un avertissement de certificat sur le Wi-Fi d’une gare, pour le site de ta banque. Que fais-tu ?" {
+        - "tu acceptes l'exception, le Wi-Fi public est souvent mal configuré"
+        + "tu refuses et tu quittes ce réseau, car quelqu'un peut intercepter la connexion"
+        - "tu vides le cache puis tu continues"
+        - "tu passes en navigation privée"
+        explanation: "Un avertissement de certificat sur un site connu est le symptôme typique d'une interception. L'accepter donne la connexion en clair à l'attaquant. Utilise plutôt les données mobiles."
+      }
+      question "Pourquoi bloquer une seule adresse IP ne suffit-il pas contre un DDoS ?" {
+        - "parce que le pare-feu ne sait pas bloquer d'adresse"
+        + "parce que l'attaque vient d'un très grand nombre de sources"
+        - "parce que les DDoS n'utilisent pas IP"
+        - "parce que le blocage aggrave toujours l'attaque"
+        explanation: "Distributed signifie que des milliers de machines (un botnet) attaquent en même temps. Il faut une atténuation en amont, chez l'hébergeur ou un service spécialisé."
+      }
+      question "Beaucoup de connexions TCP restent dans l’état SYN-RECV sur un serveur. Quelle attaque est probable ?" {
+        - "une usurpation ARP"
+        - "un bourrage d'identifiants"
+        + "une inondation SYN (SYN flood)"
+        - "un hameçonnage"
+        explanation: "L'attaquant envoie des SYN sans jamais finir la poignée de main ; les demandes s'accumulent en SYN-RECV. ss -tn state syn-recv permet de les compter."
+      }
+    }
+  }
+
+  module "defense-profondeur" {
+    title: "Chapitre 5 : la défense en profondeur sur un poste et un serveur"
+    duration: "40min"
+    content: """
+### Le principe
+Aucune protection n'est parfaite. La **défense en profondeur** consiste à empiler plusieurs barrières **indépendantes**, de sorte que l'échec de l'une soit rattrapé par la suivante. L'idée vient de la fortification militaire (fossés, remparts, donjon), et la DCSSI (devenue l'ANSSI en 2009) l'a décrite pour les systèmes d'information dans un mémento publié en 2004.
+
+| Couche | Exemples de mesures |
+|---|---|
+| Humains et organisation | sensibilisation, charte informatique, procédures (changement de RIB, départ d'un salarié) |
+| Physique | local technique fermé, badges, câbles et ports protégés |
+| Réseau | pare-feu, segmentation en VLAN, Wi-Fi invités séparé, VPN pour les accès distants |
+| Système | mises à jour, comptes nominatifs, moindre privilège, antivirus ou EDR, durcissement |
+| Application | mises à jour, MFA, contrôle des entrées (OWASP) |
+| Données | chiffrement, droits d'accès, sauvegardes hors ligne |
+| Détection et réaction | journaux centralisés, alertes, procédure d'incident |
+
+Exemple : un rançongiciel arrive dans une pièce jointe. Le filtre de messagerie le laisse passer (couche 1 en échec), l'utilisateur l'ouvre (couche 2 en échec), mais comme l'utilisateur n'est pas administrateur et que l'antivirus le détecte, il ne peut pas se propager ; et même s'il chiffrait le partage réseau, la sauvegarde hors ligne permettrait de restaurer.
+
+### Quatre principes à appliquer partout
+• **Moindre privilège** : chacun reçoit seulement les droits nécessaires à son travail. Un enseignant n'est pas administrateur de son poste ; un technicien utilise un compte normal pour lire ses courriels et un compte d'administration séparé pour administrer.
+• **Réduction de la surface d'attaque** : tout service inutile est désactivé, tout port inutile est fermé.
+• **Mises à jour** : appliquer rapidement les correctifs de sécurité, en priorité sur ce qui est exposé à Internet (VPN, pare-feu, messagerie, site web).
+• **Cloisonnement** : séparer les réseaux (administration, élèves, invités, serveurs), pour qu'une machine compromise n'atteigne pas tout.
+
+Le **Guide d'hygiène informatique** de l'ANSSI regroupe 42 mesures de ce type ; c'est une bonne liste de contrôle pour une petite structure.
+
+### Mettre en œuvre sur un serveur Debian
+Voir les services qui écoutent :
+```text
+$ sudo ss -tulpn
+Netid State  Local Address:Port  Process
+tcp   LISTEN 0.0.0.0:22          users:(("sshd",pid=612,fd=3))
+tcp   LISTEN 0.0.0.0:3306        users:(("mariadbd",pid=701,fd=20))
+tcp   LISTEN 0.0.0.0:80          users:(("apache2",pid=820,fd=4))
+```
+Ici, la base de données MariaDB écoute sur toutes les interfaces (`0.0.0.0:3306`) alors que seul le site local s'en sert : il faut la limiter à `127.0.0.1` (option `bind-address` de MariaDB) ou au moins la filtrer.
+
+Les mises à jour automatiques de sécurité :
+```bash
+sudo apt update && sudo apt upgrade
+sudo apt install unattended-upgrades
+sudo dpkg-reconfigure -plow unattended-upgrades
+```
+
+Un pare-feu simple avec ufw. **Attention** : si tu es connecté en SSH, autorise SSH **avant** d'activer le pare-feu, sinon tu perds la main sur le serveur.
+```bash
+sudo apt install ufw
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow from 192.168.10.0/24 to any port 22 proto tcp
+sudo ufw allow 80/tcp
+sudo ufw enable
+sudo ufw status verbose
+```
+
+### Mettre en œuvre sur un poste Windows
+• Un compte **standard** pour l'usage quotidien ; le compte administrateur seulement pour installer.
+• Windows Update actif, Microsoft Defender actif. Vérifie l'état de Defender : `Get-MpComputerStatus | Select-Object AntivirusEnabled, RealTimeProtectionEnabled, AntivirusSignatureLastUpdated`.
+• Pare-feu Windows activé sur les trois profils : `Get-NetFirewallProfile | Select-Object Name, Enabled`.
+• Chiffrement du disque (BitLocker) sur les portables, pour la confidentialité en cas de vol.
+• Liste des administrateurs locaux à surveiller : `Get-LocalGroupMember -Group "Administrateurs"` (sur un Windows en anglais : `Administrators`).
+
+### La couche détection : surveiller et bannir
+**fail2ban** lit les journaux et bannit temporairement par le pare-feu les adresses qui accumulent les échecs. Sous Debian 12, il doit lire le journal systemd :
+```text
+# /etc/fail2ban/jail.local
+[sshd]
+enabled  = true
+backend  = systemd
+maxretry = 5
+findtime = 10m
+bantime  = 1h
+```
+fail2ban ralentit les attaques ; il ne remplace ni l'authentification par clé, ni le VPN. C'est une couche de plus.
+
+### À toi de jouer
+Le lycée possède un serveur Debian « intranet » (site web interne et base MariaDB). Tu dois le durcir.
+1. Écris les commandes pour : lister les ports ouverts, appliquer les mises à jour et activer les mises à jour de sécurité automatiques.
+2. Configure ufw pour : refuser tout en entrée, autoriser SSH seulement depuis le VLAN d'administration `192.168.10.0/24`, autoriser HTTP et HTTPS depuis partout. Dans quel ordre tapes-tu les commandes si tu es connecté en SSH ?
+3. Installe fail2ban pour SSH et vérifie qu'il fonctionne.
+4. Pour chacune des couches du tableau, cite une mesure qui protège cet intranet.
+
+### Correction
+1. `sudo ss -tulpn` ; `sudo apt update && sudo apt upgrade` ; `sudo apt install unattended-upgrades` puis `sudo dpkg-reconfigure -plow unattended-upgrades` (réponds Oui).
+2. Ordre sûr : `sudo ufw default deny incoming`, `sudo ufw default allow outgoing`, `sudo ufw allow from 192.168.10.0/24 to any port 22 proto tcp`, `sudo ufw allow 80/tcp`, `sudo ufw allow 443/tcp`, **puis seulement** `sudo ufw enable`. Vérifie avec `sudo ufw status verbose`. Si ton poste n'est pas dans `192.168.10.0/24`, ta session SSH sera coupée : vérifie ton adresse avant.
+3. `sudo apt install fail2ban python3-systemd`, crée `/etc/fail2ban/jail.local` comme ci-dessus, `sudo systemctl restart fail2ban`, puis `sudo fail2ban-client status sshd` : la sortie indique le nombre d'échecs vus et la liste des adresses bannies.
+4. Exemples : humains (charte et sensibilisation des enseignants), physique (serveur dans une baie fermée à clé), réseau (serveur dans un VLAN serveurs, SSH limité au VLAN d'administration), système (mises à jour automatiques, compte d'administration nominatif, `sudo` plutôt que `root`), application (MariaDB limitée à `127.0.0.1`, mises à jour du site), données (sauvegarde quotidienne de la base, copie hors ligne), détection (fail2ban, journaux conservés).
+"""
+
+    codeblock "bash" {
+      title: "Contrôle rapide d'un serveur Debian"
+      code: """
+sudo ss -tulpn                      # services qui écoutent, et sur quelle adresse
+sudo ufw status verbose             # politique par défaut et règles
+sudo fail2ban-client status sshd    # échecs vus et adresses bannies
+apt list --upgradable               # mises à jour en attente
+getent group sudo                   # comptes qui peuvent devenir administrateur
+sudo journalctl -p warning --since today | tail -20   # avertissements du jour
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quel est le principe de la défense en profondeur ?" {
+        - "installer l'antivirus le plus performant du marché"
+        + "empiler plusieurs barrières indépendantes pour que l'échec de l'une soit rattrapé"
+        - "placer tous les serveurs au sous-sol"
+        - "chiffrer tous les disques durs"
+        explanation: "Aucune mesure n'est infaillible. Avec plusieurs couches indépendantes (humaine, réseau, système, données, détection), une attaque doit toutes les franchir."
+      }
+      question "Qu’impose le principe du moindre privilège ?" {
+        - "donner les droits d'administrateur à tous pour éviter les blocages"
+        + "donner à chacun seulement les droits nécessaires à son travail"
+        - "supprimer tous les comptes administrateurs"
+        - "changer les mots de passe chaque mois"
+        explanation: "Un compte qui a peu de droits limite les dégâts s'il est compromis. Les administrateurs utilisent un compte normal au quotidien et un compte séparé pour administrer."
+      }
+      question "La sortie de ss -tulpn montre 0.0.0.0:3306 pour mariadbd. Qu’est-ce que cela signifie ?" {
+        - "MariaDB est arrêté"
+        + "MariaDB écoute sur toutes les interfaces, donc il est joignable depuis le réseau"
+        - "MariaDB n'écoute que sur la machine locale"
+        - "MariaDB utilise le port 0"
+        explanation: "0.0.0.0 signifie toutes les adresses IPv4 de la machine. Si seule l'application locale l'utilise, il faut limiter l'écoute à 127.0.0.1 (bind-address) ou filtrer le port."
+      }
+      question "Tu configures ufw à distance par SSH. Quelle erreur te coupe l’accès ?" {
+        - "autoriser le port 22 avant ufw enable"
+        + "lancer ufw enable avant d'avoir autorisé SSH"
+        - "lancer ufw status verbose"
+        - "autoriser le port 80"
+        explanation: "Avec une politique deny incoming, activer ufw sans règle pour SSH bloque ta connexion. Il faut toujours autoriser SSH (et vérifier ton adresse source) avant d'activer."
+      }
+      question "Quelle commande active les mises à jour de sécurité automatiques sous Debian ?" {
+        - "sudo apt autoremove"
+        + "sudo dpkg-reconfigure -plow unattended-upgrades"
+        - "sudo systemctl enable apt"
+        - "sudo apt upgrade --auto"
+        explanation: "Après avoir installé le paquet unattended-upgrades, dpkg-reconfigure -plow unattended-upgrades active l'installation automatique. apt autoremove supprime des paquets inutiles ; les deux autres commandes n'existent pas sous cette forme."
+      }
+      question "Que fait fail2ban ?" {
+        - "il chiffre les connexions SSH"
+        - "il remplace le mot de passe par une clé"
+        + "il lit les journaux et bannit temporairement les adresses qui accumulent les échecs"
+        - "il met à jour le noyau Linux"
+        explanation: "fail2ban surveille les journaux et ajoute des règles de pare-feu contre les adresses trop insistantes. Il ralentit la force brute mais ne remplace pas l'authentification par clé ni le VPN."
+      }
+      question "Sous Debian 12, pourquoi faut-il indiquer backend = systemd pour la prison sshd de fail2ban ?" {
+        - "parce que fail2ban ne fonctionne qu'avec systemd-networkd"
+        + "parce que les messages de sshd sont dans le journal systemd et non dans /var/log/auth.log"
+        - "parce que systemd bannit lui-même les adresses"
+        - "parce que sinon fail2ban bannit tout le monde"
+        explanation: "Sans rsyslog, /var/log/auth.log n'existe pas. fail2ban doit lire le journal systemd (avec le paquet python3-systemd), sinon la prison ne démarre pas ou ne voit rien."
+      }
+      question "Un enseignant utilise au quotidien un compte administrateur de son poste. Quel risque cela ajoute-t-il ?" {
+        - "aucun, s'il a un bon mot de passe"
+        + "un logiciel malveillant ouvert par erreur s'exécute avec tous les droits sur le poste"
+        - "son poste ne recevra plus de mises à jour"
+        - "il ne pourra plus imprimer"
+        explanation: "Un programme lancé hérite des droits de l'utilisateur. Avec un compte standard, beaucoup de logiciels malveillants ne peuvent ni s'installer durablement ni désactiver les protections."
+      }
+      question "Combien de mesures compte le Guide d’hygiène informatique de l’ANSSI ?" {
+        - "10"
+        - "20"
+        + "42"
+        - "100"
+        explanation: "Le guide d'hygiène informatique de l'ANSSI regroupe 42 mesures (sensibiliser, connaître le SI, authentifier, sécuriser les postes, le réseau, l'administration, le nomadisme, mettre à jour, superviser). C'est une bonne base pour une petite structure."
+      }
+      question "Pourquoi séparer le réseau des élèves de celui de l’administration ?" {
+        - "pour doubler le débit Internet"
+        + "pour qu'un poste compromis côté élèves n'atteigne pas directement les serveurs sensibles"
+        - "parce que le Wi-Fi l'exige"
+        - "pour supprimer le besoin d'antivirus"
+        explanation: "Le cloisonnement (VLAN, filtrage entre eux) limite la propagation. C'est une couche réseau de la défense en profondeur."
+      }
+      question "Quelle commande PowerShell vérifie que le pare-feu Windows est actif sur chaque profil ?" {
+        - "Get-MpComputerStatus"
+        + "Get-NetFirewallProfile | Select-Object Name, Enabled"
+        - "netsh wlan show profiles"
+        - "Get-LocalGroupMember Administrateurs"
+        explanation: "Get-NetFirewallProfile liste les profils Domaine, Privé et Public avec leur état. Get-MpComputerStatus concerne Defender, netsh wlan les profils Wi-Fi, Get-LocalGroupMember les membres d'un groupe."
+      }
+      question "Sur quoi faut-il appliquer les correctifs de sécurité en priorité ?" {
+        - "sur les postes les plus anciens"
+        + "sur les équipements exposés à Internet (VPN, pare-feu, messagerie, site web)"
+        - "sur les imprimantes"
+        - "sur les machines virtuelles de test"
+        explanation: "Ce qui est exposé à Internet est attaqué en premier et en continu, souvent quelques jours après la publication d'une faille. C'est là qu'un retard de mise à jour coûte le plus cher."
+      }
+    }
+  }
+
+  module "mots-de-passe" {
+    title: "Chapitre 6 : mots de passe robustes et gestionnaires"
+    duration: "35min"
+    content: """
+### Ce qui rend un mot de passe robuste
+Un mot de passe résiste quand il est **imprévisible**. On mesure cela par l'**entropie**, en bits : pour un mot de passe tiré **au hasard** parmi N symboles possibles, sur L caractères, l'entropie vaut L × log2(N). Chaque bit supplémentaire double le nombre d'essais nécessaires.
+
+| Alphabet | N | Bits par caractère (environ) |
+|---|---|---|
+| chiffres seuls | 10 | 3,3 |
+| minuscules | 26 | 4,7 |
+| minuscules + majuscules + chiffres | 62 | 5,95 |
+| + 37 caractères spéciaux | 99 | 6,6 |
+
+Exemples de calcul :
+• 12 caractères tirés parmi 99 : 12 × 6,63 ≈ **80 bits** ;
+• 14 caractères tirés parmi 62 : 14 × 5,95 ≈ **83 bits** ;
+• 8 caractères parmi 99 : environ 53 bits seulement.
+
+Attention : ce calcul ne vaut que pour un tirage aléatoire. `Lycee2025!` contient les quatre types de caractères, mais il est dans toutes les listes d'attaque : son imprévisibilité réelle est très faible.
+
+### La recommandation de la CNIL (2022)
+La CNIL a publié en 2022 une recommandation sur les mots de passe (délibération n° 2022-100). Elle raisonne en entropie selon le contexte :
+| Situation | Entropie minimale | Mesures qui l'accompagnent |
+|---|---|---|
+| Mot de passe seul (forum, blog) | 80 bits | conseils à l'utilisateur |
+| Mot de passe + restriction d'accès (messagerie, compte d'entreprise, commerce en ligne) | 50 bits | temporisation après échecs, nombre d'essais limité, ou blocage (au plus 10 échecs) |
+| Mot de passe + matériel détenu (carte bancaire, carte SIM) | 13 bits | blocage après 3 échecs |
+
+Exemples donnés pour atteindre 80 bits : **12 caractères** mêlant majuscules, minuscules, chiffres et caractères spéciaux ; **14 caractères** avec majuscules, minuscules et chiffres ; une **phrase de passe d'au moins 7 mots**.
+
+Autres points de cette recommandation :
+• ne plus imposer de **renouvellement périodique** pour les comptes ordinaires (cela pousse à `Motdepasse1`, `Motdepasse2`…), mais le garder pour les comptes à privilèges, et imposer le changement en cas de compromission ;
+• côté serveur, ne jamais stocker un mot de passe **en clair** : le transformer avec une fonction non réversible et lente, avec un **sel** (une valeur aléatoire par compte), par exemple scrypt ou Argon2.
+
+### La phrase de passe
+Une suite de mots tirés **au hasard** dans une grande liste est longue, robuste et facile à taper. Avec la méthode des dés (diceware), une liste de 7 776 mots donne environ 12,9 bits par mot : 7 mots ≈ 90 bits. Une citation ou un vers connu ne vaut rien : il est dans les dictionnaires d'attaque.
+```bash
+# Debian : 7 mots au hasard dans un dictionnaire français (paquet wfrench)
+sudo apt install wfrench
+shuf --random-source=/dev/urandom -n 7 /usr/share/dict/french | tr '\n' ' '; echo
+```
+Évite les mots avec apostrophes ou majuscules si tu dois les taper souvent ; ce qui compte, c'est le hasard du tirage et le nombre de mots.
+
+### Un mot de passe différent par compte : le gestionnaire
+Personne ne retient 80 mots de passe uniques. Un **gestionnaire de mots de passe** les génère, les stocke dans un coffre **chiffré**, et les remplit pour toi. Tu ne retiens plus qu'une **phrase de passe maîtresse**, longue et unique, et tu protèges le coffre par la double authentification quand il est en ligne.
+| Type | Exemples | Atout | Point d'attention |
+|---|---|---|---|
+| Local, libre | KeePassXC | le fichier chiffré reste chez toi | la sauvegarde du fichier `.kdbx` est ta responsabilité |
+| Synchronisé | Bitwarden, Proton Pass | accessible sur tous les appareils | dépend d'un service et de la solidité du mot de passe maître |
+| Intégré au navigateur ou au système | Firefox, Chrome, trousseau Apple | rien à installer | protège mal si la session de l'ordinateur n'est pas verrouillée |
+
+Un bon gestionnaire **ne remplit pas** automatiquement tes identifiants sur `ameli-fr.info` quand ils sont enregistrés pour `ameli.fr` : c'est aussi une protection contre l'hameçonnage. Si ton gestionnaire ne propose pas le remplissage sur une page qui ressemble au bon site, méfie-toi.
+
+### Les fuites de mots de passe
+Les bases de sites piratés circulent. Le service **Have I Been Pwned** (`haveibeenpwned.com`) indique si une adresse électronique figure dans une fuite connue ; plusieurs gestionnaires vérifient aussi tes mots de passe contre les fuites, sans les envoyer en clair. Un mot de passe présent dans une fuite doit être changé partout où il est utilisé.
+
+### Côté administrateur : limiter les essais
+Sous Windows, la politique de verrouillage se lit et se règle avec `net accounts` (en administrateur) :
+```text
+C:\> net accounts
+...
+Seuil de verrouillage :                  10
+Durée de verrouillage (minutes) :        10
+Fenêtre d'observation du verrouillage (minutes) : 10
+```
+Sur un domaine Active Directory, ces valeurs se règlent par stratégie de groupe (GPO) : Configuration ordinateur > Stratégies > Paramètres Windows > Paramètres de sécurité > Stratégies de comptes > Stratégie de verrouillage du compte.
+
+### À toi de jouer
+1. Calcule l'entropie approximative de : (a) un code de 6 chiffres tiré au hasard ; (b) 10 minuscules au hasard ; (c) 16 caractères au hasard parmi 62 ; (d) 6 mots tirés au hasard dans une liste de 7 776. Lesquels atteignent 80 bits ?
+2. Classe ces mots de passe du plus faible au plus fort, en expliquant : `Azerty123!`, `cheval-pluie-agrafe-lundi-orage-tasse-piano` (tiré au hasard), `T7#qz!Lp2v` (tiré au hasard), `Lyc3e2025`.
+3. Installe KeePassXC, crée une base protégée par une phrase de passe de 7 mots, génère un mot de passe de 20 caractères pour un compte de test, et note où se trouve le fichier `.kdbx` et comment tu le sauvegardes.
+4. La PME impose aujourd'hui « 8 caractères, changement tous les 30 jours, pas de blocage ». Propose une politique conforme à la CNIL pour la messagerie.
+
+### Correction
+1. (a) 6 × 3,32 ≈ 20 bits ; (b) 10 × 4,70 ≈ 47 bits ; (c) 16 × 5,95 ≈ 95 bits ; (d) 6 × 12,9 ≈ 77 bits. Seul (c) dépasse 80 bits ; (d) en est proche, 7 mots suffisent.
+2. Du plus faible au plus fort : `Lyc3e2025` et `Azerty123!` (motifs prévisibles : mot courant, substitution e→3, année, clavier, présents dans les dictionnaires d'attaque) ; puis `T7#qz!Lp2v` (10 caractères au hasard parmi environ 99 : environ 66 bits) ; puis la phrase de 7 mots tirés au hasard (environ 90 bits si la liste fait 7 776 mots).
+3. Dans KeePassXC : Base de données > Nouvelle base ; choisis la phrase de passe ; ajoute une entrée et utilise le générateur (longueur 20, tous les types de caractères). Le fichier `.kdbx` est là où tu l'as enregistré : il doit faire partie de tes sauvegardes 3-2-1 (chapitre 8). Sans ce fichier ou sans la phrase maîtresse, les mots de passe sont perdus.
+4. Exemple pour la messagerie (cas « restriction d'accès », 50 bits minimum) : au moins 12 caractères, ou phrase de passe, vérifiée contre une liste de mots de passe compromis ; plus de renouvellement périodique pour les comptes ordinaires, mais changement obligatoire en cas de compromission ; blocage temporaire après 10 échecs ; mots de passe stockés hachés avec sel ; et, en plus, MFA (chapitre 7). Les comptes d'administration gardent un renouvellement régulier et un secret plus long.
+"""
+
+    quiz {
+      pick: 5
+      question "Quelle est l’entropie d’un mot de passe de 12 caractères tirés au hasard parmi 99 symboles ?" {
+        - "environ 40 bits"
+        + "environ 80 bits"
+        - "environ 120 bits"
+        - "99 bits"
+        explanation: "log2(99) ≈ 6,63 bits par caractère ; 12 × 6,63 ≈ 80 bits. C'est l'un des exemples de la CNIL pour un mot de passe seul."
+      }
+      question "Pourquoi « Lycee2025! » est-il faible malgré ses quatre types de caractères ?" {
+        - "parce qu'il est trop long"
+        + "parce qu'il suit un motif prévisible présent dans les listes d'attaque"
+        - "parce que le point d'exclamation est interdit"
+        - "parce qu'il ne contient pas d'espace"
+        explanation: "Le calcul d'entropie suppose un tirage au hasard. Un mot courant, une année et un symbole final sont exactement ce que les outils d'attaque essaient en premier."
+      }
+      question "Pour un mot de passe seul, sans autre mesure, quelle entropie minimale recommande la CNIL ?" {
+        - "13 bits"
+        - "50 bits"
+        + "80 bits"
+        - "256 bits"
+        explanation: "80 bits si le mot de passe est la seule protection, 50 bits avec une restriction d'accès (temporisation, blocage), 13 bits avec un matériel détenu et un blocage après 3 échecs."
+      }
+      question "Quel exemple la CNIL donne-t-elle pour une phrase de passe équivalente à 80 bits ?" {
+        - "au moins 3 mots"
+        - "au moins 5 mots"
+        + "au moins 7 mots"
+        - "au moins 12 mots"
+        explanation: "La recommandation cite une phrase de passe d'au moins 7 mots, à côté de 12 caractères de quatre types ou 14 caractères sans caractère spécial obligatoire."
+      }
+      question "Que recommande la CNIL depuis 2022 sur le renouvellement périodique des mots de passe des comptes ordinaires ?" {
+        - "le rendre obligatoire tous les 30 jours"
+        - "le rendre obligatoire tous les 90 jours"
+        + "ne plus l'imposer, sauf compromission, et le garder pour les comptes à privilèges"
+        - "le remplacer par un mot de passe commun à toute l'équipe"
+        explanation: "Le changement forcé pousse à des variations prévisibles (Motdepasse1, Motdepasse2). La CNIL le réserve aux comptes à privilèges et aux cas de compromission."
+      }
+      question "Comment un site doit-il conserver les mots de passe de ses utilisateurs ?" {
+        - "en clair dans une base protégée par un pare-feu"
+        - "chiffrés avec une clé stockée sur le même serveur"
+        + "transformés par une fonction non réversible et lente, avec un sel par compte"
+        - "encodés en Base64"
+        explanation: "Une fonction comme Argon2 ou scrypt, avec un sel unique, empêche de retrouver le mot de passe et ralentit les essais en cas de vol de la base. Base64 est un simple encodage, réversible instantanément."
+      }
+      question "À quoi sert le sel dans le stockage d’un mot de passe ?" {
+        - "à chiffrer la connexion au site"
+        + "à rendre différentes les empreintes de deux comptes ayant le même mot de passe"
+        - "à raccourcir le mot de passe"
+        - "à remplacer la double authentification"
+        explanation: "Le sel est une valeur aléatoire propre à chaque compte, ajoutée avant le hachage. Il empêche l'usage de tables précalculées et oblige à attaquer chaque compte séparément."
+      }
+      question "Quel est le principal avantage d’un gestionnaire de mots de passe ?" {
+        - "il rend inutile toute sauvegarde"
+        + "il permet un mot de passe long et unique pour chaque compte sans avoir à les retenir"
+        - "il empêche les attaques par déni de service"
+        - "il remplace l'antivirus"
+        explanation: "Un mot de passe unique par site annule le bourrage d'identifiants. Le gestionnaire génère et retient ces mots de passe ; seule la phrase maîtresse doit être mémorisée."
+      }
+      question "Ton gestionnaire ne propose pas de remplir tes identifiants sur une page qui ressemble à ta banque. Que peux-tu en déduire ?" {
+        - "le gestionnaire est en panne"
+        + "le domaine de la page n'est pas celui enregistré : c'est peut-être un faux site"
+        - "la banque a changé de mot de passe"
+        - "il faut copier-coller le mot de passe à la main"
+        explanation: "Le remplissage est lié au domaine exact. Une absence de proposition sur une page familière est un signal d'hameçonnage ; copier le mot de passe à la main supprimerait cette protection."
+      }
+      question "Un code de 6 chiffres tiré au hasard a une entropie d’environ :" {
+        + "20 bits"
+        - "6 bits"
+        - "36 bits"
+        - "60 bits"
+        explanation: "log2(10) ≈ 3,32 bits par chiffre ; 6 × 3,32 ≈ 20 bits, soit un million de combinaisons. C'est suffisant seulement avec un matériel détenu et un blocage après quelques essais."
+      }
+      question "Que vérifie le service Have I Been Pwned pour une adresse électronique ?" {
+        - "si la boîte aux lettres contient un virus"
+        + "si l'adresse figure dans des fuites de données connues"
+        - "si le mot de passe actuel est robuste"
+        - "si l'adresse est bloquée par les filtres antispam"
+        explanation: "Le service recense les fuites publiques et indique celles qui contiennent ton adresse. Il faut alors changer les mots de passe concernés, et ne plus les réutiliser."
+      }
+      question "Quelle commande affiche la politique de verrouillage des comptes sur un poste Windows ?" {
+        - "ipconfig /all"
+        + "net accounts"
+        - "net user /lock"
+        - "gpupdate /force"
+        explanation: "net accounts affiche (et règle) la durée de vie des mots de passe, le seuil, la durée et la fenêtre de verrouillage. gpupdate applique les stratégies de groupe, il n'affiche pas la politique."
+      }
+      question "Tu utilises KeePassXC. Que se passe-t-il si tu perds le fichier .kdbx sans sauvegarde ?" {
+        - "l'éditeur peut le récupérer sur ses serveurs"
+        + "tous les mots de passe qu'il contenait sont perdus"
+        - "le fichier se recrée tout seul au prochain démarrage"
+        - "il suffit de retaper la phrase maîtresse"
+        explanation: "KeePassXC est local : le coffre n'existe que dans ce fichier. Il doit faire partie des sauvegardes, comme tout fichier important."
+      }
+    }
+  }
+
+  module "authentification-mfa" {
+    title: "Chapitre 7 : authentification et authentification multifacteur"
+    duration: "35min"
+    content: """
+### Identifier, authentifier, autoriser
+Trois étapes qu'on confond souvent :
+• **identification** : tu dis qui tu es (ton identifiant, `l.martin`) ;
+• **authentification** : tu le prouves (mot de passe, code, empreinte) ;
+• **autorisation** : le système décide ce que tu as le droit de faire (lire tel dossier, administrer tel serveur).
+Une authentification forte ne sert à rien si les autorisations sont trop larges, et inversement.
+
+### Les trois familles de facteurs
+| Facteur | Ce que c'est | Exemples |
+|---|---|---|
+| **Connaissance** | ce que tu sais | mot de passe, code PIN, réponse à une question |
+| **Possession** | ce que tu possèdes | téléphone avec une application d'authentification, clé de sécurité FIDO2, carte à puce |
+| **Inhérence** | ce que tu es | empreinte digitale, visage |
+
+L'**authentification multifacteur** (MFA, multi-factor authentication) combine au moins **deux facteurs de familles différentes**. Un mot de passe plus un code PIN, ce sont deux éléments de la même famille (connaissance) : ce n'est **pas** de la MFA. Quand il y a exactement deux facteurs, on parle aussi de double authentification ou 2FA.
+
+Pourquoi c'est efficace : un mot de passe volé par hameçonnage ou trouvé dans une fuite ne suffit plus, l'attaquant doit aussi avoir l'objet de la victime. Les recommandations de l'ANSSI et de Cybermalveillance.gouv.fr placent la MFA parmi les premières mesures, en priorité sur la messagerie, les accès distants (VPN, bureau à distance) et les comptes d'administration.
+
+### Les seconds facteurs, du plus faible au plus fort
+| Méthode | Fonctionnement | Faiblesses |
+|---|---|---|
+| Code par SMS | un code est envoyé au numéro de téléphone | détournement de la ligne (échange de carte SIM frauduleux, SIM swapping) ; le code peut être saisi sur un faux site |
+| Notification à valider | l'application du téléphone demande « Est-ce vous ? » | **fatigue MFA** : l'attaquant multiplie les demandes jusqu'à ce que la victime accepte par lassitude ; parade : saisie d'un numéro affiché à l'écran |
+| Code TOTP | une application (Aegis, FreeOTP, Google Authenticator, Microsoft Authenticator…) calcule un code qui change toutes les 30 secondes | le code peut encore être volé par un faux site qui le relaie aussitôt (attaque par proxy) |
+| Clé FIDO2 / clé d'accès (passkey) | une clé physique ou le téléphone signe un défi lié au **nom de domaine** du site | le faux site a un autre domaine : la clé refuse de signer. Résiste à l'hameçonnage |
+
+### Comment fonctionne un code TOTP
+Le TOTP (Time-based One-Time Password, RFC 6238) part d'un **secret partagé** entre le service et ton application, transmis une seule fois par un QR code lors de l'activation. Toutes les 30 secondes (valeur par défaut de la RFC), les deux calculent un code à partir du secret et de l'heure courante, par une fonction HMAC. Les deux codes sont identiques si les horloges sont à peu près à l'heure : c'est pourquoi un téléphone mal réglé produit des codes refusés.
+
+Tu peux le constater sous Linux avec un secret **de démonstration** :
+```text
+$ sudo apt install oathtool
+$ oathtool --totp -b JBSWY3DPEHPK3PXP
+492039
+```
+Le code affiché change toutes les 30 secondes ; une application TOTP qui a scanné le même secret affiche le même. Ne colle jamais un vrai secret de compte dans une commande : il resterait dans l'historique du shell.
+
+### Les codes de secours
+À l'activation, la plupart des services fournissent des **codes de récupération** à usage unique. Ils permettent de se connecter si le téléphone est perdu. Range-les hors du téléphone : dans ton gestionnaire de mots de passe ou imprimés dans un lieu sûr. Sans eux, la perte du téléphone peut signifier la perte définitive du compte.
+
+### Côté administrateur
+• Active la MFA d'abord pour les comptes d'administration, la messagerie et les accès distants.
+• Préfère les clés FIDO2 ou les clés d'accès pour les administrateurs, le TOTP pour les autres, le SMS en dernier recours.
+• Prévois une procédure de récupération qui ne soit pas elle-même un point faible (pas de réinitialisation sur simple appel téléphonique).
+• Surveille les connexions refusées au second facteur : un mot de passe correct suivi d'un second facteur refusé signifie que le **mot de passe est déjà connu** de l'attaquant. Il faut le changer.
+
+### À toi de jouer
+1. Pour chaque combinaison, dis si c'est de la MFA : (a) mot de passe + question secrète ; (b) carte à puce + code PIN ; (c) empreinte digitale + mot de passe ; (d) mot de passe + code reçu par SMS ; (e) deux mots de passe différents.
+2. Active la double authentification par application TOTP sur un de tes comptes personnels (messagerie ou réseau social). Note où tu ranges les codes de secours.
+3. Un enseignant reçoit à 23 h une dizaine de notifications « Approuvez-vous cette connexion ? » qu'il n'a pas demandées. Que s'est-il passé, que doit-il faire, et quelle configuration évite ce scénario ?
+4. Explique en trois phrases pourquoi une clé FIDO2 protège contre un faux site alors qu'un code TOTP ne le fait pas.
+
+### Correction
+1. (a) non : deux facteurs de connaissance ; (b) oui : possession + connaissance ; (c) oui : inhérence + connaissance ; (d) oui : connaissance + possession (le téléphone), même si le SMS est la méthode la plus faible ; (e) non : deux fois la même famille.
+2. Dans les paramètres de sécurité du compte : « Double authentification » > « Application d'authentification », scanne le QR code, saisis le code affiché pour confirmer. Range les codes de secours dans ton gestionnaire de mots de passe ou sur papier en lieu sûr, pas en photo sur le téléphone.
+3. Quelqu'un connaît son mot de passe et tente de se connecter : il compte sur la fatigue MFA. L'enseignant refuse toutes les demandes, change immédiatement son mot de passe, et prévient le service informatique. La parade est la saisie d'un numéro affiché sur l'écran de connexion (number matching), ou mieux, une clé FIDO2.
+4. Le code TOTP ne dépend pas du site sur lequel on le tape : un faux site peut le recevoir et le rejouer aussitôt sur le vrai. La clé FIDO2 signe un défi qui inclut le nom de domaine du site. Sur un faux domaine, la signature est refusée ou inutilisable sur le vrai site.
+"""
+
+    quiz {
+      pick: 5
+      question "Quelles sont les trois familles de facteurs d’authentification ?" {
+        - "identifiant, mot de passe, code PIN"
+        + "connaissance, possession, inhérence"
+        - "SMS, courriel, appel"
+        - "identification, authentification, autorisation"
+        explanation: "Ce que tu sais, ce que tu possèdes, ce que tu es. Identification, authentification et autorisation sont trois étapes différentes, pas des familles de facteurs."
+      }
+      question "Un mot de passe suivi d’un code PIN, est-ce de l’authentification multifacteur ?" {
+        - "oui, car il y a deux secrets"
+        + "non, car les deux appartiennent à la même famille : la connaissance"
+        - "oui, si le code PIN a 6 chiffres"
+        - "non, car un code PIN n'est pas un facteur"
+        explanation: "La MFA exige des facteurs de familles différentes. Un attaquant qui a hameçonné l'un peut hameçonner l'autre de la même manière."
+      }
+      question "Quelle méthode de second facteur résiste à l’hameçonnage par faux site ?" {
+        - "le code par SMS"
+        - "le code TOTP"
+        - "la question secrète"
+        + "la clé FIDO2 ou la clé d'accès (passkey)"
+        explanation: "La clé FIDO2 signe un défi lié au nom de domaine : sur un faux domaine, sa réponse ne permet pas de se connecter au vrai site. Les codes SMS ou TOTP peuvent être saisis sur le faux site puis relayés."
+      }
+      question "Toutes les combien de secondes un code TOTP change-t-il par défaut ?" {
+        - "10 secondes"
+        + "30 secondes"
+        - "60 secondes"
+        - "300 secondes"
+        explanation: "La RFC 6238 fixe un pas de temps de 30 secondes par défaut, celui qu'utilisent presque toutes les applications. Le service accepte souvent un pas d'écart pour tolérer un léger décalage d'horloge."
+      }
+      question "Pourquoi un téléphone dont l’horloge a 5 minutes d’avance produit-il des codes TOTP refusés ?" {
+        - "parce que le secret partagé expire"
+        + "parce que le code est calculé à partir de l'heure : le service attend le code d'un autre intervalle"
+        - "parce que le QR code est périmé"
+        - "parce que les codes TOTP sont envoyés par SMS"
+        explanation: "TOTP combine le secret et l'heure courante. Avec 5 minutes d'écart, le téléphone calcule le code d'un intervalle que le service ne tolère pas. Il faut activer l'heure automatique."
+      }
+      question "Qu’est-ce que la fatigue MFA ?" {
+        - "l'oubli fréquent du code PIN"
+        + "l'envoi répété de demandes de validation jusqu'à ce que la victime accepte par lassitude"
+        - "l'usure de la batterie du téléphone"
+        - "l'expiration des codes de secours"
+        explanation: "L'attaquant connaît déjà le mot de passe et déclenche des notifications en rafale. La saisie d'un numéro affiché à l'écran ou une clé FIDO2 neutralisent cette attaque."
+      }
+      question "Quelle faiblesse propre au code par SMS l’échange de carte SIM frauduleux exploite-t-il ?" {
+        - "le SMS est envoyé en clair sur Internet"
+        + "l'attaquant obtient une carte SIM à ton numéro et reçoit tes codes"
+        - "le SMS contient ton mot de passe"
+        - "le code SMS ne change jamais"
+        explanation: "En se faisant passer pour toi auprès de l'opérateur, l'attaquant fait transférer ton numéro sur sa SIM. Il reçoit alors tous les codes. C'est pourquoi le SMS est le second facteur le plus faible."
+      }
+      question "À quoi servent les codes de récupération fournis à l’activation de la MFA ?" {
+        - "à remplacer définitivement le mot de passe"
+        + "à se connecter une fois si le second facteur est perdu"
+        - "à désactiver la MFA pour tous les utilisateurs"
+        - "à réinitialiser le téléphone"
+        explanation: "Chaque code s'utilise une fois, en cas de perte du téléphone ou de la clé. Il faut les ranger hors du téléphone, sinon ils disparaissent avec lui."
+      }
+      question "Un journal montre un mot de passe correct suivi d’un second facteur refusé, depuis un pays inconnu. Que conclus-tu ?" {
+        - "la MFA est mal configurée"
+        + "l'attaquant connaît déjà le mot de passe : il faut le changer"
+        - "l'utilisateur a oublié son mot de passe"
+        - "il s'agit d'un déni de service"
+        explanation: "La première barrière est tombée, seule la MFA a tenu. Il faut changer le mot de passe, chercher où il a fuité (hameçonnage, réutilisation) et prévenir l'utilisateur."
+      }
+      question "Quelle étape décide de ce que tu as le droit de faire une fois connecté ?" {
+        - "l'identification"
+        - "l'authentification"
+        + "l'autorisation"
+        - "la traçabilité"
+        explanation: "L'autorisation applique les droits du compte authentifié. L'identification annonce qui tu es, l'authentification le prouve, la traçabilité enregistre ce que tu fais."
+      }
+      question "Sur quels comptes activer la MFA en priorité dans une PME ?" {
+        - "les comptes invités du Wi-Fi"
+        + "les comptes d'administration, la messagerie et les accès distants"
+        - "les comptes des imprimantes"
+        - "les comptes désactivés"
+        explanation: "Ce sont les comptes les plus visés et ceux dont la compromission ouvre le plus de portes. La messagerie permet en plus de réinitialiser les mots de passe d'autres services."
+      }
+      question "Comment le secret TOTP est-il en général transmis à l’application du téléphone ?" {
+        - "par un SMS à chaque connexion"
+        + "une seule fois, par un QR code affiché lors de l'activation"
+        - "il est calculé à partir du numéro de téléphone"
+        - "il est envoyé par courriel chaque jour"
+        explanation: "Le QR code contient le secret partagé. Ensuite, le téléphone et le service calculent chacun les codes sans communiquer. Ce QR code ne doit jamais être partagé ni photographié."
+      }
+    }
+  }
+
+  module "sauvegardes" {
+    title: "Chapitre 8 : les sauvegardes 3-2-1 et la restauration"
+    duration: "35min"
+    content: """
+### Une sauvegarde n'existe que si elle se restaure
+La sauvegarde est la dernière barrière contre le rançongiciel, la panne de disque, le vol ou l'erreur humaine. Une copie qu'on n'a jamais essayé de restaurer n'est qu'un espoir.
+
+### La règle 3-2-1
+Recommandée par l'ANSSI (guide « Les fondamentaux de la sauvegarde des systèmes d'information ») comme par la CNIL :
+• **3** copies des données : l'original et deux sauvegardes ;
+• sur **2** supports différents (disque du serveur et NAS, NAS et bande, disque et stockage en ligne…) ;
+• dont **1** hors site, et de préférence **hors ligne** (déconnectée du réseau).
+
+Pourquoi hors ligne : un rançongiciel chiffre tout ce qu'il atteint avec les droits qu'il a volés, y compris le NAS monté en lecteur réseau. Une copie sur un disque débranché, sur une bande retirée, ou sur un stockage **immuable** (qui interdit toute modification pendant une durée fixée) lui échappe. Les recommandations des éditeurs vont parfois jusqu'à « 3-2-1-1-0 » : une copie hors ligne ou immuable en plus, et **zéro** erreur lors des tests de restauration.
+
+Une synchronisation (OneDrive, Dropbox, un miroir) **n'est pas** une sauvegarde : si un fichier est chiffré ou supprimé, la synchronisation propage le chiffrement ou la suppression. Une sauvegarde garde des **versions** dans le temps.
+
+### Combien perdre, combien de temps arrêté ?
+Deux chiffres guident le plan de sauvegarde. Ils se décident avec la direction :
+• **RPO** (Recovery Point Objective) : la quantité maximale de données qu'on accepte de perdre, exprimée en durée. Une sauvegarde chaque nuit donne un RPO de 24 heures : le travail de la journée peut être perdu.
+• **RTO** (Recovery Time Objective) : la durée maximale d'interruption acceptable avant que le service redémarre. Restaurer 2 To depuis un stockage en ligne lent peut prendre plusieurs jours.
+
+### Complète, incrémentielle, différentielle
+| Type | Ce qui est copié | Restauration |
+|---|---|---|
+| Complète | tout | la plus simple : une seule sauvegarde |
+| Incrémentielle | ce qui a changé depuis la dernière sauvegarde, quelle qu'elle soit | la complète + **toutes** les incrémentielles suivantes |
+| Différentielle | ce qui a changé depuis la dernière **complète** | la complète + la **dernière** différentielle |
+
+Exemple courant : complète le dimanche, incrémentielle chaque soir de la semaine, avec une **rétention** de plusieurs semaines pour pouvoir revenir avant une infection restée discrète.
+
+### Exemple sous Linux
+Une archive datée des documents, avec son empreinte, puis une copie vers un disque externe qu'on débranche ensuite :
+```bash
+sudo mkdir -p /srv/sauvegardes
+sudo tar -czf /srv/sauvegardes/docs-$(date +%F).tar.gz -C /srv partage
+cd /srv/sauvegardes && sha256sum docs-$(date +%F).tar.gz | sudo tee docs-$(date +%F).tar.gz.sha256
+# disque USB monté sur /mnt/usb
+sudo rsync -a /srv/sauvegardes/ /mnt/usb/sauvegardes/
+sudo umount /mnt/usb    # puis débrancher le disque
+```
+L'option `--delete` de rsync supprime dans la destination ce qui a disparu de la source : utile pour un miroir, dangereux pour une sauvegarde, car une suppression accidentelle ou malveillante se propage. Ne l'utilise pas ici.
+
+Le test de restauration, dans un dossier séparé :
+```bash
+# après avoir rebranché et remonté le disque sur /mnt/usb
+cd /mnt/usb/sauvegardes
+sha256sum -c docs-2026-11-26.tar.gz.sha256     # attendu : docs-2026-11-26.tar.gz: OK
+mkdir -p ~/test-restauration
+tar -xzf /mnt/usb/sauvegardes/docs-2026-11-26.tar.gz -C ~/test-restauration
+ls -R ~/test-restauration | head
+```
+
+### Exemple sous Windows
+• L'**Historique des fichiers** (Paramètres > Sauvegarde, ou Panneau de configuration > Historique des fichiers) garde des versions de tes dossiers sur un disque externe.
+• En ligne de commande, `robocopy` copie un dossier :
+```text
+robocopy C:\Users\eleve\Documents E:\Sauvegarde\Documents /E /R:1 /W:1 /LOG:E:\Sauvegarde\robocopy.log
+```
+L'option `/MIR` (miroir) supprime dans la destination les fichiers absents de la source : comme `--delete`, elle propage les suppressions et ne remplace pas une sauvegarde versionnée.
+
+### À toi de jouer
+La PME de 20 postes a un serveur de fichiers (400 Go) et un NAS dans la même salle, monté en lecteur réseau `S:` sur tous les postes, qui reçoit une copie chaque nuit par `robocopy /MIR`. Le gérant pense que « les sauvegardes sont faites ».
+1. Liste les faiblesses de ce dispositif face à un rançongiciel, à un incendie et à une suppression accidentelle découverte au bout de 10 jours.
+2. Propose un plan 3-2-1 réaliste, avec la fréquence, la rétention, le RPO et le RTO.
+3. Écris une procédure de test de restauration mensuelle en 5 étapes.
+4. Sous Linux, réalise la sauvegarde d'un dossier de test avec `tar` et `sha256sum`, copie-la sur une clé USB, puis restaure-la dans un autre dossier et compare.
+
+### Correction
+1. Rançongiciel : le NAS est monté en lecteur réseau sur tous les postes, il sera chiffré avec le reste. Incendie : tout est dans la même salle. Suppression découverte tard : `/MIR` a déjà supprimé le fichier du NAS dès la nuit suivante, et il n'y a pas de versions. Et aucune restauration n'a jamais été testée.
+2. Exemple : copie 1 = le serveur ; copie 2 = le NAS, **non monté** sur les postes, alimenté par un logiciel de sauvegarde avec un compte dédié, sauvegarde incrémentielle chaque nuit, rétention de 30 jours, instantanés en lecture seule ; copie 3 = un disque externe chiffré, complet chaque vendredi, emporté hors du bureau en alternance avec un second disque (un disque toujours hors ligne et hors site), ou un stockage en ligne immuable. RPO : 24 heures ; RTO visé : une journée pour les fichiers courants.
+3. (1) choisir au hasard un fichier, un dossier et une date ; (2) restaurer vers un emplacement de test, jamais par-dessus l'original ; (3) vérifier l'intégrité (empreinte, ouverture des fichiers) ; (4) mesurer le temps de restauration et le comparer au RTO ; (5) noter le résultat, la date et le nom de la personne dans le registre des tests, et corriger tout écart.
+4. `tar -czf test.tar.gz dossier-test`, `sha256sum test.tar.gz > test.tar.gz.sha256`, copie des deux fichiers sur la clé, puis depuis la clé : `sha256sum -c test.tar.gz.sha256` (attendu : `test.tar.gz: OK`), `mkdir restauration && tar -xzf test.tar.gz -C restauration`, et `diff -r dossier-test restauration/dossier-test` (aucune sortie : les deux sont identiques).
+"""
+
+    quiz {
+      pick: 5
+      question "Que signifie la règle 3-2-1 ?" {
+        - "3 sauvegardes par jour, 2 par semaine, 1 par mois"
+        + "3 copies, sur 2 supports différents, dont 1 hors site (de préférence hors ligne)"
+        - "3 serveurs, 2 NAS, 1 stockage en ligne"
+        - "3 disques en RAID, 2 alimentations, 1 onduleur"
+        explanation: "La règle 3-2-1, recommandée par l'ANSSI et la CNIL : l'original et deux copies, sur deux supports différents, dont une hors du site. Le hors ligne protège en plus contre les rançongiciels."
+      }
+      question "Pourquoi un NAS monté en lecteur réseau sur tous les postes protège-t-il mal contre un rançongiciel ?" {
+        - "parce que les NAS ne savent pas stocker de gros fichiers"
+        + "parce que le rançongiciel chiffre tout ce qui est accessible depuis le poste infecté"
+        - "parce que le NAS est trop lent"
+        - "parce que le NAS n'a pas d'antivirus"
+        explanation: "Un lecteur réseau monté est vu comme un dossier ordinaire par le logiciel malveillant. La copie doit être inaccessible aux postes : compte dédié, instantanés en lecture seule, copie hors ligne."
+      }
+      question "Une synchronisation OneDrive est-elle une sauvegarde ?" {
+        - "oui, car les fichiers sont dans le nuage"
+        + "pas à elle seule, car elle propage les suppressions et les fichiers chiffrés"
+        - "oui, si l'abonnement est payant"
+        - "non, car OneDrive ne copie pas les documents"
+        explanation: "La synchronisation reproduit l'état actuel, y compris les erreurs. Certains services gardent un historique de versions limité, mais une vraie sauvegarde garde des versions sous ton contrôle et une copie hors ligne."
+      }
+      question "Une sauvegarde est faite chaque nuit à 22 h. Quel est le RPO ?" {
+        - "22 heures"
+        + "24 heures"
+        - "1 heure"
+        - "il dépend de la durée de restauration"
+        explanation: "Le RPO est la quantité maximale de données perdues, en durée. Avec une sauvegarde par 24 heures, un incident juste avant 22 h fait perdre presque 24 heures de travail. La durée de restauration correspond au RTO."
+      }
+      question "Que mesure le RTO ?" {
+        - "la quantité de données perdues"
+        + "la durée maximale d'interruption acceptable avant le redémarrage du service"
+        - "le nombre de copies de sauvegarde"
+        - "la taille du disque de sauvegarde"
+        explanation: "Le RTO fixe le temps acceptable pour remettre le service en marche. Il guide le choix du support : restaurer des téraoctets depuis Internet peut prendre des jours."
+      }
+      question "Pour restaurer avec une stratégie incrémentielle, de quoi as-tu besoin ?" {
+        - "seulement de la dernière incrémentielle"
+        + "de la dernière complète et de toutes les incrémentielles qui la suivent"
+        - "de la dernière complète et de la dernière incrémentielle seulement"
+        - "de toutes les complètes depuis le début"
+        explanation: "Chaque incrémentielle ne contient que les changements depuis la sauvegarde précédente : il faut toute la chaîne. Avec une différentielle, la complète et la dernière différentielle suffisent."
+      }
+      question "Quel est le danger de l’option /MIR de robocopy ou --delete de rsync pour une sauvegarde ?" {
+        - "elles ralentissent fortement la copie"
+        + "elles suppriment dans la destination ce qui a disparu de la source"
+        - "elles chiffrent les fichiers copiés"
+        - "elles copient seulement les fichiers cachés"
+        explanation: "Un miroir reproduit les suppressions. Un fichier effacé par erreur ou par un attaquant disparaît aussi de la copie à la prochaine exécution."
+      }
+      question "Pourquoi garder plusieurs semaines de sauvegardes (rétention) ?" {
+        - "pour occuper l'espace disque"
+        + "pour revenir à un état antérieur à une infection ou une erreur découverte tard"
+        - "parce que la loi impose exactement 30 jours"
+        - "pour accélérer les restaurations"
+        explanation: "Une infection ou une suppression peut rester inaperçue plusieurs jours. Si seule la sauvegarde de la veille existe, elle contient déjà le problème."
+      }
+      question "Comment vérifier qu’une archive copiée sur un disque externe n’a pas été altérée ?" {
+        - "en regardant sa date de modification"
+        + "en comparant son empreinte SHA-256 à celle calculée au moment de la sauvegarde"
+        - "en vérifiant que sa taille n'est pas nulle"
+        - "en l'ouvrant dans un éditeur de texte"
+        explanation: "sha256sum -c compare l'empreinte actuelle à celle enregistrée. Une seule différence d'octet est détectée ; la date ou la taille ne le garantissent pas."
+      }
+      question "Où faire un test de restauration ?" {
+        - "par-dessus les fichiers d'origine, pour gagner de la place"
+        + "dans un emplacement séparé, pour comparer sans risque"
+        - "sur le poste du directeur"
+        - "dans la corbeille"
+        explanation: "Restaurer sur l'original peut écraser des données récentes si la sauvegarde est ancienne ou abîmée. On restaure à part, on compare, on mesure le temps."
+      }
+      question "Qu’est-ce qu’un stockage immuable ?" {
+        - "un stockage qui ne peut jamais être lu"
+        + "un stockage qui interdit la modification et la suppression des données pendant une durée fixée"
+        - "un disque qui ne tombe jamais en panne"
+        - "un stockage sans chiffrement"
+        explanation: "Même avec les identifiants de l'administrateur, les données ne peuvent pas être modifiées avant l'échéance. Cela protège les sauvegardes contre un attaquant qui cherche à les détruire."
+      }
+      question "Un incendie détruit la salle serveur où se trouvent le serveur et le NAS de sauvegarde. Quel principe n’a pas été respecté ?" {
+        - "le chiffrement des sauvegardes"
+        + "une copie hors site"
+        - "la sauvegarde incrémentielle"
+        - "le RAID"
+        explanation: "Le 1 de la règle 3-2-1 : une copie à un autre endroit, à l'abri des sinistres locaux (incendie, inondation, vol)."
+      }
+    }
+  }
+
+  module "incident-legal" {
+    title: "Chapitre 9 : réagir à un incident et respecter le cadre légal"
+    duration: "40min"
+    content: """
+### Les bons réflexes, dans l'ordre
+Un vendredi à 17 h, plusieurs postes de la PME affichent une note de rançon et les fichiers du serveur portent une extension inconnue. Ce qui compte maintenant, c'est l'ordre des actions. D'après les fiches réflexes de Cybermalveillance.gouv.fr :
+1. **Isoler** : débrancher du réseau les machines touchées (câble réseau, Wi-Fi coupé), couper l'accès Internet si l'attaque se propage, débrancher les sauvegardes encore connectées.
+2. **Ne pas éteindre** les machines touchées : la mémoire contient des traces utiles à l'enquête. Si le chiffrement est encore en cours, on peut envisager une mise en veille prolongée (hibernation). Ne redémarre pas non plus les machines épargnées.
+3. **Alerter et se faire aider** : le responsable, le prestataire informatique, et la plateforme publique.
+4. **Ne pas payer la rançon.**
+5. **Préserver les preuves** : journaux, note de rançon, quelques fichiers chiffrés, copie des disques si possible avec l'aide d'un professionnel. Tenir une **main courante** : un journal horodaté de chaque constat et de chaque action.
+6. **Porter plainte** (commissariat, gendarmerie, ou par écrit au procureur de la République) avant de réinstaller.
+7. **Déclarer** : à l'assureur si un contrat cyber existe ; à la **CNIL sous 72 heures** si des données personnelles sont touchées.
+8. **Comprendre, nettoyer, reconstruire** : trouver la porte d'entrée, réinstaller, restaurer depuis une sauvegarde saine, changer tous les mots de passe, corriger la faille, puis surveiller de près.
+
+Erreurs fréquentes : tout éteindre « pour arrêter l'attaque » (on perd les traces en mémoire), réinstaller tout de suite (on efface les preuves et on ne sait pas par où l'attaquant est entré, il reviendra), restaurer une sauvegarde sans vérifier qu'elle est antérieure à l'intrusion.
+
+### Où trouver de l'aide
+• **Cybermalveillance.gouv.fr** : dispositif national d'assistance (porté par le groupement d'intérêt public ACYMA depuis 2017) pour les particuliers, entreprises, associations et collectivités. Diagnostic en ligne, fiches réflexes, mise en relation avec des prestataires de proximité.
+• **17Cyber** (`17cyber.gouv.fr`) : guichet unique lancé en décembre 2024 par le ministère de l'Intérieur, la police, la gendarmerie et Cybermalveillance.gouv.fr. Il pose un diagnostic, oriente, et peut mettre en relation avec un policier ou un gendarme, 24 heures sur 24.
+• Pour les administrations et les opérateurs importants : le **CERT-FR** de l'ANSSI ; dans les régions, les **CSIRT** régionaux.
+• Pour les escroqueries : **Info Escroqueries** (0 805 805 817) ; pour l'aide aux victimes : **France Victimes** (116 006).
+• Pour vérifier s'il existe un outil de déchiffrement gratuit : le projet **No More Ransom**.
+
+### Le cadre pénal : les articles 323-1 et suivants
+La loi du 5 janvier 1988 dite « loi Godfrain » a créé les atteintes aux systèmes de traitement automatisé de données (STAD), aujourd'hui aux articles 323-1 à 323-8 du Code pénal. Peines en vigueur :
+| Article | Ce qui est puni | Peine de base |
+|---|---|---|
+| 323-1 | accéder ou se maintenir **frauduleusement** dans tout ou partie d'un système | 3 ans d'emprisonnement et 100 000 € d'amende ; 5 ans et 150 000 € s'il en résulte une suppression ou une modification de données ou une altération du fonctionnement |
+| 323-2 | **entraver** ou fausser le fonctionnement d'un système (par exemple un déni de service) | 5 ans et 150 000 € |
+| 323-3 | introduire, extraire, détenir, reproduire, transmettre, supprimer ou modifier frauduleusement des données | 5 ans et 150 000 € |
+| 323-3-1 | importer, détenir, offrir ou mettre à disposition, **sans motif légitime** (notamment de recherche ou de sécurité), un outil conçu pour ces infractions | les peines de l'infraction concernée |
+| 323-4 | participer à un groupement formé pour préparer ces infractions | les peines de l'infraction préparée |
+| 323-4-1 | commettre ces infractions en bande organisée | 10 ans et 300 000 € |
+| 323-7 | la **tentative** | les mêmes peines que l'infraction |
+
+Les peines montent à 7 ans et 300 000 € quand le système est un traitement de données personnelles mis en œuvre par l'État (articles 323-1 à 323-3).
+
+Conséquences pratiques pour toi :
+• « Ce n'était qu'un test » n'est pas une défense : **essayer** d'entrer sans autorisation est puni comme le fait d'entrer (323-7).
+• Rester dans un système où tu es entré par erreur, et fouiller, constitue un **maintien frauduleux**.
+• Un audit ou un test d'intrusion se fait avec une **autorisation écrite** du propriétaire du système, qui fixe le périmètre, les dates et les techniques permises.
+• Tes exercices pratiques se font sur **tes** machines virtuelles, ou sur des plateformes d'entraînement prévues pour cela.
+• Si tu découvres une faille par hasard, tu ne l'exploites pas ; tu la signales au responsable ou à l'ANSSI, qui protège l'identité des personnes qui lui signalent de bonne foi une vulnérabilité (article L. 2321-4 du Code de la défense).
+
+### Le RGPD : protéger les données personnelles
+Le **règlement général sur la protection des données** (RGPD, règlement UE 2016/679), applicable depuis le 25 mai 2018, s'impose à tout organisme qui traite des données personnelles (nom, adresse, adresse IP, photo, notes d'un élève…). Pour la sécurité, retiens :
+• **Article 5** : les données sont traitées de façon à garantir leur sécurité, y compris leur intégrité et leur confidentialité ;
+• **Article 32** : le responsable du traitement met en place des mesures techniques et organisationnelles adaptées au risque (le texte cite le chiffrement, la pseudonymisation, la capacité à rétablir la disponibilité, et des tests réguliers des mesures) ;
+• **Article 33** : une violation de données personnelles se **notifie à l'autorité de contrôle (la CNIL en France) dans les meilleurs délais, et si possible dans les 72 heures** après en avoir pris connaissance, sauf si elle ne présente pas de risque pour les personnes ;
+• **Article 34** : si le risque pour les personnes est **élevé**, il faut aussi les **informer** ;
+• **Article 83** : les amendes administratives vont jusqu'à **20 millions d'euros ou 4 % du chiffre d'affaires annuel mondial**, le montant le plus élevé étant retenu.
+
+Une **violation de données** n'est pas seulement un vol : c'est toute destruction, perte, altération, divulgation ou accès non autorisé, accidentel ou illicite. Un fichier d'élèves envoyé au mauvais destinataire ou un serveur chiffré par un rançongiciel sont des violations. Même si on ne la notifie pas, chaque violation se consigne dans un **registre interne**.
+
+### À toi de jouer
+1. Remets dans l'ordre ces actions face à un rançongiciel, et barre celles à ne pas faire : (a) éteindre tous les postes ; (b) débrancher les câbles réseau des postes touchés ; (c) payer pour gagner du temps ; (d) photographier la note de rançon et noter l'heure ; (e) porter plainte ; (f) réinstaller immédiatement le serveur ; (g) appeler le prestataire et suivre le parcours 17Cyber ; (h) notifier la CNIL ; (i) restaurer depuis une sauvegarde saine après avoir trouvé et corrigé la porte d'entrée.
+2. Pour chaque situation, dis si une infraction est constituée et laquelle : (a) un élève devine le mot de passe d'un camarade et lit sa messagerie ; (b) tu scannes les ports du serveur de ta propre machine virtuelle ; (c) un étudiant lance un outil de déni de service contre le site de son lycée « pour voir » ; il ne réussit pas ; (d) un technicien, mandaté par écrit par la direction, teste la robustesse des mots de passe du domaine.
+3. Un professeur envoie par erreur le tableau des notes et des adresses des élèves d'une classe à une autre classe. Qui prévient-on, sous quel délai, et faut-il informer les familles ?
+
+### Correction
+1. Ordre : (b) isoler, (d) noter et conserver les preuves, (g) se faire aider, (e) plainte, (h) CNIL sous 72 heures (des données personnelles sont touchées), (i) reconstruire après analyse. À ne pas faire : (a) éteindre fait perdre les traces en mémoire ; (c) payer ne garantit rien et finance les attaquants ; (f) réinstaller tout de suite efface les preuves et laisse la porte d'entrée ouverte.
+2. (a) oui : accès frauduleux à un système et lecture de données (323-1, voire 323-3 s'il copie ou modifie des messages) ; (b) non : c'est ton système ; (c) oui : la tentative d'entrave au fonctionnement est punie comme l'entrave elle-même (323-2 et 323-7) ; (d) non, s'il reste dans le périmètre de son autorisation écrite.
+3. Le professeur prévient immédiatement son chef d'établissement, qui informe le délégué à la protection des données (DPO) de l'académie. C'est une violation de confidentialité. La notification à la CNIL se fait dans les 72 heures sauf si l'on juge l'absence de risque, ce qui est difficile à soutenir ici (adresses de mineurs). L'information des familles dépend du niveau de risque : s'il est élevé (données diffusées largement, adresses de mineurs), il faut les informer. Dans tous les cas, on demande aux destinataires de supprimer le message et on consigne la violation dans le registre.
+"""
+
+    quiz {
+      pick: 5
+      question "Des postes affichent une note de rançon. Quelle est la première action ?" {
+        - "éteindre tous les ordinateurs"
+        + "isoler les machines touchées du réseau"
+        - "payer la rançon pour limiter les pertes"
+        - "réinstaller le serveur"
+        explanation: "Débrancher du réseau arrête la propagation tout en gardant les traces en mémoire. Éteindre efface ces traces, réinstaller efface les preuves et ne ferme pas la porte d'entrée."
+      }
+      question "Pourquoi ne faut-il pas éteindre une machine touchée par un rançongiciel ?" {
+        - "parce qu'elle ne redémarrerait plus jamais"
+        + "parce que sa mémoire contient des traces utiles à l'enquête"
+        - "parce que la loi l'interdit"
+        - "parce que le chiffrement s'accélère à l'extinction"
+        explanation: "La mémoire vive peut contenir des processus, des connexions, parfois des clés. L'extinction les fait disparaître. On isole du réseau à la place, et on envisage l'hibernation si le chiffrement est en cours."
+      }
+      question "Sous quel délai notifier une violation de données personnelles à la CNIL ?" {
+        - "24 heures"
+        + "dans les meilleurs délais, et si possible dans les 72 heures"
+        - "1 mois"
+        - "uniquement si la presse en parle"
+        explanation: "L'article 33 du RGPD fixe 72 heures après la prise de connaissance, sauf si la violation ne présente pas de risque pour les personnes. Une notification incomplète peut être complétée ensuite."
+      }
+      question "Quelles peines prévoit l’article 323-1 pour un accès frauduleux simple à un système ?" {
+        - "1 an et 15 000 €"
+        + "3 ans d'emprisonnement et 100 000 € d'amende"
+        - "10 ans et 1 000 000 €"
+        - "une simple contravention"
+        explanation: "Peine de base de l'article 323-1 : 3 ans et 100 000 €. Elle passe à 5 ans et 150 000 € s'il y a suppression ou modification de données ou altération du fonctionnement."
+      }
+      question "Un étudiant tente un déni de service contre le site de son lycée, sans succès. Que risque-t-il ?" {
+        - "rien, puisque l'attaque a échoué"
+        + "les mêmes peines que pour une entrave réussie, car la tentative est punie"
+        - "une simple exclusion de l'établissement"
+        - "une amende de 38 €"
+        explanation: "L'article 323-7 punit la tentative des délits des articles 323-1 à 323-3-1 des mêmes peines. L'entrave au fonctionnement relève de l'article 323-2."
+      }
+      question "Qu’exige l’article 323-3-1 pour pouvoir détenir un outil d’attaque ?" {
+        - "une licence payante de l'outil"
+        + "un motif légitime, notamment de recherche ou de sécurité informatique"
+        - "une autorisation de la CNIL"
+        - "rien, la détention est toujours libre"
+        explanation: "Détenir ou diffuser sans motif légitime un outil conçu pour ces infractions est puni. Un administrateur qui teste son propre réseau ou un chercheur ont un motif légitime ; il faut pouvoir le justifier."
+      }
+      question "Que doit contenir l’autorisation donnée à un auditeur avant un test d’intrusion ?" {
+        - "seulement le nom de l'auditeur"
+        + "le périmètre, les dates et les techniques permises, signés par le propriétaire du système"
+        - "le mot de passe de l'administrateur"
+        - "une simple autorisation orale du technicien de garde"
+        explanation: "L'autorisation écrite du propriétaire fixe ce qui est permis. Hors de ce cadre, l'auditeur commet les mêmes infractions qu'un attaquant."
+      }
+      question "Quel montant maximal peuvent atteindre les amendes administratives du RGPD ?" {
+        - "150 000 €"
+        - "1 million d'euros"
+        + "20 millions d'euros ou 4 % du chiffre d'affaires annuel mondial, le plus élevé des deux"
+        - "10 % du chiffre d'affaires de l'année"
+        explanation: "L'article 83 fixe deux plafonds selon les manquements, le plus haut étant 20 M€ ou 4 % du chiffre d'affaires mondial. 150 000 € correspond à certaines peines pénales du Code pénal."
+      }
+      question "Quand faut-il informer les personnes concernées par une violation de données ?" {
+        - "jamais, seule la CNIL est informée"
+        + "quand la violation présente un risque élevé pour leurs droits et libertés"
+        - "seulement si elles le demandent"
+        - "uniquement si plus de 1 000 personnes sont touchées"
+        explanation: "L'article 34 du RGPD impose de communiquer la violation aux personnes en cas de risque élevé, pour qu'elles puissent se protéger (changer un mot de passe, surveiller leur compte)."
+      }
+      question "Quel guichet unique d’assistance aux victimes de cybermalveillance a été lancé en décembre 2024 ?" {
+        - "Pharos"
+        + "17Cyber"
+        - "Signal Spam"
+        - "Perceval"
+        explanation: "17Cyber réunit le ministère de l'Intérieur, la police, la gendarmerie et Cybermalveillance.gouv.fr. Pharos reçoit les signalements de contenus illicites, Signal Spam les courriels indésirables, Perceval les fraudes à la carte bancaire."
+      }
+      question "Un fichier d’élèves est envoyé par erreur au mauvais destinataire. Est-ce une violation de données au sens du RGPD ?" {
+        - "non, car il n'y a pas eu de piratage"
+        + "oui, car il y a une divulgation non autorisée, même accidentelle"
+        - "non, si le destinataire est un enseignant"
+        - "oui, mais seulement si le fichier était chiffré"
+        explanation: "Le RGPD couvre la destruction, la perte, l'altération, la divulgation ou l'accès non autorisé, accidentel ou illicite. L'erreur d'envoi est une violation de confidentialité, à consigner et à évaluer."
+      }
+      question "Tu entres par erreur dans un dossier partagé qui ne te concerne pas. Que fais-tu ?" {
+        - "tu explores pour vérifier ce qui est visible"
+        + "tu sors sans rien consulter et tu signales le problème de droits au responsable"
+        - "tu copies les fichiers pour prouver la faille"
+        - "tu modifies les droits toi-même"
+        explanation: "Rester et fouiller constitue un maintien frauduleux (323-1), copier relève de l'extraction de données (323-3). Le bon réflexe est de sortir et de signaler."
+      }
+      question "Pourquoi tenir une main courante pendant un incident ?" {
+        - "pour la publier sur les réseaux sociaux"
+        + "pour garder une trace horodatée des constats et des actions, utile à l'enquête et à l'analyse"
+        - "parce que l'antivirus l'exige"
+        - "pour remplacer la plainte"
+        explanation: "Dans l'urgence, on oublie vite qui a fait quoi et quand. La main courante sert à la plainte, à l'assureur, à la notification CNIL et au retour d'expérience."
+      }
+    }
+  }
+
+  module "synthese" {
+    title: "Chapitre 10 : synthèse, mini-projet guidé"
+    duration: "60min"
+    content: """
+### Le projet
+Une association de 12 salariés te demande un **état des lieux de sécurité** et un plan d'action. Ce que tu sais :
+• 12 postes Windows 11 ; tout le monde est administrateur de son poste ;
+• un serveur de fichiers Debian 12 avec un partage Samba ; SSH est ouvert sur Internet « pour le prestataire », avec mot de passe ;
+• un NAS dans le même bureau, monté en lecteur réseau sur tous les postes, qui reçoit une copie miroir chaque nuit ;
+• une messagerie en ligne sans double authentification ; le mot de passe du compte de la directrice est le même que sur plusieurs sites ;
+• un fichier des adhérents (noms, adresses, cotisations) sur le partage ;
+• aucun journal n'est consulté, il n'existe aucune procédure en cas d'incident.
+
+Tu dois livrer : un tableau des besoins DICT, trois scénarios de risque notés, un plan de mesures classé par couche, la mise en œuvre de quelques mesures sur un labo, une fiche réflexe d'incident d'une page.
+
+### Étape 1 : les besoins DICT
+Évalue de 1 à 4 au moins ces biens : fichier des adhérents, messagerie, comptabilité, site web public. Justifie la valeur la plus forte de chaque ligne.
+
+### Étape 2 : les risques
+Écris trois scénarios de risque (source de menace, vulnérabilité, bien, critère atteint, conséquence), note gravité et vraisemblance, calcule le produit et choisis une réponse (réduire, transférer, éviter, accepter).
+
+### Étape 3 : le plan de mesures par couche
+Pour chaque couche de la défense en profondeur (humains, physique, réseau, système, application, données, détection), au moins une mesure, avec une priorité (immédiate, sous un mois, sous six mois).
+
+### Étape 4 : la mise en œuvre sur ton labo
+Sur une machine virtuelle Debian 12 qui joue le rôle du serveur :
+• lister les ports ouverts ;
+• créer un compte nominatif pour le prestataire, installer sa clé publique, désactiver l'authentification SSH par mot de passe ;
+• activer ufw (SSH seulement depuis le réseau local ou le VPN) et fail2ban ;
+• activer les mises à jour automatiques de sécurité ;
+• faire une sauvegarde `tar` du partage avec son empreinte, la copier sur un second disque virtuel que tu détaches ensuite, et la restaurer dans un dossier de test.
+
+### Étape 5 : la fiche réflexe
+Une page affichée près de chaque poste : qui appeler (numéro interne, prestataire, 17Cyber), les trois gestes immédiats, ce qu'il ne faut pas faire, où signaler un message suspect.
+
+### Étape 6 : la recette
+| Test | Commande ou action | Attendu |
+|---|---|---|
+| Connexion par mot de passe refusée | `ssh -o PubkeyAuthentication=no presta@serveur` | `Permission denied (publickey).` |
+| Connexion par clé | `ssh presta@serveur` | connexion sans mot de passe du compte |
+| Pare-feu | `sudo ufw status verbose` | `Default: deny (incoming)`, SSH limité au réseau prévu |
+| fail2ban | `sudo fail2ban-client status sshd` | la prison `sshd` existe et compte les échecs |
+| Mises à jour | `systemctl status unattended-upgrades` | service actif |
+| Sauvegarde | `sha256sum -c` sur la copie | `OK` |
+| Restauration | `diff -r` entre l'original et la restauration | aucune différence |
+| MFA messagerie | connexion depuis un navigateur privé | second facteur demandé |
+
+### À toi de jouer
+Réalise les étapes 1 à 6. Puis réponds à ces trois situations :
+1. Deux semaines après la mise en place, `fail2ban-client status sshd` affiche 0 échec alors que le serveur est exposé. Est-ce une bonne nouvelle ?
+2. La directrice reçoit un SMS « Votre colis est bloqué, payez 1,99 € », clique et saisit sa carte bancaire. Que fait-elle, dans l'ordre ?
+3. Un lundi matin, le partage Samba est chiffré. Le NAS l'est aussi. La copie externe du vendredi est dans le tiroir de la trésorière. Déroule la réponse.
+
+### Correction
+Points de contrôle du projet :
+• étape 1 : fichier des adhérents avec C et I forts (données personnelles, RGPD article 32), messagerie avec D et C forts ; site public avec C faible ;
+• étape 2 : un scénario « rançongiciel par SSH exposé avec mot de passe ou par pièce jointe, chiffrement du serveur et du NAS monté » noté au plus haut, un scénario « bourrage d'identifiants sur la messagerie de la directrice » ;
+• étape 3 : immédiat = MFA sur la messagerie, mots de passe uniques via gestionnaire, SSH par clé et derrière un VPN, NAS démonté des postes ; sous un mois = comptes standard sur les postes, copie hors ligne hebdomadaire, fiche réflexe ; sous six mois = segmentation, journaux surveillés, sensibilisation ;
+• étape 4 : dans `/etc/ssh/sshd_config`, `PasswordAuthentication no`, vérifié par `sudo sshd -t` puis `sudo systemctl reload ssh`, en gardant une session ouverte pendant le test ;
+• étape 6 : chaque ligne a un résultat obtenu, chaque écart est expliqué.
+
+Situations :
+1. Pas forcément. Si SSH n'est plus exposé à Internet (VPN), c'est normal. Sinon, vérifie que la prison lit bien le journal systemd (`backend = systemd`, paquet `python3-systemd`) et qu'elle surveille le bon service : `sudo journalctl -u ssh --since today | grep -c "Failed"` doit donner un chiffre cohérent avec celui de fail2ban. Un outil de détection silencieux doit toujours être vérifié.
+2. Opposition immédiate auprès de sa banque ; garder le SMS et le transférer au 33700 ; surveiller les débits ; porter plainte si des débits frauduleux apparaissent (et signaler la fraude à la carte sur Perceval, le service en ligne du ministère de l'Intérieur). Si elle a aussi saisi un mot de passe, le changer partout où il était utilisé.
+3. Isoler (débrancher les postes et le serveur du réseau, couper le NAS du réseau), ne pas éteindre, main courante, prestataire et parcours 17Cyber, ne pas payer, plainte, notification CNIL sous 72 heures (fichier des adhérents touché), information des adhérents si le risque est élevé (vol des données probable en double extorsion). Trouver la porte d'entrée, reconstruire, puis restaurer depuis la copie du vendredi **sur un système propre**, après avoir vérifié son empreinte. Les données du week-end et de lundi matin sont perdues : c'est le RPO de 7 jours que le plan doit réduire (sauvegarde nocturne non accessible aux postes).
+
+### Pour aller plus loin
+• Guide d'hygiène informatique (42 mesures) et Les fondamentaux de la sauvegarde des systèmes d'information, ANSSI : https://cyber.gouv.fr
+• Attaques par rançongiciels, tous concernés : comment les anticiper et réagir en cas d'incident, ANSSI : https://cyber.gouv.fr
+• Fiches réflexes (hameçonnage, rançongiciel, piratage de compte) et kit de sensibilisation, Cybermalveillance.gouv.fr : https://www.cybermalveillance.gouv.fr
+• Recommandation relative aux mots de passe et autres secrets partagés (délibération n° 2022-100) et Guide de la sécurité des données personnelles, CNIL : https://www.cnil.fr
+• Code pénal, articles 323-1 à 323-8, Légifrance : https://www.legifrance.gouv.fr ; Règlement (UE) 2016/679 (RGPD), articles 5, 32, 33, 34 et 83 : https://eur-lex.europa.eu
+• RFC 6238, TOTP: Time-Based One-Time Password Algorithm, IETF : https://www.rfc-editor.org/rfc/rfc6238
+"""
+
+    codeblock "bash" {
+      title: "Recette rapide du serveur durci"
+      code: """
+sudo ss -tulpn                                    # seuls les services prévus écoutent
+sudo sshd -t && echo "configuration SSH correcte"
+sudo grep -i '^PasswordAuthentication' /etc/ssh/sshd_config   # PasswordAuthentication no
+sudo ufw status verbose                           # Default: deny (incoming)
+sudo fail2ban-client status sshd                  # prison active
+systemctl is-active unattended-upgrades           # active
+sha256sum -c partage-2026-11-26.tar.gz.sha256     # partage-2026-11-26.tar.gz: OK
+diff -r /srv/partage ~/test-restauration/partage && echo "restauration identique"
+"""
+    }
+
+    quiz {
+      pick: 10
+      question "Le fichier des adhérents d’une association contient noms et adresses. Quels critères ont le besoin le plus fort ?" {
+        - "disponibilité seulement"
+        + "confidentialité et intégrité"
+        - "aucun, ce ne sont pas des données sensibles"
+        - "traçabilité seulement"
+        explanation: "Ce sont des données personnelles : une fuite (confidentialité) ou une erreur (intégrité) touche directement des personnes et engage l'association au titre du RGPD."
+      }
+      question "Un serveur expose SSH sur Internet avec mot de passe. Quelle mesure réduit le plus le risque de force brute ?" {
+        - "changer le mot de passe tous les mois"
+        + "n'accepter que l'authentification par clé et passer par un VPN"
+        - "changer le message d'accueil de SSH"
+        - "installer un antivirus sur le serveur"
+        explanation: "Sans authentification par mot de passe, les essais deviennent inutiles ; derrière un VPN, le service n'est même plus visible. fail2ban peut s'ajouter comme couche supplémentaire."
+      }
+      question "Quelle commande vérifie la syntaxe de la configuration SSH avant de recharger le service ?" {
+        - "ssh -t"
+        + "sudo sshd -t"
+        - "systemctl check ssh"
+        - "ssh-keygen -t"
+        explanation: "sshd -t teste le fichier de configuration et ne dit rien s'il est correct. ssh-keygen -t choisit le type de clé à générer ; les deux autres commandes n'existent pas sous cette forme."
+      }
+      question "Quel lien est un piège ?" {
+        - "https://www.service-public.fr/particuliers"
+        - "https://moncompte.ameli.fr/"
+        + "https://ameli.fr.securite-compte.info/"
+        - "https://www.impots.gouv.fr/"
+        explanation: "Le domaine réel se lit avant le premier / : securite-compte.info. ameli.fr n'y est qu'un sous-domaine choisi pour tromper."
+      }
+      question "Quelle combinaison est une authentification multifacteur ?" {
+        - "mot de passe et question secrète"
+        - "deux mots de passe"
+        + "mot de passe et clé FIDO2"
+        - "code PIN et date de naissance"
+        explanation: "Seule cette combinaison associe deux familles différentes : connaissance (mot de passe) et possession (clé). Les autres ne mélangent que des éléments de connaissance."
+      }
+      question "Un NAS reçoit chaque nuit une copie miroir et reste monté sur tous les postes. Que manque-t-il pour respecter 3-2-1 ?" {
+        - "un deuxième NAS identique dans la même pièce"
+        + "une copie hors site et hors ligne, et des versions dans le temps"
+        - "un RAID 5"
+        - "un antivirus sur le NAS"
+        explanation: "Le miroir propage suppressions et chiffrement, et tout est au même endroit. Il faut une copie déconnectée et hors site, avec une rétention de plusieurs versions."
+      }
+      question "Que recommande la CNIL pour 80 bits d’entropie sans caractère spécial obligatoire ?" {
+        - "8 caractères"
+        - "10 caractères"
+        + "14 caractères avec majuscules, minuscules et chiffres"
+        - "20 chiffres"
+        explanation: "14 caractères tirés parmi 62 donnent environ 83 bits. Avec les caractères spéciaux, 12 caractères suffisent ; une phrase de passe de 7 mots aussi."
+      }
+      question "Une violation de données personnelles est découverte lundi à 9 h. Jusqu’à quand, au plus tard, notifier la CNIL si possible ?" {
+        - "lundi 18 h"
+        - "mardi 9 h"
+        + "jeudi 9 h"
+        - "dans un mois"
+        explanation: "72 heures après la prise de connaissance : lundi 9 h + 72 h = jeudi 9 h. Une notification incomplète peut être complétée ensuite."
+      }
+      question "Quelle est la bonne réaction devant une note de rançon sur plusieurs postes ?" {
+        - "éteindre, payer, réinstaller"
+        + "isoler du réseau, ne pas éteindre, se faire aider, ne pas payer, porter plainte"
+        - "redémarrer tous les postes pour arrêter le chiffrement"
+        - "restaurer immédiatement la sauvegarde la plus récente sur les postes infectés"
+        explanation: "L'isolement arrête la propagation et garde les traces. Restaurer sur un système encore compromis ou avec une sauvegarde postérieure à l'intrusion relance le problème."
+      }
+      question "Un élève teste un outil d’attaque contre le serveur du lycée, sans autorisation, et échoue. Quel article rend la tentative punissable ?" {
+        - "l'article 323-5"
+        + "l'article 323-7"
+        - "l'article 32 du RGPD"
+        - "l'article 323-8"
+        explanation: "L'article 323-7 punit la tentative des délits 323-1 à 323-3-1 des mêmes peines. 323-5 prévoit des peines complémentaires, 323-8 une exception pour les services de renseignement, l'article 32 du RGPD les mesures de sécurité."
+      }
+      question "Un risque a une gravité de 4 et une vraisemblance de 2. Avec la règle du produit, quelle est sa note ?" {
+        - "6"
+        + "8"
+        - "2"
+        - "16"
+        explanation: "4 × 2 = 8 sur 16. Un risque grave mais peu vraisemblable reste à traiter, souvent en réduisant sa gravité (sauvegardes, plan de reprise)."
+      }
+      question "Qu’indique un nombre élevé de connexions TCP en état SYN-RECV sur un serveur web ?" {
+        - "un bourrage d'identifiants"
+        + "une inondation SYN, une forme de déni de service"
+        - "une sauvegarde en cours"
+        - "une mise à jour automatique"
+        explanation: "Les demandes de connexion jamais terminées s'accumulent et épuisent les ressources. C'est une atteinte à la disponibilité."
+      }
+      question "Pourquoi retirer les droits d’administrateur des 12 postes de l’association ?" {
+        - "pour accélérer Windows"
+        + "pour qu'un logiciel malveillant ouvert par un salarié ne puisse pas prendre le contrôle complet du poste"
+        - "pour empêcher l'impression"
+        - "parce que Windows 11 l'impose"
+        explanation: "C'est le moindre privilège : un programme hérite des droits de l'utilisateur qui le lance. Les installations passent alors par un compte d'administration séparé."
+      }
+      question "Qu’est-ce qu’une vulnérabilité ?" {
+        - "une personne qui veut attaquer le système"
+        + "une faiblesse d'un bien qui peut être exploitée"
+        - "un programme qui exploite une faille"
+        - "le dommage subi après une attaque"
+        explanation: "La vulnérabilité est la faiblesse. La personne malveillante est une menace, le programme un exploit, et le scénario complet avec son dommage, un risque."
+      }
+      question "fail2ban affiche 0 échec depuis deux semaines sur un serveur SSH exposé à Internet, en Debian 12. Que vérifies-tu ?" {
+        - "rien, le serveur n'est pas attaqué"
+        + "que la prison lit le journal systemd (backend = systemd) et voit bien les messages de sshd"
+        - "que l'antivirus est à jour"
+        - "que le disque n'est pas plein"
+        explanation: "Un serveur exposé reçoit des essais en permanence. Zéro échec signale plutôt un outil qui ne lit pas la bonne source ; sous Debian 12, il n'y a pas de /var/log/auth.log par défaut."
+      }
+      question "Quel second facteur la directrice doit-elle préférer pour sa messagerie ?" {
+        - "le code par SMS"
+        - "une question secrète"
+        + "une clé FIDO2 ou une clé d'accès, sinon une application TOTP"
+        - "un second mot de passe"
+        explanation: "La clé FIDO2 résiste à l'hameçonnage, le TOTP est un bon compromis, le SMS reste le plus faible. Question secrète et second mot de passe ne sont pas un second facteur."
+      }
+      question "À quoi sert une empreinte SHA-256 enregistrée au moment de la sauvegarde ?" {
+        - "à chiffrer la sauvegarde"
+        + "à vérifier plus tard que la copie n'a pas été modifiée ou abîmée"
+        - "à compresser l'archive"
+        - "à retrouver le mot de passe de l'archive"
+        explanation: "sha256sum -c recalcule l'empreinte et la compare : un seul octet différent est détecté. C'est un contrôle d'intégrité, pas un chiffrement."
+      }
+      question "Un courriel du « président » demande un virement urgent et confidentiel vers un nouveau compte. Quelle est la bonne réaction ?" {
+        - "faire le virement, la demande vient de la direction"
+        - "répondre au courriel pour demander confirmation"
+        + "rappeler le président sur son numéro habituel avant toute action"
+        - "transférer le courriel à toute l'équipe"
+        explanation: "C'est le schéma de la fraude au président. Répondre au courriel revient à interroger l'escroc ; seul un contact par un canal connu permet de vérifier."
+      }
+      question "Pourquoi un compte d’administration partagé entre le prestataire et la directrice pose-t-il problème ?" {
+        - "parce qu'il consomme plus de licences"
+        + "parce qu'on ne peut plus attribuer les actions à une personne et que le secret circule"
+        - "parce qu'il empêche les sauvegardes"
+        - "parce que Debian l'interdit"
+        explanation: "La traçabilité exige des comptes nominatifs. Chacun a son compte, et le prestataire utilise sa propre clé SSH, révocable à la fin du contrat."
+      }
+      question "Quelle plateforme oriente les victimes vers des prestataires et publie des fiches réflexes ?" {
+        - "la CNIL"
+        + "Cybermalveillance.gouv.fr"
+        - "l'Afnic"
+        - "Légifrance"
+        explanation: "Cybermalveillance.gouv.fr (GIP ACYMA) assiste particuliers, entreprises, associations et collectivités. La CNIL reçoit les notifications de violations, Légifrance publie les textes de loi."
+      }
+    }
+  }
+}

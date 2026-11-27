@@ -1,0 +1,1836 @@
+tdc-version: 2
+type: course
+
+course "regex-mastery" {
+  title: "Expressions régulières"
+  description: """
+Ce cours t'apprend à écrire, lire et tester des expressions régulières (regex) pour chercher, extraire, remplacer et valider du texte : journaux de serveurs, fichiers de configuration, saisies de formulaires. Il s'adresse aux élèves de bac pro CIEL, BTS SIO (SISR et SLAM), BTS CIEL et BUT, et à toute personne qui utilise un terminal ou écrit des scripts.
+
+À la fin, tu sauras :
+• expliquer à quoi sert une regex et reconnaître les caractères littéraux et les caractères spéciaux ;
+• construire des classes de caractères, choisir le bon quantificateur et la différence entre gourmand et paresseux ;
+• ancrer un motif (début, fin, limite de mot) pour éviter les fausses correspondances ;
+• capturer des morceaux avec des groupes, les réutiliser dans un remplacement, combiner des alternatives ;
+• utiliser les assertions (lookahead, lookbehind) et éviter les motifs qui font planter un serveur (ReDoS) ;
+• passer d'un outil à l'autre sans te tromper : grep, grep -E, grep -P, sed -E, Python, JavaScript et PowerShell ;
+• extraire des adresses IP et des dates d'un journal, compter des tentatives de connexion et valider une saisie.
+
+Chaque chapitre contient des exemples testés, au moins un exercice pratique avec sa correction, et une banque de questions tirées au hasard. Les commandes sont écrites pour Debian 12 ou Ubuntu 24.04 (GNU grep), Python 3, Node.js et PowerShell.
+
+Prérequis : savoir ouvrir un terminal et lancer une commande simple (cd, ls, cat). Les notions de Python ou de JavaScript aident pour les chapitres 5 à 8, sans être obligatoires.
+"""
+  category: "programming"
+  level: "beginner"
+  duration: "6h"
+  icon: "DataObject"
+  keywords: ["regex", "expressions régulières", "grep", "grep -E", "grep -P", "sed", "python re", "javascript regexp", "powershell", "quantificateur", "capture", "lookahead", "ancre", "journal", "validation", "redos"]
+
+  module "regex-bases" {
+    title: "Chapitre 1 : à quoi sert une regex, caractères littéraux et spéciaux"
+    duration: "30min"
+    content: """
+### Le problème
+Tu dois trouver, dans un journal de 50 000 lignes, toutes les adresses IP qui ont raté une connexion SSH. Ou vérifier qu'un code postal saisi dans un formulaire contient bien cinq chiffres. Ou remplacer toutes les dates `2026-11-26` d'un fichier par `26/11/2026`. Chercher un mot exact ne suffit pas : tu ne connais pas les adresses à l'avance, seulement leur **forme**.
+
+Une **expression régulière** (regular expression, souvent abrégée **regex** ou **regexp**) est un petit texte qui décrit une forme de texte. Le moteur de regex parcourt le texte et signale chaque endroit qui correspond à la description : on dit que le motif **correspond** (match).
+
+On s'en sert partout :
+• dans le terminal : `grep`, `sed`, `awk`, `less` (recherche avec `/`) ;
+• dans les langages : Python (`re`), JavaScript (`RegExp`), PHP (`preg_match`), Java, C#, PowerShell ;
+• dans les éditeurs : VS Code, Notepad++, vim (case « .* » ou « Regex » dans la recherche) ;
+• dans les outils réseau et sécurité : règles de pare-feu applicatif, fail2ban, filtres de SIEM, validation des formulaires web.
+
+### Les caractères littéraux
+La plupart des caractères se représentent eux-mêmes. Le motif `Failed` correspond au texte « Failed », à cet endroit, avec cette casse. Le motif `port 22` correspond à « port 22 », espace compris. Par défaut, la recherche est **sensible à la casse** : `failed` ne trouve pas « Failed ».
+
+Une regex cherche une correspondance **n'importe où** dans la ligne : `chat` correspond dans « chat », dans « achat » et dans « chaton ». Pour imposer un mot entier ou une ligne entière, il faudra des ancres (chapitre 4).
+
+### Les caractères spéciaux (métacaractères)
+Quelques caractères ont un sens particulier. Ce sont les **métacaractères** :
+
+| Caractère | Sens | Exemple | Correspond à |
+|---|---|---|---|
+| `.` | n'importe quel caractère (sauf le saut de ligne) | `c.t` | cat, cot, c9t, c-t |
+| `*` | l'élément précédent 0 fois ou plus | `ab*c` | ac, abc, abbbc |
+| `+` | l'élément précédent 1 fois ou plus | `ab+c` | abc, abbbc (pas ac) |
+| `?` | l'élément précédent 0 ou 1 fois | `colou?r` | color, colour |
+| `[ ]` | un caractère parmi une liste | `gr[ae]y` | gray, grey |
+| `^` | début de ligne | `^Nov` | lignes qui commencent par Nov |
+| `$` | fin de ligne | `ssh2$` | lignes qui finissent par ssh2 |
+| `( )` | groupe | `(ab)+` | ab, abab |
+| `{ }` | nombre de répétitions | `[0-9]{5}` | cinq chiffres |
+| `\` | échappement | `\.` | un vrai point |
+
+La **barre verticale** est aussi un métacaractère : elle exprime une alternative (ou). Le motif `chat|chien` correspond à chat ou à chien (chapitre 5).
+
+### L'échappement
+Pour chercher un métacaractère comme un caractère ordinaire, tu le fais précéder d'un **antislash** (backslash) `\`. C'est l'**échappement**.
+• `192.168.1.1` correspond aussi à « 192x168y1z1 », car chaque point vaut n'importe quel caractère.
+• `192\.168\.1\.1` ne correspond qu'à « 192.168.1.1 ».
+• Pour chercher « 3+2 », écris `3\+2` ; pour « (note) », écris `\(note\)` en syntaxe étendue.
+• Pour chercher un antislash lui-même, écris `\\`.
+
+L'erreur du point non échappé est la plus fréquente : le motif « marche » sur tes exemples, mais accepte aussi des textes faux.
+
+### Premier contact avec grep
+`grep` affiche les lignes d'un fichier qui contiennent une correspondance. Mets toujours le motif entre **guillemets simples** : sinon le shell interprète lui-même `*`, `?`, `$` ou `\` avant que grep ne les voie.
+
+```bash
+grep 'Failed' /var/log/auth.log         # lignes contenant Failed
+grep -i 'failed' /var/log/auth.log      # -i : ignore la casse
+grep -c 'Failed' /var/log/auth.log      # -c : compte les lignes
+grep -n 'Failed' /var/log/auth.log      # -n : numéro de ligne
+grep -v '^#' /etc/ssh/sshd_config       # -v : lignes qui ne correspondent PAS
+grep -o 'port [0-9]*' fichier.txt       # -o : seulement la partie trouvée
+grep -F '192.168.1.1' fichier.txt       # -F : texte fixe, aucun métacaractère
+```
+
+Sur Debian 12, les messages SSH sont dans le journal systemd ; tu les lis avec `journalctl -u ssh` et tu peux envoyer la sortie dans grep : `journalctl -u ssh | grep 'Failed'`. Si le paquet `rsyslog` est installé, ils sont aussi dans `/var/log/auth.log`.
+
+### Tester avant de faire confiance
+Une regex se teste toujours sur des exemples **qui doivent correspondre** et sur des exemples **qui ne doivent pas correspondre**. Crée un petit fichier de test :
+
+```bash
+printf 'chat\nachat\nchaton\nchien\nCHAT\n' > animaux.txt
+grep 'chat' animaux.txt      # chat, achat, chaton
+grep -i 'chat' animaux.txt   # les mêmes, plus CHAT
+```
+
+### À toi de jouer
+1. Crée le fichier `ips.txt` avec ces quatre lignes : `192.168.1.1`, `192x168y1z1`, `10.0.0.1`, `192.168.10.1`. Écris une commande grep qui affiche seulement la ligne `192.168.1.1` en utilisant une regex (pas `-F`).
+2. Que trouve `grep 'a.c'` dans les lignes « abc », « ac », « a.c », « a\nc » (deux lignes) et « aXXc » ?
+3. Tu veux trouver le texte « prix: 10$ ». Pourquoi `grep 'prix: 10$'` ne fonctionne-t-il pas comme prévu, et comment corriger ?
+
+### Correction
+1. `printf '192.168.1.1\n192x168y1z1\n10.0.0.1\n192.168.10.1\n' > ips.txt`, puis `grep '^192\.168\.1\.1$' ips.txt`. Les points échappés éliminent `192x168y1z1`. `10.0.0.1` et `192.168.10.1` ne contiennent pas la suite `192.168.1.1`. Sans ancres, `grep '192\.168\.1\.1'` donnerait ici le même résultat, mais il accepterait aussi `192.168.1.10` ou `192.168.1.100` : les ancres `^` (début) et `$` (fin) imposent la ligne entière, prends l'habitude de les mettre.
+2. `abc` et `a.c` correspondent (le point vaut b, puis vaut le point). `ac` ne correspond pas : le point exige exactement un caractère. `aXXc` non plus : deux caractères entre a et c. Sur deux lignes, grep travaille ligne par ligne : ni « a » ni « c » seuls ne correspondent.
+3. `$` signifie « fin de ligne » : le motif cherche « prix: 10 » en fin de ligne. Il faut échapper le dollar : `grep 'prix: 10\$' fichier`, ou utiliser `grep -F 'prix: 10$' fichier`. Les guillemets simples sont indispensables, sinon le shell essaierait d'interpréter `$`.
+"""
+
+    codeblock "bash" {
+      title: "Mini-banc de test pour les regex de ce chapitre"
+      code: """
+printf 'chat\nachat\nchaton\nchien\nCHAT\n' > animaux.txt
+grep 'chat' animaux.txt        # chat, achat, chaton
+grep -i 'chat' animaux.txt     # + CHAT
+grep -c 'ch' animaux.txt       # 4 lignes (CHAT exclu sans -i)
+grep -v 'chat' animaux.txt     # chien, CHAT
+printf '192.168.1.1\n192x168y1z1\n' | grep '192\.168\.1\.1'   # seulement la première
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Que décrit une expression régulière ?" {
+        - "un fichier compressé contenant du texte"
+        + "une forme de texte que le moteur recherche dans une chaîne"
+        - "une liste exacte de mots à remplacer"
+        - "un format d'encodage des caractères"
+        explanation: "Une regex décrit une forme (des chiffres, puis un point, etc.) plutôt qu'un texte exact. Le moteur signale chaque endroit du texte qui correspond à cette forme. Ce n'est ni un encodage comme UTF-8 ni une liste figée de mots."
+      }
+      question "Quelles lignes la commande grep chat affiche-t-elle parmi : chat, achat, chaton, chien ?" {
+        - "chat seulement"
+        - "chat et chaton"
+        + "chat, achat et chaton"
+        - "les quatre lignes"
+        explanation: "Sans ancre, une regex peut correspondre n'importe où dans la ligne : « chat » apparaît dans achat et chaton. Pour le mot seul, il faudrait grep -w ou des ancres."
+      }
+      question "Que vaut le point « . » dans une regex ?" {
+        - "un point littéral uniquement"
+        + "n'importe quel caractère unique (sauf le saut de ligne)"
+        - "zéro ou plusieurs caractères"
+        - "la fin de la ligne"
+        explanation: "Le point remplace exactement un caractère quelconque. Pour un vrai point, il faut l'échapper : \\. ; zéro ou plusieurs caractères s'écrit .* et la fin de ligne $."
+      }
+      question "Quel motif ne correspond qu’à l’adresse 10.0.0.1 écrite avec de vrais points ?" {
+        - "10.0.0.1"
+        + "10\\.0\\.0\\.1"
+        - "10*0*0*1"
+        - "[10.0.0.1]"
+        explanation: "Chaque point doit être échappé par un antislash pour perdre son sens spécial. Sans échappement, 10x0y0z1 correspondrait aussi. [10.0.0.1] est une classe qui ne correspond qu'à un seul caractère parmi 1, 0 et le point."
+      }
+      question "Pourquoi écrire le motif de grep entre guillemets simples ?" {
+        - "pour rendre la recherche insensible à la casse"
+        - "parce que grep refuse les guillemets doubles"
+        + "pour empêcher le shell d'interpréter *, ?, $ ou \\ avant grep"
+        - "pour que grep cherche un texte fixe"
+        explanation: "Sans guillemets, le shell remplace par exemple *.log par la liste des fichiers ou $var par une variable. Les guillemets simples transmettent le motif tel quel à grep. L'insensibilité à la casse vient de -i, le texte fixe de -F."
+      }
+      question "Quelle option de grep affiche seulement les lignes qui NE correspondent PAS ?" {
+        - "-n"
+        - "-o"
+        + "-v"
+        - "-c"
+        explanation: "-v inverse la sélection. -n ajoute le numéro de ligne, -o n'affiche que la partie trouvée, -c compte les lignes qui correspondent."
+      }
+      question "grep -c Failed auth.log affiche 12. Que signifie ce nombre ?" {
+        - "le mot Failed apparaît exactement 12 fois dans le fichier"
+        + "12 lignes contiennent au moins une fois Failed"
+        - "12 adresses IP différentes ont échoué"
+        - "la 12e ligne contient Failed"
+        explanation: "-c compte les lignes qui correspondent, pas les occurrences : une ligne avec deux fois Failed compte pour 1. Pour compter les occurrences, on utilise grep -o 'Failed' fichier | wc -l."
+      }
+      question "Quel motif cherche le texte exact « (note) » avec grep -E ?" {
+        - "(note)"
+        + "\\(note\\)"
+        - "[(note)]"
+        - "/(note/)"
+        explanation: "En syntaxe étendue, les parenthèses forment un groupe : (note) trouverait simplement « note ». Il faut les échapper avec un antislash. La barre oblique n'est pas un caractère d'échappement."
+      }
+      question "Que fait l’option -F de grep ?" {
+        - "elle force la recherche dans les sous-dossiers"
+        - "elle active les expressions étendues"
+        + "elle traite le motif comme un texte fixe, sans métacaractère"
+        - "elle affiche le nom des fichiers seulement"
+        explanation: "Avec -F, le point, l'étoile ou le dollar sont des caractères ordinaires. C'est pratique pour chercher une adresse IP ou un texte plein de symboles. La récursion est -r, les expressions étendues -E, le nom des fichiers -l."
+      }
+      question "Le motif ab*c correspond-il au texte « ac » ?" {
+        + "oui, car b* autorise zéro b"
+        - "non, il faut au moins un b"
+        - "non, car l'étoile remplace plusieurs caractères quelconques"
+        - "oui, mais seulement avec grep -E"
+        explanation: "L'étoile s'applique à l'élément juste avant elle (ici b) et autorise 0 répétition ou plus. ab+c, lui, exigerait au moins un b. L'étoile des regex n'est pas le joker * du shell, qui remplace n'importe quelle suite de caractères."
+      }
+      question "Tu cherches « prix: 10$ ». Quel motif est correct ?" {
+        - "prix: 10$"
+        + "prix: 10\\$"
+        - "prix: 10.$"
+        - "^prix: 10$"
+        explanation: "$ est une ancre de fin de ligne. Pour trouver le caractère dollar, on l'échappe : \\$. Les autres motifs cherchent « prix: 10 » en fin de ligne ou un caractère quelconque suivi de la fin de ligne."
+      }
+      question "La recherche grep Erreur trouve-t-elle la ligne « ERREUR disque » ?" {
+        - "oui, grep ignore toujours la casse"
+        + "non, sauf avec l'option -i"
+        - "oui, si la ligne commence par le mot"
+        - "non, même avec -i"
+        explanation: "Par défaut, la correspondance est sensible à la casse : E majuscule suivi de rreur minuscule ne correspond pas à ERREUR. L'option -i (ignore case) rend la recherche insensible à la casse."
+      }
+    }
+  }
+
+  module "regex-classes" {
+    title: "Chapitre 2 : classes de caractères, raccourcis et point"
+    duration: "30min"
+    content: """
+### Choisir un caractère dans une liste
+Une **classe de caractères** (character class) s'écrit entre crochets et correspond à **un seul caractère** pris dans la liste.
+• `[aeiou]` : une voyelle minuscule.
+• `gr[ae]y` : gray ou grey, mais pas groy.
+• `[0-9]` : un chiffre ; le tiret entre deux caractères indique un **intervalle** (range).
+• `[a-z]`, `[A-Z]`, `[a-zA-Z0-9]` : une lettre minuscule, une majuscule, une lettre ou un chiffre.
+• `[0-9a-fA-F]` : un chiffre hexadécimal (pratique pour les adresses MAC et IPv6).
+
+Le contenu des crochets se lit autrement que le reste de la regex :
+• le point, l'étoile, le plus ou le point d'interrogation y sont des caractères **ordinaires** : `[.?]` correspond à un point ou à un point d'interrogation ;
+• le tiret est un intervalle, sauf en première ou dernière position : `[-a-z]` ou `[a-z-]` acceptent le tiret ;
+• le `]` se met en première position pour être littéral : `[]a]`.
+
+### Classe négative
+Un `^` placé **juste après** le crochet ouvrant inverse la classe : `[^0-9]` correspond à un caractère qui n'est **pas** un chiffre. Ailleurs, `^` est un caractère ordinaire dans la classe (`[a^b]`).
+
+La classe négative est très utile pour « tout jusqu'au prochain délimiteur » : `"[^"]*"` correspond à un texte entre guillemets doubles sans déborder sur le guillemet suivant. Retiens ce réflexe, il sert dans tous les journaux.
+
+Attention, une classe négative correspond quand même à **un** caractère : `[^0-9]` ne correspond pas à une chaîne vide.
+
+### Les raccourcis
+La plupart des moteurs modernes proposent des abréviations :
+
+| Raccourci | Sens habituel | Contraire |
+|---|---|---|
+| `\d` | un chiffre (digit) | `\D` : tout sauf un chiffre |
+| `\w` | un caractère de mot : lettre, chiffre ou `_` | `\W` |
+| `\s` | un blanc : espace, tabulation, saut de ligne | `\S` : tout sauf un blanc |
+
+Ces raccourcis existent en Python, JavaScript, PowerShell (.NET) et `grep -P`. Mais **pas tous dans grep -E** : GNU grep reconnaît `\w`, `\W`, `\s` et `\S`, mais **pas `\d`**. Depuis grep 3.8 (Debian 12 en a la version 3.8), `grep -E '\d'` affiche un avertissement `stray \ before d` et cherche simplement la lettre d. Dans grep, écris `[0-9]` ou `[[:digit:]]`.
+
+### Les classes POSIX
+Les outils Unix (grep, sed, awk) connaissent des noms de classes, à placer **à l'intérieur** de crochets :
+
+| Classe POSIX | Contenu |
+|---|---|
+| `[:digit:]` | chiffres |
+| `[:alpha:]` | lettres |
+| `[:alnum:]` | lettres et chiffres |
+| `[:upper:]` / `[:lower:]` | majuscules / minuscules |
+| `[:space:]` | blancs (espace, tabulation, saut de ligne…) |
+| `[:blank:]` | espace et tabulation seulement |
+| `[:punct:]` | ponctuation |
+| `[:xdigit:]` | chiffres hexadécimaux |
+
+On écrit donc `[[:digit:]]` (deux paires de crochets : la classe POSIX dans une classe). Écrire `[:digit:]` seul est une erreur classique : GNU grep refuse avec le message `character class syntax is [[:space:]], not [:space:]`.
+
+### Le point et les lettres accentuées
+• Le point correspond à tout caractère **sauf le saut de ligne** (dans grep, la question ne se pose pas : il lit ligne par ligne). En Python et en JavaScript, l'option DOTALL (`re.S`) ou le drapeau `s` lui fait aussi accepter le saut de ligne.
+• `[a-z]` ne contient pas é, è, à ou ç. Pour un prénom français, `[a-z]` est donc insuffisant.
+• En Python, `\w` et `\d` sont **Unicode** par défaut : `\w` accepte « élève », et `\d` accepte même des chiffres arabes orientaux comme ١٢. L'option `re.ASCII` les limite à l'ASCII.
+• En JavaScript, `\w` et `\d` sont **ASCII** : `/\w+/.exec("élève")[0]` renvoie seulement `l`.
+
+### Exemples testés
+```bash
+printf 'gray\ngrey\ngroy\n' | grep 'gr[ae]y'                  # gray, grey
+printf 'A1\nB2\nC\n' | grep '[0-9]'                            # A1, B2
+printf 'abc\n123\na1\n' | grep -x '[^0-9]*'                    # abc (ligne sans chiffre)
+printf 'mac 00:1a:2B:3c:4d:5e\n' | grep -oE '[0-9a-fA-F]{2}(:[0-9a-fA-F]{2}){5}'
+grep -E '[[:space:]]+$' script.sh                              # lignes avec des blancs en fin
+```
+
+### À toi de jouer
+1. Écris une classe qui accepte une voyelle, majuscule ou minuscule (sans accent).
+2. Écris un motif `grep -E` qui trouve un numéro de salle de la forme « B204 » : une lettre majuscule de A à F, puis trois chiffres.
+3. Dans un fichier CSV, chaque champ est séparé par un point-virgule. Écris une regex qui correspond au **premier champ** d'une ligne (tout ce qui précède le premier point-virgule).
+4. Un camarade écrit `grep -E '\d{5}' adresses.txt` pour trouver les codes postaux et n'obtient rien d'utile. Explique et corrige.
+
+### Correction
+1. `[aeiouyAEIOUY]` (ou `[aeiouy]` avec l'option -i de grep).
+2. `grep -E '[A-F][0-9]{3}' salles.txt`. Si le numéro doit être un mot entier, ajoute `-w` : sinon « XB2045 » correspondrait aussi.
+3. `^[^;]*` : depuis le début de la ligne, autant de caractères que possible qui ne sont pas des points-virgules. Avec grep : `grep -o '^[^;]*' fichier.csv`.
+4. `\d` n'existe pas en syntaxe étendue de grep : grep 3.8 et plus avertit `stray \ before d` et cherche 5 fois la lettre d. Corrections : `grep -E '[0-9]{5}' adresses.txt`, ou `grep -E '[[:digit:]]{5}' adresses.txt`, ou `grep -P '\d{5}' adresses.txt`.
+"""
+
+    codeblock "python" {
+      title: "Différences Unicode et ASCII en Python"
+      code: """
+import re
+print(re.findall(r"\w+", "élève"))               # ['élève']
+print(re.findall(r"\w+", "élève", re.ASCII))     # ['l', 've']
+print(re.findall(r"\d+", "a ١٢ 34"))             # ['١٢', '34']
+print(re.findall(r"[0-9]+", "a ١٢ 34"))          # ['34']
+print(re.findall(r'"[^"]*"', 'a "x" b "y"'))     # ['"x"', '"y"']
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "À combien de caractères correspond la classe [abc] ?" {
+        + "un seul caractère, qui vaut a, b ou c"
+        - "la suite exacte « abc »"
+        - "zéro ou plusieurs caractères parmi a, b et c"
+        - "trois caractères quelconques"
+        explanation: "Une classe entre crochets correspond toujours à un seul caractère pris dans la liste. Pour la suite abc, on écrit abc sans crochets ; pour plusieurs caractères de la liste, on ajoute un quantificateur : [abc]+."
+      }
+      question "Que signifie [^0-9] ?" {
+        - "un chiffre en début de ligne"
+        + "un caractère qui n'est pas un chiffre"
+        - "une ligne qui ne contient aucun chiffre"
+        - "zéro chiffre"
+        explanation: "Le ^ juste après le crochet ouvrant inverse la classe. [^0-9] correspond à un caractère, à condition que ce ne soit pas un chiffre. Le ^ hors des crochets serait une ancre de début de ligne."
+      }
+      question "Dans la classe [.?], que vaut le point ?" {
+        - "n'importe quel caractère"
+        + "un point littéral"
+        - "une erreur de syntaxe"
+        - "la fin de la ligne"
+        explanation: "À l'intérieur des crochets, le point, l'étoile et le point d'interrogation perdent leur sens spécial. [.?] correspond donc à un point ou à un point d'interrogation."
+      }
+      question "Quelle classe accepte aussi le tiret « - » comme caractère ?" {
+        - "[a-z]"
+        + "[a-z-]"
+        - "[az]"
+        - "[a..z]"
+        explanation: "Le tiret placé en dernière (ou première) position est littéral. Dans [a-z], il sert d'intervalle. [az] ne contient que a et z, et [a..z] contient a, le point et z."
+      }
+      question "Que se passe-t-il avec grep -E et le motif \\d+ sur Debian 12 ?" {
+        - "grep trouve les nombres du fichier"
+        + "grep avertit « stray \\ before d » et cherche la lettre d"
+        - "grep refuse de démarrer"
+        - "grep active automatiquement le mode Perl"
+        explanation: "GNU grep ne connaît pas \\d en syntaxe de base ni étendue. Depuis la version 3.8, il signale l'antislash inutile et traite \\d comme la lettre d. Il faut écrire [0-9], [[:digit:]] ou passer à grep -P."
+      }
+      question "Comment écrit-on correctement la classe POSIX des chiffres dans grep ?" {
+        - "[:digit:]"
+        + "[[:digit:]]"
+        - "{digit}"
+        - "\\p{digit}"
+        explanation: "Le nom de classe POSIX s'utilise à l'intérieur d'une classe entre crochets, d'où les doubles crochets. GNU grep rejette [:digit:] seul avec un message qui rappelle la bonne syntaxe."
+      }
+      question "En Python, que renvoie re.findall avec le motif \\w+ sur la chaîne « élève » ?" {
+        + "['élève']"
+        - "['l', 've']"
+        - "[]"
+        - "['élève', '']"
+        explanation: "En Python, pour une chaîne str, \\w est Unicode par défaut et accepte les lettres accentuées. Avec l'option re.ASCII, on obtiendrait ['l', 've'], comme le ferait JavaScript sans le drapeau u."
+      }
+      question "En JavaScript, quelle est la première correspondance de /\\w+/ dans la chaîne « élève » ?" {
+        - "\"élève\""
+        + "\"l\""
+        - "\"é\""
+        - "null"
+        explanation: "En JavaScript, \\w ne contient que [A-Za-z0-9_]. Le premier morceau de caractères de mot dans « élève » est « l », puisque é et è n'en font pas partie. C'est un piège pour valider des noms français."
+      }
+      question "Quel motif correspond à un texte entre guillemets doubles sans déborder sur le guillemet suivant ?" {
+        - "\".*\""
+        + "\"[^\"]*\""
+        - "\"[.*]\""
+        - "[\"]*"
+        explanation: "La classe négative [^\"] accepte tout sauf un guillemet : la correspondance s'arrête donc au premier guillemet fermant. \".*\" irait jusqu'au dernier guillemet de la ligne, car l'étoile est gourmande."
+      }
+      question "Que contient la classe POSIX [:blank:] ?" {
+        - "tous les blancs, saut de ligne compris"
+        + "l'espace et la tabulation"
+        - "les caractères invisibles de contrôle"
+        - "les lignes vides"
+        explanation: "[:blank:] contient seulement l'espace et la tabulation. [:space:] est plus large : il ajoute le saut de ligne, le retour chariot et d'autres blancs. [:cntrl:] contient les caractères de contrôle."
+      }
+      question "Quel motif grep -E correspond à un octet hexadécimal comme 1a ou 4F ?" {
+        - "[0-9]{2}"
+        - "[a-f]{2}"
+        + "[0-9a-fA-F]{2}"
+        - "[0-F]{2}"
+        explanation: "Un chiffre hexadécimal est un chiffre de 0 à 9 ou une lettre de a à f, en minuscule ou en majuscule. [0-F] est un intervalle de codes ASCII qui contient aussi : ; < = > ? @ ; il est donc faux."
+      }
+      question "Le motif [a-z]+ accepte-t-il le prénom « Jérôme » en entier ?" {
+        - "oui, les accents sont compris dans a-z"
+        + "non : J est une majuscule, et é et ô ne sont pas dans l'intervalle a-z"
+        - "oui, si on ajoute l'option -i"
+        - "non, car + n'accepte qu'un caractère"
+        explanation: "a-z ne couvre que les 26 lettres ASCII minuscules. Même avec -i (qui règle la majuscule), é et ô restent refusés. Il faut ajouter les lettres accentuées à la classe ou utiliser \\w ou [[:alpha:]] selon l'outil."
+      }
+    }
+  }
+
+  module "regex-quantificateurs" {
+    title: "Chapitre 3 : quantificateurs gourmands et paresseux"
+    duration: "35min"
+    content: """
+### Répéter un élément
+Un **quantificateur** (quantifier) se place juste après un élément (un caractère, une classe ou un groupe) et dit combien de fois il peut se répéter.
+
+| Quantificateur | Sens | Exemple | Correspond à |
+|---|---|---|---|
+| `*` | 0 fois ou plus | `[0-9]*` | rien, 7, 2026 |
+| `+` | 1 fois ou plus | `[0-9]+` | 7, 2026 (pas rien) |
+| `?` | 0 ou 1 fois | `https?` | http, https |
+| `{n}` | exactement n fois | `[0-9]{5}` | 13480 |
+| `{n,}` | au moins n fois | `[a-z]{8,}` | 8 lettres ou plus |
+| `{n,m}` | de n à m fois | `[0-9]{1,3}` | 1, 12, 123 |
+
+Le quantificateur porte sur **un seul élément**, celui qui le précède : `ab+` répète le b, pas « ab ». Pour répéter plusieurs caractères, on les met dans un groupe : `(ab)+` correspond à ab, abab, ababab.
+
+### Attention au zéro
+`*` et `?` acceptent zéro répétition. Le motif `[0-9]*` correspond donc dans **toutes** les lignes, même sans chiffre : il trouve une correspondance vide au début de la ligne. Quand tu veux « au moins un chiffre », écris `[0-9]+`.
+
+### Les quantificateurs dans grep : BRE et ERE
+grep connaît deux syntaxes :
+• **BRE** (basic regular expressions), la syntaxe par défaut de `grep` et de `sed` : `?`, `+`, `{`, `}`, `|`, `(` et `)` sont des caractères **ordinaires**. Pour leur donner leur sens spécial, GNU grep demande un antislash : `\?`, `\+`, `\{3\}`.
+• **ERE** (extended regular expressions), avec `grep -E` ou `sed -E` : ces caractères sont spéciaux directement.
+
+```bash
+grep 'a\{3\}' fichier       # BRE : aaa
+grep -E 'a{3}' fichier      # ERE : même résultat, plus lisible
+grep 'a+' fichier           # BRE : cherche le texte « a+ » !
+grep -E 'a+' fichier        # ERE : un a ou plus
+```
+
+Conseil : utilise **toujours `grep -E`** quand ton motif contient des quantificateurs ou des groupes. Les commandes `egrep` et `fgrep` sont obsolètes : depuis grep 3.8, elles affichent un avertissement et renvoient vers `grep -E` et `grep -F`.
+
+### Gourmand par défaut
+Les quantificateurs sont **gourmands** (greedy) : ils prennent le plus de caractères possible, puis reculent seulement si la suite du motif échoue. C'est le **retour arrière** (backtracking).
+
+Avec le texte `<b>gras</b>` et le motif `<.+>` :
+1. `<` correspond au premier caractère ;
+2. `.+` avale tout le reste de la ligne : `b>gras</b>` ;
+3. il faut encore un `>` : le moteur recule d'un caractère, trouve le `>` final ;
+4. résultat : `<b>gras</b>` en entier, pas seulement `<b>`.
+
+### Paresseux : ajouter un point d'interrogation
+Un `?` placé **après** un quantificateur le rend **paresseux** (lazy, ou non gourmand) : il prend le moins possible, puis s'allonge si nécessaire. `*?`, `+?`, `??`, `{n,m}?`.
+
+Avec `<.+?>`, le résultat est `<b>` : le moteur s'arrête au premier `>` possible.
+
+Les quantificateurs paresseux existent en Python, JavaScript, PowerShell et `grep -P`. Ils **n'existent pas** en BRE ni en ERE POSIX : `grep -E '<.+?>'` ne se comporte pas de façon paresseuse. Dans grep, la solution portable est la **classe négative** : `<[^>]+>` s'arrête forcément au premier `>`. Elle est aussi plus rapide, car elle ne provoque presque aucun retour arrière.
+
+### Choisir le bon quantificateur
+• Nombre connu (code postal) : `{5}`.
+• Bornes connues (octet d'adresse IP écrit de 1 à 3 chiffres) : `{1,3}`.
+• « Jusqu'au prochain délimiteur » : classe négative + `+` ou `*`.
+• `.*` au milieu d'un motif est souvent un signe de motif trop large : demande-toi ce qui doit vraiment se trouver là.
+
+### À toi de jouer
+1. Écris un motif `grep -E` qui trouve les lignes contenant un numéro de téléphone français écrit en 10 chiffres collés commençant par 0 (exemple : 0612345678).
+2. Quel est le résultat de chaque motif sur le texte `x="1" y="2"` : `".*"`, `".*?"` (en Python) et `"[^"]*"` ? Donne la première correspondance.
+3. Écris un motif qui accepte « http » ou « https » suivi de `://`.
+4. Pourquoi `grep -E 'erreur[0-9]*'` affiche-t-il aussi les lignes qui contiennent « erreur » sans aucun chiffre ? Corrige pour exiger au moins un chiffre.
+
+### Correction
+1. `grep -E '0[0-9]{9}' contacts.txt` : un 0 puis exactement 9 chiffres. Avec `-w` (ou des ancres), on évite de trouver ces 10 chiffres au milieu d'un nombre plus long.
+2. `".*"` donne `"1" y="2"` (gourmand, jusqu'au dernier guillemet). `".*?"` donne `"1"` (paresseux). `"[^"]*"` donne `"1"` aussi, et fonctionne également dans grep.
+3. `https?://` : le `?` rend le s facultatif. Dans grep, utilise `grep -E 'https?://'`.
+4. `[0-9]*` accepte zéro chiffre : « erreur » seul suffit. Correction : `grep -E 'erreur[0-9]+'`.
+"""
+
+    codeblock "python" {
+      title: "Gourmand, paresseux et classe négative en Python"
+      code: """
+import re
+texte = "<b>gras</b>"
+print(re.search(r"<.+>", texte).group())     # <b>gras</b>  (gourmand)
+print(re.search(r"<.+?>", texte).group())    # <b>          (paresseux)
+print(re.search(r"<[^>]+>", texte).group())  # <b>          (classe négative)
+print(re.findall(r"[0-9]{2,4}", "1 12 123 12345"))  # ['12', '123', '1234']
+print(re.findall(r"colou?r", "color colour colouur"))  # ['color', 'colour']
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Que signifie le quantificateur + ?" {
+        - "zéro ou une fois"
+        - "zéro fois ou plus"
+        + "une fois ou plus"
+        - "exactement deux fois"
+        explanation: "+ exige au moins une occurrence. * accepte zéro occurrence, ? accepte zéro ou une. C'est la différence entre [0-9]+ (au moins un chiffre) et [0-9]* (peut-être aucun)."
+      }
+      question "Sur quoi porte le + dans le motif ab+ ?" {
+        - "sur ab"
+        + "sur b seulement"
+        - "sur a seulement"
+        - "sur toute la ligne"
+        explanation: "Un quantificateur s'applique à l'élément juste avant lui : ici le b. ab+ correspond à ab, abb, abbb. Pour répéter ab, il faut un groupe : (ab)+."
+      }
+      question "Quel motif correspond exactement à un code postal français de 5 chiffres (sans ancres) ?" {
+        - "[0-9]+5"
+        + "[0-9]{5}"
+        - "[0-5]{9}"
+        - "[0-9]*5"
+        explanation: "{5} répète exactement 5 fois l'élément précédent. [0-9]+5 signifie « au moins un chiffre puis le chiffre 5 ». Pour refuser un 6e chiffre, il faudra en plus des ancres ou -w."
+      }
+      question "Pourquoi grep avec le motif [0-9]* affiche-t-il toutes les lignes ?" {
+        - "parce que grep ignore l'étoile"
+        + "parce que * accepte zéro chiffre, donc une correspondance vide existe dans chaque ligne"
+        - "parce que toutes les lignes contiennent un chiffre"
+        - "parce que l'étoile remplace n'importe quel texte comme dans le shell"
+        explanation: "Zéro répétition est une correspondance valide : chaque ligne contient une chaîne vide au début. Pour exiger un chiffre, on écrit [0-9]+ avec grep -E, ou [0-9][0-9]* en BRE."
+      }
+      question "En BRE (grep sans -E), que cherche le motif a+ ?" {
+        - "un a ou plus"
+        + "le texte « a+ »"
+        - "rien, c'est une erreur"
+        - "un a ou un +"
+        explanation: "En syntaxe de base, + est un caractère ordinaire. GNU grep accepte \\+ comme extension pour « une fois ou plus ». Avec grep -E, a+ prend son sens habituel."
+      }
+      question "Avec re.search en Python, quelle correspondance le motif <.+> trouve-t-il dans « <b>gras</b> » ?" {
+        - "<b>"
+        - "</b>"
+        + "<b>gras</b>"
+        - "b"
+        explanation: "Le quantificateur + est gourmand : .+ avale toute la fin de la ligne, puis recule jusqu'au dernier > qui permet de finir le motif. On obtient tout le texte. Avec <.+?> on aurait <b>."
+      }
+      question "Comment rendre le quantificateur * paresseux en Python ou en JavaScript ?" {
+        - "en écrivant **"
+        + "en écrivant *?"
+        - "en écrivant ?*"
+        - "avec l'option re.LAZY"
+        explanation: "Un ? ajouté juste après le quantificateur le rend paresseux : *?, +?, ??, {n,m}?. ?* signifierait « zéro ou une fois, répété ». L'option re.LAZY n'existe pas."
+      }
+      question "Quelle solution fonctionne dans grep -E pour s’arrêter au premier > d’une balise ?" {
+        - "<.+?>"
+        + "<[^>]+>"
+        - "<.*>"
+        - "<.{1}>"
+        explanation: "Les quantificateurs paresseux n'existent pas en ERE POSIX. La classe négative [^>] ne peut pas franchir un >, donc la correspondance s'arrête au premier. <.{1}> n'accepte qu'un seul caractère entre les chevrons."
+      }
+      question "En Python, que renvoie re.findall avec le motif [0-9]{2,4} sur « 1 12 123 12345 » ?" {
+        - "['12', '123', '12345']"
+        + "['12', '123', '1234']"
+        - "['1', '12', '123', '1234', '5']"
+        - "['12', '123']"
+        explanation: "{2,4} est gourmand : dans 12345, il prend 4 chiffres (1234). Le 5 restant, seul, ne suffit pas pour un minimum de 2. Le 1 isolé est aussi refusé."
+      }
+      question "Quel motif accepte « http:// » et « https:// » ?" {
+        - "https*://"
+        + "https?://"
+        - "http(s)+://"
+        - "http[s]{2}://"
+        explanation: "s? rend le s facultatif (0 ou 1 fois). https*:// accepterait aussi httpsss://, http(s)+:// exigerait au moins un s, http[s]{2}:// exigerait deux s."
+      }
+      question "Qu’est-ce que le retour arrière (backtracking) ?" {
+        - "la relecture du fichier depuis le début à chaque ligne"
+        + "le recul du moteur quand une partie gourmande a pris trop de caractères pour que la suite réussisse"
+        - "l'annulation de la dernière commande grep"
+        - "la lecture du texte de droite à gauche"
+        explanation: "Un quantificateur gourmand prend le maximum, puis rend des caractères un par un si la suite du motif échoue. Ce mécanisme explique les résultats et, dans les cas extrêmes, les lenteurs étudiées au chapitre 6."
+      }
+      question "Quelles commandes sont obsolètes depuis longtemps et affichent un avertissement depuis grep 3.8 ?" {
+        - "grep -E et grep -F"
+        + "egrep et fgrep"
+        - "grep -P et grep -o"
+        - "sed -E et awk"
+        explanation: "egrep et fgrep sont des anciens noms pour grep -E et grep -F. GNU grep 3.8 affiche un avertissement d'obsolescence quand on les lance. Les options -E et -F, elles, sont les bonnes formes."
+      }
+      question "Quel motif correspond à « aa », « aaa » ou « aaaa », mais pas à « a » (sans ancres, en ERE) ?" {
+        - "a{1,4}"
+        + "a{2,4}"
+        - "a{4}"
+        - "a{2}"
+        explanation: "{2,4} accepte entre 2 et 4 a. a{1,4} accepterait aussi un a seul, a{4} exigerait exactement quatre a, a{2} exactement deux (même s'il trouve aa dans aaa)."
+      }
+    }
+  }
+
+  module "regex-ancres" {
+    title: "Chapitre 4 : ancres et limites de mots"
+    duration: "30min"
+    content: """
+### Pourquoi ancrer
+Sans ancre, une regex accepte une correspondance **n'importe où**. C'est pratique pour chercher, mais dangereux pour **valider** : `[0-9]{5}` « valide » le code postal `134800` et même `abc12345xyz`, car cinq chiffres s'y trouvent quelque part.
+
+Une **ancre** (anchor) ne correspond à aucun caractère : elle correspond à une **position** dans le texte.
+
+| Ancre | Position |
+|---|---|
+| `^` | début de la ligne (ou de la chaîne) |
+| `$` | fin de la ligne (ou de la chaîne) |
+| `\b` | limite de mot : entre un caractère de mot et un caractère qui n'en est pas un (ou le bord du texte) |
+| `\B` | tout endroit qui n'est pas une limite de mot |
+| `\<` et `\>` | début et fin de mot (GNU grep et sed seulement) |
+
+### Début et fin
+• `^Nov` : lignes qui commencent par Nov.
+• `ssh2$` : lignes qui se terminent par ssh2.
+• `^[0-9]{5}$` : la ligne entière fait exactement 5 chiffres.
+• `^$` : une ligne vide.
+• `^#` : une ligne de commentaire, très utile pour nettoyer un fichier de configuration.
+
+```bash
+grep -Ev '^[[:space:]]*(#|$)' /etc/ssh/sshd_config   # config sans commentaires ni lignes vides
+grep -c '^$' fichier.txt                              # nombre de lignes vides
+```
+
+Attention : `^` a deux sens. Au début d'une regex, c'est une ancre ; juste après `[`, c'est la négation de la classe. `^[^#]` signifie « une ligne qui commence par autre chose qu'un dièse ».
+
+### Les limites de mots
+`\b` sépare un caractère de mot (lettre, chiffre, `_`) d'un caractère qui n'en est pas un.
+• `\bchat\b` trouve « chat » dans « le chat. », mais pas dans « achat » ni dans « chaton ».
+• `\b22\b` trouve le port 22 dans `port 22 ssh2`, mais pas dans `port 2222`.
+
+Dans grep, l'option `-w` fait la même chose pour tout le motif : `grep -w 'chat'`. L'option `-x` exige que le motif couvre **la ligne entière**, comme si tu avais écrit `^(motif)$`.
+
+Les limites dépendent de la définition du « caractère de mot ». En JavaScript, `\w` est ASCII : la position entre « é » et « t » de « été » est vue comme une limite de mot. Pour du texte français, vérifie toujours avec des mots accentués.
+
+### Une ligne ou tout le texte ?
+grep lit ligne par ligne : `^` et `$` sont donc le début et la fin de **chaque ligne**. Dans un langage, une chaîne peut contenir plusieurs lignes :
+• par défaut, `^` et `$` désignent le début et la fin de **toute la chaîne** ;
+• avec l'option **multiligne** (`re.MULTILINE` ou `re.M` en Python, drapeau `m` en JavaScript), ils correspondent aussi au début et à la fin de chaque ligne.
+
+### Le piège du saut de ligne final en Python
+En Python, `$` correspond à la fin de la chaîne **et juste avant un saut de ligne final**. Ainsi `re.match(r"^[0-9]{5}$", "13480\n")` réussit : un saut de ligne passe la validation. Deux bonnes pratiques :
+• valide avec `re.fullmatch(motif, texte)`, qui exige que **tout** le texte corresponde ;
+• ou termine le motif par `\Z`, qui ne correspond qu'à la vraie fin de la chaîne (Python 3.14 ajoute aussi l'écriture `\z`).
+
+En JavaScript, sans le drapeau `m`, `$` ne correspond qu'à la vraie fin : `/^\d{5}$/.test("13480\n")` renvoie `false`.
+
+Note : depuis Python 3.15, `re.match` a un nouveau nom, `re.prefixmatch`. L'ancien nom reste disponible ; ce cours utilise `re.match` et surtout `re.fullmatch`.
+
+### À toi de jouer
+1. Écris une commande grep qui affiche les lignes **non vides** et **non commentées** de `/etc/ssh/sshd_config`, y compris quand le dièse est précédé d'espaces.
+2. Dans un fichier `ports.txt` contenant `22`, `2222`, `port 22 ouvert`, `220`, quelle commande affiche seulement les lignes où 22 apparaît comme nombre isolé ?
+3. En Python, écris une fonction `code_postal_valide(s)` qui renvoie `True` seulement pour une chaîne de 5 chiffres ASCII exactement, et teste-la avec `"13480"`, `"13480\n"`, `"134800"`, `"1348a"`.
+4. Que trouve `re.findall(r"^\w+", "ligne1\nligne2")` ? Et avec `re.M` ?
+
+### Correction
+1. `grep -Ev '^[[:space:]]*(#|$)' /etc/ssh/sshd_config`. Le motif accepte des blancs au début, puis un dièse ou la fin de ligne ; `-v` garde les autres lignes.
+2. `grep -w '22' ports.txt` affiche `22` et `port 22 ouvert`. Équivalent : `grep -E '\b22\b' ports.txt`. `2222` et `220` sont exclus, car 22 y est collé à d'autres chiffres.
+3.
+```python
+import re
+def code_postal_valide(s):
+    return re.fullmatch(r"[0-9]{5}", s) is not None
+for t in ["13480", "13480\n", "134800", "1348a"]:
+    print(repr(t), code_postal_valide(t))   # True, False, False, False
+```
+`[0-9]` plutôt que `\d`, qui accepterait des chiffres non ASCII. Note qu'un motif juste ne prouve pas que le code postal existe : il vérifie seulement sa forme.
+4. Sans option : `['ligne1']`, car `^` ne correspond qu'au début de la chaîne. Avec `re.M` : `['ligne1', 'ligne2']`.
+"""
+
+    codeblock "bash" {
+      title: "Ancres et limites de mots avec grep"
+      code: """
+printf '22\n2222\nport 22 ouvert\n220\n' > ports.txt
+grep '22' ports.txt          # les 4 lignes
+grep -w '22' ports.txt       # 22 et port 22 ouvert
+grep -x '22' ports.txt       # 22 seulement
+grep -E '^22' ports.txt      # 22, 2222, 220
+grep -E '\b22\b' ports.txt   # comme -w
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "À quoi correspond une ancre comme ^ ou $ ?" {
+        - "à un caractère invisible du fichier"
+        + "à une position dans le texte, sans consommer de caractère"
+        - "à n'importe quel caractère en début de ligne"
+        - "au caractère de fin de fichier"
+        explanation: "Une ancre décrit une position : début, fin, limite de mot. Elle ne consomme aucun caractère. ^Nov exige que N soit le premier caractère de la ligne."
+      }
+      question "Quel motif valide une ligne composée uniquement de 5 chiffres ?" {
+        - "[0-9]{5}"
+        - "^[0-9]{5}"
+        + "^[0-9]{5}$"
+        - "[0-9]{5}$"
+        explanation: "Il faut ancrer au début et à la fin. Sans ^, la ligne 9913480 passerait ; sans $, 134801 passerait. Avec grep, l'option -x produit le même effet."
+      }
+      question "Que signifie ^[^#] ?" {
+        - "une ligne qui ne contient aucun dièse"
+        + "une ligne qui commence par un caractère autre qu'un dièse"
+        - "une ligne qui commence par un dièse"
+        - "un dièse en fin de ligne"
+        explanation: "Le premier ^ est l'ancre de début. Le second, placé juste après [, inverse la classe. Le motif exige donc un premier caractère différent de #. Une ligne vide n'y correspond pas, car il faut un caractère."
+      }
+      question "Quelle commande affiche les lignes où 22 est un mot isolé, et pas 2222 ?" {
+        - "grep '22' ports.txt"
+        + "grep -w '22' ports.txt"
+        - "grep -c '22' ports.txt"
+        - "grep '^22' ports.txt"
+        explanation: "-w impose que la correspondance soit précédée et suivie d'un caractère qui n'est pas un caractère de mot (ou du bord de la ligne). ^22 trouverait aussi 2222 et 220."
+      }
+      question "Quelle est la différence entre grep -w et grep -x ?" {
+        - "aucune, ce sont deux noms de la même option"
+        + "-w exige un mot entier, -x exige la ligne entière"
+        - "-w ignore la casse, -x l'active"
+        - "-w cherche dans les sous-dossiers, -x dans le fichier courant"
+        explanation: "-w vérifie les bords du mot trouvé ; -x vérifie que le motif couvre toute la ligne. Pour une validation stricte d'un fichier où chaque ligne est une valeur, -x est le bon choix."
+      }
+      question "Le motif \\bchat\\b correspond dans quelle phrase ?" {
+        - "un achat utile"
+        - "le chaton dort"
+        + "le chat, enfin"
+        - "chats et chiens"
+        explanation: "\\b exige une limite de mot de chaque côté. Dans achat, chaton et chats, chat est collé à d'autres lettres. Dans « le chat, enfin », il est entouré d'une espace et d'une virgule."
+      }
+      question "En Python, que renvoie re.match avec le motif ^[0-9]{5}$ sur la chaîne 13480 suivie d’un saut de ligne ?" {
+        + "une correspondance, car $ accepte un saut de ligne final"
+        - "None, car le saut de ligne n'est pas un chiffre"
+        - "une erreur de syntaxe"
+        - "None, car match ne lit que le premier caractère"
+        explanation: "En Python, $ correspond aussi juste avant un saut de ligne final. Pour valider strictement, on utilise re.fullmatch ou on termine le motif par \\Z."
+      }
+      question "Quelle fonction Python exige que tout le texte corresponde au motif ?" {
+        - "re.search"
+        - "re.findall"
+        + "re.fullmatch"
+        - "re.split"
+        explanation: "re.fullmatch réussit seulement si le motif couvre la chaîne entière, saut de ligne final compris. re.search cherche n'importe où, re.findall renvoie toutes les correspondances, re.split découpe."
+      }
+      question "En Python, sans option, que renvoie re.findall avec le motif ^\\w+ sur le texte ligne1, saut de ligne, ligne2 ?" {
+        + "['ligne1']"
+        - "['ligne1', 'ligne2']"
+        - "['ligne2']"
+        - "[]"
+        explanation: "Sans re.MULTILINE, ^ ne correspond qu'au début de la chaîne. Avec re.M, il correspond aussi après chaque saut de ligne, et on obtient les deux mots."
+      }
+      question "En JavaScript, quel drapeau fait correspondre ^ et $ au début et à la fin de chaque ligne ?" {
+        - "g"
+        - "s"
+        + "m"
+        - "i"
+        explanation: "m (multiline) change le sens de ^ et $. g cherche toutes les correspondances, s permet au point d'accepter le saut de ligne, i ignore la casse."
+      }
+      question "Quel motif trouve les lignes vides ?" {
+        - "^ $"
+        + "^$"
+        - "$^"
+        - "\\n"
+        explanation: "^$ décrit une ligne où la fin suit immédiatement le début. ^ $ exige une espace. grep travaille ligne par ligne et retire le saut de ligne : \\n ne sert pas à trouver des lignes vides."
+      }
+      question "Quelle commande enlève les commentaires (même précédés d’espaces) et les lignes vides d’un fichier de configuration ?" {
+        - "grep -v '#' fichier.conf"
+        + "grep -Ev '^[[:space:]]*(#|$)' fichier.conf"
+        - "grep '^#' fichier.conf"
+        - "grep -E '[[:space:]]#' fichier.conf"
+        explanation: "Le motif décrit une ligne qui commence par des blancs éventuels puis un dièse ou la fin de ligne ; -v garde les autres. grep -v '#' supprimerait aussi les lignes utiles qui contiennent un dièse en milieu de ligne."
+      }
+    }
+  }
+
+  module "regex-groupes" {
+    title: "Chapitre 5 : groupes, captures, alternatives et remplacements"
+    duration: "40min"
+    content: """
+### Les groupes
+Les parenthèses ont deux rôles :
+1. **regrouper** pour appliquer un quantificateur ou une alternative à plusieurs caractères : `(ab)+`, `(\.[0-9]{1,3}){3}` ;
+2. **capturer** le texte trouvé pour le réutiliser : l'afficher, le remplacer, le comparer.
+
+Les groupes sont numérotés de gauche à droite, selon leur parenthèse ouvrante : le premier `(` est le groupe 1, le second le groupe 2. Le groupe 0 est la correspondance entière.
+
+Dans `([0-9]{4})-([0-9]{2})-([0-9]{2})` appliqué à `2026-11-26` :
+• groupe 0 : `2026-11-26` ;
+• groupe 1 : `2026` ; groupe 2 : `11` ; groupe 3 : `26`.
+
+### Les alternatives
+La barre verticale `|` sépare des choix : `chat|chien|lapin`. Elle a la **priorité la plus faible** : elle coupe tout le motif en deux, sauf si elle est dans un groupe.
+• `^chat|chien$` signifie « chat en début de ligne » **ou** « chien en fin de ligne ».
+• `^(chat|chien)$` signifie « une ligne qui vaut exactement chat ou chien ».
+• `gr(a|e)y` équivaut à `gr[ae]y`. Quand les choix sont des caractères seuls, la classe est plus simple et plus rapide.
+
+Le moteur essaie les choix de gauche à droite et garde le **premier** qui marche (Python, JavaScript, PCRE). Avec `Jan|Janvier` sur « Janvier », Python trouve « Jan ». Mets le choix le plus long en premier, ou ancre le motif. GNU grep, lui, retient la correspondance la plus longue (règle POSIX).
+
+### Groupes non capturants et groupes nommés
+• `(?:...)` regroupe **sans capturer** : utile quand on veut seulement répéter ou alterner. Disponible en Python, JavaScript, PCRE (`grep -P`) et .NET, mais **pas** dans `grep -E`.
+• Un **groupe nommé** donne un nom au lieu d'un numéro, plus lisible :
+  - Python : `(?P<annee>[0-9]{4})`, utilisé avec `m.group("annee")` ;
+  - JavaScript et .NET : `(?<annee>[0-9]{4})`, utilisé avec `m.groups.annee` ou `$Matches.annee`.
+  Attention : Python refuse la forme `(?<annee>...)` avec l'erreur `unknown extension ?<a`.
+
+### Les références arrière
+Dans le motif lui-même, `\1` désigne « le même texte que celui capturé par le groupe 1 ». `\b(\w+) \1\b` trouve un mot répété : « le le », « est est ». GNU grep accepte aussi `\1` avec `-E` (extension GNU, non portable). Python a aussi la forme nommée `(?P=nom)`, JavaScript `\k<nom>`.
+
+### Remplacer avec les captures
+| Outil | Remplacement | Groupe 1 | Groupe nommé | Tout le texte trouvé |
+|---|---|---|---|---|
+| `sed -E` | `s/motif/remplacement/` | `\1` | non | `&` |
+| Python `re.sub` | `re.sub(motif, rempl, texte)` | `\1` ou `\g<1>` | `\g<nom>` | `\g<0>` |
+| JavaScript | `texte.replace(re, rempl)` | `$1` | `$<nom>` | `$&` |
+| PowerShell | `$texte -replace 'motif','rempl'` | `$1` | `${nom}` | `$0` |
+
+Exemples testés :
+```bash
+echo '2026-11-26' | sed -E 's#([0-9]{4})-([0-9]{2})-([0-9]{2})#\3/\2/\1#'   # 26/11/2026
+echo 'Dupont Jean' | sed -E 's/(\w+) (\w+)/\2 \1/'                          # Jean Dupont
+```
+Avec sed, le séparateur `#` évite d'échapper les `/` du remplacement. Ajoute `-i` seulement après avoir vérifié le résultat à l'écran : `-i` modifie le fichier sans retour possible (garde une copie avec `-i.bak`).
+
+### Le piège de findall avec des groupes
+En Python, `re.findall` renvoie **le contenu des groupes** quand le motif en a : avec `([0-9]{1,3}\.){3}[0-9]{1,3}` sur `203.0.113.45`, tu obtiens `['113.']`, pas l'adresse. Solutions : groupe non capturant `(?:...)`, ou `re.finditer` et `m.group(0)`. Avec plusieurs groupes, `findall` renvoie une liste de tuples, ce qui est pratique pour extraire plusieurs champs d'un coup.
+
+En JavaScript, `texte.match(/.../g)` renvoie seulement les correspondances entières ; pour les groupes de chaque correspondance, utilise `texte.matchAll(/.../g)`.
+
+### À toi de jouer
+1. Avec sed, transforme `Nom: DUPONT, Prénom: Jean` en `Jean DUPONT`.
+2. En Python, extrais de la ligne `Failed password for invalid user admin from 198.51.100.7 port 40022 ssh2` l'utilisateur et l'adresse IP avec un seul motif et des groupes nommés.
+3. Écris un motif qui accepte exactement `oui`, `non` ou `peut-être` sur toute la ligne.
+4. Trouve, avec grep, les lignes d'un texte qui contiennent un mot répété deux fois de suite.
+
+### Correction
+1. `echo 'Nom: DUPONT, Prénom: Jean' | sed -E 's/Nom: (\w+), Prénom: (\w+)/\2 \1/'`. Résultat : `Jean DUPONT`.
+2.
+```python
+import re
+ligne = "Failed password for invalid user admin from 198.51.100.7 port 40022 ssh2"
+m = re.search(r"Failed password for (?:invalid user )?(?P<user>\S+) from (?P<ip>\S+)", ligne)
+print(m.group("user"), m.group("ip"))   # admin 198.51.100.7
+```
+Le groupe non capturant `(?:invalid user )?` rend facultatif le texte « invalid user », qui n'apparaît que pour un compte inexistant.
+3. `^(oui|non|peut-être)$`. Sans les parenthèses, `^oui|non|peut-être$` accepterait « oui merci » ou « je ne sais pas, non ».
+4. `grep -E '\b(\w+) \1\b' texte.txt` (GNU grep). Il trouve « le le » et « est est ».
+"""
+
+    codeblock "python" {
+      title: "Captures, groupes nommés et remplacements en Python"
+      code: """
+import re
+m = re.search(r"(?P<a>[0-9]{4})-(?P<m>[0-9]{2})-(?P<j>[0-9]{2})", "le 2026-11-26")
+print(m.group(0), m.group(1), m.group("j"))     # 2026-11-26 2026 26
+print(re.sub(r"([0-9]{4})-([0-9]{2})-([0-9]{2})", r"\3/\2/\1", "2026-11-26"))   # 26/11/2026
+print(re.sub(r"(?P<u>\w+)@(?P<d>\S+)", r"\g<d>:\g<u>", "alice@lycee.internal")) # lycee.internal:alice
+print(re.findall(r"([0-9]{1,3}\.){3}[0-9]{1,3}", "203.0.113.45"))    # ['113.']  piège
+print(re.findall(r"(?:[0-9]{1,3}\.){3}[0-9]{1,3}", "203.0.113.45"))  # ['203.0.113.45']
+print(re.findall(r"(\w+)=(\d+)", "width=20 height=10"))  # [('width', '20'), ('height', '10')]
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Dans ([0-9]{4})-([0-9]{2}) appliqué à 2026-11, que contient le groupe 2 ?" {
+        - "2026"
+        + "11"
+        - "2026-11"
+        - "-"
+        explanation: "Les groupes sont numérotés selon l'ordre des parenthèses ouvrantes. Le groupe 1 capture 2026, le groupe 2 capture 11, et le groupe 0 est la correspondance entière 2026-11."
+      }
+      question "Que signifie ^chat|chien$ ?" {
+        - "une ligne qui vaut exactement chat ou chien"
+        + "chat en début de ligne, ou chien en fin de ligne"
+        - "chat suivi de chien sur la même ligne"
+        - "une erreur de syntaxe"
+        explanation: "La barre verticale a la priorité la plus faible : elle sépare ^chat et chien$. Pour « exactement chat ou chien », il faut un groupe : ^(chat|chien)$."
+      }
+      question "À quoi sert (?:...) ?" {
+        - "à créer un groupe nommé"
+        + "à regrouper sans capturer"
+        - "à rendre le groupe facultatif"
+        - "à vérifier ce qui suit sans le consommer"
+        explanation: "(?:...) regroupe pour un quantificateur ou une alternative, sans créer de numéro de groupe. Un groupe facultatif s'écrit (...)? ; vérifier sans consommer, c'est un lookahead (?=...)."
+      }
+      question "Quelle syntaxe de groupe nommé est acceptée par Python ?" {
+        - "(?<annee>[0-9]{4})"
+        + "(?P<annee>[0-9]{4})"
+        - "(<annee>[0-9]{4})"
+        - "(?{annee}[0-9]{4})"
+        explanation: "Python utilise (?P<nom>...) et refuse (?<nom>...) avec l'erreur « unknown extension ». La forme (?<nom>...) est celle de JavaScript, de .NET et de PCRE."
+      }
+      question "Que trouve \\b(\\w+) \\1\\b ?" {
+        - "deux mots quelconques séparés par une espace"
+        + "un mot répété deux fois de suite"
+        - "le premier mot de chaque ligne"
+        - "un mot suivi du chiffre 1"
+        explanation: "\\1 est une référence arrière : elle exige le même texte que celui capturé par le groupe 1. « le le » correspond, « le chat » non."
+      }
+      question "Quelle commande sed transforme 2026-11-26 en 26/11/2026 ?" {
+        - "sed 's/(....)-(..)-(..)/\\3\\/\\2\\/\\1/'"
+        + "sed -E 's#([0-9]{4})-([0-9]{2})-([0-9]{2})#\\3/\\2/\\1#'"
+        - "sed -E 's#([0-9]{4})-([0-9]{2})-([0-9]{2})#$3/$2/$1#'"
+        - "sed -E 's#[0-9]{4}-[0-9]{2}-[0-9]{2}#\\3/\\2/\\1#'"
+        explanation: "sed -E active les parenthèses de groupe, \\1 à \\3 réutilisent les captures, et le séparateur # évite d'échapper les /. Sans -E, les parenthèses sont littérales ; $1 est la syntaxe de JavaScript ; sans groupes, \\3 ne désigne rien."
+      }
+      question "En JavaScript, comment insérer le groupe 1 dans le texte de remplacement de replace() ?" {
+        - "\\1"
+        + "$1"
+        - "\\g<1>"
+        - "%1"
+        explanation: "JavaScript utilise $1, $2, $<nom> et $& pour toute la correspondance. \\1 sert dans sed et Python, \\g<1> est la forme explicite de Python."
+      }
+      question "En Python, que renvoie re.findall avec le motif ([0-9]{1,3}\\.){3}[0-9]{1,3} sur « 203.0.113.45 » ?" {
+        - "['203.0.113.45']"
+        + "['113.']"
+        - "['203.', '0.', '113.']"
+        - "[]"
+        explanation: "Quand le motif contient un groupe, findall renvoie le contenu du groupe, pas la correspondance entière. Un groupe répété garde sa dernière valeur : 113. Avec (?:...) on obtient l'adresse complète."
+      }
+      question "Avec le motif Jan|Janvier sur le texte « Janvier », que trouve Python ?" {
+        + "Jan"
+        - "Janvier"
+        - "Jan et Janvier"
+        - "rien"
+        explanation: "Python, JavaScript et PCRE essaient les choix de gauche à droite et s'arrêtent au premier qui réussit. Il faut écrire Janvier|Jan, ou ancrer le motif. GNU grep, qui suit la règle POSIX de la plus longue correspondance, trouverait Janvier."
+      }
+      question "Dans sed, que représente & dans le remplacement ?" {
+        - "le groupe 1"
+        + "tout le texte trouvé par le motif"
+        - "un caractère & littéral"
+        - "la ligne suivante"
+        explanation: "& insère la correspondance entière. Par exemple, sed -E 's/[0-9]+/[&]/' entoure le premier nombre de crochets. Pour un & littéral, on écrit \\&."
+      }
+      question "Pourquoi ajouter -i.bak plutôt que -i à sed pour une première modification ?" {
+        - "pour ignorer la casse"
+        + "pour garder une copie du fichier d'origine avec l'extension .bak"
+        - "pour afficher le résultat sans modifier le fichier"
+        - "pour activer la syntaxe étendue"
+        explanation: "-i modifie le fichier en place ; -i.bak garde en plus l'ancienne version sous le nom fichier.bak. Pour seulement afficher, on n'utilise pas -i du tout ; la syntaxe étendue est -E."
+      }
+      question "En JavaScript, comment obtenir les groupes de chaque correspondance d’une recherche globale ?" {
+        - "texte.match(/.../g)"
+        + "texte.matchAll(/.../g)"
+        - "texte.search(/.../g)"
+        - "texte.split(/.../g)"
+        explanation: "match avec le drapeau g ne renvoie que les correspondances entières. matchAll renvoie un itérateur dont chaque élément contient la correspondance et ses groupes. search renvoie seulement une position."
+      }
+      question "Quel motif accepte exactement les lignes « oui » ou « non » ?" {
+        - "^oui|non$"
+        + "^(oui|non)$"
+        - "[oui|non]"
+        - "(oui)(non)"
+        explanation: "Le groupe limite la portée de l'alternative entre les deux ancres. [oui|non] est une classe d'un seul caractère, et (oui)(non) exige ouinon."
+      }
+    }
+  }
+
+  module "regex-assertions" {
+    title: "Chapitre 6 : assertions et regex dangereuses (ReDoS)"
+    duration: "35min"
+    content: """
+### Vérifier sans consommer
+Une **assertion** (lookaround) vérifie ce qui se trouve avant ou après la position courante, **sans l'inclure** dans la correspondance. Comme une ancre, elle ne consomme aucun caractère.
+
+| Assertion | Nom | Sens |
+|---|---|---|
+| `X(?=Y)` | lookahead positif | X suivi de Y |
+| `X(?!Y)` | lookahead négatif | X non suivi de Y |
+| `(?<=Y)X` | lookbehind positif | X précédé de Y |
+| `(?<!Y)X` | lookbehind négatif | X non précédé de Y |
+
+Exemples (testés en Python) :
+• `\d+(?= €)` sur `10 € et 20 $ et 30 €` trouve `10` et `30` : seulement les montants en euros, sans le symbole.
+• `(?<=from )[0-9.]+(?= port)` extrait l'adresse IP d'une ligne SSH, sans les mots autour.
+• `(?<!-)\b\d+` sur `-5 et 7` trouve seulement `7` : un nombre non précédé d'un signe moins.
+
+### Où les assertions existent
+• Python, JavaScript (lookbehind depuis ES2018, disponible dans les navigateurs et Node.js actuels), .NET et PowerShell, `grep -P` : oui.
+• `grep` et `grep -E` : **non**.
+• En Python, le lookbehind doit avoir une **longueur fixe** : `(?<=a+)b` provoque l'erreur `look-behind requires fixed-width pattern`. `(?<=ab|cd)` est accepté, car les deux choix ont la même longueur. JavaScript accepte des lookbehind de longueur variable.
+
+### \K dans grep -P
+PCRE propose `\K` : « oublie tout ce qui a été trouvé jusqu'ici ». Avec `grep -oP`, c'est la façon la plus courte d'extraire une valeur derrière un mot-clé :
+```bash
+journalctl -u ssh | grep -oP 'from \K[0-9.]+'    # seulement les adresses IP
+```
+
+### Valider plusieurs règles à la fois
+Les lookahead s'enchaînent au début d'un motif, chacun testant une règle sur toute la chaîne :
+```text
+^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{12,}$
+```
+« au moins une minuscule, au moins une majuscule, au moins un chiffre, au moins 12 caractères ». C'est un exemple pédagogique : pour les mots de passe, la longueur compte davantage que les règles de composition. Ne fixe pas de longueur maximale trop courte et ne bloque pas les caractères spéciaux ou les espaces.
+
+### Quand une regex fait tomber un serveur : le ReDoS
+Les moteurs à retour arrière (Python, JavaScript, PCRE, Java, .NET) essaient toutes les façons de faire correspondre un motif avant de conclure à l'échec. Certains motifs ont un nombre de façons qui **explose** avec la longueur du texte. Un attaquant envoie alors un texte construit exprès, et le processeur reste bloqué : c'est le **ReDoS** (Regular expression Denial of Service), décrit par l'OWASP.
+
+Les motifs dangereux contiennent un **groupe répété** qui contient lui-même une répétition, ou une alternative dont les choix se recouvrent. Exemples donnés par l'OWASP :
+• `(a+)+$`
+• `([a-zA-Z]+)*$`
+• `(a|aa)+$`
+• `(a|a?)+$`
+
+Mesure faite sur un ordinateur récent avec Python, motif `(a+)+$` et un texte de n lettres « a » suivi de « ! » : 18 lettres, environ 0,01 s ; 20 lettres, 0,05 s ; 22 lettres, 0,18 s ; 24 lettres, 0,73 s. Le temps **double à chaque lettre** ajoutée : à 40 lettres, il faudrait des heures.
+
+Bonnes pratiques :
+• éviter les répétitions imbriquées : `(a+)+` s'écrit simplement `a+` ;
+• préférer les classes négatives et les quantificateurs bornés (`{1,64}`) à `.*` ;
+• **limiter la longueur** de la saisie avant d'appliquer la regex ;
+• ne jamais construire une regex à partir d'un texte fourni par l'utilisateur (en Python, `re.escape(texte)` le rend littéral) ;
+• utiliser un moteur sans retour arrière quand c'est possible : RE2 (bibliothèque de Google) et GNU grep, tant que le motif n'a pas de référence arrière, ne connaissent pas cette explosion ; .NET permet un délai maximal (timeout) ;
+• depuis Python 3.11, les groupes atomiques `(?>...)` et les quantificateurs possessifs `*+`, `++`, `?+` interdisent le retour arrière dans une partie du motif.
+
+### À toi de jouer
+1. Écris un motif Python qui trouve les prix en euros écrits `12,50 €` et renvoie seulement le nombre (`12,50`).
+2. Avec `grep -oP`, extrais le nom d'utilisateur de chaque ligne `Accepted publickey for alice from 192.0.2.10 port 51000 ssh2`.
+3. Ce motif de validation d'adresse électronique est-il dangereux : `^([a-zA-Z0-9]+)*@exemple\.fr$` ? Que proposes-tu ?
+4. Écris un motif qui trouve le mot `password` quand il n'est **pas** suivi de `=` (pour repérer les lignes de configuration où le mot apparaît dans un commentaire).
+
+### Correction
+1. `re.findall(r"\d+(?:,\d{2})?(?= €)", "Total : 12,50 € puis 3 €")` renvoie `['12,50', '3']`. Le lookahead exige l'espace et le symbole sans les inclure.
+2. `grep -oP 'Accepted \S+ for \K\S+' fichier`, ou `grep -oP '(?<=for )\w+(?= from)' fichier`. Résultat : `alice`.
+3. Oui : `([a-zA-Z0-9]+)*` est un groupe répété qui contient une répétition. Avec une longue suite de lettres sans `@`, le temps explose. Correction : `^[a-zA-Z0-9]+@exemple\.fr$` : plus d'imbrication, et une partie avant le `@` qui ne peut plus être vide. Vérifie aussi une longueur maximale avant d'appliquer le motif.
+4. `password(?!=)` en Python, JavaScript ou `grep -P`. Pour tolérer des espaces : `password(?!\s*=)`.
+"""
+
+    codeblock "python" {
+      title: "Assertions et mesure du ReDoS (à lancer sur ta machine)"
+      code: """
+import re, time
+print(re.findall(r"\d+(?= €)", "10 € et 20 $ et 30 €"))      # ['10', '30']
+print(re.findall(r"(?<!-)\b\d+", "-5 et 7"))                # ['7']
+ligne = "Nov 26 10:16:30 srv sshd[1240]: Accepted publickey for alice from 192.0.2.10 port 51000 ssh2"
+print(re.search(r"(?<=from )[0-9.]+(?= port)", ligne).group())  # 192.0.2.10
+
+for n in (18, 20, 22, 24):            # ne monte pas plus haut
+    debut = time.time()
+    re.match(r"(a+)+$", "a" * n + "!")
+    print(n, round(time.time() - debut, 3), "s")   # le temps double à chaque lettre
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "En Python, que renvoie re.findall avec le motif \\d+(?= €) sur « 10 € et 20 $ et 30 € » ?" {
+        - "['10 €', '30 €']"
+        + "['10', '30']"
+        - "['10', '20', '30']"
+        - "['20']"
+        explanation: "Le lookahead (?= €) vérifie la présence de « espace + € » après le nombre sans l'inclure dans le résultat. 20 est suivi d'un dollar, il est donc exclu."
+      }
+      question "Qu’est-ce qui distingue une assertion d’un groupe ordinaire ?" {
+        - "elle est toujours facultative"
+        + "elle vérifie un contexte sans consommer de caractères"
+        - "elle capture le texte sous un nom"
+        - "elle ne fonctionne qu'en début de ligne"
+        explanation: "Une assertion teste ce qui précède ou suit la position courante, mais le texte testé ne fait pas partie de la correspondance. C'est pour cela qu'on peut extraire une IP sans le mot from."
+      }
+      question "Quel outil ne connaît pas les lookahead et lookbehind ?" {
+        - "grep -P"
+        - "Python re"
+        + "grep -E"
+        - "JavaScript"
+        explanation: "Les assertions viennent de Perl. grep -P (PCRE), Python, JavaScript et .NET les connaissent. Les syntaxes POSIX BRE et ERE de grep -E ne les ont pas."
+      }
+      question "Pourquoi Python refuse-t-il (?<=a+)b ?" {
+        - "parce que le lookbehind n'existe pas en Python"
+        + "parce qu'un lookbehind Python doit avoir une longueur fixe"
+        - "parce que + est interdit après une lettre"
+        - "parce qu'il manque le drapeau re.M"
+        explanation: "Python exige que le contenu d'un lookbehind corresponde à une longueur fixe et affiche « look-behind requires fixed-width pattern ». (?<=ab|cd) est accepté, car les deux choix font 2 caractères."
+      }
+      question "Que fait \\K dans la commande grep -oP avec le motif from \\K[0-9.]+ ?" {
+        - "il rend le motif insensible à la casse"
+        + "il retire de la correspondance tout ce qui précède, ici « from »"
+        - "il ajoute un saut de ligne"
+        - "il capture le texte dans le groupe K"
+        explanation: "\\K (PCRE) remet à zéro le début de la correspondance. Avec -o, grep n'affiche donc que l'adresse. C'est équivalent à un lookbehind (?<=from ), en plus souple."
+      }
+      question "Que signifie password(?!=) ?" {
+        - "password suivi d'un signe égal"
+        + "password non suivi d'un signe égal"
+        - "password précédé d'un signe égal"
+        - "password ou un signe égal"
+        explanation: "(?!...) est un lookahead négatif : la correspondance échoue si le texte qui suit est un =. (?=...) serait le lookahead positif, (?<=...) un lookbehind."
+      }
+      question "Qu’est-ce qu’une attaque ReDoS ?" {
+        - "le vol d'une regex dans le code source"
+        + "l'envoi d'un texte qui fait exploser le temps de calcul d'une regex mal écrite"
+        - "l'injection de code SQL dans une regex"
+        - "un déni de service par saturation du réseau"
+        explanation: "ReDoS (Regular expression Denial of Service) exploite le retour arrière : avec certains motifs, le nombre d'essais croît très vite avec la longueur du texte, et le processeur reste occupé. Le réseau n'est pas saturé."
+      }
+      question "Lequel de ces motifs est vulnérable au ReDoS ?" {
+        - "^[a-z]+$"
+        + "^(a+)+$"
+        - "^[0-9]{5}$"
+        - "^a+b$"
+        explanation: "(a+)+ contient une répétition dans un groupe répété : le moteur peut découper une suite de a d'un très grand nombre de façons avant d'échouer. Les autres motifs n'ont pas de répétition imbriquée."
+      }
+      question "Quelle mesure réduit le risque de ReDoS sur un champ de formulaire ?" {
+        - "ajouter .* au début du motif"
+        + "limiter la longueur de la saisie avant d'appliquer la regex"
+        - "activer l'option ignorer la casse"
+        - "construire le motif à partir de la saisie"
+        explanation: "Un texte court limite le nombre d'essais possibles. Ajouter .* augmente le retour arrière, et construire une regex à partir de la saisie permet à l'attaquant de choisir le motif lui-même."
+      }
+      question "Comment rendre littéral un texte saisi par l’utilisateur avant de l’insérer dans un motif Python ?" {
+        - "texte.lower()"
+        + "re.escape(texte)"
+        - "re.compile(texte)"
+        - "texte.strip()"
+        explanation: "re.escape ajoute un antislash devant les caractères spéciaux : 1.2 devient 1\\.2. re.compile transformerait au contraire le texte en motif, avec tous ses métacaractères."
+      }
+      question "Que fait le motif ^(?=.*[0-9]).{12,}$ ?" {
+        - "il exige exactement 12 chiffres"
+        + "il exige au moins 12 caractères dont au moins un chiffre"
+        - "il exige un chiffre en première position"
+        - "il refuse les chiffres"
+        explanation: "Le lookahead vérifie depuis le début qu'un chiffre apparaît quelque part, sans rien consommer. Puis .{12,} exige au moins 12 caractères sur toute la ligne."
+      }
+      question "D’après la mesure du cours, le temps de (a+)+$ sur une suite de a suivie de ! fait quoi quand on ajoute une lettre ?" {
+        - "il augmente d'une milliseconde"
+        - "il reste constant"
+        + "il double environ"
+        - "il diminue, car le moteur apprend"
+        explanation: "Chaque a supplémentaire double le nombre de découpages à essayer : la croissance est exponentielle. C'est ce qui rend l'attaque efficace avec un texte de quelques dizaines de caractères seulement."
+      }
+    }
+  }
+
+  module "regex-dialectes" {
+    title: "Chapitre 7 : grep, grep -E, grep -P, sed, Python, JavaScript et PowerShell"
+    duration: "40min"
+    content: """
+### Un même nom, plusieurs dialectes
+Il n'existe pas une seule syntaxe de regex, mais des familles proches. Un motif qui marche dans Python peut échouer dans grep, et inversement. Les trois familles à connaître :
+• **POSIX BRE** : `grep` et `sed` sans option ;
+• **POSIX ERE** : `grep -E`, `sed -E`, `awk` ;
+• **style Perl** (PCRE et voisins) : `grep -P`, Python, JavaScript, PHP, Java, .NET et PowerShell. Ces moteurs se ressemblent beaucoup, avec des différences de détail.
+
+### Tableau de comparaison
+| Fonction | grep (BRE) | grep -E (ERE) | grep -P, Python, JS, .NET |
+|---|---|---|---|
+| `+` `?` `{n,m}` `( )` spéciaux | avec antislash (GNU) | oui | oui |
+| `\d` | non | non | oui |
+| `\w` `\s` `\b` | oui (GNU) | oui (GNU) | oui |
+| classes `[[:digit:]]` | oui | oui | grep -P oui ; Python et JS non |
+| paresseux `*?` | non | non | oui |
+| groupe non capturant `(?:...)` | non | non | oui |
+| assertions `(?=...)` `(?<=...)` | non | non | oui (Python : lookbehind fixe) |
+| référence arrière `\1` | oui | oui (GNU) | oui |
+
+Dans les tableaux de ce cours, « GNU » signale une extension de GNU grep : elle marche sur Debian et Ubuntu, mais pas forcément avec le grep de macOS ou de BusyBox.
+
+### grep : les options à retenir
+| Option | Effet |
+|---|---|
+| `-E` | syntaxe étendue (ERE) |
+| `-P` | syntaxe Perl (PCRE) ; disponible si grep a été compilé avec PCRE, ce qui est le cas sur Debian et Ubuntu |
+| `-F` | texte fixe, aucun métacaractère |
+| `-i` | ignore la casse |
+| `-v` | inverse la sélection |
+| `-w` / `-x` | mot entier / ligne entière |
+| `-o` | affiche seulement les parties trouvées, une par ligne |
+| `-c` | compte les lignes trouvées |
+| `-n` | numéro de ligne |
+| `-r` | recherche dans un dossier et ses sous-dossiers |
+| `-l` | affiche seulement le nom des fichiers qui contiennent une correspondance |
+
+Le code de retour de grep est utile dans les scripts : `0` si au moins une ligne correspond, `1` si aucune, `2` en cas d'erreur (fichier absent, motif invalide).
+```bash
+if grep -qE '^PermitRootLogin[[:space:]]+no' /etc/ssh/sshd_config; then
+  echo "connexion root SSH interdite"
+fi
+```
+`-q` (quiet) n'affiche rien : seul le code de retour compte.
+
+### Python : toujours des chaînes brutes
+En Python, écris les motifs dans des **chaînes brutes** (raw strings) : `r"\d+"`. Dans une chaîne normale, Python interprète lui-même certains antislashs **avant** le module `re` :
+• `"\b"` devient le caractère retour arrière (backspace), et `re.search("\bchat\b", "le chat")` ne trouve rien ;
+• `"\d"` provoque un avertissement `SyntaxWarning: invalid escape sequence '\d'` depuis Python 3.12.
+
+Les fonctions principales :
+| Fonction | Rôle |
+|---|---|
+| `re.search(m, t)` | première correspondance n'importe où, ou `None` |
+| `re.match(m, t)` | correspondance au début seulement |
+| `re.fullmatch(m, t)` | le texte entier doit correspondre (validation) |
+| `re.findall(m, t)` | liste de toutes les correspondances (ou des groupes) |
+| `re.finditer(m, t)` | itérateur d'objets Match |
+| `re.sub(m, r, t)` | remplacement |
+| `re.split(m, t)` | découpage |
+| `re.compile(m)` | motif préparé, réutilisable |
+
+Options : `re.I` (casse), `re.M` (multiligne), `re.S` (le point accepte le saut de ligne), `re.X` (motif commenté, espaces ignorés), `re.A` (raccourcis ASCII).
+
+### JavaScript : littéral ou constructeur
+• Littéral : `/\d{4}-\d{2}/g`, la forme habituelle.
+• Constructeur : `new RegExp("\\d{4}-\\d{2}", "g")` ; le motif est une chaîne, donc **chaque antislash est doublé**.
+• Drapeaux : `g` (toutes les correspondances), `i` (casse), `m` (multiligne), `s` (le point accepte le saut de ligne), `u` (Unicode), `v` (Unicode étendu), `y` (collant), `d` (indices des groupes).
+• Méthodes : `re.test(t)` (vrai ou faux), `re.exec(t)`, `t.match(re)`, `t.matchAll(re)`, `t.replace(re, r)`, `t.split(re)`.
+
+Piège classique : une regex avec le drapeau `g` garde en mémoire la position de la dernière correspondance (`lastIndex`). Réutilisée avec `test()`, elle donne des résultats alternés :
+```javascript
+const re = /a/g;
+re.test("a");   // true  (lastIndex passe à 1)
+re.test("a");   // false (la recherche repart de la position 1)
+```
+Pour une validation, n'utilise pas le drapeau `g`.
+
+### PowerShell : .NET, insensible à la casse par défaut
+• `-match` teste une chaîne et remplit la variable automatique `$Matches` : `'2026-11-26' -match '(\d{4})-(\d{2})'` renvoie `True`, et `$Matches[1]` vaut `2026`.
+• `-match` et `-replace` **ignorent la casse** par défaut ; `-cmatch` et `-creplace` la respectent.
+• `-replace` utilise `$1` : écris le remplacement entre **guillemets simples** (`'$2/$1'`), sinon PowerShell remplace `$1` par une variable vide.
+• `Select-String` est l'équivalent de grep, également insensible à la casse par défaut (option `-CaseSensitive`) :
+```powershell
+Select-String -Path .\auth.txt -Pattern 'from (\d{1,3}\.){3}\d{1,3}' | ForEach-Object { $_.Matches[0].Value }
+'Dupont Jean' -replace '(\w+) (\w+)', '$2 $1'      # Jean Dupont
+```
+
+### À toi de jouer
+1. Traduis le motif Python `r"\b\d{1,3}(?:\.\d{1,3}){3}\b"` pour `grep -E`.
+2. Ce code Python ne trouve rien : `re.findall("\bport\b", "port 22")`. Pourquoi ? Corrige.
+3. En PowerShell, écris une commande qui transforme `2026-11-26` en `26/11/2026`.
+4. Un script Bash doit afficher « mot de passe interdit » si le fichier `/etc/ssh/sshd_config` contient une ligne non commentée `PasswordAuthentication yes`. Écris le test.
+
+### Correction
+1. `grep -E '\b[0-9]{1,3}(\.[0-9]{1,3}){3}\b'` : `\d` devient `[0-9]` et le groupe non capturant devient un groupe ordinaire (grep -E ne connaît pas `(?:`).
+2. Sans le préfixe `r`, `"\b"` est le caractère retour arrière : le motif cherche ce caractère invisible. Correction : `re.findall(r"\bport\b", "port 22")` renvoie `['port']`.
+3. `'2026-11-26' -replace '(\d{4})-(\d{2})-(\d{2})', '$3/$2/$1'` (guillemets simples obligatoires autour du remplacement).
+4.
+```bash
+if grep -qE '^[[:space:]]*PasswordAuthentication[[:space:]]+yes' /etc/ssh/sshd_config; then
+  echo "mot de passe interdit"
+fi
+```
+Le `^[[:space:]]*` refuse les lignes commentées (`#PasswordAuthentication yes`) tout en acceptant une indentation. Note : sur Debian, des fichiers de `/etc/ssh/sshd_config.d/` peuvent aussi régler cette option ; la commande `sshd -T` (en root) affiche la configuration réellement appliquée.
+"""
+
+    codeblock "javascript" {
+      title: "Les méthodes principales en JavaScript (Node.js)"
+      code: """
+const texte = "a=1 b=22";
+console.log(/\d+/.test(texte));                         // true
+console.log(texte.match(/\d+/g));                       // [ '1', '22' ]
+for (const m of texte.matchAll(/(\w)=(\d+)/g)) {
+  console.log(m[1], m[2]);                              // a 1  puis  b 22
+}
+console.log("2026-11-26".replace(/(?<a>\d{4})-(?<m>\d{2})-(?<j>\d{2})/, "$<j>/$<m>/$<a>")); // 26/11/2026
+console.log(new RegExp("\\d{3}").test("port 443"));    // true (antislash doublé)
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle commande comprend \\d, les quantificateurs paresseux et les lookahead ?" {
+        - "grep"
+        - "grep -E"
+        + "grep -P"
+        - "grep -F"
+        explanation: "grep -P utilise la syntaxe Perl (PCRE), qui connaît \\d, *? et les assertions. grep et grep -E suivent POSIX BRE et ERE, et grep -F cherche un texte fixe."
+      }
+      question "Que renvoie grep quand aucune ligne ne correspond ?" {
+        - "le code 0"
+        + "le code 1"
+        - "le code 2"
+        - "le code 127"
+        explanation: "grep renvoie 0 s'il trouve au moins une ligne, 1 s'il n'en trouve aucune, 2 en cas d'erreur. 127 est le code du shell pour une commande introuvable."
+      }
+      question "En Python, pourquoi le motif \\bport\\b écrit dans une chaîne normale (sans préfixe r) ne trouve-t-il rien dans « port 22 » ?" {
+        - "parce que \\b n'existe pas en Python"
+        + "parce que, sans préfixe r, \\b devient le caractère retour arrière"
+        - "parce qu'il faut l'option re.M"
+        - "parce que findall ne gère pas les limites de mots"
+        explanation: "Dans une chaîne normale, Python transforme \\b en caractère backspace avant que re ne lise le motif. Avec une chaîne brute r\"\\bport\\b\", l'antislash arrive intact au module re."
+      }
+      question "Quelle fonction Python utiliser pour valider qu’une saisie entière respecte un format ?" {
+        - "re.search"
+        - "re.findall"
+        + "re.fullmatch"
+        - "re.sub"
+        explanation: "re.fullmatch exige que le motif couvre toute la chaîne. re.search accepte une correspondance partielle, ce qui laisserait passer « 13480 et du texte »."
+      }
+      question "En JavaScript, comment écrire \\d+ avec le constructeur RegExp ?" {
+        - "new RegExp(\"\\d+\")"
+        + "new RegExp(\"\\\\d+\")"
+        - "new RegExp(/\\\\d+/)"
+        - "RegExp.digits(\"+\")"
+        explanation: "Le motif passé au constructeur est une chaîne JavaScript : l'antislash doit être doublé pour qu'il en reste un dans le motif. Dans un littéral /\\d+/, un seul antislash suffit."
+      }
+      question "Avec const re = /a/g, que renvoient deux appels successifs de re.test sur la chaîne « a » ?" {
+        - "true puis true"
+        + "true puis false"
+        - "false puis true"
+        - "une erreur au second appel"
+        explanation: "Avec le drapeau g, la regex mémorise lastIndex. Le second appel repart de la position 1, ne trouve rien et remet lastIndex à 0. Pour valider, on n'utilise pas g."
+      }
+      question "En PowerShell, quelle est la particularité de l’opérateur -match ?" {
+        - "il respecte la casse par défaut"
+        + "il ignore la casse par défaut et remplit $Matches"
+        - "il n'accepte que des textes fixes"
+        - "il ne fonctionne qu'avec Select-String"
+        explanation: "-match utilise le moteur .NET, ignore la casse par défaut et place les captures dans $Matches. -cmatch est la version sensible à la casse."
+      }
+      question "Pourquoi écrire $2 $1 entre guillemets simples dans un -replace PowerShell ?" {
+        - "pour activer la syntaxe étendue"
+        + "pour que PowerShell ne remplace pas $1 et $2 par des variables"
+        - "pour ignorer la casse"
+        - "parce que les guillemets doubles sont interdits en PowerShell"
+        explanation: "Entre guillemets doubles, PowerShell remplace $1 par le contenu d'une variable nommée 1, en général vide. Entre guillemets simples, le texte arrive tel quel au moteur .NET."
+      }
+      question "Quel est l’équivalent grep -E de \\d{1,3} ?" {
+        - "\\d{1,3}"
+        + "[0-9]{1,3}"
+        - "[:digit:]{1,3}"
+        - "d{1,3}"
+        explanation: "grep -E ne connaît pas \\d. On écrit [0-9] ou [[:digit:]] (avec les doubles crochets). [:digit:] seul est refusé par GNU grep."
+      }
+      question "Quelle option de grep affiche seulement le nom des fichiers qui contiennent une correspondance ?" {
+        - "-c"
+        - "-o"
+        + "-l"
+        - "-n"
+        explanation: "-l (files with matches) liste les fichiers. Combinée à -r, elle répond vite à « quels fichiers de /etc parlent de ce serveur ? »."
+      }
+      question "Quel drapeau JavaScript permet au point d’accepter aussi le saut de ligne ?" {
+        - "m"
+        + "s"
+        - "u"
+        - "y"
+        explanation: "s (dotAll) donne au point le sens « vraiment n'importe quel caractère ». m concerne ^ et $, u le traitement Unicode, y la recherche collante à lastIndex."
+      }
+      question "Le motif (?:ab)+ est accepté par quels outils ?" {
+        - "grep et grep -E seulement"
+        + "grep -P, Python, JavaScript et .NET"
+        - "tous les outils, y compris grep -E"
+        - "aucun, la syntaxe est fausse"
+        explanation: "Le groupe non capturant vient du style Perl. POSIX ERE ne le connaît pas : avec grep -E, on écrit (ab)+, qui capture mais donne le même résultat pour la recherche."
+      }
+    }
+  }
+
+  module "regex-cas-pratiques" {
+    title: "Chapitre 8 : cas pratiques, adresses IP, dates, journaux et validation"
+    duration: "45min"
+    content: """
+### Une méthode en quatre temps
+1. **Écris des exemples** : ce qui doit correspondre, ce qui ne doit pas correspondre, les cas limites.
+2. **Écris le motif le plus simple** qui sépare ces deux listes.
+3. **Teste** sur les exemples (un petit fichier et grep, ou quelques lignes de Python).
+4. **Décide** si une regex suffit : pour une vérification complète (date réelle, adresse IP valide), un vrai analyseur fait mieux.
+
+### Adresses IPv4
+**Pour chercher** dans un journal, un motif simple suffit :
+```text
+\b([0-9]{1,3}\.){3}[0-9]{1,3}\b
+```
+Il accepte aussi `999.1.1.1`, mais dans un journal ce n'est pas grave : on cherche, on ne valide pas.
+
+**Pour valider**, chaque octet doit rester entre 0 et 255. On découpe en cas :
+| Cas | Motif |
+|---|---|
+| 250 à 255 | `25[0-5]` |
+| 200 à 249 | `2[0-4][0-9]` |
+| 100 à 199 | `1[0-9]{2}` |
+| 0 à 99, sans zéro inutile | `[1-9]?[0-9]` |
+
+L'octet complet : `(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])` (barres verticales entre les quatre cas). L'adresse : l'octet, puis trois fois un point suivi d'un octet, le tout ancré. Testé en Python : `192.168.1.1`, `10.0.0.255` et `0.0.0.0` sont acceptés ; `256.1.1.1`, `1.2.3`, `01.2.3.4` et `192.168.001.1` sont refusés.
+
+En Python, le plus sûr reste le module standard `ipaddress` : `ipaddress.ip_address("192.168.1.1")` accepte IPv4 et IPv6 et lève `ValueError` sinon. Pour IPv6, une regex complète est très longue : utilise toujours un analyseur.
+
+Les exemples de ce cours utilisent les plages réservées à la documentation (RFC 5737) : `192.0.2.0/24`, `198.51.100.0/24` et `203.0.113.0/24`.
+
+### Dates
+• ISO 8601 (`2026-11-26`) : `[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])`.
+• Française (`26/11/2026`) : `(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/[0-9]{4}`.
+
+Ces motifs refusent `32/01/2026` et `00/12/2026`, mais **acceptent `31/02/2026`** : une regex ne connaît pas le calendrier. Pour une vraie validation, en Python : `datetime.strptime(s, "%d/%m/%Y")` lève `ValueError` pour le 31 février.
+
+### Journaux SSH
+Les lignes utiles de `journalctl -u ssh` (Debian, Ubuntu) ressemblent à :
+```text
+Nov 26 10:15:02 srv sshd[1234]: Failed password for root from 203.0.113.45 port 52114 ssh2
+Nov 26 10:15:09 srv sshd[1236]: Failed password for invalid user admin from 198.51.100.7 port 40022 ssh2
+Nov 26 10:15:12 srv sshd[1236]: Invalid user test from 203.0.113.45 port 52200
+Nov 26 10:16:30 srv sshd[1240]: Accepted publickey for alice from 192.0.2.10 port 51000 ssh2: ED25519 SHA256:k3Yt
+```
+« invalid user » signale un compte qui n'existe pas sur le serveur : c'est typique d'un robot qui essaie des noms courants.
+
+```bash
+# adresses qui ont raté un mot de passe, de la plus active à la moins active
+journalctl -u ssh | grep -oP 'Failed password for (invalid user )?\S+ from \K[0-9.]+' | sort | uniq -c | sort -rn
+# comptes inexistants essayés
+journalctl -u ssh | grep -oP 'Invalid user \K\S+' | sort | uniq -c | sort -rn
+# connexions réussies
+journalctl -u ssh | grep -E 'Accepted (password|publickey) for'
+```
+`sort | uniq -c` compte les lignes identiques (uniq ne regroupe que des lignes voisines, d'où le premier `sort`), puis `sort -rn` trie par nombre décroissant.
+
+### Journaux web
+Une ligne au format combiné d'Apache ou de nginx :
+```text
+203.0.113.7 - - [26/Nov/2026:10:15:03 +0100] "GET /admin HTTP/1.1" 404 196 "-" "curl/8.5.0"
+```
+Le code de statut HTTP suit le guillemet qui ferme la requête :
+```bash
+grep -oP '" \K[0-9]{3}(?= )' access.log | sort | uniq -c        # nombre de réponses par code
+grep -E '" [45][0-9]{2} ' access.log                              # erreurs client (4xx) et serveur (5xx)
+grep -E '"(GET|POST) /(wp-login\.php|xmlrpc\.php|\.env)' access.log   # sondes automatiques classiques
+```
+
+### Valider une saisie
+Règles tirées de l'aide-mémoire de l'OWASP sur la validation des entrées :
+• **liste d'autorisation** (allowlist) : décrire ce qui est accepté et refuser le reste, plutôt que d'essayer de lister tout ce qui est dangereux ;
+• motif **ancré sur tout le texte** (`fullmatch`, ou `^...$` sans drapeau `m` en JavaScript) ;
+• **longueur maximale** vérifiée avant la regex ;
+• validation **côté serveur** : celle du navigateur (attribut HTML `pattern`, JavaScript) se contourne facilement, elle sert seulement au confort de l'utilisateur ;
+• une validation de format ne remplace pas les protections contre l'injection : requêtes SQL préparées, échappement à l'affichage.
+
+Exemples de motifs pour des champs français :
+| Champ | Motif (à appliquer au texte entier) | Remarque |
+|---|---|---|
+| code postal | `[0-9]{5}` | ne prouve pas que le code existe |
+| téléphone | `0[1-9]([ .]?[0-9]{2}){4}` | accepte 0612345678 et 06 12 34 56 78 |
+| identifiant | `[a-z][a-z0-9_]{2,15}` | une lettre puis 3 à 16 caractères au total |
+| adresse électronique | `[^@\s]+@[^@\s]+\.[^@\s]+` | contrôle grossier |
+
+Pour une adresse électronique, une regex « parfaite » n'existe pas en pratique : la grammaire complète (RFC 5321 et 5322) est trop riche. L'OWASP conseille un contrôle simple ou une bibliothèque maintenue, puis la **preuve** que la personne reçoit les messages : un courriel de confirmation avec un lien à usage unique.
+
+### À toi de jouer
+1. Dans le fichier d'exemple de journal SSH ci-dessus (copie-le dans `auth.txt`), compte les tentatives `Failed password` par adresse IP. Quel résultat attends-tu ?
+2. Écris une fonction Python `ipv4_valide(s)` avec une regex, puis une deuxième version avec `ipaddress`. Teste-les sur `192.168.1.1`, `256.1.1.1`, `192.168.1`, `192.168.01.1`.
+3. Écris une commande qui affiche les adresses IP distinctes présentes dans `access.log`, une par ligne.
+4. Le formulaire d'inscription du lycée vérifie le code postal en JavaScript avec `/[0-9]{5}/.test(cp)`. Trouve deux défauts et corrige.
+
+### Correction
+1. Commande : `grep -oP 'Failed password for (invalid user )?\S+ from \K[0-9.]+' auth.txt | sort | uniq -c | sort -rn`. Sur les quatre lignes d'exemple, on obtient `1 203.0.113.45` et `1 198.51.100.7` : les lignes `Invalid user` et `Accepted publickey` ne contiennent pas « Failed password ». Le fichier plus complet du bloc de code ci-dessous donne `3 203.0.113.45`, `1 198.51.100.7` et `1 192.0.2.10`.
+2.
+```python
+import re, ipaddress
+OCTET = r"(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])"
+IPV4 = re.compile(rf"{OCTET}(?:\.{OCTET}){{3}}")
+def ipv4_valide(s):
+    return IPV4.fullmatch(s) is not None
+def ipv4_valide2(s):
+    try:
+        return isinstance(ipaddress.ip_address(s), ipaddress.IPv4Address)
+    except ValueError:
+        return False
+for t in ["192.168.1.1", "256.1.1.1", "192.168.1", "192.168.01.1"]:
+    print(t, ipv4_valide(t), ipv4_valide2(t))   # True True, puis False False trois fois
+```
+Dans une f-string, les accolades du quantificateur `{3}` se doublent : `{{3}}`. Le module `ipaddress` refuse aussi les zéros en tête (`192.168.01.1`) depuis Python 3.9.5, car ils sont ambigus (certains outils les lisent en octal).
+3. `grep -oE '^[0-9.]+' access.log | sort -u`. L'adresse est le premier champ de chaque ligne.
+4. Défaut 1 : pas d'ancres, donc `134800` ou `abc13480` passent ; écrire `/^[0-9]{5}$/.test(cp)`. Défaut 2 : la vérification n'existe que dans le navigateur ; le serveur doit refaire le contrôle, car n'importe qui peut envoyer la requête sans passer par le formulaire.
+"""
+
+    codeblock "bash" {
+      title: "Créer les fichiers d'exemple et lancer les analyses"
+      code: """
+cat > auth.txt <<'EOF'
+Nov 26 10:15:02 srv sshd[1234]: Failed password for root from 203.0.113.45 port 52114 ssh2
+Nov 26 10:15:05 srv sshd[1234]: Failed password for root from 203.0.113.45 port 52114 ssh2
+Nov 26 10:15:09 srv sshd[1236]: Failed password for invalid user admin from 198.51.100.7 port 40022 ssh2
+Nov 26 10:15:12 srv sshd[1236]: Invalid user test from 203.0.113.45 port 52200
+Nov 26 10:16:30 srv sshd[1240]: Accepted publickey for alice from 192.0.2.10 port 51000 ssh2: ED25519 SHA256:k3Yt
+Nov 26 10:17:01 srv sshd[1241]: Failed password for invalid user test from 203.0.113.45 port 52200 ssh2
+Nov 26 10:18:44 srv sshd[1250]: Failed password for bob from 192.0.2.10 port 51500 ssh2
+EOF
+grep -c 'Failed password' auth.txt        # 5
+grep -oP 'Failed password for (invalid user )?\S+ from \K[0-9.]+' auth.txt | sort | uniq -c | sort -rn
+#   3 203.0.113.45 / 1 198.51.100.7 / 1 192.0.2.10 (l'ordre des égalités peut varier)
+grep -oP 'Invalid user \K\S+' auth.txt    # test
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quel motif correspond à un octet d’adresse IPv4 entre 250 et 255 ?" {
+        - "2[0-5][0-5]"
+        + "25[0-5]"
+        - "25[0-9]"
+        - "[2][5][0-5]{2}"
+        explanation: "25 suivi d'un chiffre de 0 à 5 donne 250 à 255. 2[0-5][0-5] refuserait 206 à 209 et serait incomplet ; 25[0-9] accepterait 256 à 259."
+      }
+      question "Le motif \\b([0-9]{1,3}\\.){3}[0-9]{1,3}\\b accepte-t-il 999.1.1.1 ?" {
+        + "oui : il convient pour chercher dans un journal, pas pour valider"
+        - "non, car {1,3} limite la valeur à 255"
+        - "non, car \\b refuse les nombres à trois chiffres"
+        - "oui, mais seulement avec grep -P"
+        explanation: "{1,3} limite le nombre de chiffres, pas la valeur. Pour valider, il faut découper chaque octet en cas (25[0-5], 2[0-4][0-9]…) ou utiliser un analyseur comme le module ipaddress."
+      }
+      question "Le motif de date (0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/[0-9]{4} accepte-t-il 31/02/2026 ?" {
+        - "non, il connaît la longueur des mois"
+        + "oui, une regex ne connaît pas le calendrier"
+        - "non, car 02 est refusé"
+        - "oui, mais seulement les années bissextiles"
+        explanation: "La regex vérifie la forme : un jour de 01 à 31, un mois de 01 à 12. Pour vérifier qu'une date existe, on utilise un analyseur comme datetime.strptime en Python."
+      }
+      question "Que fait sort | uniq -c | sort -rn à la fin d’une chaîne de commandes ?" {
+        - "il supprime les doublons et trie par ordre alphabétique"
+        + "il compte les lignes identiques et trie par nombre décroissant"
+        - "il compte les lignes du fichier"
+        - "il garde seulement la ligne la plus fréquente"
+        explanation: "uniq -c compte les lignes identiques voisines, d'où le sort préalable qui les regroupe. sort -rn trie ensuite numériquement (n) en ordre inverse (r) : le plus fréquent en premier."
+      }
+      question "Que signifie « Failed password for invalid user admin » dans un journal SSH ?" {
+        - "le compte admin existe mais son mot de passe a expiré"
+        + "quelqu'un a essayé de se connecter avec un compte admin qui n'existe pas sur le serveur"
+        - "le compte admin a été bloqué par fail2ban"
+        - "le serveur refuse l'authentification par mot de passe"
+        explanation: "invalid user indique un nom de compte inconnu du système. Une série de ces lignes avec des noms courants (admin, test, oracle) signale un robot qui teste des identifiants."
+      }
+      question "Quelle commande extrait seulement les adresses IP des lignes « Failed password » ?" {
+        - "grep 'Failed password' auth.txt"
+        + "grep -oP 'Failed password for (invalid user )?\\S+ from \\K[0-9.]+' auth.txt"
+        - "grep -c 'from' auth.txt"
+        - "grep -E 'Failed|from' auth.txt"
+        explanation: "-o n'affiche que la partie trouvée, et \\K retire le début (« Failed password for … from ») : il reste l'adresse. Les autres commandes affichent des lignes entières ou un nombre."
+      }
+      question "Pourquoi la validation d’un formulaire faite en JavaScript ne suffit-elle pas ?" {
+        - "parce que JavaScript ne connaît pas les regex"
+        + "parce qu'on peut envoyer la requête au serveur sans passer par le navigateur"
+        - "parce que les regex JavaScript sont plus lentes"
+        - "parce que le drapeau g est obligatoire"
+        explanation: "La validation côté navigateur améliore le confort, mais un attaquant peut désactiver le script ou envoyer directement la requête. Le serveur doit toujours refaire le contrôle."
+      }
+      question "Pour valider une adresse électronique, quelle approche est recommandée ?" {
+        - "une regex qui couvre toute la RFC 5322"
+        + "un contrôle de forme simple, puis un courriel de confirmation"
+        - "refuser toutes les adresses qui contiennent un point"
+        - "aucune vérification, pour respecter la vie privée"
+        explanation: "La grammaire complète des adresses est trop riche pour une regex fiable. Un contrôle simple évite les fautes de frappe grossières, et seul un message de confirmation prouve que l'adresse est valide et appartient à la personne."
+      }
+      question "Pourquoi les exemples utilisent-ils des adresses comme 203.0.113.45 ou 198.51.100.7 ?" {
+        - "ce sont des adresses privées comme 192.168.0.0/16"
+        + "elles sont réservées à la documentation (RFC 5737) et n'appartiennent à personne"
+        - "ce sont les adresses des serveurs racine DNS"
+        - "ce sont des adresses de boucle locale"
+        explanation: "La RFC 5737 réserve 192.0.2.0/24, 198.51.100.0/24 et 203.0.113.0/24 aux exemples. On évite ainsi de citer l'adresse d'une vraie machine."
+      }
+      question "Quel motif téléphone accepte « 06 12 34 56 78 » et « 0612345678 » (sur tout le texte) ?" {
+        - "0[0-9]{9}"
+        + "0[1-9]([ .]?[0-9]{2}){4}"
+        - "[0-9 ]{10}"
+        - "0[1-9] [0-9]{8}"
+        explanation: "Après 0 et un chiffre de 1 à 9, le groupe répété 4 fois accepte un séparateur facultatif (espace ou point) puis deux chiffres. 0[0-9]{9} refuse les espaces ; [0-9 ]{10} accepte n'importe quel mélange de 10 caractères."
+      }
+      question "Quelle commande liste les adresses IP distinctes d’un journal web au format combiné ?" {
+        - "grep -c '^[0-9.]+' access.log"
+        + "grep -oE '^[0-9.]+' access.log | sort -u"
+        - "grep -v '^[0-9.]+' access.log"
+        - "grep -E '[0-9.]+$' access.log | uniq"
+        explanation: "L'adresse est le premier champ : ^[0-9.]+ avec -o l'extrait, sort -u trie et supprime les doublons. uniq seul ne supprime que les doublons voisins, et la fin de ligne contient le navigateur, pas l'adresse."
+      }
+      question "Quel motif grep -E repère les réponses HTTP d’erreur 4xx et 5xx dans un journal au format combiné ?" {
+        - "'[45][0-9]{2}'"
+        + "'\" [45][0-9]{2} '"
+        - "'^[45][0-9]{2}'"
+        - "'4xx|5xx'"
+        explanation: "Le code de statut suit le guillemet fermant de la requête et une espace. Sans ce contexte, [45][0-9]{2} trouverait aussi 404 dans une URL ou 500 dans une taille. ^ ferait chercher en début de ligne, où se trouve l'adresse IP."
+      }
+      question "Dans une f-string Python, comment écrire le quantificateur {3} ?" {
+        - "{3}"
+        + "{{3}}"
+        - "\\{3\\}"
+        - "[3]"
+        explanation: "Dans une f-string, les accolades servent à insérer des variables. Pour obtenir une accolade littérale, on la double : {{3}} devient {3} dans le motif final."
+      }
+    }
+  }
+
+  module "regex-synthese" {
+    title: "Chapitre 9 : synthèse, mini-projet guidé"
+    duration: "60min"
+    content: """
+### Le projet
+Le serveur Debian du lycée héberge un accès SSH pour les enseignants et un petit site web. Tu dois livrer à l'équipe informatique un **rapport d'analyse des journaux** reproductible, en t'appuyant uniquement sur des expressions régulières :
+• des commandes grep pour un premier bilan rapide ;
+• un script Python qui produit un rapport lisible ;
+• une version anonymisée du journal, pour le transmettre sans diffuser les adresses complètes ;
+• une fonction de validation pour le formulaire où l'on saisit une adresse IP à surveiller ;
+• une fiche de recette.
+
+Travaille sur les fichiers `auth.txt` et `access.txt` du chapitre 8, ou sur la sortie réelle de `journalctl -u ssh` d'une machine virtuelle à toi. Ne lance jamais d'analyse ni de test sur un serveur qui ne t'appartient pas.
+
+### Étape 1 : le bilan rapide avec grep
+Écris, teste et note le résultat de chaque commande :
+• nombre de lignes `Failed password` ;
+• échecs par adresse IP, triés ;
+• comptes inexistants essayés ;
+• connexions réussies, avec la méthode (`password` ou `publickey`) ;
+• nombre de réponses web par code HTTP ;
+• requêtes web vers des pages d'administration connues (`/wp-login.php`, `/admin`).
+
+### Étape 2 : le script Python
+Le script lit un fichier ligne par ligne et applique trois motifs compilés avec des **groupes nommés** : échec, compte inexistant, succès. Il compte les échecs par adresse et signale celles qui dépassent un seuil.
+
+```python
+import re
+import sys
+from collections import Counter
+
+ECHEC = re.compile(
+    r"Failed password for (?:invalid user )?(?P<user>\S+) from (?P<ip>[0-9.]+) port (?P<port>[0-9]+)"
+)
+INCONNU = re.compile(r"Invalid user (?P<user>\S+) from (?P<ip>[0-9.]+)")
+SUCCES = re.compile(r"Accepted (?P<methode>password|publickey) for (?P<user>\S+) from (?P<ip>[0-9.]+)")
+
+echecs_ip, comptes_inconnus, succes = Counter(), Counter(), []
+with open(sys.argv[1], encoding="utf-8") as f:
+    for ligne in f:
+        if m := ECHEC.search(ligne):
+            echecs_ip[m["ip"]] += 1
+        elif m := INCONNU.search(ligne):
+            comptes_inconnus[m["user"]] += 1
+        elif m := SUCCES.search(ligne):
+            succes.append((m["user"], m["ip"], m["methode"]))
+
+SEUIL = 3
+print("Échecs par adresse :")
+for ip, n in echecs_ip.most_common():
+    alerte = "  <- à surveiller" if n >= SEUIL else ""
+    print(f"  {ip:<16}{n}{alerte}")
+print("Comptes inexistants essayés :", dict(comptes_inconnus))
+print("Connexions réussies :")
+for user, ip, methode in succes:
+    print(f"  {user} depuis {ip} ({methode})")
+```
+Lancement : `python3 analyse.py auth.txt`. Sur le fichier d'exemple, la sortie est :
+```text
+Échecs par adresse :
+  203.0.113.45    3  <- à surveiller
+  198.51.100.7    1
+  192.0.2.10      1
+Comptes inexistants essayés : {'test': 1}
+Connexions réussies :
+  alice depuis 192.0.2.10 (publickey)
+```
+L'opérateur `:=` (Python 3.8 et plus) affecte et teste en une seule ligne ; `m["ip"]` équivaut à `m.group("ip")`.
+
+### Étape 3 : anonymiser avant de partager
+Un journal contient des données personnelles (adresses IP, identifiants). Avant de le joindre à un rapport, ne garde que ce qui est utile. Ici, on remplace le dernier octet de chaque adresse par 0 :
+```bash
+sed -E 's/\b([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\.[0-9]{1,3}\b/\1.0/g' auth.txt > auth-anonyme.txt
+```
+`203.0.113.45` devient `203.0.113.0`. Le drapeau `g` remplace toutes les adresses de la ligne, pas seulement la première. Vérifie le résultat avec `grep -cE '\.[1-9][0-9]*\b port' auth-anonyme.txt`, qui doit afficher 0. Attention : tronquer une adresse réduit l'identification sans la rendre impossible ; c'est une pseudonymisation partielle, pas une anonymisation complète au sens du RGPD.
+
+### Étape 4 : valider la saisie d'une adresse à surveiller
+Le formulaire de l'outil interne demande une adresse IPv4. Écris `ipv4_valide(s)` avec :
+• un refus immédiat si la chaîne dépasse 15 caractères (la longueur maximale de `255.255.255.255`) ;
+• la regex stricte du chapitre 8 avec `fullmatch` ;
+• une seconde vérification avec `ipaddress`.
+
+### Étape 5 : la recette
+| Test | Commande ou entrée | Attendu |
+|---|---|---|
+| Échecs totaux | `grep -c 'Failed password' auth.txt` | `5` |
+| Adresse la plus active | première ligne du tri `uniq -c` | `3 203.0.113.45` |
+| Compte inexistant | `grep -oP 'Invalid user \K\S+' auth.txt` | `test` |
+| Script | `python3 analyse.py auth.txt` | 203.0.113.45 marquée « à surveiller » |
+| Anonymisation | `grep -c '203.0.113.45' auth-anonyme.txt` | `0` |
+| Validation correcte | `ipv4_valide("192.168.1.1")` | `True` |
+| Validation octet | `ipv4_valide("256.1.1.1")` | `False` |
+| Validation saut de ligne | `ipv4_valide("10.0.0.1\n")` | `False` |
+| Validation longueur | `ipv4_valide("1" * 10000)` | `False`, sans délai |
+
+### À toi de jouer
+Réalise les étapes 1 à 5. Puis réponds à ces trois situations :
+1. Ton script compte 0 échec sur le vrai serveur, alors que `journalctl -u ssh | grep -c Failed` affiche 40. Que vérifies-tu ?
+2. Un collègue propose le motif `(\d+\.?)+` pour repérer les adresses IP « plus simplement ». Que réponds-tu ?
+3. Le rapport doit aussi compter les échecs par heure. Quel motif ajoutes-tu ?
+
+### Correction
+Points de contrôle :
+• étape 1 : `grep -oP 'Failed password for (invalid user )?\S+ from \K[0-9.]+' auth.txt | sort | uniq -c | sort -rn` ; `grep -oP '" \K[0-9]{3}(?= )' access.txt | sort | uniq -c` ; `grep -E '"(GET|POST) /(wp-login\.php|admin)' access.txt` ;
+• étape 2 : les trois motifs sont compilés une seule fois, en chaînes brutes, et le groupe `(?:invalid user )?` est non capturant ;
+• étape 3 : le drapeau `g` de sed est présent ; sans lui, seule la première adresse de chaque ligne serait modifiée ;
+• étape 4 :
+```python
+import re, ipaddress
+OCTET = r"(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])"
+IPV4 = re.compile(rf"{OCTET}(?:\.{OCTET}){{3}}")
+def ipv4_valide(s):
+    if len(s) > 15 or IPV4.fullmatch(s) is None:
+        return False
+    try:
+        ipaddress.IPv4Address(s)
+        return True
+    except ValueError:
+        return False
+```
+
+Situations :
+1. Lis une vraie ligne du serveur et compare-la au motif : une différence de texte suffit (deux espaces, un autre message comme `Failed publickey`, ou un fichier lu qui n'est pas celui que tu crois). Teste le motif seul sur une ligne copiée : `echo 'ligne' | grep -P 'motif'`. Vérifie aussi que le script lit bien la sortie de `journalctl` (redirigée dans un fichier) et pas un `auth.txt` vide.
+2. Le motif est trop large (il accepte `2026` ou `1.2.3.4.5.6`) et dangereux : `(\d+\.?)+` est un groupe répété qui contient une répétition, avec un point facultatif. Sur une longue suite de chiffres sans correspondance complète, le retour arrière explose (ReDoS). Garde `\b([0-9]{1,3}\.){3}[0-9]{1,3}\b` pour chercher, ou le motif strict pour valider.
+3. Les lignes commencent par `Nov 26 10:15:02` : le motif `^\w{3} +\d{1,2} (?P<heure>\d{2}):` capture l'heure. ` +` et `\d{1,2}` acceptent les deux écritures du jour : `Nov 06` (journalctl) et `Nov  6` avec deux espaces (fichier syslog classique). Ajoute un `Counter` par heure dans la branche des échecs.
+
+### Pour aller plus loin
+• GNU Grep Manual, Free Software Foundation : https://www.gnu.org/software/grep/manual/
+• re, Regular expression operations, et Regular Expression HOWTO, documentation officielle de Python : https://docs.python.org/3/library/re.html
+• Expressions régulières, guide JavaScript, MDN Web Docs (Mozilla) : https://developer.mozilla.org/fr/docs/Web/JavaScript/Guide/Regular_expressions
+• Langage des expressions régulières, aide-mémoire, et about_Regular_Expressions pour PowerShell, Microsoft Learn : https://learn.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference
+• Regular expression Denial of Service (ReDoS) et Input Validation Cheat Sheet, OWASP : https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html
+• POSIX.1-2017, chapitre 9 « Regular Expressions » (BRE et ERE), The Open Group : https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap09.html
+"""
+
+    codeblock "bash" {
+      title: "Recette rapide du mini-projet"
+      code: """
+grep -c 'Failed password' auth.txt                                   # 5
+grep -oP 'Failed password for (invalid user )?\S+ from \K[0-9.]+' auth.txt | sort | uniq -c | sort -rn | head -1
+grep -oP 'Invalid user \K\S+' auth.txt                               # test
+python3 analyse.py auth.txt                                          # 203.0.113.45 à surveiller
+sed -E 's/\b([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\.[0-9]{1,3}\b/\1.0/g' auth.txt > auth-anonyme.txt
+grep -c '203.0.113.45' auth-anonyme.txt                              # 0
+"""
+    }
+
+    quiz {
+      pick: 10
+      question "Quel motif valide une ligne entière composée de 5 chiffres avec grep -E ?" {
+        - "[0-9]{5}"
+        + "^[0-9]{5}$"
+        - "\\d{5}"
+        - "^[0-9]*5$"
+        explanation: "Les ancres imposent la ligne entière et {5} le nombre exact. Sans ancres, 134800 passerait ; \\d n'existe pas dans grep -E ; ^[0-9]*5$ signifie « des chiffres puis un 5 final »."
+      }
+      question "Que trouve grep -o avec le motif port [0-9]* sur la ligne « from 192.0.2.10 port 51000 ssh2 » ?" {
+        - "port"
+        + "port 51000"
+        - "51000"
+        - "toute la ligne"
+        explanation: "-o affiche seulement la partie trouvée : le mot port, l'espace et les chiffres qui suivent (l'étoile est gourmande). Pour n'avoir que le nombre, il faudrait grep -oP 'port \\K[0-9]+'."
+      }
+      question "Pourquoi le point est-il dangereux dans le motif 10.0.0.1 ?" {
+        - "il ralentit la recherche"
+        + "il accepte n'importe quel caractère, par exemple 10x0y0z1"
+        - "il est interdit en dehors des classes"
+        - "il ne correspond qu'à la fin de ligne"
+        explanation: "Le point non échappé vaut n'importe quel caractère. Pour un vrai point, on écrit \\. ou on utilise grep -F."
+      }
+      question "Avec re.search en Python, quelle correspondance le motif <.+?> trouve-t-il dans « <b>gras</b> » ?" {
+        + "<b>"
+        - "<b>gras</b>"
+        - "</b>"
+        - "gras"
+        explanation: "+? est paresseux : il s'arrête au premier > qui permet de finir le motif. La version gourmande <.+> irait jusqu'au dernier >."
+      }
+      question "Quel motif s’arrête au premier guillemet fermant, y compris dans grep -E ?" {
+        - "\".*\""
+        - "\".*?\""
+        + "\"[^\"]*\""
+        - "\"[.*]\""
+        explanation: "La classe négative ne peut pas franchir un guillemet. \".*?\" est paresseux en Python ou JavaScript mais pas en ERE POSIX, et \".*\" est gourmand partout."
+      }
+      question "Dans le script du mini-projet, pourquoi (?:invalid user )? est-il non capturant ?" {
+        - "pour rendre la recherche insensible à la casse"
+        + "parce qu'on veut seulement le rendre facultatif, sans créer de groupe à lire"
+        - "parce que Python refuse les groupes capturants facultatifs"
+        - "pour accélérer la lecture du fichier"
+        explanation: "Le groupe sert à appliquer ? à plusieurs mots. Le rendre non capturant évite un groupe inutile et garde la numérotation et les résultats de findall propres."
+      }
+      question "Quelle forme de groupe nommé utiliser en Python ?" {
+        - "(?<ip>[0-9.]+)"
+        + "(?P<ip>[0-9.]+)"
+        - "(ip:[0-9.]+)"
+        - "{ip}[0-9.]+"
+        explanation: "Python utilise (?P<nom>...). La forme (?<nom>...) est celle de JavaScript et de .NET ; Python la refuse."
+      }
+      question "Pourquoi le drapeau g est-il indispensable dans la commande sed d’anonymisation ?" {
+        - "pour ignorer la casse"
+        + "pour remplacer toutes les adresses d'une ligne, pas seulement la première"
+        - "pour modifier le fichier en place"
+        - "pour activer les groupes"
+        explanation: "Sans g, s/// ne remplace que la première correspondance de chaque ligne. La modification en place est -i, les groupes en ERE viennent de -E."
+      }
+      question "Quel motif est vulnérable au ReDoS ?" {
+        - "\\b([0-9]{1,3}\\.){3}[0-9]{1,3}\\b"
+        + "(\\d+\\.?)+"
+        - "^[0-9]{5}$"
+        - "\"[^\"]*\""
+        explanation: "(\\d+\\.?)+ répète un groupe qui contient lui-même une répétition, et le point facultatif permet de découper une suite de chiffres d'un très grand nombre de façons. Les autres motifs sont bornés ou sans imbrication."
+      }
+      question "Pourquoi tester len(s) > 15 avant la regex dans ipv4_valide ?" {
+        - "parce que la regex ne sait pas compter"
+        + "parce qu'une adresse IPv4 fait au plus 15 caractères et qu'un texte énorme coûte du temps de calcul"
+        - "parce que fullmatch refuse les chaînes longues"
+        - "parce que le module ipaddress l'exige"
+        explanation: "255.255.255.255 compte 15 caractères. Refuser tout de suite un texte plus long est simple, rapide et limite l'effet d'une saisie malveillante."
+      }
+      question "ipv4_valide doit renvoyer False pour 10.0.0.1 suivi d’un saut de ligne. Quelle fonction le garantit ?" {
+        - "re.match avec ^ et $"
+        + "re.fullmatch"
+        - "re.search"
+        - "re.findall"
+        explanation: "En Python, $ accepte un saut de ligne final : re.match(r\"^...$\") laisserait passer la saisie. re.fullmatch exige que tout le texte corresponde."
+      }
+      question "Quelle option de grep compte les lignes qui correspondent ?" {
+        + "-c"
+        - "-n"
+        - "-l"
+        - "-o"
+        explanation: "-c affiche le nombre de lignes. -n numérote les lignes, -l liste les fichiers, -o affiche les parties trouvées."
+      }
+      question "Dans grep -E, que vaut le motif \\b22\\b sur la ligne « port 2222 » ?" {
+        - "une correspondance sur les deux premiers chiffres"
+        + "aucune correspondance"
+        - "deux correspondances"
+        - "une erreur de syntaxe"
+        explanation: "\\b exige une limite de mot de chaque côté. Dans 2222, les 22 sont collés à d'autres chiffres : aucune limite. La ligne « port 22 ssh2 » correspondrait."
+      }
+      question "En JavaScript, que donne replace avec le motif /(\\d{4})-(\\d{2})-(\\d{2})/ et le remplacement $3/$2/$1 sur « 2026-11-26 » ?" {
+        - "$3/$2/$1"
+        + "26/11/2026"
+        - "2026/11/26"
+        - "11/26/2026"
+        explanation: "$1, $2 et $3 désignent les groupes capturés : 2026, 11 et 26. Le remplacement les réordonne en jour, mois, année."
+      }
+      question "Quelle commande traite le motif comme un texte fixe, sans aucun métacaractère ?" {
+        - "grep -E"
+        - "grep -P"
+        + "grep -F"
+        - "grep -w"
+        explanation: "grep -F (fixed strings) cherche le texte tel quel : idéal pour une adresse IP ou un texte plein de points et de dollars."
+      }
+      question "Quel outil connaît le raccourci \\K ?" {
+        - "grep -E"
+        - "sed -E"
+        + "grep -P"
+        - "Python re"
+        explanation: "\\K est une fonction de PCRE, donc de grep -P. Python ne la connaît pas : on utilise un groupe ou un lookbehind à la place."
+      }
+      question "Le motif de date (0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/[0-9]{4} refuse quelle date ?" {
+        - "31/02/2026"
+        - "29/02/2025"
+        + "32/01/2026"
+        - "31/04/2026"
+        explanation: "Le jour 32 n'est accepté par aucun des cas. Les trois autres dates n'existent pas dans le calendrier, mais ont la bonne forme : la regex les accepte, seul un analyseur de dates les refuse."
+      }
+      question "Pourquoi tronquer le dernier octet des adresses avant de partager un journal ?" {
+        - "pour réduire la taille du fichier"
+        + "pour limiter les données personnelles transmises tout en gardant l'information utile"
+        - "pour rendre le journal compatible avec Windows"
+        - "parce que grep ne lit pas les adresses complètes"
+        explanation: "Une adresse IP peut identifier une personne. Garder le réseau (203.0.113.0) suffit souvent pour l'analyse. Ce n'est pas une anonymisation complète, mais cela réduit l'exposition."
+      }
+      question "En PowerShell, quelle opération respecte la casse ?" {
+        - "-match"
+        + "-cmatch"
+        - "-imatch"
+        - "Select-String sans option"
+        explanation: "-cmatch (c pour case-sensitive) respecte la casse. -match et -imatch l'ignorent, comme Select-String sans l'option -CaseSensitive."
+      }
+      question "Ton motif marche sur tes exemples mais ne trouve rien sur le vrai journal. Quelle est la meilleure première action ?" {
+        - "réécrire le motif avec .* partout"
+        + "copier une vraie ligne du journal et tester le motif dessus"
+        - "passer de grep à Python"
+        - "ajouter l'option -i"
+        explanation: "Un écart minime entre le texte réel et tes exemples (espaces, message différent) suffit à faire échouer le motif. Tester sur une vraie ligne montre où il bloque. Ajouter .* partout rend le motif trop large et lent."
+      }
+    }
+  }
+}

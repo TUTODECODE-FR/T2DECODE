@@ -1,0 +1,2370 @@
+tdc-version: 2
+type: course
+
+course "securite-web-owasp" {
+  title: "Sécurité des applications web (OWASP)"
+  description: """
+Ce cours t'apprend à reconnaître, exploiter dans ton propre labo, puis corriger les failles les plus courantes des applications web, en suivant le référentiel OWASP Top 10 dans sa version 2025. Il s'adresse aux élèves de BTS SIO (SLAM et SISR), BTS CIEL, BUT informatique et à toute personne qui développe ou héberge un site.
+
+À la fin, tu sauras :
+• lire une requête et une réponse HTTP, et régler correctement les attributs d'un cookie de session ;
+• expliquer les dix risques du Top 10 OWASP 2025, avec pour chacun un exemple et une défense ;
+• corriger une injection SQL avec des requêtes préparées et une injection de commande avec une liste d'arguments ;
+• neutraliser une faille XSS par l'échappement selon le contexte et une politique CSP ;
+• protéger un formulaire contre le CSRF (jeton, SameSite, vérification de l'origine) ;
+• vérifier le contrôle d'accès côté serveur, repérer une IDOR et limiter le SSRF ;
+• stocker des mots de passe avec Argon2id ou bcrypt et gérer une session sans fixation ;
+• poser les en-têtes de sécurité sur Nginx, auditer ses dépendances et écrire des journaux utiles.
+
+Le cours s'appuie sur un labo que tu montes sur ta machine : une petite application Flask volontairement vulnérable, écoutée seulement sur 127.0.0.1, et l'application d'entraînement OWASP Juice Shop dans Docker. Chaque chapitre a un exercice de code vulnérable à corriger, avec sa correction, et une banque de questions tirées au hasard.
+
+Règle absolue : tous les tests d'attaque se font sur tes propres environnements de test. Tester un site sans autorisation écrite de son propriétaire est un délit en France (article 323-1 du Code pénal).
+
+Prérequis : bases du HTML, lecture d'un petit programme Python ou PHP, notions de SQL (SELECT, WHERE), utilisation courante du terminal Linux.
+"""
+  category: "web"
+  level: "intermediate"
+  duration: "8h"
+  icon: "Shield"
+  keywords: ["owasp", "top 10", "sécurité web", "injection sql", "requête préparée", "xss", "csrf", "csp", "cookie", "session", "contrôle d'accès", "idor", "ssrf", "argon2", "bcrypt", "hsts", "en-têtes", "dépendances", "sbom", "journalisation"]
+
+  module "http-cookies-labo" {
+    title: "Chapitre 1 : HTTP, cookies et labo de test"
+    duration: "35min"
+    content: """
+### Le cadre avant tout
+Une faille web s'apprend en l'exploitant, puis en la corrigeant. Mais l'exploitation n'est permise que sur un système qui t'appartient ou pour lequel tu as une autorisation écrite. En France, accéder ou se maintenir frauduleusement dans un système de traitement automatisé de données (STAD) est puni de 3 ans d'emprisonnement et 100 000 € d'amende (article 323-1 du Code pénal, version en vigueur depuis janvier 2023). Le fait de « juste regarder » le site du lycée avec une apostrophe dans un champ suffit à entrer dans ce cadre.
+
+Dans ce cours, tout se passe sur ta machine :
+• une mini-application Flask (Python) que tu écris et casses toi-même ;
+• OWASP Juice Shop, une boutique volontairement truffée de failles, publiée par la fondation OWASP pour l'entraînement.
+
+Les deux écoutent seulement sur `127.0.0.1` : personne d'autre sur le réseau ne peut y accéder.
+
+### HTTP en deux minutes
+HTTP est un protocole texte de **requêtes et réponses**. Le client envoie une méthode, un chemin, des en-têtes et parfois un corps ; le serveur renvoie un code d'état, des en-têtes et un corps. La sémantique est décrite par la RFC 9110.
+
+```http
+POST /connexion HTTP/1.1
+Host: 127.0.0.1:5000
+Content-Type: application/x-www-form-urlencoded
+Cookie: session=eyJ1c2VyIjpudWxsfQ.Z...
+
+email=alice%40lab.test&mdp=Secret-2026
+```
+
+```http
+HTTP/1.1 302 Found
+Location: /compte
+Set-Cookie: session=eyJ1c2VyIjoxfQ.Z...; HttpOnly; Path=/; SameSite=Lax
+```
+
+Points à retenir :
+• **HTTP est sans état** (stateless) : chaque requête est indépendante. Pour « se souvenir » d'un utilisateur, le serveur lui confie un **cookie** que le navigateur renvoie à chaque requête.
+• Les méthodes **sûres** (safe) comme `GET` et `HEAD` ne doivent jamais modifier de données. Une action (supprimer, payer, changer un mot de passe) passe par `POST`, `PUT`, `PATCH` ou `DELETE`.
+• Tout ce qui vient du client (paramètres, en-têtes, cookies, corps JSON, nom de fichier envoyé) est **contrôlé par l'attaquant**. Un champ caché ou un menu déroulant n'empêche rien : on modifie la requête avec un proxy ou `curl`.
+
+| Code | Sens | Exemple |
+|---|---|---|
+| 200 | OK | page servie |
+| 301 / 302 | redirection | après connexion |
+| 401 | non authentifié | pas de session valide |
+| 403 | authentifié mais interdit | élève qui ouvre /admin |
+| 404 | introuvable | ressource absente |
+| 500 | erreur du serveur | exception non gérée |
+
+### Le cookie et ses attributs
+Un cookie est posé par l'en-tête `Set-Cookie` (RFC 6265). Ses attributs décident de sa sécurité :
+
+| Attribut | Effet | Pour un cookie de session |
+|---|---|---|
+| `Secure` | envoyé seulement en HTTPS | oui |
+| `HttpOnly` | illisible par JavaScript (`document.cookie`) | oui |
+| `SameSite=Lax` ou `Strict` | non envoyé dans la plupart des requêtes venant d'un autre site | oui |
+| `Path=/` | chemins concernés | oui |
+| `Domain` | si présent, le cookie part aussi vers tous les sous-domaines | à éviter |
+| `Max-Age` / `Expires` | durée de vie ; sans eux, cookie de session (effacé à la fermeture) | courte |
+
+Détails utiles :
+• `SameSite=None` n'est accepté qu'avec `Secure`.
+• Si `SameSite` est absent, certains navigateurs (Chrome, Edge) appliquent `Lax` par défaut, d'autres non : ne compte pas dessus, écris-le.
+• Le préfixe `__Host-` dans le nom (`__Host-session`) oblige le navigateur à refuser le cookie s'il n'a pas `Secure`, `Path=/` et aucun `Domain`. C'est la forme la plus stricte.
+
+### Origine et site
+Deux notions reviennent dans tout le cours :
+• l'**origine** (origin) = schéma + hôte + port. `https://lab.test` et `https://lab.test:8443` sont deux origines différentes ;
+• le **site** = schéma + domaine enregistrable. `https://www.lab.test` et `https://api.lab.test` sont deux origines mais le même site.
+
+La **politique de même origine** (same-origin policy) empêche un script d'une origine de lire les réponses d'une autre. Elle n'empêche pas d'**envoyer** une requête vers une autre origine : c'est ce qui rend le CSRF possible (chapitre 5).
+
+### Monter le labo
+Sur Debian ou Ubuntu :
+
+```bash
+sudo apt install python3-venv curl
+mkdir -p ~/labweb && cd ~/labweb
+python3 -m venv .venv && . .venv/bin/activate
+pip install flask
+```
+
+Juice Shop, si Docker est installé :
+
+```bash
+docker run --rm -p 127.0.0.1:3000:3000 bkimminich/juice-shop
+```
+
+Le `127.0.0.1:` devant le port est important : sans lui, Docker publie le port sur toutes les interfaces, et ton application vulnérable devient joignable depuis le réseau du lycée.
+
+### À toi de jouer
+1. Lance Juice Shop, puis affiche les en-têtes de la page d'accueil avec `curl -sI http://127.0.0.1:3000/`. Repère le code d'état, le `Content-Type` et les en-têtes commençant par `X-` ou `Access-Control`.
+2. Un site pose ce cookie : `Set-Cookie: sid=8f2c...; Domain=lycee-exemple.fr; Path=/`. Cite trois défauts et réécris la ligne correctement pour un site en HTTPS.
+3. Un formulaire de suppression de compte utilise `GET /compte/supprimer?id=42`. Explique pourquoi c'est dangereux, même si l'utilisateur doit être connecté.
+
+### Correction
+1. La première ligne affiche `HTTP/1.1 200 OK`. Le `Content-Type` est `text/html; charset=UTF-8`. Juice Shop renvoie notamment `Access-Control-Allow-Origin: *` (il autorise toutes les origines à lire ses réponses, un défaut voulu pour l'entraînement) ainsi que `X-Content-Type-Options: nosniff` et `X-Frame-Options: SAMEORIGIN`. Les valeurs exactes peuvent varier selon la version de l'image.
+2. Défauts : pas de `Secure` (le cookie peut partir en HTTP clair), pas de `HttpOnly` (un script injecté peut le lire), pas de `SameSite` (comportement dépendant du navigateur face au CSRF), et `Domain` l'envoie à tous les sous-domaines, y compris un éventuel sous-domaine mal sécurisé. Version correcte : `Set-Cookie: __Host-sid=8f2c...; Secure; HttpOnly; SameSite=Lax; Path=/`.
+3. `GET` est une méthode sûre : le navigateur et les outils la déclenchent sans précaution. Une simple image `<img src="https://site/compte/supprimer?id=42">` dans un courriel ou un forum envoie la requête avec les cookies de la victime. Les liens sont aussi préchargés, mis en cache et enregistrés dans les journaux et l'historique. Une action doit passer par `POST` (ou `DELETE`) avec un jeton anti-CSRF.
+"""
+
+    codeblock "bash" {
+      title: "Observer requêtes, réponses et cookies avec curl"
+      code: """
+# En-têtes de la réponse seulement
+curl -sI http://127.0.0.1:3000/
+
+# Requête et réponse complètes (> envoyé, < reçu)
+curl -sv http://127.0.0.1:3000/ -o /dev/null 2>&1 | grep -E '^[<>]'
+
+# Garder les cookies entre deux requêtes, comme un navigateur
+curl -s -c cookies.txt -b cookies.txt http://127.0.0.1:5000/connexion \
+     -d 'email=alice@lab.test' -d 'mdp=Secret-2026'
+cat cookies.txt
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Que signifie « HTTP est sans état » ?" {
+        - "le serveur ne renvoie jamais de code d'état"
+        + "chaque requête est traitée indépendamment, sans mémoire des précédentes"
+        - "les connexions TCP sont fermées après chaque octet"
+        - "le protocole ne transporte pas d'en-têtes"
+        explanation: "Le serveur ne garde aucun lien entre deux requêtes. Pour reconnaître un utilisateur, on lui confie un identifiant de session dans un cookie que le navigateur renvoie à chaque fois. Les codes d'état existent bien (200, 404…)."
+      }
+      question "Quel attribut empêche un script JavaScript de lire un cookie ?" {
+        - "Secure"
+        + "HttpOnly"
+        - "SameSite=Strict"
+        - "Path=/"
+        explanation: "HttpOnly rend le cookie invisible pour document.cookie : un script injecté par XSS ne peut pas le voler directement. Secure impose HTTPS, SameSite limite l'envoi entre sites, Path restreint les chemins."
+      }
+      question "Un cookie a l’attribut SameSite=None. Que faut-il obligatoirement ajouter ?" {
+        - "HttpOnly"
+        - "Domain"
+        + "Secure"
+        - "Max-Age"
+        explanation: "Les navigateurs refusent un cookie SameSite=None sans Secure. Ce réglage autorise l'envoi dans les requêtes intersites, il doit donc au moins être limité à HTTPS."
+      }
+      question "Quelles conditions impose le préfixe __Host- dans le nom d’un cookie ?" {
+        - "HttpOnly et SameSite=Strict"
+        + "Secure, Path=/ et aucun attribut Domain"
+        - "Domain égal au nom d'hôte et Max-Age inférieur à une heure"
+        - "un nom d'hôte sans sous-domaine"
+        explanation: "Un navigateur qui gère les préfixes rejette un cookie __Host- sans Secure, sans Path=/ ou avec un Domain. Le cookie reste ainsi attaché à un seul hôte. HttpOnly n'est pas exigé par ce préfixe : il faut l'ajouter soi-même."
+      }
+      question "https://www.lab.test et https://api.lab.test sont :" {
+        - "la même origine et le même site"
+        + "deux origines différentes mais le même site"
+        - "deux sites différents mais la même origine"
+        - "deux origines et deux sites différents"
+        explanation: "L'origine compare schéma, hôte et port : les hôtes diffèrent. Le site compare le schéma et le domaine enregistrable (lab.test) : il est identique."
+      }
+      question "Un utilisateur connecté reçoit 403 en ouvrant /admin. Que signifie ce code ?" {
+        - "la page n'existe pas"
+        - "il doit se connecter"
+        + "il est identifié mais n'a pas le droit d'accéder à cette ressource"
+        - "le serveur a planté"
+        explanation: "401 signale l'absence d'authentification valide, 403 un refus d'autorisation pour un utilisateur connu. 404 signifie introuvable, 500 une erreur du serveur."
+      }
+      question "Pourquoi un champ caché (input type=hidden) contenant le prix ne protège-t-il rien ?" {
+        - "parce qu'il n'est pas envoyé au serveur"
+        + "parce que l'utilisateur peut modifier toute la requête avant envoi"
+        - "parce que les navigateurs le chiffrent"
+        - "parce qu'il est limité à 255 caractères"
+        explanation: "Tout ce qui vient du client est contrôlable : outils de développement, proxy d'interception ou curl permettent de changer n'importe quel champ. Le prix doit être recalculé côté serveur."
+      }
+      question "Quelle commande publie Juice Shop uniquement sur la boucle locale ?" {
+        - "docker run --rm -p 3000:3000 bkimminich/juice-shop"
+        + "docker run --rm -p 127.0.0.1:3000:3000 bkimminich/juice-shop"
+        - "docker run --rm --network host bkimminich/juice-shop"
+        - "docker run --rm -p 0.0.0.0:3000:3000 bkimminich/juice-shop"
+        explanation: "Préciser 127.0.0.1 devant le port limite l'écoute à la machine elle-même. Sans adresse, ou avec 0.0.0.0 ou le réseau host, l'application vulnérable devient joignable depuis le réseau."
+      }
+      question "Si Set-Cookie contient à la fois Expires et Max-Age, lequel s’applique ?" {
+        - "Expires, car il est plus précis"
+        + "Max-Age"
+        - "le plus court des deux"
+        - "aucun, le cookie est rejeté"
+        explanation: "Quand les deux sont présents, Max-Age a la priorité. Sans aucun des deux, c'est un cookie de session, effacé à la fermeture du navigateur."
+      }
+      question "Quelle peine prévoit l’article 323-1 du Code pénal pour un accès frauduleux simple à un STAD ?" {
+        - "un simple avertissement"
+        - "1 an et 15 000 € d'amende"
+        + "3 ans d'emprisonnement et 100 000 € d'amende"
+        - "10 ans et 1 000 000 € d'amende"
+        explanation: "Depuis la loi du 24 janvier 2023, l'accès ou le maintien frauduleux est puni de 3 ans et 100 000 €, davantage en cas de modification de données ou contre un système de l'État. D'où la règle : on teste seulement ses propres environnements."
+      }
+      question "La politique de même origine empêche un script de evil.test :" {
+        - "d'envoyer une requête vers banque.test"
+        + "de lire la réponse d'une requête vers banque.test"
+        - "d'afficher une image hébergée sur banque.test"
+        - "de soumettre un formulaire vers banque.test"
+        explanation: "La same-origin policy bloque la lecture des réponses d'une autre origine, pas l'envoi. Un formulaire ou une image peuvent toujours viser un autre site, avec ses cookies selon SameSite : c'est la base du CSRF."
+      }
+      question "Quelle méthode HTTP est adaptée pour une action qui supprime une donnée ?" {
+        - "GET, car elle est la plus simple"
+        - "HEAD"
+        + "POST ou DELETE, accompagnée d'une protection anti-CSRF"
+        - "OPTIONS"
+        explanation: "GET, HEAD et OPTIONS sont des méthodes sûres qui ne doivent rien modifier. Une suppression passe par POST ou DELETE, avec un jeton anti-CSRF ou une vérification de l'origine."
+      }
+    }
+  }
+
+  module "owasp-top10-2025" {
+    title: "Chapitre 2 : le Top 10 OWASP 2025, risque par risque"
+    duration: "40min"
+    content: """
+### Qu'est-ce que l'OWASP Top 10 ?
+L'**OWASP** (Open Worldwide Application Security Project) est une fondation à but non lucratif qui publie des guides, des outils et des applications d'entraînement en accès libre. Son document le plus connu, le **Top 10**, classe les dix catégories de risques les plus importantes pour les applications web. Il est construit à partir de données de tests fournies par des entreprises et d'une enquête auprès des professionnels.
+
+Ce n'est pas une norme ni une liste exhaustive : c'est un **document de sensibilisation**. Pour vérifier une application de façon complète, l'OWASP propose un autre référentiel, l'**ASVS** (Application Security Verification Standard). Le Top 10 sert de vocabulaire commun : quand un rapport d'audit écrit « A01 », tout le monde comprend « contrôle d'accès défaillant ».
+
+Chaque catégorie regroupe plusieurs **CWE** (Common Weakness Enumeration), le catalogue de faiblesses logicielles tenu par MITRE. Exemple : CWE-89 = injection SQL, CWE-79 = XSS, CWE-918 = SSRF. Une faille précise dans un produit précis reçoit, elle, un identifiant **CVE** (Common Vulnerabilities and Exposures), par exemple CVE-2021-44228 pour Log4Shell.
+
+### La liste 2025
+La version actuelle date de 2025 et remplace celle de 2021.
+
+| Rang | Catégorie (nom officiel) | En une phrase |
+|---|---|---|
+| A01 | Broken Access Control | un utilisateur agit en dehors de ses droits |
+| A02 | Security Misconfiguration | réglages par défaut, mode debug, en-têtes absents |
+| A03 | Software Supply Chain Failures | dépendances vulnérables ou piégées, chaîne de build non maîtrisée |
+| A04 | Cryptographic Failures | données sensibles mal chiffrées ou mal hachées |
+| A05 | Injection | une donnée devient du code (SQL, commande, HTML/JS…) |
+| A06 | Insecure Design | le défaut est dans la conception, pas dans le code |
+| A07 | Authentication Failures | identification et sessions mal gérées |
+| A08 | Software or Data Integrity Failures | code ou données acceptés sans vérifier leur intégrité |
+| A09 | Security Logging and Alerting Failures | attaques non journalisées ou sans alerte |
+| A10 | Mishandling of Exceptional Conditions | erreurs et cas imprévus mal gérés |
+
+Ce qui change par rapport à 2021 :
+• **A02 Security Misconfiguration** monte de la 5e à la 2e place ;
+• **A03 Software Supply Chain Failures** élargit l'ancienne catégorie « composants vulnérables et obsolètes » à toute la chaîne : dépendances, outils de build, dépôts de paquets, intégration continue ;
+• le **SSRF**, qui avait sa propre catégorie en 2021, est désormais rangé dans **A01** (c'est un problème d'accès à des ressources internes) ;
+• **A10 Mishandling of Exceptional Conditions** est une catégorie nouvelle : messages d'erreur bavards, exceptions non gérées, systèmes qui « échouent ouverts » ;
+• A07 et A09 sont renommées (« Authentication Failures », « Security Logging and Alerting Failures »), pour insister sur l'alerte et pas seulement sur l'écriture de journaux.
+
+### Les dix risques en détail
+Pour chaque risque : le **principe**, un **exemple** concret, la **défense** principale. Les chapitres suivants reprennent les plus importants avec du code.
+
+**A01 Broken Access Control.** Principe : le serveur ne vérifie pas, à chaque requête, que l'utilisateur a le droit d'agir sur cette ressource. Exemple : `GET /facture/1042` affiche la facture d'un autre client si l'on change le numéro (IDOR). Défense : refus par défaut, contrôle côté serveur centralisé, vérification du propriétaire de chaque objet (chapitre 6).
+
+**A02 Security Misconfiguration.** Principe : l'application est sûre en théorie mais mal réglée. Exemple : Flask lancé en production avec `--debug`, un dossier `.git/` accessible par le web, un compte `admin/admin` laissé actif. Défense : configuration durcie et reproductible, en-têtes de sécurité, rien d'inutile installé (chapitre 8).
+
+**A03 Software Supply Chain Failures.** Principe : ton code dépend de centaines de paquets que tu n'as pas écrits. Exemple : la bibliothèque Java Log4j (Log4Shell, décembre 2021) permettait d'exécuter du code à distance dans des milliers d'applications ; en 2024, la porte dérobée insérée dans xz-utils (CVE-2024-3094) visait les serveurs SSH Linux. Défense : inventaire des dépendances (SBOM), audit automatique, mises à jour suivies, versions verrouillées (chapitre 9).
+
+**A04 Cryptographic Failures.** Principe : une donnée sensible circule ou est stockée sans protection adaptée. Exemple : mots de passe stockés en MD5 sans sel, site encore servi en HTTP. Défense : HTTPS partout (TLS 1.2 ou 1.3), mots de passe hachés avec Argon2id ou bcrypt, aléa issu d'un générateur cryptographique (`secrets` en Python), pas de cryptographie « maison » (chapitre 7).
+
+**A05 Injection.** Principe : une donnée fournie par l'utilisateur est collée dans un langage interprété (SQL, shell, HTML, modèle de page) et change le sens de la commande. Exemple : `' OR 1=1--` dans un champ de connexion. Défense : requêtes préparées, listes d'arguments, échappement selon le contexte (chapitres 3 et 4).
+
+**A06 Insecure Design.** Principe : aucun correctif de code ne répare une mauvaise idée. Exemple : une réinitialisation de mot de passe basée sur une « question secrète » (nom du chien) qu'on trouve sur les réseaux sociaux ; un code promo testable sans limite de tentatives. Défense : modélisation des menaces dès la conception, limites métier (quotas, délais), cas d'abus écrits à côté des cas d'usage.
+
+**A07 Authentication Failures.** Principe : l'attaquant se fait passer pour un utilisateur. Exemple : aucune limite de tentatives, donc attaque par liste de mots de passe déjà fuités (credential stuffing). Défense : limitation des tentatives, double authentification, contrôle des mots de passe compromis, session régénérée à la connexion (chapitre 7).
+
+**A08 Software or Data Integrity Failures.** Principe : l'application fait confiance à du code ou à des données sans vérifier leur origine. Exemple : un cookie contenant un objet Python sérialisé avec `pickle` que le serveur désérialise ; un script JavaScript chargé depuis un CDN sans contrôle d'intégrité. Défense : signatures, sommes de contrôle, attribut `integrity` (SRI), formats de données simples comme JSON (chapitre 9).
+
+**A09 Security Logging and Alerting Failures.** Principe : une attaque qui n'est ni journalisée ni signalée dure des mois. Exemple : 5 000 échecs de connexion par heure sans aucune alerte. Défense : journaliser les événements de sécurité, centraliser, alerter, conserver une durée raisonnable (chapitre 9).
+
+**A10 Mishandling of Exceptional Conditions.** Principe : le programme ne sait pas quoi faire quand quelque chose se passe mal. Exemple : une page d'erreur affiche la requête SQL et la pile d'appels ; un contrôle d'accès dont l'exception est attrapée par un `except: pass` laisse passer tout le monde (échec ouvert, fail open). Défense : gestionnaire d'erreurs global, message générique pour l'utilisateur, détail dans les journaux, transactions annulées en entier, échec fermé (fail closed) (chapitre 9).
+
+### Trois principes qui reviennent partout
+• **Ne jamais faire confiance à l'entrée** : tout ce qui vient du client est suspect, même ce que ton propre JavaScript a « validé ».
+• **Défense en profondeur** : plusieurs barrières indépendantes (requête préparée + compte SQL à droits limités + journalisation).
+• **Moindre privilège** : chaque composant n'a que les droits dont il a besoin (le compte SQL de l'application n'est pas `root`).
+
+### À toi de jouer
+Classe chacune de ces situations dans une catégorie du Top 10 2025, puis propose une défense.
+1. Une API renvoie `{"id": 7, "email": "...", "role": "eleve"}` ; en envoyant `PUT /api/profil` avec `"role": "admin"`, un élève devient administrateur.
+2. La page `/recherche?q=` affiche « Aucun résultat pour » suivi du texte tapé, sans transformation. Un lien piégé exécute du JavaScript chez la victime.
+3. Le site d'une PME utilise une version de WordPress de 2019 avec une extension abandonnée.
+4. Après une erreur de base de données, la page affiche `sqlite3.OperationalError: near "'": syntax error` et le chemin `/home/www/app/app.py`.
+5. Une application de prêt de matériel laisse réserver 500 ordinateurs en une seule requête, ce qui bloque le service pour tout le lycée.
+6. Les mots de passe sont stockés avec `sha256(mot_de_passe)`.
+
+### Correction
+1. **A01** (contrôle d'accès, ici une affectation de masse, mass assignment) : le serveur ne doit accepter que les champs modifiables par l'utilisateur (liste blanche) et vérifier le rôle de celui qui fait la demande.
+2. **A05** (injection, XSS réfléchi) : échapper la donnée selon le contexte HTML, utiliser un moteur de gabarits qui échappe par défaut, ajouter une CSP.
+3. **A03** (chaîne d'approvisionnement, composant obsolète) : inventaire, mise à jour du cœur et des extensions, suppression de l'extension abandonnée.
+4. **A10** (exception mal gérée qui divulgue des informations) et aussi signe probable d'une **A05** : message générique pour l'utilisateur, détail uniquement dans les journaux, et requête préparée pour supprimer la cause.
+5. **A06** (conception non sécurisée) : limite métier (par exemple 2 réservations par personne), contrôle côté serveur.
+6. **A04** (défaillance cryptographique) : SHA-256 est une fonction rapide, conçue pour tester des milliards de valeurs par seconde, sans sel ici. Il faut une fonction lente et salée : Argon2id (ou bcrypt pour un système ancien).
+"""
+
+    quiz {
+      pick: 5
+      question "Quelle catégorie occupe la première place du Top 10 OWASP 2025 ?" {
+        - "Injection"
+        + "Broken Access Control"
+        - "Security Misconfiguration"
+        - "Cryptographic Failures"
+        explanation: "Le contrôle d'accès défaillant reste en tête, comme en 2021. Security Misconfiguration est 2e, l'injection est descendue en 5e position."
+      }
+      question "Dans le Top 10 2025, où est classé le SSRF ?" {
+        - "il a toujours sa propre catégorie A10"
+        + "dans A01 Broken Access Control"
+        - "dans A05 Injection"
+        - "il a été retiré du référentiel"
+        explanation: "En 2021, le SSRF formait la catégorie A10. En 2025, il est rattaché à A01 : l'attaquant accède, par le serveur, à des ressources internes auxquelles il n'a pas droit. La nouvelle A10 traite des conditions exceptionnelles mal gérées."
+      }
+      question "Quelle catégorie est apparue pour la première fois dans la version 2025 ?" {
+        - "Injection"
+        - "Insecure Design"
+        + "Mishandling of Exceptional Conditions"
+        - "Security Misconfiguration"
+        explanation: "A10 Mishandling of Exceptional Conditions est nouvelle : erreurs bavardes, exceptions non gérées, échec ouvert. Insecure Design existait déjà en 2021, les deux autres bien avant."
+      }
+      question "Quelle est la différence entre une CWE et une CVE ?" {
+        - "ce sont deux noms pour la même chose"
+        + "une CWE décrit un type de faiblesse, une CVE identifie une faille précise dans un produit précis"
+        - "une CVE décrit un type de faiblesse, une CWE identifie une faille précise"
+        - "une CWE concerne le matériel, une CVE le logiciel"
+        explanation: "CWE-89 désigne la famille « injection SQL » ; CVE-2021-44228 désigne la faille Log4Shell dans Log4j. Un rapport d'audit utilise les deux."
+      }
+      question "Un développeur stocke les mots de passe avec sha256(mot_de_passe). Quelle catégorie est concernée ?" {
+        - "A05 Injection"
+        + "A04 Cryptographic Failures"
+        - "A09 Security Logging and Alerting Failures"
+        - "A02 Security Misconfiguration"
+        explanation: "C'est un mauvais usage de la cryptographie : une fonction de hachage rapide et sans sel permet de casser les mots de passe par force brute. Il faut Argon2id, scrypt ou bcrypt."
+      }
+      question "Le Top 10 OWASP est :" {
+        - "une norme obligatoire pour tout site français"
+        - "la liste complète de toutes les failles web"
+        + "un document de sensibilisation sur les risques les plus importants"
+        - "un outil d'analyse automatique du code"
+        explanation: "Le Top 10 sert à sensibiliser et à donner un vocabulaire commun. Pour une vérification complète, l'OWASP propose l'ASVS. Ce n'est ni une loi ni un scanner."
+      }
+      question "Une boutique accepte un code promo sans limite de tentatives ; un robot teste tous les codes possibles. Quelle catégorie décrit le mieux le problème ?" {
+        - "A05 Injection"
+        - "A04 Cryptographic Failures"
+        + "A06 Insecure Design"
+        - "A08 Software or Data Integrity Failures"
+        explanation: "Le code fonctionne comme prévu : c'est la conception qui a oublié une limite métier. Un correctif de code isolé ne suffit pas, il faut prévoir quotas et délais dès la conception."
+      }
+      question "Une page d’erreur affiche la requête SQL qui a échoué et le chemin du fichier Python. Quelle catégorie 2025 est la plus directement concernée ?" {
+        - "A07 Authentication Failures"
+        + "A10 Mishandling of Exceptional Conditions"
+        - "A03 Software Supply Chain Failures"
+        - "A01 Broken Access Control"
+        explanation: "Le message d'erreur contenant des informations sensibles (CWE-209) fait partie de A10. Il aide l'attaquant à préparer une injection. L'utilisateur doit voir un message générique, le détail va dans les journaux."
+      }
+      question "Que regroupe la catégorie A03 Software Supply Chain Failures ?" {
+        - "seulement les failles des navigateurs"
+        + "les dépendances vulnérables ou piégées et la chaîne de build et de publication"
+        - "les erreurs de livraison des colis d'une boutique en ligne"
+        - "seulement les mots de passe par défaut"
+        explanation: "A03 élargit l'ancienne catégorie des composants vulnérables à toute la chaîne : bibliothèques, gestionnaires de paquets, outils de build, intégration continue. Log4Shell et xz-utils en sont des exemples."
+      }
+      question "Un contrôle d’accès est écrit ainsi : try: autorise = verifier(user) except Exception: autorise = True. Quel est le défaut ?" {
+        - "aucun, l'exception est gérée"
+        + "en cas d'erreur, l'accès est accordé : le système échoue ouvert"
+        - "le code est trop lent"
+        - "il faudrait attraper ValueError au lieu d'Exception"
+        explanation: "Un contrôle de sécurité doit échouer fermé : en cas de doute ou d'erreur, on refuse. Ici, provoquer une erreur suffit à entrer. C'est un exemple typique de A10."
+      }
+      question "Quel principe consiste à empiler plusieurs barrières indépendantes ?" {
+        - "le moindre privilège"
+        + "la défense en profondeur"
+        - "la sécurité par l'obscurité"
+        - "le refus par défaut"
+        explanation: "La défense en profondeur prévoit qu'une barrière peut céder : requête préparée, compte SQL limité, journalisation et alerte se complètent. Le moindre privilège limite les droits de chaque composant ; c'est l'une des barrières."
+      }
+      question "Un script chargé depuis un CDN externe sans attribut integrity relève surtout de :" {
+        - "A05 Injection"
+        + "A08 Software or Data Integrity Failures"
+        - "A07 Authentication Failures"
+        - "A09 Security Logging and Alerting Failures"
+        explanation: "Si le CDN est compromis, le navigateur exécute un script modifié sans le remarquer. L'attribut integrity (Subresource Integrity) impose une empreinte attendue : c'est un contrôle d'intégrité, au cœur de A08."
+      }
+      question "Quel référentiel OWASP sert à vérifier de façon détaillée la sécurité d’une application ?" {
+        - "le Top 10"
+        + "l'ASVS (Application Security Verification Standard)"
+        - "Juice Shop"
+        - "la liste CVE"
+        explanation: "L'ASVS liste des exigences vérifiables, classées par niveaux. Le Top 10 sensibilise, Juice Shop est une application d'entraînement et la liste CVE est tenue par MITRE, pas par l'OWASP."
+      }
+    }
+  }
+
+  module "injection-sql-commandes" {
+    title: "Chapitre 3 : injection SQL et injection de commande"
+    duration: "40min"
+    content: """
+### Le mécanisme commun
+Une injection se produit quand un programme **fabrique une commande en collant du texte** : une partie vient du développeur (le code), une partie vient de l'utilisateur (la donnée). Si la donnée contient des caractères qui ont un sens pour l'interpréteur (une apostrophe en SQL, un `;` dans un shell), elle sort de son rôle de donnée et devient du code.
+
+La bonne défense n'est pas de « filtrer les caractères dangereux » : on en oublie toujours un. C'est de **séparer le code et les données** dès la construction de la commande. L'interpréteur reçoit d'un côté la structure, de l'autre les valeurs, et ne mélange jamais les deux.
+
+### L'application du labo
+Crée `~/labweb/app.py`. Elle est volontairement vulnérable : ne la mets jamais sur un serveur accessible.
+
+```python
+import sqlite3
+from flask import Flask, request, g
+
+app = Flask(__name__)
+
+def db():
+    if "db" not in g:
+        g.db = sqlite3.connect("lab.db")
+        g.db.row_factory = sqlite3.Row
+    return g.db
+
+@app.get("/recherche")
+def recherche():
+    q = request.args.get("q", "")
+    sql = "SELECT nom, prix FROM produits WHERE nom LIKE '%" + q + "%'"
+    lignes = db().execute(sql).fetchall()
+    return {"resultats": [dict(l) for l in lignes]}
+```
+
+Et une base de test :
+
+```bash
+sqlite3 lab.db "CREATE TABLE produits(nom TEXT, prix REAL);
+CREATE TABLE utilisateurs(login TEXT, mdp TEXT);
+INSERT INTO produits VALUES ('clavier', 19.9), ('souris', 9.5);
+INSERT INTO utilisateurs VALUES ('admin', 'Adm1n-2026'), ('alice', 'Soleil-42');"
+flask --app app run --host 127.0.0.1 --port 5000
+```
+
+### Exploiter (dans le labo seulement)
+Requête normale : `q=souris` donne `... WHERE nom LIKE '%souris%'`.
+
+Requête piégée : `q=' UNION SELECT login, mdp FROM utilisateurs--`. La chaîne construite devient :
+
+```sql
+SELECT nom, prix FROM produits WHERE nom LIKE '%' UNION SELECT login, mdp FROM utilisateurs--%'
+```
+
+L'apostrophe ferme la chaîne, `UNION` ajoute une deuxième requête qui lit la table des comptes, et `--` transforme la fin en commentaire. Le nombre de colonnes doit être le même dans les deux `SELECT` (ici 2) : c'est pour cela qu'un attaquant commence souvent par tester `ORDER BY 1`, `ORDER BY 2`, `ORDER BY 3`… jusqu'à l'erreur.
+
+```bash
+curl -s -G http://127.0.0.1:5000/recherche --data-urlencode "q=' UNION SELECT login, mdp FROM utilisateurs--"
+```
+
+Sur un formulaire de connexion construit de la même façon (`... WHERE login='` + login + `' AND mdp='` + mdp + `'`), le login `admin'--` supprime la vérification du mot de passe.
+
+Les variantes à connaître :
+• **par UNION** : les données volées s'affichent dans la page ;
+• **par erreur** : le message d'erreur de la base révèle des informations ;
+• **à l'aveugle** (blind) : la page ne montre rien, mais répond différemment (vrai ou faux, ou temps de réponse) ; l'attaquant extrait les données caractère par caractère.
+
+### Corriger : la requête préparée
+Une **requête préparée** (prepared statement, requête paramétrée) envoie la structure avec des marqueurs, puis les valeurs à part. La base ne réinterprète jamais une valeur comme du SQL.
+
+```python
+@app.get("/recherche")
+def recherche():
+    q = request.args.get("q", "")
+    lignes = db().execute(
+        "SELECT nom, prix FROM produits WHERE nom LIKE ?",
+        ("%" + q + "%",),
+    ).fetchall()
+    return {"resultats": [dict(l) for l in lignes]}
+```
+
+Le même principe dans d'autres langages :
+
+| Langage / bibliothèque | Marqueur | Exemple |
+|---|---|---|
+| Python `sqlite3` | `?` | `cur.execute("... WHERE id = ?", (id,))` |
+| Python `psycopg` (PostgreSQL) | `%s` | `cur.execute("... WHERE id = %s", (id,))` |
+| PHP PDO | `:nom` ou `?` | `$st = $pdo->prepare("... WHERE id = :id"); $st->execute(['id' => $id]);` |
+| Java JDBC | `?` | `PreparedStatement ps = c.prepareStatement("... WHERE id = ?");` |
+
+Pièges fréquents :
+• `cur.execute(f"... WHERE id = {id}")` ou `"... %s" % id` : c'est de la concaténation déguisée, pas une requête préparée.
+• Les **noms** de tables ou de colonnes (`ORDER BY` choisi par l'utilisateur) ne peuvent pas être des paramètres. On utilise une **liste blanche** : `colonnes = {"nom": "nom", "prix": "prix"}`, puis `colonnes.get(tri, "nom")`.
+• Un ORM (SQLAlchemy, Doctrine, Eloquent) protège tant qu'on n'écrit pas de SQL brut concaténé à l'intérieur.
+• En PHP, désactive l'émulation : `PDO::ATTR_EMULATE_PREPARES => false`, pour que la préparation soit faite par la base.
+
+Défense en profondeur : le compte SQL de l'application n'a que les droits nécessaires (pas de `DROP`, pas d'accès aux autres bases), et les erreurs SQL ne sont jamais affichées à l'utilisateur.
+
+### L'injection de commande
+Même erreur avec le shell. Une page « tester la connectivité » :
+
+```python
+import os
+@app.get("/ping")
+def ping():
+    hote = request.args.get("hote", "")
+    os.system("ping -c 1 " + hote)
+    return "ok"
+```
+
+Avec `hote=127.0.0.1; id`, le shell exécute `ping`, puis `id`. Les séparateurs `;`, `&&`, `|`, `$( )` et les retours à la ligne font tous l'affaire.
+
+Correction en deux temps : **valider** la donnée selon ce qu'elle doit être, puis **ne pas passer par un shell**.
+
+```python
+import ipaddress, subprocess
+@app.get("/ping")
+def ping():
+    try:
+        ip = ipaddress.ip_address(request.args.get("hote", ""))
+    except ValueError:
+        return "adresse invalide", 400
+    r = subprocess.run(["ping", "-c", "1", str(ip)],
+                       capture_output=True, text=True, timeout=5)
+    return {"code": r.returncode}
+```
+
+Avec une **liste d'arguments** et sans `shell=True`, aucun caractère n'est interprété par un shell. La validation reste utile : sans elle, une valeur commençant par `-` pourrait être lue comme une option de `ping` (injection d'argument). Le mieux reste d'éviter d'appeler un programme externe quand une bibliothèque fait le travail.
+
+### À toi de jouer
+1. Dans le labo, exploite `/recherche` pour afficher la table `utilisateurs`, puis corrige la route avec une requête préparée et vérifie que la même requête renvoie maintenant une liste vide.
+2. Corrige cette fonction PHP :
+```php
+$sql = "SELECT * FROM eleves WHERE classe = '" . $_GET['classe'] . "' ORDER BY " . $_GET['tri'];
+$res = $pdo->query($sql);
+```
+3. Corrige cette fonction Python qui compresse un dossier choisi par l'utilisateur : `os.system("tar czf /tmp/archive.tgz " + dossier)`.
+
+### Correction
+1. Après correction, `curl -s -G http://127.0.0.1:5000/recherche --data-urlencode "q=' UNION SELECT login, mdp FROM utilisateurs--"` renvoie `{"resultats":[]}` : la base cherche littéralement un produit dont le nom contient tout ce texte. La recherche normale `q=souris` fonctionne toujours.
+2. La classe devient un paramètre, le tri passe par une liste blanche :
+```php
+$tris = ['nom' => 'nom', 'date' => 'date_naissance'];
+$tri = $tris[$_GET['tri'] ?? 'nom'] ?? 'nom';
+$st = $pdo->prepare("SELECT * FROM eleves WHERE classe = :classe ORDER BY $tri");
+$st->execute(['classe' => $_GET['classe'] ?? '']);
+```
+La variable `$tri` est insérée dans le SQL, mais elle ne peut valoir que `nom` ou `date_naissance`, des valeurs écrites par le développeur.
+3. On vérifie que le dossier existe sous un répertoire autorisé, puis on utilise une liste d'arguments, avec `--` pour marquer la fin des options :
+```python
+from pathlib import Path
+base = Path("/srv/partage").resolve()
+cible = (base / dossier).resolve()
+if not cible.is_relative_to(base) or not cible.is_dir():
+    abort(400)
+subprocess.run(["tar", "czf", "/tmp/archive.tgz", "--", str(cible)], check=True)
+```
+Le module `tarfile` de Python évite même d'appeler un programme externe.
+"""
+
+    codeblock "python" {
+      title: "Requête vulnérable et requête préparée côte à côte"
+      code: """
+# Vulnérable : la donnée est collée dans le SQL
+sql = "SELECT * FROM utilisateurs WHERE login = '" + login + "'"
+cur.execute(sql)
+
+# Correct : la structure et la valeur voyagent séparément
+cur.execute("SELECT * FROM utilisateurs WHERE login = ?", (login,))
+
+# Faux ami : une f-string reste une concaténation
+cur.execute(f"SELECT * FROM utilisateurs WHERE login = '{login}'")
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Pourquoi une requête préparée empêche-t-elle l’injection SQL ?" {
+        - "parce qu'elle supprime les apostrophes"
+        + "parce que la structure de la requête et les valeurs sont transmises séparément"
+        - "parce qu'elle chiffre la requête"
+        - "parce qu'elle est exécutée plus vite"
+        explanation: "La base reçoit d'abord la requête avec des marqueurs, puis les valeurs. Une valeur ne peut donc jamais être interprétée comme du SQL, quels que soient ses caractères. Filtrer les apostrophes est fragile et ne suffit pas."
+      }
+      question "Quel est le rôle de -- à la fin d’une charge comme admin’-- ?" {
+        - "il termine la connexion à la base"
+        + "il met en commentaire la fin de la requête d'origine"
+        - "il soustrait deux valeurs"
+        - "il force une requête préparée"
+        explanation: "En SQL, -- commence un commentaire. Tout ce qui suit, ici la vérification AND mdp='...', est ignoré. L'attaquant se connecte donc sans mot de passe."
+      }
+      question "Lequel de ces appels Python est une vraie requête paramétrée ?" {
+        - "cur.execute(f\"SELECT * FROM t WHERE id = {id}\")"
+        - "cur.execute(\"SELECT * FROM t WHERE id = %s\" % id)"
+        + "cur.execute(\"SELECT * FROM t WHERE id = ?\", (id,))"
+        - "cur.execute(\"SELECT * FROM t WHERE id = \" + str(id))"
+        explanation: "Seul le troisième passe la valeur à part, dans un tuple. Les f-strings, l'opérateur % et la concaténation construisent une chaîne avant l'appel : c'est toujours de la concaténation."
+      }
+      question "Un utilisateur choisit la colonne de tri (ORDER BY). Comment sécuriser ?" {
+        - "en passant le nom de colonne comme paramètre ?"
+        + "avec une liste blanche de colonnes autorisées"
+        - "en mettant le nom de colonne entre apostrophes"
+        - "en limitant la longueur à 10 caractères"
+        explanation: "Les marqueurs ne remplacent que des valeurs, pas des noms de colonnes. On compare donc le choix à une liste écrite par le développeur. Entre apostrophes, le nom deviendrait une chaîne constante et le tri ne marcherait plus."
+      }
+      question "Pour réussir une injection par UNION, quelle condition doit être remplie ?" {
+        - "la base doit être MySQL"
+        + "les deux SELECT doivent renvoyer le même nombre de colonnes"
+        - "l'utilisateur doit être administrateur"
+        - "la requête doit utiliser LIKE"
+        explanation: "UNION combine deux résultats de même structure. L'attaquant teste ORDER BY 1, 2, 3… ou ajoute des NULL pour trouver le bon nombre. Toutes les bases SQL courantes acceptent UNION."
+      }
+      question "La page ne montre jamais de données ni d’erreur, mais met 5 secondes à répondre quand une condition injectée est vraie. De quel type d’injection s’agit-il ?" {
+        - "injection par UNION"
+        - "injection par erreur"
+        + "injection à l'aveugle basée sur le temps"
+        - "injection de commande"
+        explanation: "Dans une injection à l'aveugle, l'attaquant observe un comportement (temps, contenu vrai ou faux) au lieu des données. Il extrait l'information bit par bit. La requête préparée la bloque comme les autres."
+      }
+      question "Le code appelle os.system en concaténant « ping -c 1 » et la variable hote. Quelle valeur d’hôte provoque une injection ?" {
+        - "192.168.1.1"
+        - "lab.test"
+        + "127.0.0.1; cat /etc/passwd"
+        - "::1"
+        explanation: "Le point-virgule sépare deux commandes pour le shell : ping s'exécute, puis cat. Les trois autres valeurs sont des noms ou adresses valides."
+      }
+      question "Quelle est la correction la plus sûre pour lancer ping avec une adresse fournie par l’utilisateur ?" {
+        - "os.system avec la valeur entourée d'apostrophes"
+        - "subprocess.run(\"ping -c 1 \" + hote, shell=True)"
+        + "valider l'adresse avec ipaddress puis subprocess.run([\"ping\", \"-c\", \"1\", str(ip)])"
+        - "supprimer les points-virgules de la valeur"
+        explanation: "La liste d'arguments sans shell supprime toute interprétation des caractères spéciaux, et la validation empêche les valeurs inattendues (comme une option commençant par un tiret). Supprimer quelques caractères laisse passer &&, | ou $( )."
+      }
+      question "Pourquoi valider l’entrée même avec une liste d’arguments sans shell ?" {
+        - "ce n'est pas utile, la liste suffit toujours"
+        + "une valeur commençant par un tiret peut être lue comme une option du programme"
+        - "parce que subprocess plante sur les accents"
+        - "pour accélérer l'exécution"
+        explanation: "Sans shell, pas d'injection de commande, mais une injection d'argument reste possible : une valeur comme -f ou --output=... change le comportement du programme appelé. Valider le format et utiliser -- en fin d'options l'évite."
+      }
+      question "En PHP avec PDO, quel réglage garantit que la préparation est faite par la base et non simulée ?" {
+        - "PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT"
+        + "PDO::ATTR_EMULATE_PREPARES => false"
+        - "PDO::ATTR_PERSISTENT => true"
+        - "PDO::ATTR_AUTOCOMMIT => false"
+        explanation: "Par défaut, PDO peut émuler les requêtes préparées côté PHP. Avec ATTR_EMULATE_PREPARES à false, la préparation est réelle côté serveur de base de données. ERRMODE_SILENT masquerait au contraire les erreurs."
+      }
+      question "Quelle mesure relève de la défense en profondeur contre l’injection SQL ?" {
+        - "afficher les erreurs SQL pour corriger plus vite"
+        + "donner au compte SQL de l'application seulement les droits dont elle a besoin"
+        - "renommer la table utilisateurs en u_x"
+        - "interdire la lettre a dans les formulaires"
+        explanation: "Si une injection passe malgré tout, un compte sans droit DROP ni accès aux autres bases limite les dégâts. Renommer une table est de la sécurité par l'obscurité, et afficher les erreurs aide l'attaquant."
+      }
+      question "Une application utilise un ORM mais construit un filtre text() en concaténant la variable nom dans la chaîne SQL. Est-elle protégée ?" {
+        - "oui, l'ORM protège toujours"
+        + "non, le SQL brut concaténé reste injectable"
+        - "oui, si la base est PostgreSQL"
+        - "non, les ORM sont toujours vulnérables"
+        explanation: "Un ORM protège quand on utilise ses méthodes ou ses paramètres liés. Du SQL brut fabriqué par concaténation à l'intérieur reste vulnérable. Avec text(), on utilise des paramètres nommés : text(\"nom = :nom\")."
+      }
+    }
+  }
+
+  module "xss-echappement" {
+    title: "Chapitre 4 : XSS et échappement selon le contexte"
+    duration: "40min"
+    content: """
+### Le principe
+Le **XSS** (cross-site scripting, CWE-79) est une injection dans la page HTML : une donnée de l'utilisateur est insérée dans la page sans transformation, et le navigateur de la **victime** l'exécute comme du code. Le script tourne alors dans l'origine du site attaqué : il peut lire la page, envoyer des requêtes avec la session de la victime, modifier un formulaire, afficher une fausse demande de mot de passe.
+
+Trois formes :
+| Type | Où est stockée la charge | Exemple |
+|---|---|---|
+| Réfléchi (reflected) | dans l'URL, renvoyée tout de suite | `/recherche?q=<script>...` envoyé par lien piégé |
+| Stocké (stored) | dans la base, affiché à tous | commentaire, pseudo, nom de fichier |
+| Basé sur le DOM (DOM-based) | traité par le JavaScript de la page | `element.innerHTML = location.hash` |
+
+Le XSS stocké est le plus grave : chaque visiteur de la page est touché, y compris les administrateurs.
+
+### Exemple dans le labo
+Ajoute cette route à `app.py` :
+
+```python
+@app.get("/bonjour")
+def bonjour():
+    nom = request.args.get("nom", "")
+    return "<h1>Bonjour " + nom + "</h1>"
+```
+
+Ouvre `http://127.0.0.1:5000/bonjour?nom=<img src=x onerror=alert(document.domain)>` : une boîte s'affiche avec `127.0.0.1`. La balise `<script>` n'est pas nécessaire : n'importe quel attribut d'événement (`onerror`, `onload`, `onfocus`) suffit. Afficher `document.domain` plutôt qu'un simple `alert(1)` prouve dans quelle origine le code s'exécute.
+
+### Corriger : échapper à la sortie
+On ne « nettoie » pas l'entrée au moment où elle arrive. On **échappe à la sortie**, au moment de l'insérer, selon l'endroit où elle va. En HTML, échapper veut dire remplacer les caractères spéciaux par des entités :
+
+| Caractère | Entité |
+|---|---|
+| `&` | `&amp;` |
+| `<` | `&lt;` |
+| `>` | `&gt;` |
+| `"` | `&#34;` ou `&quot;` |
+| `'` | `&#39;` |
+
+```python
+from markupsafe import escape
+@app.get("/bonjour")
+def bonjour():
+    return "<h1>Bonjour " + str(escape(request.args.get("nom", ""))) + "</h1>"
+```
+
+Mieux : utiliser un **moteur de gabarits** qui échappe par défaut. Flask active l'échappement automatique de Jinja pour les fichiers `.html`, `.htm`, `.xml`, `.xhtml` et `.svg`. Le filtre `|safe` (ou `Markup()`) désactive cette protection : chaque `|safe` est un endroit à relire. En PHP, on utilise `htmlspecialchars($v, ENT_QUOTES, 'UTF-8')` ; Twig et Blade échappent par défaut.
+
+### Le contexte change tout
+L'échappement HTML protège le **contenu** d'une balise et un attribut **entre guillemets**. Ailleurs, il ne suffit pas :
+
+| Contexte | Risque | Défense |
+|---|---|---|
+| `<p>{{ v }}</p>` | balise injectée | échappement HTML (automatique) |
+| `<input value="{{ v }}">` | sortie de l'attribut | échappement HTML + guillemets |
+| `<input value={{ v }}>` (sans guillemets) | `x onfocus=alert(1) autofocus` | toujours mettre des guillemets |
+| `<a href="{{ url }}">` | `javascript:alert(1)` | n'accepter que `http:` et `https:` |
+| `<script>var n = '{{ v }}';</script>` | sortie de la chaîne JS | `{{ v|tojson }}` ou attribut `data-` |
+| `style="{{ v }}"` | injection CSS | ne pas y mettre de données utilisateur |
+
+L'exemple du lien est classique : Jinja échappe `javascript:alert(1)` sans rien y changer, puisque ce texte ne contient aucun caractère spécial HTML. Il faut vérifier le schéma de l'URL côté serveur.
+
+### Le XSS dans le JavaScript de la page
+Côté navigateur, les « puits » (sinks) dangereux sont ceux qui interprètent du HTML ou du code : `innerHTML`, `outerHTML`, `document.write`, `insertAdjacentHTML`, `eval`, `setTimeout` avec une chaîne, et l'attribut `href` d'un lien. Pour afficher du texte, on utilise `textContent`, qui n'interprète rien.
+
+```javascript
+// Vulnérable : #<img src=x onerror=alert(1)> s'exécute
+document.getElementById("titre").innerHTML = decodeURIComponent(location.hash.slice(1));
+// Correct
+document.getElementById("titre").textContent = decodeURIComponent(location.hash.slice(1));
+```
+
+### Quand il faut accepter du HTML
+Un éditeur de texte riche (forum, ENT) doit garder `<b>` ou `<a>`. On ne l'échappe pas : on le **nettoie** avec une bibliothèque éprouvée qui garde une liste blanche de balises et d'attributs : DOMPurify côté navigateur, `nh3` en Python (la bibliothèque `bleach` est dépréciée depuis 2023). Jamais d'expression régulière maison.
+
+### L'injection de gabarit côté serveur
+Une variante plus grave : `render_template_string("Bonjour " + nom)`. Ici, la donnée devient du **code Jinja**. Avec `nom={{7*7}}`, la page affiche `Bonjour 49` ; une charge plus élaborée exécute des commandes sur le serveur (SSTI, server-side template injection). Correction : un gabarit fixe et la donnée en variable, `render_template_string("Bonjour {{ nom }}", nom=nom)`.
+
+### Les barrières supplémentaires
+• `HttpOnly` sur le cookie de session : le script ne peut pas le lire. Il peut quand même agir à la place de la victime dans la page, donc ce n'est pas une correction.
+• Une **CSP** (Content-Security-Policy) qui interdit les scripts en ligne : même si une injection passe, le navigateur refuse de l'exécuter (chapitre 8).
+• Le bon `Content-Type` : une API JSON répond en `application/json`, jamais en `text/html`.
+
+### À toi de jouer
+1. Dans le labo, vérifie le XSS de `/bonjour`, puis réécris la route avec un gabarit Jinja `templates/bonjour.html` et `render_template`. Teste à nouveau.
+2. Trouve les trois failles dans ce gabarit Jinja et corrige-les :
+```html
+<a href="{{ profil.site }}">Site perso</a>
+<input name="ville" value={{ profil.ville }}>
+<div class="bio">{{ profil.bio|safe }}</div>
+```
+3. Ce code affiche la réponse d'une API de commentaires. Corrige-le : `liste.innerHTML += "<li>" + c.auteur + " : " + c.texte + "</li>";`
+
+### Correction
+1. `templates/bonjour.html` contient `<h1>Bonjour {{ nom }}</h1>` et la route fait `return render_template("bonjour.html", nom=request.args.get("nom", ""))`. Le code source de la page montre alors `&lt;img src=x onerror=alert(document.domain)&gt;` : le texte s'affiche, rien ne s'exécute.
+2. Le lien accepte `javascript:` : vérifier côté serveur que l'URL commence par `https://` ou `http://` (avec `urllib.parse.urlsplit(url).scheme in ("http", "https")`), sinon ne pas afficher le lien. L'attribut `value` n'a pas de guillemets : écrire `value="{{ profil.ville }}"`. La biographie est marquée `|safe` : retirer `|safe`, ou si le HTML est voulu, la nettoyer à l'enregistrement avec `nh3.clean(bio)` et garder `|safe` seulement sur ce contenu nettoyé.
+3. Créer les éléments et utiliser `textContent` :
+```javascript
+const li = document.createElement("li");
+li.textContent = c.auteur + " : " + c.texte;
+liste.appendChild(li);
+```
+"""
+
+    codeblock "python" {
+      title: "Échappement explicite, gabarit et contexte JavaScript"
+      code: """
+from markupsafe import escape
+from flask import render_template_string
+
+print(escape('<img src=x onerror=alert(1)>'))
+# &lt;img src=x onerror=alert(1)&gt;
+
+# Gabarit fixe, donnée en variable : échappée automatiquement
+render_template_string("<p>{{ nom }}</p>", nom=nom)
+
+# Donnée dans un script : tojson produit un littéral JavaScript sûr
+render_template_string("<script>const nom = {{ nom|tojson }};</script>", nom=nom)
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Dans quel navigateur s’exécute le code d’une attaque XSS ?" {
+        - "dans celui de l'attaquant seulement"
+        + "dans celui de la victime, dans l'origine du site vulnérable"
+        - "sur le serveur web"
+        - "dans la base de données"
+        explanation: "Le XSS injecte du code dans la page que reçoit la victime. Il s'exécute avec les droits de l'origine du site : il peut agir avec la session de la victime. L'exécution sur le serveur correspond plutôt à la SSTI ou à l'injection de commande."
+      }
+      question "Quel type de XSS touche tous les visiteurs d’une page de forum ?" {
+        - "réfléchi"
+        + "stocké"
+        - "basé sur le DOM"
+        - "SSTI"
+        explanation: "La charge est enregistrée en base, puis affichée à chaque lecture du message. Le XSS réfléchi exige que chaque victime ouvre un lien piégé."
+      }
+      question "Quelle chaîne est le résultat de l’échappement HTML de <b> ?" {
+        - "%3Cb%3E"
+        + "&lt;b&gt;"
+        - "\\u003cb\\u003e"
+        - "<b>"
+        explanation: "En HTML, < devient &lt; et > devient &gt;. %3C est un encodage d'URL et \\u003c un échappement JavaScript : chacun correspond à un autre contexte."
+      }
+      question "Le gabarit contient un lien dont l’attribut href vaut {{ url }}, avec l’échappement automatique. Quelle valeur reste dangereuse ?" {
+        - "<script>alert(1)</script>"
+        + "javascript:alert(1)"
+        - "\"><img src=x onerror=alert(1)>"
+        - "https://example.com"
+        explanation: "javascript:alert(1) ne contient aucun caractère HTML spécial : l'échappement le laisse intact, et un clic exécute le code. Il faut vérifier côté serveur que le schéma est http ou https. Les deux premières charges avec < ou guillemets sont neutralisées par l'échappement."
+      }
+      question "Pourquoi <input value={{ v }}> sans guillemets est-il vulnérable même avec l’échappement automatique ?" {
+        - "les navigateurs ignorent value sans guillemets"
+        + "un espace suffit pour ajouter un attribut comme onfocus, et l'espace n'est pas échappé"
+        - "Jinja n'échappe pas dans les attributs"
+        - "il ne l'est pas"
+        explanation: "Sans guillemets, la valeur s'arrête au premier espace. x onfocus=alert(1) autofocus ajoute un gestionnaire d'événement sans utiliser < > ou guillemet. Il faut toujours entourer les attributs de guillemets."
+      }
+      question "En JavaScript, quelle propriété affiche une donnée comme du texte sans l’interpréter ?" {
+        - "innerHTML"
+        - "outerHTML"
+        + "textContent"
+        - "insertAdjacentHTML"
+        explanation: "textContent insère du texte brut : < reste un caractère. innerHTML, outerHTML et insertAdjacentHTML analysent le HTML et exécutent les gestionnaires d'événements injectés."
+      }
+      question "Que révèle l’affichage de 49 après avoir envoyé {{7*7}} dans un champ ?" {
+        - "un XSS réfléchi"
+        + "une injection de gabarit côté serveur (SSTI)"
+        - "une injection SQL"
+        - "un comportement normal de Jinja"
+        explanation: "Le serveur a évalué l'expression : la donnée est devenue du code de gabarit. C'est plus grave qu'un XSS, car cela peut mener à l'exécution de commandes sur le serveur. Avec un gabarit fixe et une variable, on verrait le texte {{7*7}}."
+      }
+      question "Que fait le filtre |safe dans un gabarit Jinja ?" {
+        - "il nettoie le HTML dangereux"
+        + "il désactive l'échappement automatique pour cette valeur"
+        - "il chiffre la valeur"
+        - "il vérifie le schéma des URL"
+        explanation: "|safe indique à Jinja que la valeur est déjà sûre : elle est insérée telle quelle. Sur une donnée utilisateur non nettoyée, c'est un XSS. Chaque |safe doit être justifié."
+      }
+      question "Un forum doit conserver le gras et les liens des messages. Que faut-il faire ?" {
+        - "échapper tout le HTML"
+        - "supprimer les balises script avec une expression régulière"
+        + "nettoyer le HTML avec une bibliothèque à liste blanche comme DOMPurify ou nh3"
+        - "afficher le message dans une balise pre"
+        explanation: "L'échappement retirerait la mise en forme voulue. Les expressions régulières maison ratent des variantes (onerror, svg, encodages). Une bibliothèque de nettoyage garde seulement les balises et attributs autorisés."
+      }
+      question "Le cookie de session est HttpOnly. Une faille XSS est-elle alors sans danger ?" {
+        - "oui, la session ne peut plus être volée"
+        + "non, le script peut toujours envoyer des requêtes et modifier la page au nom de la victime"
+        - "oui, car le navigateur bloque le script"
+        - "non, car HttpOnly n'existe que sur HTTPS"
+        explanation: "HttpOnly empêche seulement la lecture du cookie par document.cookie. Le script injecté agit dans la page : il peut changer l'e-mail du compte, lire des données, afficher un faux formulaire. HttpOnly limite les dégâts, il ne corrige pas."
+      }
+      question "Comment insérer une donnée dans un bloc script d’un gabarit Jinja ?" {
+        - "var n = '{{ nom }}';"
+        + "const n = {{ nom|tojson }};"
+        - "var n = {{ nom|safe }};"
+        - "var n = \"{{ nom|e }}\";"
+        explanation: "tojson produit un littéral JavaScript valide et échappe les caractères qui permettraient de sortir de la chaîne ou de fermer la balise script. L'échappement HTML ne protège pas le contexte JavaScript, et |safe supprime toute protection."
+      }
+      question "Quel principe résume la défense contre le XSS ?" {
+        - "filtrer les mots script et alert à l'entrée"
+        + "échapper à la sortie selon le contexte d'insertion"
+        - "chiffrer toutes les données en base"
+        - "interdire les caractères accentués"
+        explanation: "Les listes noires à l'entrée sont contournées (balise img, majuscules, encodages). On échappe au moment d'afficher, de la façon qui convient au contexte : contenu HTML, attribut, URL ou JavaScript."
+      }
+      question "Une API renvoie un message d’erreur contenant la saisie de l’utilisateur. Quel en-tête évite qu’il soit interprété comme une page HTML ?" {
+        - "Content-Type: text/html"
+        + "Content-Type: application/json, avec X-Content-Type-Options: nosniff"
+        - "Cache-Control: no-store"
+        - "Access-Control-Allow-Origin: *"
+        explanation: "Avec le bon type et nosniff, le navigateur ne traite pas la réponse comme du HTML, même si elle contient des balises. Cache-Control gère le cache et Access-Control-Allow-Origin le partage entre origines."
+      }
+    }
+  }
+
+  module "csrf" {
+    title: "Chapitre 5 : CSRF, la requête envoyée à ton insu"
+    duration: "30min"
+    content: """
+### Le principe
+Le **CSRF** (cross-site request forgery, falsification de requête intersite, CWE-352) exploite un comportement normal du navigateur : quand une page envoie une requête vers un site, le navigateur y joint les cookies de ce site. Une page malveillante peut donc déclencher, depuis le navigateur d'une victime connectée, une action sur un autre site : changer l'adresse e-mail du compte, virer de l'argent, supprimer un élève.
+
+L'attaquant ne voit pas la réponse (la politique de même origine l'en empêche, chapitre 1). Il n'en a pas besoin : seul compte l'**effet** de la requête.
+
+Conditions pour qu'une attaque CSRF marche :
+• une action intéressante déclenchée par une requête ;
+• une authentification portée seulement par un cookie (ou une authentification HTTP gérée par le navigateur) ;
+• aucun paramètre imprévisible pour l'attaquant.
+
+### Exemple dans le labo
+Ajoute une route qui change l'e-mail de l'utilisateur connecté :
+
+```python
+from flask import session
+app.secret_key = "labo-seulement"   # clé de démonstration, jamais en production
+
+@app.get("/connexion-test")
+def connexion_test():
+    session["user"] = "alice"   # connexion simulée pour le labo
+    session["user_id"] = 1
+    session["role"] = "eleve"
+    return "connecté en tant qu'alice"
+
+@app.post("/compte/email")
+def changer_email():
+    if "user" not in session:
+        return "non connecté", 401
+    # ... enregistre request.form["email"] pour session["user"]
+    return "e-mail modifié"
+```
+
+La page de l'attaquant, `attaque.html`, servie depuis un autre site :
+
+```html
+<form id="f" action="http://127.0.0.1:5000/compte/email" method="post">
+  <input type="hidden" name="email" value="pirate@lab.test">
+</form>
+<script>document.getElementById("f").submit();</script>
+```
+
+Pour que le test soit réellement « intersite », sers-la sous un autre nom : `127.0.0.1` et `localhost` sont deux sites différents, alors que deux ports d'un même hôte forment le **même site** (le port ne compte pas dans la notion de site).
+
+```bash
+mkdir -p ~/labweb/attaquant && cd ~/labweb/attaquant
+python3 -m http.server 8000 --bind 127.0.0.1
+# puis ouvrir http://localhost:8000/attaque.html dans le navigateur où tu es connecté au labo
+```
+
+### Défense 1 : le jeton anti-CSRF
+Le serveur place dans chaque formulaire un **jeton** aléatoire lié à la session et le vérifie à la réception. La page de l'attaquant ne peut pas le connaître : elle ne peut pas lire les pages du site (même origine).
+
+Avec Flask-WTF :
+
+```python
+from flask_wtf.csrf import CSRFProtect
+csrf = CSRFProtect(app)   # vérifie toutes les requêtes POST, PUT, PATCH, DELETE
+```
+
+```html
+<form method="post" action="/compte/email">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input name="email" type="email">
+  <button>Enregistrer</button>
+</form>
+```
+
+Sans jeton valide, la requête est refusée avec une erreur 400 (« The CSRF token is missing. »). Django, Symfony et Laravel intègrent ce mécanisme par défaut. Pour une API appelée en JavaScript, on envoie le jeton dans un en-tête (Flask-WTF lit l'en-tête `X-CSRFToken`).
+
+### Défense 2 : SameSite
+Avec `SameSite=Lax`, le navigateur n'envoie pas le cookie dans un `POST` venant d'un autre site ; il l'envoie seulement lors d'une navigation de premier niveau avec une méthode sûre (clic sur un lien en `GET`). Avec `Strict`, jamais depuis un autre site, même un lien : l'utilisateur qui arrive depuis un courriel n'est pas reconnu.
+
+Limites :
+• SameSite ne protège pas entre sous-domaines d'un même site : un `blog.lycee.test` compromis peut viser `ent.lycee.test` ;
+• une action déclenchée par `GET` reste vulnérable en `Lax` : encore une raison de ne jamais modifier de données en `GET` ;
+• tous les navigateurs n'appliquent pas `Lax` par défaut, et Chrome tolère pendant 2 minutes un `POST` intersite pour un cookie sans attribut `SameSite` qui vient d'être posé.
+
+SameSite est donc une **barrière supplémentaire**, pas un remplacement du jeton.
+
+### Défense 3 : vérifier l'origine de la requête
+Les navigateurs récents ajoutent des en-têtes que JavaScript ne peut pas falsifier :
+• `Origin: http://localhost:8000` sur les requêtes `POST` ;
+• `Sec-Fetch-Site` : `same-origin`, `same-site`, `cross-site` ou `none` (saisie directe de l'URL).
+
+Le serveur peut refuser une action dont `Sec-Fetch-Site` vaut `cross-site`, ou dont l'`Origin` ne figure pas dans sa liste. C'est simple à ajouter et efficace en complément.
+
+### Ce qui ne protège pas
+• Vérifier le `Referer` seul : il peut être absent (politique de référent), donc il faut décider quoi faire dans ce cas.
+• Exiger `POST` : un formulaire auto-soumis envoie un `POST`.
+• CORS : il règle qui peut **lire** une réponse, pas qui peut **envoyer** une requête simple.
+• Un XSS sur le site : un script injecté lit le jeton dans la page. Le jeton ne protège que si le site est sans XSS.
+
+Pour les actions sensibles (changer de mot de passe, d'e-mail, valider un paiement), on demande en plus une **réauthentification** : le mot de passe actuel ou un code de double authentification.
+
+### À toi de jouer
+1. Reproduis l'attaque dans le labo : ouvre `http://127.0.0.1:5000/connexion-test`, puis ouvre `http://localhost:8000/attaque.html`. L'e-mail est-il modifié ? Ajoute `SESSION_COOKIE_SAMESITE="Lax"` dans la configuration, reconnecte-toi et recommence. Que constates-tu ?
+2. Ajoute Flask-WTF et le jeton au formulaire légitime. Vérifie que le formulaire normal marche et que la page d'attaque reçoit une erreur 400.
+3. Une application de vie scolaire supprime une absence par `GET /absences/supprimer/123`. Le cookie est en `SameSite=Lax`. Est-elle protégée ? Corrige.
+
+### Correction
+1. Sans `SameSite` explicite, le résultat dépend du navigateur : Firefox envoie le cookie et l'attaque réussit ; Chrome applique `Lax` par défaut mais peut laisser passer la requête dans les 2 minutes qui suivent la connexion. Avec `SESSION_COOKIE_SAMESITE="Lax"`, le cookie n'est plus joint au `POST` venant de `localhost` : le serveur répond 401 « non connecté ». Le test montre pourquoi il faut écrire l'attribut.
+2. Après `pip install flask-wtf`, `CSRFProtect(app)` et le champ caché, le formulaire de l'application fonctionne ; la page d'attaque obtient `400 Bad Request` avec `The CSRF token is missing.` Note que `CSRFProtect` exige une `secret_key`.
+3. Non : en `Lax`, le cookie est envoyé lors d'une navigation de premier niveau en `GET`. Un simple lien piégé dans un message suffit. Correction : passer l'action en `POST` (ou `DELETE`), avec un jeton anti-CSRF, et vérifier que l'utilisateur a le droit de supprimer cette absence (chapitre 6).
+"""
+
+    codeblock "python" {
+      title: "Refuser les requêtes intersites sur les actions"
+      code: """
+from flask import request, abort
+
+@app.before_request
+def bloquer_intersite():
+    if request.method in ("POST", "PUT", "PATCH", "DELETE"):
+        site = request.headers.get("Sec-Fetch-Site")
+        if site == "cross-site":
+            abort(403)
+        origine = request.headers.get("Origin")
+        if origine and origine not in ("https://ent.lycee.test",):
+            abort(403)
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Sur quel comportement du navigateur repose une attaque CSRF ?" {
+        - "l'exécution de scripts injectés dans la page"
+        + "l'envoi automatique des cookies d'un site dans les requêtes vers ce site, même déclenchées ailleurs"
+        - "la lecture des réponses d'une autre origine"
+        - "la mémorisation des mots de passe"
+        explanation: "Le navigateur joint les cookies du site cible quelle que soit la page qui déclenche la requête. L'attaquant ne lit pas la réponse : la même origine l'en empêche. Le XSS, lui, exécute du code dans la page."
+      }
+      question "Pourquoi l’attaquant ne peut-il pas deviner le jeton anti-CSRF ?" {
+        - "parce que le jeton est chiffré en AES"
+        + "parce qu'il est aléatoire et que sa page ne peut pas lire les pages du site cible"
+        - "parce que le jeton change toutes les secondes"
+        - "parce que le navigateur cache les champs cachés"
+        explanation: "Le jeton est imprévisible et figure seulement dans les pages du site. La politique de même origine empêche la page de l'attaquant de les lire. Un XSS sur le site lève cette barrière."
+      }
+      question "Avec SameSite=Lax, dans quel cas le cookie est-il envoyé depuis un autre site ?" {
+        - "dans un POST de formulaire auto-soumis"
+        - "dans une requête fetch en arrière-plan"
+        + "lors d'une navigation de premier niveau en GET, comme un clic sur un lien"
+        - "jamais"
+        explanation: "Lax autorise le cookie pour une navigation de premier niveau avec une méthode sûre. Les POST intersites, les images et les requêtes en arrière-plan n'en ont pas. Strict ne l'envoie jamais depuis un autre site."
+      }
+      question "http://127.0.0.1:5000 et http://127.0.0.1:8000 sont :" {
+        - "deux sites différents"
+        + "le même site, mais deux origines différentes"
+        - "la même origine"
+        - "deux schémas différents"
+        explanation: "Le port compte dans l'origine mais pas dans le site. Pour simuler une attaque intersite dans un labo local, on utilise localhost d'un côté et 127.0.0.1 de l'autre."
+      }
+      question "Une API autorise CORS uniquement pour son propre domaine. Est-elle protégée contre le CSRF ?" {
+        - "oui, CORS bloque toutes les requêtes d'autres origines"
+        + "non, CORS limite la lecture des réponses, pas l'envoi de requêtes simples comme un formulaire"
+        - "oui, si la méthode est POST"
+        - "non, CORS rend toujours le site vulnérable"
+        explanation: "Un formulaire HTML envoie une requête simple sans demande préalable (preflight) : elle arrive au serveur et produit son effet. CORS décide seulement si la page peut lire la réponse."
+      }
+      question "Quelle valeur de Sec-Fetch-Site doit faire refuser une action sensible ?" {
+        - "same-origin"
+        - "none"
+        + "cross-site"
+        - "same-site"
+        explanation: "cross-site signifie que la requête vient d'un autre site, typiquement une page d'attaque. none correspond à une saisie directe de l'URL, same-origin à la page du site lui-même."
+      }
+      question "Une suppression se fait par GET /eleves/supprimer/12 avec un cookie SameSite=Lax. Que penser ?" {
+        - "c'est protégé grâce à Lax"
+        + "c'est vulnérable : un lien suffit, car Lax envoie le cookie en navigation GET"
+        - "c'est protégé si le site est en HTTPS"
+        - "c'est vulnérable uniquement sous Firefox"
+        explanation: "Lax laisse passer les navigations GET. Une action ne doit jamais utiliser GET ; elle passe en POST ou DELETE avec un jeton anti-CSRF."
+      }
+      question "Quelle erreur renvoie Flask-WTF quand un formulaire POST n’a pas de jeton ?" {
+        - "200 avec un avertissement"
+        + "400 Bad Request, avec le message The CSRF token is missing."
+        - "500 Internal Server Error"
+        - "302 vers la page de connexion"
+        explanation: "CSRFProtect rejette la requête avec une erreur 400 et un message explicite. Le traitement de la route n'est pas exécuté."
+      }
+      question "Pourquoi un XSS sur le site rend-il le jeton anti-CSRF inutile ?" {
+        - "parce que le XSS désactive les cookies"
+        + "parce que le script injecté s'exécute dans l'origine du site et peut lire le jeton dans la page"
+        - "parce que le XSS change la méthode HTTP"
+        - "il ne le rend pas inutile"
+        explanation: "Le script injecté est dans la même origine : il lit le formulaire, récupère le jeton et envoie une requête valide. Il faut donc corriger les XSS en premier."
+      }
+      question "Pour une action très sensible comme changer le mot de passe, que faut-il ajouter au jeton anti-CSRF ?" {
+        - "un CAPTCHA à chaque page"
+        + "une réauthentification : mot de passe actuel ou code de double authentification"
+        - "un cookie supplémentaire"
+        - "un en-tête Referer obligatoire"
+        explanation: "La réauthentification prouve que l'utilisateur lui-même est derrière l'action. Même si une protection cède (session volée, CSRF, XSS), l'attaquant ne connaît pas le mot de passe actuel."
+      }
+      question "Un site vérifie seulement le Referer et accepte la requête quand il est absent. Quel est le problème ?" {
+        - "aucun"
+        + "un attaquant peut supprimer le Referer avec une politique de référent et passer le contrôle"
+        - "le Referer contient le mot de passe"
+        - "le Referer est toujours falsifié par les navigateurs"
+        explanation: "Une page peut demander au navigateur de ne pas envoyer de Referer (Referrer-Policy: no-referrer). Si l'absence vaut acceptation, la protection tombe. Le jeton reste la défense principale."
+      }
+      question "Quelle limite de SameSite faut-il garder en tête ?" {
+        - "il ne fonctionne qu'avec HTTP/2"
+        + "il ne protège pas d'une attaque venant d'un sous-domaine du même site"
+        - "il empêche toute connexion depuis un lien de courriel"
+        - "il remplace HttpOnly"
+        explanation: "Deux sous-domaines du même domaine enregistrable forment un même site : un sous-domaine compromis peut envoyer des requêtes avec les cookies Lax ou Strict. Strict, et non Lax, empêche d'être reconnu en arrivant par un lien."
+      }
+    }
+  }
+
+  module "controle-acces" {
+    title: "Chapitre 6 : contrôle d'accès, IDOR, chemins et SSRF"
+    duration: "40min"
+    content: """
+### Authentification et autorisation
+Deux questions différentes, à ne pas confondre :
+• **authentification** : qui es-tu ? (connexion, chapitre 7) ;
+• **autorisation**, ou contrôle d'accès : as-tu le droit de faire **cette** action sur **cet** objet ?
+
+A01 est en tête du Top 10 parce que l'autorisation est écrite à la main, route par route, et qu'il suffit d'en oublier une. Les scanners automatiques la détectent mal : ils ne savent pas que la facture 1042 appartient à quelqu'un d'autre.
+
+Deux directions d'élévation de privilège :
+• **verticale** : un élève accède à une fonction d'enseignant ou d'administrateur ;
+• **horizontale** : un élève accède aux données d'un autre élève, avec le même rôle.
+
+### L'IDOR
+Une **IDOR** (insecure direct object reference, référence directe non sécurisée à un objet, CWE-639) apparaît quand le serveur utilise l'identifiant fourni par le client sans vérifier à qui appartient l'objet.
+
+```python
+@app.get("/bulletin/<int:id>")
+def bulletin(id):
+    if "user" not in session:
+        abort(401)
+    b = db().execute("SELECT * FROM bulletins WHERE id = ?", (id,)).fetchone()
+    return dict(b)
+```
+
+La requête est préparée (pas d'injection), l'utilisateur est connecté… mais en remplaçant `/bulletin/57` par `/bulletin/58`, il lit le bulletin d'un camarade. Correction : lier la recherche au propriétaire.
+
+```python
+    b = db().execute(
+        "SELECT * FROM bulletins WHERE id = ? AND eleve_id = ?",
+        (id, session["user_id"]),
+    ).fetchone()
+    if b is None:
+        abort(404)
+```
+
+Renvoyer `404` plutôt que `403` évite de confirmer que le bulletin 58 existe. Des identifiants aléatoires (UUID) rendent l'énumération plus difficile, mais **ne remplacent pas** la vérification : un identifiant finit toujours par fuiter (lien partagé, journal, capture d'écran).
+
+### Refuser par défaut, contrôler au même endroit
+• Toute route est **interdite par défaut** ; on ouvre explicitement les pages publiques.
+• Le contrôle est **côté serveur**. Masquer le bouton « Administration » dans la page ne protège rien : la requête `GET /admin` reste possible avec `curl`.
+• Le contrôle est **centralisé** (un décorateur, un middleware, une politique) plutôt que réécrit dans chaque route.
+• On vérifie aussi les méthodes : une API qui protège `GET /api/notes/5` mais pas `DELETE /api/notes/5` est vulnérable.
+
+```python
+from functools import wraps
+def role_requis(*roles):
+    def deco(vue):
+        @wraps(vue)
+        def enveloppe(*a, **k):
+            if session.get("role") not in roles:
+                abort(403)
+            return vue(*a, **k)
+        return enveloppe
+    return deco
+
+@app.post("/admin/utilisateurs/<int:id>/supprimer")
+@role_requis("admin")
+def supprimer_utilisateur(id): ...
+```
+
+### L'affectation de masse
+Une API qui fait `utilisateur.update(request.json)` accepte **tous** les champs envoyés, y compris `"role": "admin"` ou `"solde": 9999`. C'est une forme de contrôle d'accès défaillant (mass assignment). On n'accepte que les champs autorisés, listés explicitement :
+
+```python
+CHAMPS_MODIFIABLES = {"prenom", "email", "langue"}
+donnees = {k: v for k, v in request.json.items() if k in CHAMPS_MODIFIABLES}
+```
+
+### La traversée de répertoire
+Une route de téléchargement `send_file(os.path.join("documents", nom))` avec `nom=../../etc/passwd` sort du dossier prévu (path traversal, CWE-22). En Flask, `send_from_directory("documents", nom)` refuse les chemins qui sortent du dossier. Dans le cas général, on **résout** le chemin puis on vérifie qu'il reste dans le dossier autorisé :
+
+```python
+base = Path("documents").resolve()
+cible = (base / nom).resolve()
+if not cible.is_relative_to(base):
+    abort(404)
+```
+
+### Le SSRF
+Le **SSRF** (server-side request forgery, CWE-918) touche les fonctions où le serveur va chercher une URL donnée par l'utilisateur : aperçu de lien, import d'image par URL, webhook. L'attaquant fournit une adresse que lui ne peut pas joindre, mais que le serveur peut :
+• `http://127.0.0.1:8080/admin`, une interface d'administration écoutant seulement en local ;
+• `http://192.168.10.5/`, une machine du réseau interne ;
+• `http://169.254.169.254/latest/meta-data/`, le service de métadonnées des machines virtuelles dans le cloud, qui peut renvoyer des identifiants temporaires.
+
+C'est pour cela que l'OWASP le range dans A01 : le serveur sert d'intermédiaire pour accéder à ce qui est interdit à l'attaquant.
+
+Défenses, à combiner :
+• une **liste blanche** de domaines quand c'est possible (seulement l'API du fournisseur prévu) ;
+• n'accepter que `http` et `https` (pas `file://`, `gopher://`) ;
+• **résoudre le nom**, puis refuser les adresses privées, de boucle locale, de lien local et réservées ; se connecter à l'adresse vérifiée (sinon un DNS piégé peut répondre différemment au deuxième appel) ;
+• **ne pas suivre les redirections** automatiquement (une URL publique peut rediriger vers `127.0.0.1`) ;
+• au niveau réseau, interdire au serveur web les connexions sortantes inutiles (pare-feu en sortie).
+
+```python
+import ipaddress, socket
+from urllib.parse import urlsplit
+
+def adresse_autorisee(url):
+    u = urlsplit(url)
+    if u.scheme not in ("http", "https") or not u.hostname:
+        return False
+    for info in socket.getaddrinfo(u.hostname, u.port or 443):
+        ip = ipaddress.ip_address(info[4][0])
+        if not ip.is_global:
+            return False
+    return True
+```
+
+`is_global` est faux pour les plages privées (RFC 1918), la boucle locale, le lien local (dont 169.254.169.254) et les plages réservées.
+
+### CORS trop permissif
+CORS (cross-origin resource sharing) permet à une autre origine de **lire** les réponses. Le configurer en renvoyant l'`Origin` reçu avec `Access-Control-Allow-Credentials: true` autorise n'importe quel site à lire les données d'un utilisateur connecté. On liste les origines autorisées une par une. Note : les navigateurs refusent `Access-Control-Allow-Origin: *` combiné à l'envoi des cookies.
+
+### À toi de jouer
+1. Dans le labo, crée la table `bulletins(id, eleve_id, moyenne)` avec le bulletin 57 pour l'élève 1 et le bulletin 58 pour l'élève 2 (la route `/connexion-test` te connecte comme élève 1), reproduis l'IDOR, puis corrige-la. Vérifie avec `curl` que l'identifiant d'un autre élève renvoie 404.
+2. Repère les défauts de cette route et corrige-la :
+```python
+@app.post("/api/profil")
+def profil():
+    u = Utilisateur.query.get(request.json["id"])
+    for k, v in request.json.items():
+        setattr(u, k, v)
+    db.session.commit()
+    return {"ok": True}
+```
+3. Une fonction « importer un avatar par URL » télécharge `url` avec `requests.get(url)`. Donne trois URL qu'un attaquant testerait dans ton labo et la liste des corrections.
+
+### Correction
+1. Avec la requête `WHERE id = ? AND eleve_id = ?`, `curl -s -o /dev/null -w "%{http_code}" -b cookies.txt http://127.0.0.1:5000/bulletin/58` affiche `404` pour l'élève 1, et le bulletin 57 (le sien) reste accessible.
+2. Trois défauts : l'identifiant vient du client (n'importe qui modifie n'importe quel profil, IDOR), tous les champs sont copiés (affectation de masse, `role`, `id`), et aucune vérification de connexion. Correction :
+```python
+@app.post("/api/profil")
+def profil():
+    if "user_id" not in session:
+        abort(401)
+    u = db.session.get(Utilisateur, session["user_id"])
+    for k in ("prenom", "email", "langue"):
+        if k in request.json:
+            setattr(u, k, request.json[k])
+    db.session.commit()
+    return {"ok": True}
+```
+Une validation du format de l'e-mail compléterait la correction.
+3. URL d'essai : `http://127.0.0.1:5000/admin`, `http://169.254.169.254/latest/meta-data/`, `file:///etc/passwd` (refusée par `requests`, qui ne gère pas `file://`, mais à refuser explicitement). Corrections : schémas `http` et `https` seulement, résolution et refus des adresses non globales, `allow_redirects=False`, délai court (`timeout=5`), taille maximale lue, vérification que le contenu est bien une image, et pare-feu en sortie.
+"""
+
+    codeblock "bash" {
+      title: "Tester un IDOR et un contrôle de rôle avec curl (labo)"
+      code: """
+# Se connecter et garder le cookie
+curl -s -c cookies.txt http://127.0.0.1:5000/connexion-test
+
+# Son propre bulletin, puis celui d'un autre
+curl -s -b cookies.txt -w "  -> %{http_code}\n" http://127.0.0.1:5000/bulletin/57
+curl -s -b cookies.txt -w "  -> %{http_code}\n" http://127.0.0.1:5000/bulletin/58
+
+# Une route d'administration appelée directement
+curl -s -b cookies.txt -X POST -w "  -> %{http_code}\n" http://127.0.0.1:5000/admin/utilisateurs/3/supprimer
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle est la différence entre authentification et autorisation ?" {
+        - "ce sont deux mots pour la même chose"
+        + "l'authentification établit qui est l'utilisateur, l'autorisation décide ce qu'il a le droit de faire"
+        - "l'autorisation se fait avant l'authentification"
+        - "l'authentification concerne les API, l'autorisation les pages web"
+        explanation: "On s'authentifie d'abord (identité), puis chaque requête est autorisée ou non selon les droits sur l'objet visé. Un utilisateur bien authentifié peut tout de même tenter d'accéder à ce qui ne lui appartient pas."
+      }
+      question "Un élève lit le bulletin d’un camarade en changeant /bulletin/57 en /bulletin/58. Comment s’appelle cette faille ?" {
+        - "injection SQL"
+        + "IDOR (référence directe non sécurisée à un objet)"
+        - "CSRF"
+        - "XSS stocké"
+        explanation: "Le serveur utilise l'identifiant fourni sans vérifier le propriétaire. C'est une élévation horizontale de privilège, au cœur de A01. La requête peut très bien être préparée : ce n'est pas une injection."
+      }
+      question "Remplacer les identifiants numériques par des UUID aléatoires suffit-il à corriger une IDOR ?" {
+        - "oui, un UUID ne peut pas être deviné"
+        + "non, il faut toujours vérifier côté serveur que l'objet appartient à l'utilisateur"
+        - "oui, si l'UUID fait 128 bits"
+        - "non, les UUID sont interdits par l'OWASP"
+        explanation: "Un UUID rend l'énumération difficile mais finit par fuiter (partage, journaux, historique). Seule la vérification du propriétaire à chaque requête corrige la faille."
+      }
+      question "Le bouton Administration est masqué pour les élèves dans le menu. La route /admin est-elle protégée ?" {
+        - "oui, l'élève ne peut pas cliquer dessus"
+        + "non, la requête peut être envoyée directement ; le contrôle doit être côté serveur"
+        - "oui, si le menu est généré en JavaScript"
+        - "oui, si la page /admin n'est pas indexée"
+        explanation: "Le client contrôle ses requêtes. Masquer un lien est de l'ergonomie, pas de la sécurité. La route doit vérifier le rôle à chaque appel."
+      }
+      question "Pourquoi répondre 404 plutôt que 403 quand un utilisateur demande un objet qui n’est pas à lui ?" {
+        - "parce que 403 est réservé aux administrateurs"
+        + "pour ne pas confirmer l'existence de l'objet"
+        - "parce que 404 est plus rapide"
+        - "parce que 403 déconnecte l'utilisateur"
+        explanation: "Un 403 indique que l'objet existe mais est interdit, ce qui aide à énumérer. Un 404 donne la même réponse pour un objet absent et un objet interdit."
+      }
+      question "Une API exécute utilisateur.update(request.json). Quelle attaque permet-elle ?" {
+        - "une injection SQL"
+        + "une affectation de masse : modifier des champs non prévus comme role"
+        - "un SSRF"
+        - "un XSS réfléchi"
+        explanation: "Tous les champs envoyés sont copiés, y compris ceux que l'utilisateur ne doit pas changer. On filtre avec une liste blanche de champs modifiables."
+      }
+      question "Le code appelle send_file(os.path.join(dossier, nom)) avec dossier = documents. Quelle valeur de nom provoque une traversée de répertoire ?" {
+        - "rapport.pdf"
+        + "../../etc/passwd"
+        - "documents/rapport.pdf"
+        - "rapport%20final.pdf"
+        explanation: "Chaque ../ remonte d'un dossier : le fichier lu sort de documents. send_from_directory, ou la résolution du chemin suivie d'une vérification d'appartenance, empêche la sortie."
+      }
+      question "Dans le Top 10 2025, pourquoi le SSRF est-il classé dans A01 ?" {
+        - "parce qu'il concerne les mots de passe"
+        + "parce que le serveur sert d'intermédiaire pour atteindre des ressources interdites à l'attaquant"
+        - "parce qu'il exécute du JavaScript chez la victime"
+        - "parce qu'il ne touche que les administrateurs"
+        explanation: "L'attaquant obtient un accès à des ressources internes (interface locale, réseau privé, métadonnées cloud) qu'il ne pourrait pas atteindre directement : c'est un contournement du contrôle d'accès."
+      }
+      question "Quelle adresse un attaquant vise-t-il souvent par SSRF dans un hébergement cloud ?" {
+        - "8.8.8.8"
+        + "169.254.169.254"
+        - "192.0.2.1"
+        - "224.0.0.1"
+        explanation: "169.254.169.254 est l'adresse de lien local du service de métadonnées de nombreuses machines virtuelles cloud, qui peut renvoyer des identifiants temporaires. 192.0.2.1 est une adresse de documentation, 224.0.0.1 une adresse multicast."
+      }
+      question "Pourquoi faut-il désactiver le suivi automatique des redirections dans une fonction qui télécharge une URL fournie ?" {
+        - "pour économiser de la bande passante"
+        + "parce qu'une URL publique autorisée peut rediriger vers une adresse interne"
+        - "parce que les redirections cassent le HTTPS"
+        - "parce que requests ne les gère pas"
+        explanation: "La vérification porte sur la première URL. Une redirection 302 vers http://127.0.0.1/ contournerait le contrôle. On vérifie chaque destination ou on refuse les redirections."
+      }
+      question "En Python, quel test refuse d’un coup les adresses privées, de boucle locale et de lien local ?" {
+        - "ip.is_multicast"
+        + "not ip.is_global"
+        - "ip.version == 4"
+        - "ip.is_reserved"
+        explanation: "is_global est vrai seulement pour les adresses routables publiquement. Les plages RFC 1918, 127.0.0.0/8 et 169.254.0.0/16 ne sont pas globales. is_reserved ne couvre qu'une plage particulière."
+      }
+      question "Une API renvoie l’Origin reçu dans Access-Control-Allow-Origin avec Access-Control-Allow-Credentials: true. Quel est le risque ?" {
+        - "aucun, c'est la configuration recommandée"
+        + "n'importe quel site peut lire les données d'un utilisateur connecté"
+        - "le site devient inaccessible"
+        - "les cookies sont chiffrés deux fois"
+        explanation: "Refléter toutes les origines avec les identifiants revient à désactiver la politique de même origine pour cette API. On liste explicitement les origines autorisées."
+      }
+      question "Une API protège GET /api/notes/5 mais pas DELETE /api/notes/5. Que doit-on retenir ?" {
+        - "DELETE est sans danger"
+        + "le contrôle d'accès doit couvrir toutes les méthodes de chaque route"
+        - "il faut désactiver DELETE dans le navigateur"
+        - "seules les méthodes GET doivent être contrôlées"
+        explanation: "L'OWASP cite les contrôles manquants sur POST, PUT et DELETE parmi les causes de A01. Un contrôle centralisé, appliqué par défaut à toute route, évite ces oublis."
+      }
+    }
+  }
+
+  module "authentification-sessions" {
+    title: "Chapitre 7 : mots de passe, authentification et sessions"
+    duration: "40min"
+    content: """
+### Stocker un mot de passe : hacher, pas chiffrer
+Le serveur n'a jamais besoin de **relire** un mot de passe : il doit seulement vérifier qu'on lui donne le bon. On stocke donc une **empreinte** (hash) calculée par une fonction à sens unique, jamais le mot de passe en clair ni une version chiffrée (qui se déchiffre avec une clé, souvent volée avec la base).
+
+Toutes les fonctions de hachage ne conviennent pas :
+• `md5`, `sha1`, `sha256` sont **rapides** : une carte graphique en teste des milliards par seconde. Sans sel, des tables précalculées retrouvent instantanément les mots de passe courants.
+• Une fonction de hachage **de mot de passe** est volontairement **lente**, utilise de la mémoire (pour gêner les cartes graphiques), et ajoute un **sel** (salt) aléatoire différent pour chaque compte : deux utilisateurs avec le même mot de passe ont des empreintes différentes.
+
+Recommandations de l'OWASP (Password Storage Cheat Sheet) :
+| Algorithme | Quand | Paramètres minimaux |
+|---|---|---|
+| Argon2id | premier choix | 19 Mio de mémoire (m=19456), 2 itérations (t=2), parallélisme 1 |
+| scrypt | si Argon2id indisponible | N=2^17, r=8, p=1 |
+| bcrypt | systèmes existants | facteur de coût 10 au moins ; mots de passe limités à 72 octets |
+| PBKDF2-HMAC-SHA256 | si une conformité FIPS-140 est exigée | 600 000 itérations |
+
+En Python, la bibliothèque `argon2-cffi` applique des réglages par défaut au-dessus de ce minimum :
+
+```python
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
+
+ph = PasswordHasher()
+empreinte = ph.hash("Soleil-42")       # à stocker en base
+# '$argon2id$v=19$m=65536,t=3,p=4$...$...'
+
+try:
+    ph.verify(empreinte, "Soleil-42")
+    if ph.check_needs_rehash(empreinte):
+        empreinte = ph.hash("Soleil-42")   # paramètres renforcés depuis
+except VerifyMismatchError:
+    pass   # mot de passe incorrect
+```
+
+L'empreinte contient l'algorithme, les paramètres et le sel : pas besoin de colonne séparée. En PHP, `password_hash($mdp, PASSWORD_ARGON2ID)` (ou `PASSWORD_DEFAULT`, bcrypt) et `password_verify()` font la même chose.
+
+### Quelle politique de mots de passe ?
+• La **CNIL** (recommandation de 2022) raisonne en entropie : 80 bits quand le mot de passe est la seule protection, ce qui correspond par exemple à 12 caractères mêlant majuscules, minuscules, chiffres et caractères spéciaux, ou à 14 caractères sans caractère spécial, ou à une phrase de passe d'au moins 7 mots. Le seuil descend à 50 bits (par exemple 8 caractères de 3 types) si l'accès est limité par une temporisation après échecs ou un mécanisme équivalent.
+• Le **NIST** américain (SP 800-63B, révision 4) insiste sur la longueur et refuse les règles de composition imposées et les changements périodiques sans raison ; il recommande de comparer le mot de passe choisi à une liste de mots de passe déjà fuités.
+
+En pratique : accepter les mots de passe longs (au moins 64 caractères) et tous les caractères, autoriser le collage depuis un gestionnaire de mots de passe, refuser les mots de passe connus comme compromis, et proposer la **double authentification** (code TOTP d'une application, clé de sécurité FIDO2, passkey).
+
+### Résister aux attaques sur la connexion
+• **Limiter les tentatives** : par compte et par adresse IP, avec un délai qui augmente. Le blocage définitif d'un compte permet à un attaquant de bloquer tout le monde : préfère un délai.
+• **Message identique** dans tous les cas d'échec : « Identifiant ou mot de passe incorrect ». Dire « Ce compte n'existe pas » permet d'énumérer les comptes. Même chose pour « Mot de passe oublié » : « Si ce compte existe, un courriel a été envoyé ».
+• **Jetons de réinitialisation** aléatoires (`secrets.token_urlsafe(32)`), à usage unique, valables peu de temps (par exemple 30 minutes), stockés hachés.
+• **Comparaison en temps constant** pour les secrets comparés à la main : `hmac.compare_digest(a, b)` plutôt que `a == b`, qui s'arrête au premier caractère différent.
+• Aléa : le module `secrets`, jamais `random`, qui est prévisible.
+
+### La session
+Après la connexion, le serveur reconnaît l'utilisateur grâce à un identifiant de session dans un cookie. Exigences :
+• identifiant **imprévisible** : au moins 64 bits d'entropie, produit par un générateur cryptographique ;
+• cookie `Secure`, `HttpOnly`, `SameSite=Lax` (chapitre 1) ;
+• **nouvel identifiant à la connexion** et à chaque changement de privilège. Sinon, un attaquant qui a imposé un identifiant à la victime avant sa connexion (fixation de session, session fixation) se retrouve connecté avec elle ;
+• **expiration** : après une inactivité (par exemple 30 minutes pour une application sensible) et une durée maximale ;
+• **déconnexion réelle** : la session est détruite côté serveur, pas seulement le cookie effacé.
+
+Le cas de Flask : par défaut, la session est **stockée dans le cookie lui-même**, signé avec `SECRET_KEY`. Conséquences :
+• le contenu est **lisible** par l'utilisateur (simple encodage base64) : n'y mets aucun secret ;
+• il est **infalsifiable** tant que `SECRET_KEY` reste secrète. Une clé faible ou publiée sur GitHub permet de fabriquer une session administrateur. Génère-la avec `python3 -c "import secrets; print(secrets.token_hex())"` et garde-la hors du code ;
+• un cookie volé reste valable jusqu'à son expiration, même après déconnexion, car le serveur ne garde rien. Pour une révocation réelle, on stocke les sessions côté serveur (extension Flask-Session avec Redis ou une base).
+
+```python
+app.config.update(
+    SECRET_KEY=os.environ["FLASK_SECRET_KEY"],
+    SESSION_COOKIE_SECURE=True,      # faux par défaut
+    SESSION_COOKIE_HTTPONLY=True,    # vrai par défaut
+    SESSION_COOKIE_SAMESITE="Lax",   # absent par défaut
+    PERMANENT_SESSION_LIFETIME=1800, # 31 jours par défaut pour une session permanente
+)
+
+@app.post("/connexion")
+def connexion():
+    ...
+    session.clear()            # repart d'une session vide
+    session["user_id"] = u.id
+```
+
+Un mot sur les **JWT** : pratiques pour les API, mais pièges connus (algorithme `none` accepté, clé faible, jeton impossible à révoquer avant expiration). Utilise une bibliothèque à jour, impose l'algorithme attendu à la vérification, et garde des durées courtes.
+
+### À toi de jouer
+1. Le labo stocke `utilisateurs(login, mdp)` en clair. Écris un script qui remplace chaque mot de passe par son empreinte Argon2id, puis la route `/connexion` qui la vérifie, avec un message d'erreur unique.
+2. Lis ce code et liste ses défauts :
+```python
+@app.post("/connexion")
+def connexion():
+    u = trouver(request.form["login"])
+    if u is None:
+        return "Utilisateur inconnu", 401
+    if hashlib.md5(request.form["mdp"].encode()).hexdigest() != u.mdp:
+        return "Mot de passe faux", 401
+    session["user_id"] = u.id
+    session["mdp"] = request.form["mdp"]
+    return redirect("/")
+```
+3. Le dépôt Git public d'un projet contient `app.secret_key = "dev"`. Que peut faire un attaquant et que dois-tu faire ?
+
+### Correction
+1. Migration (une seule fois) :
+```python
+ph = PasswordHasher()
+for login, mdp in db.execute("SELECT login, mdp FROM utilisateurs").fetchall():
+    db.execute("UPDATE utilisateurs SET mdp = ? WHERE login = ?", (ph.hash(mdp), login))
+db.commit()
+```
+Route : récupérer l'empreinte par une requête préparée ; si le compte n'existe pas ou si `ph.verify` lève `VerifyMismatchError`, renvoyer `"Identifiant ou mot de passe incorrect", 401` ; sinon `session.clear()` puis `session["user_id"] = ...`. Dans un vrai projet, on n'a jamais de mots de passe en clair à migrer : on remplace le hachage faible à la connexion suivante de chaque utilisateur.
+2. Défauts : messages différents (énumération des comptes) ; MD5 sans sel (cassable) ; comparaison `!=` non constante ; aucune limite de tentatives ; session non réinitialisée (fixation) ; **mot de passe copié dans la session**, donc lisible en base64 dans le cookie Flask. Correction : Argon2id avec `ph.verify`, message unique, limitation des tentatives, `session.clear()`, ne stocker que l'identifiant.
+3. Avec la clé, l'attaquant signe un cookie contenant `{"user_id": 1}` ou `{"role": "admin"}` : le serveur l'accepte (outils comme `flask-unsign` dans un labo). Il faut générer une nouvelle clé aléatoire, la sortir du code (variable d'environnement, fichier hors dépôt), la changer en production (toutes les sessions sont invalidées), et considérer l'historique Git comme public : supprimer la ligne ne suffit pas.
+"""
+
+    quiz {
+      pick: 5
+      question "Pourquoi stocke-t-on l’empreinte d’un mot de passe plutôt que le mot de passe chiffré ?" {
+        - "parce que le chiffrement est interdit par le RGPD"
+        + "parce que le serveur n'a besoin que de vérifier, et qu'un chiffrement se déchiffre avec une clé souvent volée avec la base"
+        - "parce qu'une empreinte prend moins de place"
+        - "parce que le chiffrement est trop lent"
+        explanation: "Une fonction de hachage est à sens unique : même avec la base et le code, on ne retrouve pas le mot de passe autrement que par essais. Un mot de passe chiffré redevient lisible dès que la clé fuit."
+      }
+      question "Quel algorithme l’OWASP recommande-t-il en premier pour stocker des mots de passe ?" {
+        - "SHA-256"
+        - "MD5 avec un sel"
+        + "Argon2id"
+        - "AES-256"
+        explanation: "Argon2id est lent et gourmand en mémoire, ce qui freine les attaques par carte graphique. SHA-256 et MD5 sont trop rapides, AES est un chiffrement réversible."
+      }
+      question "À quoi sert le sel dans le hachage d’un mot de passe ?" {
+        - "à rendre le hachage réversible"
+        + "à donner des empreintes différentes à deux comptes ayant le même mot de passe et à rendre inutiles les tables précalculées"
+        - "à chiffrer la base de données"
+        - "à accélérer la vérification"
+        explanation: "Le sel aléatoire, propre à chaque compte, est stocké avec l'empreinte. Il empêche de casser tous les comptes d'un coup et rend les tables précalculées inutilisables. Il n'est pas secret."
+      }
+      question "Quelle limite faut-il connaître avec bcrypt ?" {
+        - "il n'accepte que des chiffres"
+        + "il ne prend en compte que les 72 premiers octets du mot de passe"
+        - "il exige un sel de 1 024 bits"
+        - "il est réversible"
+        explanation: "bcrypt tronque ou refuse au-delà de 72 octets selon l'implémentation. L'OWASP le réserve aux systèmes existants et recommande de limiter la longueur en conséquence. Argon2id n'a pas cette limite."
+      }
+      question "Selon la CNIL, quel niveau d’entropie viser pour un mot de passe qui est la seule protection ?" {
+        - "13 bits"
+        - "50 bits"
+        + "80 bits"
+        - "256 bits"
+        explanation: "La recommandation de 2022 fixe 80 bits lorsque le mot de passe est seul, par exemple 12 caractères de 4 types. 50 bits suffisent avec une limitation des tentatives ; 13 bits concernent un code sur un matériel détenu par l'utilisateur avec blocage."
+      }
+      question "Pourquoi afficher « Identifiant ou mot de passe incorrect » dans tous les cas d’échec ?" {
+        - "pour simplifier la traduction"
+        + "pour ne pas révéler quels comptes existent"
+        - "parce que la loi l'impose mot pour mot"
+        - "pour accélérer la connexion"
+        explanation: "Des messages différents permettent d'énumérer les comptes valides, puis de concentrer les attaques sur eux. Le même principe s'applique au formulaire de mot de passe oublié."
+      }
+      question "Qu’est-ce qu’une fixation de session ?" {
+        - "une session qui n'expire jamais"
+        + "l'attaquant impose un identifiant de session à la victime, qui le garde après sa connexion"
+        - "le blocage d'un compte après trois échecs"
+        - "le stockage de la session dans une base"
+        explanation: "Si le serveur garde le même identifiant avant et après la connexion, l'attaquant qui le connaît se retrouve connecté. On génère un nouvel identifiant (ou on vide la session) à chaque connexion."
+      }
+      question "Dans Flask, que contient le cookie de session par défaut ?" {
+        - "un simple numéro aléatoire, les données étant sur le serveur"
+        + "les données de session elles-mêmes, signées mais lisibles"
+        - "les données chiffrées en AES"
+        - "le mot de passe de l'utilisateur"
+        explanation: "Flask stocke la session dans le cookie, encodée et signée avec SECRET_KEY. Elle est infalsifiable mais lisible : aucun secret ne doit y être placé."
+      }
+      question "La SECRET_KEY d’une application Flask est publiée par erreur. Quel est le risque principal ?" {
+        - "le site devient plus lent"
+        + "un attaquant peut fabriquer un cookie de session valide, par exemple administrateur"
+        - "les mots de passe en base sont déchiffrés"
+        - "aucun, la clé ne sert qu'en développement"
+        explanation: "La clé signe les cookies de session. Avec elle, on signe n'importe quel contenu et le serveur l'accepte. Il faut la remplacer immédiatement et la sortir du code."
+      }
+      question "Quel module Python utiliser pour générer un jeton de réinitialisation de mot de passe ?" {
+        - "random"
+        + "secrets"
+        - "uuid avec uuid1()"
+        - "time"
+        explanation: "secrets utilise le générateur cryptographique du système. random est prévisible, uuid1 dépend de l'heure et de l'adresse MAC, time est trivial à deviner."
+      }
+      question "Pourquoi utiliser hmac.compare_digest pour comparer un jeton secret ?" {
+        - "parce qu'il est plus lisible"
+        + "parce que sa durée ne dépend pas de la position du premier caractère différent"
+        - "parce qu'il chiffre les deux valeurs"
+        - "parce que == ne fonctionne pas sur les chaînes"
+        explanation: "Une comparaison classique s'arrête dès la première différence : en mesurant le temps, on peut deviner le secret caractère par caractère. compare_digest prend le même temps quel que soit le résultat."
+      }
+      question "Pourquoi préférer un délai croissant au blocage définitif d’un compte après des échecs ?" {
+        - "parce que le blocage est illégal"
+        + "parce qu'un blocage définitif permet à un attaquant de bloquer volontairement les comptes des autres"
+        - "parce que le délai empêche toute attaque"
+        - "parce que les utilisateurs ne se trompent jamais"
+        explanation: "Bloquer après quelques échecs transforme la protection en déni de service : il suffit de se tromper exprès sur le compte d'un collègue. Un délai qui augmente freine la force brute sans exclure l'utilisateur légitime."
+      }
+      question "Quelle valeur Flask donne-t-il par défaut à SESSION_COOKIE_SECURE ?" {
+        + "False : il faut l'activer en production HTTPS"
+        - "True"
+        - "Lax"
+        - "il n'existe pas"
+        explanation: "SESSION_COOKIE_SECURE vaut False par défaut, HttpOnly vaut True et SameSite n'est pas défini. En production en HTTPS, on active Secure et on fixe SameSite à Lax."
+      }
+      question "Quelle précaution prendre lors de la vérification d’un JWT ?" {
+        - "accepter l'algorithme indiqué dans l'en-tête du jeton"
+        + "imposer l'algorithme attendu et refuser alg: none"
+        - "ne jamais vérifier la signature pour aller plus vite"
+        - "stocker le jeton dans l'URL"
+        explanation: "Faire confiance à l'algorithme annoncé par le jeton permet des attaques comme alg: none. La vérification doit fixer l'algorithme et la clé attendus. Un jeton dans l'URL fuit dans les journaux et l'historique."
+      }
+    }
+  }
+
+  module "configuration-entetes-csp" {
+    title: "Chapitre 8 : configuration, en-têtes de sécurité et CSP"
+    duration: "40min"
+    content: """
+### Les erreurs de configuration les plus fréquentes
+A02 est monté à la 2e place en 2025 : beaucoup d'applications correctement codées sont mal déployées. À vérifier avant toute mise en ligne :
+• **mode debug** désactivé. Le débogueur de Werkzeug (`flask run --debug`) offre une console Python dans le navigateur, protégée seulement par un code PIN : en production, c'est une exécution de code à distance en puissance. Django : `DEBUG = False`. PHP : `display_errors = Off` ;
+• **comptes et mots de passe par défaut** supprimés ou changés ;
+• **fichiers qui n'ont rien à faire dans la racine web** : `.git/`, `.env`, sauvegardes `*.bak`, `*.sql`, `phpinfo.php` ;
+• **listing de répertoires** désactivé (`autoindex off` dans Nginx, c'est la valeur par défaut ; `Options -Indexes` dans Apache) ;
+• **version du serveur masquée** : `server_tokens off;` dans Nginx (cela ne protège pas une version vulnérable, mais évite de la publier) ;
+• **services et méthodes inutiles** fermés ; base de données qui n'écoute pas sur Internet ;
+• **HTTPS** partout, avec seulement TLS 1.2 et TLS 1.3 (`ssl_protocols TLSv1.2 TLSv1.3;`), comme le recommande l'ANSSI.
+
+La règle : une configuration **écrite et versionnée** (fichier, rôle Ansible, image Docker), identique en recette et en production, avec des secrets différents.
+
+### Les en-têtes de sécurité
+Des en-têtes de réponse demandent au navigateur d'appliquer des protections. Valeurs recommandées par l'OWASP (HTTP Headers Cheat Sheet) :
+
+| En-tête | Valeur conseillée | Rôle |
+|---|---|---|
+| `Strict-Transport-Security` | `max-age=63072000; includeSubDomains` | HSTS : le navigateur n'utilise plus que HTTPS pour ce domaine pendant 2 ans |
+| `Content-Security-Policy` | voir plus bas | liste des sources autorisées de scripts, styles, cadres… |
+| `X-Content-Type-Options` | `nosniff` | interdit au navigateur de deviner un autre type que le `Content-Type` |
+| `X-Frame-Options` | `DENY` | interdit l'affichage dans un cadre (protection contre le clickjacking) ; remplacé par `frame-ancestors` en CSP |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` | n'envoie que l'origine aux autres sites, pas le chemin complet |
+| `Permissions-Policy` | `geolocation=(), camera=(), microphone=()` | coupe les fonctions dont le site n'a pas besoin |
+| `Cross-Origin-Opener-Policy` | `same-origin` | isole la fenêtre des pages d'autres origines qu'elle ouvre |
+| `X-XSS-Protection` | `0` ou absent | ancien filtre des navigateurs, retiré, qui créait lui-même des failles |
+
+HSTS demande de la prudence : une fois l'en-tête reçu, le navigateur refuse le HTTP pendant toute la durée indiquée. Commence par un `max-age` court (par exemple 300 secondes), vérifie que tous les sous-domaines fonctionnent en HTTPS, puis augmente. L'option `preload` (inscription dans la liste intégrée aux navigateurs) est difficile à annuler.
+
+### Les poser avec Nginx
+```nginx
+server {
+    listen 443 ssl;
+    server_name ent.lycee.test;
+    server_tokens off;
+    ssl_protocols TLSv1.2 TLSv1.3;
+
+    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "geolocation=(), camera=(), microphone=()" always;
+    add_header Content-Security-Policy "default-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'" always;
+
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+    }
+}
+```
+
+Deux pièges de Nginx :
+• sans le paramètre `always`, `add_header` n'agit que sur certains codes de réponse (200, 201, 204, 206, 301, 302, 303, 304, 307, 308) : les pages d'erreur sont servies sans protection ;
+• les `add_header` d'un niveau ne sont **hérités** que si le bloc courant n'en définit aucun. Un seul `add_header` dans une `location` fait disparaître tous ceux du `server` pour cette `location`. Vérifie toujours le résultat avec `curl -sI`.
+
+Après modification : `sudo nginx -t` (vérifie la syntaxe) puis `sudo systemctl reload nginx`.
+
+### La CSP en détail
+La **Content-Security-Policy** est la deuxième ligne de défense contre le XSS : si un script injecté n'est pas dans les sources autorisées, le navigateur refuse de l'exécuter et l'indique dans la console.
+
+Directives principales :
+| Directive | Rôle |
+|---|---|
+| `default-src` | valeur par défaut pour les types non précisés |
+| `script-src` | origines des scripts ; sans `'unsafe-inline'`, les scripts en ligne et les `onclick=` sont bloqués |
+| `style-src`, `img-src`, `connect-src` | styles, images, requêtes `fetch`/WebSocket |
+| `object-src 'none'` | bloque les anciens greffons (`<object>`, `<embed>`) |
+| `base-uri 'none'` | empêche de changer la base des URL relatives avec `<base>` |
+| `frame-ancestors 'none'` | personne ne peut afficher le site dans un cadre |
+| `form-action 'self'` | les formulaires ne peuvent être envoyés qu'au site lui-même |
+
+Deux approches :
+• **par liste d'origines** : `script-src 'self' https://cdn.exemple.test`. Simple, mais fragile : si une origine autorisée héberge du code contrôlable (un CDN public, une API JSONP), la CSP est contournée ;
+• **stricte, par nonce** (recommandée par l'OWASP et le W3C) : le serveur génère à chaque réponse une valeur aléatoire, la met dans l'en-tête et dans chaque balise `<script>` légitime. Un script injecté ne connaît pas le nonce.
+
+```text
+Content-Security-Policy: script-src 'nonce-R4nd0mV4lu3' 'strict-dynamic'; object-src 'none'; base-uri 'none'
+```
+```html
+<script nonce="R4nd0mV4lu3" src="/static/app.js"></script>
+```
+
+`'strict-dynamic'` autorise aussi les scripts chargés par un script déjà autorisé. Ce qui annule une CSP : `'unsafe-inline'` dans `script-src` (sans nonce), `'unsafe-eval'`, ou `*`.
+
+Pour déployer sans casser le site, on commence par `Content-Security-Policy-Report-Only` : le navigateur **signale** les violations dans la console (et à une adresse de rapport si on en configure une) sans rien bloquer. On corrige, puis on passe en mode bloquant.
+
+### Côté Flask
+Sans proxy, on peut poser les en-têtes dans l'application :
+
+```python
+import secrets
+from flask import g
+
+@app.before_request
+def nonce():
+    g.nonce = secrets.token_urlsafe(16)
+
+@app.after_request
+def entetes(r):
+    r.headers["Content-Security-Policy"] = (
+        f"script-src 'nonce-{g.nonce}' 'strict-dynamic'; "
+        "object-src 'none'; base-uri 'none'; frame-ancestors 'none'"
+    )
+    r.headers["X-Content-Type-Options"] = "nosniff"
+    r.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    return r
+```
+
+Dans les gabarits : `<script nonce="{{ g.nonce }}">`. La bibliothèque `flask-talisman` regroupe ces réglages.
+
+### À toi de jouer
+1. Mesure l'état de départ : `curl -sI http://127.0.0.1:5000/bonjour` et `curl -sI http://127.0.0.1:3000/`. Liste les en-têtes de sécurité présents et absents.
+2. Ajoute à l'application du labo une CSP par nonce. Garde volontairement la faille XSS de `/bonjour` du chapitre 4 et vérifie que la charge `<img src=x onerror=alert(1)>` ne s'exécute plus. Que montre la console du navigateur (F12) ?
+3. Trouve les erreurs de cette configuration Nginx :
+```nginx
+server {
+    add_header X-Content-Type-Options "nosniff";
+    add_header Content-Security-Policy "default-src * 'unsafe-inline' 'unsafe-eval'";
+    location /api/ {
+        add_header Cache-Control "no-store";
+        proxy_pass http://127.0.0.1:5000;
+    }
+}
+```
+
+### Correction
+1. Le serveur de développement de Flask ne pose aucun de ces en-têtes ; la réponse contient seulement `Server: Werkzeug/...`, `Content-Type`, `Content-Length` (et `Date`, `Connection`). Juice Shop pose `X-Content-Type-Options: nosniff` et `X-Frame-Options: SAMEORIGIN`, mais pas de CSP sur sa page d'accueil ni de HSTS (il n'est pas servi en HTTPS). Les valeurs exactes peuvent varier selon la version de l'image.
+2. Avec l'en-tête `script-src 'nonce-...' 'strict-dynamic'`, l'attribut `onerror` est un gestionnaire en ligne sans nonce : le navigateur refuse de l'exécuter. La console affiche un message du type « Refused to execute inline event handler because it violates the following Content Security Policy directive ». L'image cassée apparaît, mais aucune boîte. La faille reste à corriger (chapitre 4) : la CSP est une barrière supplémentaire, pas une correction.
+3. Erreurs : pas de `always` (en-têtes absents des pages d'erreur) ; la CSP autorise tout (`*`, `'unsafe-inline'`, `'unsafe-eval'`) et ne protège donc de rien ; le `add_header` de `location /api/` fait disparaître les deux en-têtes du `server` pour l'API. Correction : CSP restrictive (`default-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'`), `always` partout, et répéter les en-têtes communs dans la `location` (ou les placer dans un fichier commun appelé par `include` dans chaque bloc).
+"""
+
+    codeblock "bash" {
+      title: "Vérifier les en-têtes et la configuration Nginx"
+      code: """
+# Afficher seulement les en-têtes de sécurité
+curl -sI https://ent.lycee.test/ | grep -iE 'strict-transport|content-security|x-content-type|x-frame|referrer-policy|permissions-policy|server:'
+
+# Les en-têtes sont-ils aussi présents sur une page d'erreur ?
+curl -sI https://ent.lycee.test/page-qui-n-existe-pas | grep -i content-security
+
+# Tester la configuration avant de recharger
+sudo nginx -t && sudo systemctl reload nginx
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Pourquoi le mode debug de Flask ne doit-il jamais être actif en production ?" {
+        - "il ralentit seulement les pages"
+        + "le débogueur interactif permet d'exécuter du code Python depuis le navigateur"
+        - "il désactive HTTPS"
+        - "il efface la base de données au redémarrage"
+        explanation: "Le débogueur Werkzeug affiche une console Python sur les pages d'erreur, protégée par un simple PIN. Exposé, il peut mener à l'exécution de code sur le serveur. Il affiche aussi le code source et les variables."
+      }
+      question "Que fait l’en-tête Strict-Transport-Security ?" {
+        - "il chiffre les cookies"
+        + "il oblige le navigateur à n'utiliser que HTTPS pour ce domaine pendant la durée indiquée"
+        - "il bloque les scripts en ligne"
+        - "il masque la version du serveur"
+        explanation: "HSTS empêche le retour en HTTP, y compris si l'utilisateur tape http:// ou suit un lien en HTTP. Une durée longue doit être posée prudemment, car on ne peut plus revenir en arrière facilement."
+      }
+      question "Quelle directive CSP empêche d’afficher le site dans un cadre d’un autre site ?" {
+        - "default-src 'self'"
+        - "object-src 'none'"
+        + "frame-ancestors 'none'"
+        - "form-action 'self'"
+        explanation: "frame-ancestors contrôle qui peut intégrer la page dans un cadre ; c'est la version moderne de X-Frame-Options, contre le clickjacking. frame-src, à l'inverse, contrôle les cadres que la page elle-même affiche."
+      }
+      question "Quelle valeur dans script-src annule presque toute la protection d’une CSP contre le XSS ?" {
+        - "'self'"
+        + "'unsafe-inline'"
+        - "'nonce-abc123'"
+        - "'strict-dynamic'"
+        explanation: "'unsafe-inline' autorise les scripts en ligne et les attributs onerror, onclick… exactement ce qu'utilise un XSS. Le nonce et strict-dynamic sont les éléments d'une CSP stricte."
+      }
+      question "Pourquoi le nonce d’une CSP doit-il changer à chaque réponse ?" {
+        - "pour respecter le format HTTP"
+        + "pour qu'un attaquant ne puisse pas le connaître à l'avance et l'ajouter à son script injecté"
+        - "pour vider le cache du navigateur"
+        - "parce que le navigateur refuse un nonce déjà vu"
+        explanation: "Un nonce fixe serait visible dans le code de la page et réutilisable dans une injection. Généré aléatoirement à chaque réponse, il reste imprévisible."
+      }
+      question "Avec Nginx, pourquoi ajouter le paramètre always à add_header ?" {
+        - "pour que l'en-tête soit hérité dans toutes les locations"
+        + "pour que l'en-tête soit aussi envoyé avec les réponses d'erreur comme 404 ou 500"
+        - "pour forcer HTTPS"
+        - "pour que l'en-tête soit envoyé deux fois"
+        explanation: "Sans always, add_header ne s'applique qu'à une liste de codes de succès et de redirection. Les pages d'erreur seraient servies sans CSP ni nosniff. always ne change rien à l'héritage."
+      }
+      question "Une location Nginx contient un seul add_header. Que deviennent les add_header du bloc server ?" {
+        - "ils s'ajoutent à celui de la location"
+        + "ils ne sont plus appliqués à cette location"
+        - "ils remplacent celui de la location"
+        - "Nginx refuse de démarrer"
+        explanation: "Les add_header sont hérités du niveau supérieur seulement si le niveau courant n'en définit aucun. On répète les en-têtes communs ou on les place dans un fichier inclus dans chaque bloc."
+      }
+      question "Quel est l’intérêt de Content-Security-Policy-Report-Only ?" {
+        - "il bloque plus fort que la CSP normale"
+        + "il signale les violations sans rien bloquer, pour tester une politique avant de l'appliquer"
+        - "il désactive la CSP"
+        - "il envoie les mots de passe au serveur"
+        explanation: "Le mode Report-Only affiche les violations dans la console (et peut les envoyer à une adresse de rapport) sans casser le site. On ajuste la politique, puis on passe en mode bloquant."
+      }
+      question "Que fait X-Content-Type-Options: nosniff ?" {
+        - "il interdit les cookies"
+        + "il interdit au navigateur de deviner un type de contenu différent du Content-Type annoncé"
+        - "il désactive le cache"
+        - "il cache l'en-tête Server"
+        explanation: "Sans nosniff, un navigateur pourrait traiter comme script ou HTML un fichier envoyé avec un autre type, par exemple un fichier téléversé. L'en-tête impose le respect du Content-Type."
+      }
+      question "Quelle valeur l’OWASP recommande-t-il aujourd’hui pour X-XSS-Protection ?" {
+        - "1; mode=block"
+        + "0, ou ne pas envoyer l'en-tête"
+        - "1"
+        - "strict"
+        explanation: "L'ancien filtre XSS des navigateurs a été retiré et pouvait lui-même introduire des failles. On le désactive et on s'appuie sur une CSP sans script en ligne."
+      }
+      question "Quelles versions de TLS garder sur un serveur web en suivant les recommandations actuelles ?" {
+        - "SSLv3 et TLS 1.0"
+        - "TLS 1.0 à TLS 1.3"
+        + "TLS 1.2 et TLS 1.3"
+        - "TLS 1.3 seulement, en interdisant tout le reste depuis 2010"
+        explanation: "SSLv3, TLS 1.0 et TLS 1.1 sont obsolètes et désactivés par les navigateurs. TLS 1.2 et 1.3 restent recommandés, par exemple par l'ANSSI. N'accepter que TLS 1.3 est possible mais peut exclure d'anciens clients."
+      }
+      question "Un dossier .git est accessible à l’adresse https://site/.git/. Quel est le risque ?" {
+        - "aucun, ce sont des fichiers techniques"
+        + "un attaquant peut reconstituer le code source et l'historique, y compris des secrets commités"
+        - "le site ne peut plus être mis à jour"
+        - "les visiteurs voient une page blanche"
+        explanation: "Des outils téléchargent le contenu de .git et reconstruisent le dépôt : code, mots de passe et clés présents dans l'historique. La racine web ne doit contenir que ce qui doit être servi."
+      }
+      question "Pourquoi commencer HSTS avec un max-age court ?" {
+        - "parce qu'un max-age long est refusé par les navigateurs"
+        + "parce qu'une erreur (sous-domaine sans HTTPS, certificat expiré) bloque ensuite les visiteurs pendant toute la durée"
+        - "parce que HSTS ralentit le site"
+        - "parce que la CNIL l'impose"
+        explanation: "Une fois la règle reçue, le navigateur refuse le HTTP et ne laisse pas passer un certificat invalide pendant la durée indiquée. On vérifie tout avec quelques minutes, puis on augmente jusqu'à un ou deux ans."
+      }
+    }
+  }
+
+  module "dependances-journaux-erreurs" {
+    title: "Chapitre 9 : dépendances, intégrité, journaux et gestion des erreurs"
+    duration: "40min"
+    content: """
+### A03 : ton application est surtout le code des autres
+Une petite application Flask installe une dizaine de paquets ; un projet JavaScript en installe facilement plusieurs centaines par le jeu des dépendances indirectes (transitive dependencies). Chacun peut contenir une faille connue, être abandonné, ou être **piégé** : paquet au nom proche d'un paquet connu (typosquatting), compte d'un mainteneur volé, porte dérobée insérée patiemment (cas de xz-utils en 2024).
+
+Exemples marquants :
+• **Equifax, 2017** : une faille d'Apache Struts (CVE-2017-5638), corrigée par l'éditeur, n'avait pas été appliquée ; les données de près de 150 millions de personnes ont fuité ;
+• **Log4Shell, décembre 2021** (CVE-2021-44228) : une chaîne de caractères journalisée par Log4j suffisait à faire exécuter du code. La difficulté n'était pas de corriger, mais de **savoir où** Log4j était présent.
+
+Les bonnes pratiques :
+1. **Inventaire** : savoir ce qui est installé, y compris les dépendances indirectes. Un **SBOM** (software bill of materials, nomenclature logicielle) au format CycloneDX ou SPDX le décrit.
+2. **Versions verrouillées** : un fichier de verrouillage (`package-lock.json`, `poetry.lock`, `requirements.txt` avec versions exactes) rend l'installation reproductible ; `npm ci` installe exactement ce qu'il contient.
+3. **Audit automatique** à chaque modification et régulièrement : `pip-audit`, `npm audit`, OSV-Scanner, OWASP Dependency-Check, ou les alertes de la forge (Dependabot, Renovate).
+4. **Mises à jour** suivies : appliquer les correctifs de sécurité vite, les mises à jour majeures après tests.
+5. **Moins de dépendances** : chaque paquet ajouté est du code de confiance. Pour trois lignes de code, on n'installe pas un paquet.
+6. **Sources sûres** : dépôt officiel, nom vérifié, mainteneurs actifs.
+
+```bash
+# Python : vulnérabilités connues des paquets installés ou listés
+pip install pip-audit
+pip-audit                       # environnement actif
+pip-audit -r requirements.txt   # fichier de dépendances
+
+# JavaScript
+npm audit                 # rapport
+npm audit fix             # mises à jour compatibles
+npm ci                    # installation exacte depuis package-lock.json
+
+# Tous écosystèmes (fichiers de verrouillage du dossier)
+osv-scanner scan source -r .
+```
+
+### A08 : vérifier l'intégrité du code et des données
+• **Scripts externes** : un `<script>` chargé depuis un CDN exécute ce que le CDN renvoie. L'attribut `integrity` (Subresource Integrity) donne l'empreinte attendue ; si le fichier change, le navigateur refuse de l'exécuter.
+```html
+<script src="https://cdn.exemple.test/lib.min.js"
+        integrity="sha384-EMPREINTE_EN_BASE64"
+        crossorigin="anonymous"></script>
+```
+L'empreinte se calcule avec `openssl dgst -sha384 -binary lib.min.js | openssl base64 -A`. Le plus simple reste souvent d'héberger le fichier soi-même.
+• **Paquets** : `pip install --require-hashes -r requirements.txt` refuse un paquet dont l'empreinte ne correspond pas à celle du fichier (générée par exemple avec `pip-compile --generate-hashes`).
+• **Désérialisation** : `pickle.loads()` sur une donnée venue du client permet d'exécuter du code (la documentation Python l'écrit en avertissement). Pour échanger des données, on utilise JSON, et l'on valide son contenu.
+• **Mises à jour et intégration continue** : binaires signés, pipeline de build protégé (qui peut modifier le workflow ? où sont les secrets ?).
+
+### A09 : journaliser ce qui compte, et alerter
+Les journaux servent à **détecter** une attaque en cours et à **comprendre** un incident après coup. Sans détection, une intrusion passe souvent inaperçue pendant plusieurs mois.
+
+À journaliser :
+• connexions réussies et échouées, déconnexions, changements de mot de passe et de double authentification ;
+• refus de contrôle d'accès (403, 404 sur des objets d'autres utilisateurs) ;
+• échecs de validation des entrées, jetons CSRF invalides ;
+• actions d'administration (création de compte, changement de rôle) ;
+• erreurs serveur.
+
+Pour chaque événement : **date et heure** (horloge synchronisée par NTP, fuseau indiqué), identifiant de l'utilisateur, adresse IP source, action, objet, résultat.
+
+À ne **jamais** journaliser : mots de passe (même faux : c'est souvent le bon avec une faute), identifiants de session, jetons, numéros de carte bancaire complets, données de santé. Attention à l'**injection dans les journaux** : une donnée contenant un retour à la ligne peut fabriquer une fausse ligne (`alice\n2026-11-26 INFO connexion réussie admin`). On remplace les caractères de contrôle, ou on écrit les journaux en JSON.
+
+```python
+import logging, json
+journal = logging.getLogger("securite")
+
+def evenement(action, resultat, **details):
+    journal.warning(json.dumps({
+        "action": action, "resultat": resultat,
+        "ip": request.remote_addr, "user": session.get("user_id"),
+        **details,
+    }, ensure_ascii=False))
+
+evenement("connexion", "echec", login=request.form.get("login", "")[:64])
+```
+
+Journaliser ne suffit pas : il faut **centraliser** (les journaux d'un serveur compromis peuvent être effacés), **surveiller** et **alerter** (par exemple 20 échecs de connexion en une minute depuis la même adresse). C'est le sens du nouveau nom de A09.
+
+Durée de conservation : la **CNIL** (recommandation de 2021 sur la journalisation) estime qu'une durée de **6 mois à 1 an** est en général suffisante pour les journaux de traçabilité ; une durée plus longue doit être justifiée. Les journaux contiennent des données personnelles (adresse IP, identifiant) : ils sont eux-mêmes protégés et leur accès est limité.
+
+### A10 : gérer les cas exceptionnels
+Une application sûre prévoit ce qui se passe quand **quelque chose échoue** : base indisponible, fichier trop gros, paramètre manquant, délai dépassé.
+
+Trois règles :
+• **l'utilisateur voit un message générique**, le détail (pile d'appels, requête) part dans les journaux avec un identifiant d'incident pour faire le lien ;
+• **échec fermé** : en cas d'erreur dans un contrôle de sécurité, on refuse ;
+• **tout ou rien** : une opération en plusieurs étapes (débit puis crédit) est faite dans une **transaction**, annulée entièrement en cas d'erreur.
+
+```python
+import uuid
+from werkzeug.exceptions import HTTPException
+
+@app.errorhandler(Exception)
+def erreur(e):
+    if isinstance(e, HTTPException):
+        return e        # 404, 403... gardent leur code
+    ref = uuid.uuid4().hex[:8]
+    app.logger.exception("erreur %s", ref)    # pile d'appels dans le journal
+    return f"Une erreur est survenue (référence {ref}).", 500
+```
+
+```python
+conn = sqlite3.connect("lab.db")
+with conn:   # validation si tout passe, annulation si une exception est levée
+    conn.execute("UPDATE comptes SET solde = solde - ? WHERE id = ?", (m, src))
+    conn.execute("UPDATE comptes SET solde = solde + ? WHERE id = ?", (m, dst))
+```
+
+Limiter les ressources fait aussi partie de A10 : taille maximale des requêtes (`MAX_CONTENT_LENGTH` dans Flask, `client_max_body_size` dans Nginx), délais d'attente sur les appels externes, nombre de requêtes par client.
+
+### À toi de jouer
+1. Dans `~/labweb`, crée un fichier `requirements.txt` contenant `flask==2.2.0` et `requests==2.25.0`, puis lance `pip-audit -r requirements.txt`. Que constates-tu ? Que fais-tu ?
+2. Améliore cette fonction de connexion du point de vue des journaux :
+```python
+print("Tentative de connexion", login, mdp)
+```
+3. Trouve les deux défauts de gestion d'erreur :
+```python
+def peut_modifier(user, doc):
+    try:
+        return doc.proprietaire_id == user.id or user.est_admin()
+    except Exception:
+        return True
+
+@app.get("/doc/<int:id>")
+def doc(id):
+    try:
+        return afficher(id)
+    except Exception as e:
+        return f"Erreur : {e}", 500
+```
+
+### Correction
+1. `pip-audit` liste plusieurs vulnérabilités connues pour ces anciennes versions de Flask et de Requests, avec leur identifiant (`GHSA-...`, `PYSEC-...` ou CVE) et la version qui les corrige. Il faut mettre à jour vers une version corrigée (la dernière version stable), relancer les tests et l'audit, puis verrouiller les nouvelles versions. Les identifiants exacts dépendent de la base consultée le jour où tu lances l'outil.
+2. Problèmes : `print` ne passe pas par le système de journalisation (pas de date, pas de niveau, pas de centralisation) et **le mot de passe est écrit en clair**. Version corrigée : utiliser `logging`, ne journaliser que le résultat, le login (tronqué et nettoyé des retours à la ligne), l'IP et l'heure, par exemple avec la fonction `evenement()` ci-dessus, et alerter au-delà d'un seuil d'échecs.
+3. `peut_modifier` **échoue ouvert** : n'importe quelle erreur (document sans propriétaire, utilisateur `None`) accorde le droit ; il faut `return False` dans le `except`, et journaliser l'erreur. La route `doc` **affiche le message d'exception** à l'utilisateur : il peut contenir des requêtes SQL, des chemins ou des données. Il faut un message générique et le détail dans le journal (gestionnaire global ci-dessus).
+"""
+
+    quiz {
+      pick: 5
+      question "Qu’est-ce qu’un SBOM ?" {
+        - "un outil de chiffrement des dépendances"
+        + "un inventaire des composants logiciels d'une application, dépendances indirectes comprises"
+        - "un pare-feu applicatif"
+        - "un format de journal"
+        explanation: "Le software bill of materials liste les composants et leurs versions (formats CycloneDX ou SPDX). Il permet de savoir immédiatement si une application est touchée quand une faille comme Log4Shell est publiée."
+      }
+      question "Que fait la commande npm ci ?" {
+        - "elle met à jour toutes les dépendances vers leur dernière version"
+        + "elle installe exactement les versions inscrites dans package-lock.json"
+        - "elle publie le paquet sur le registre npm"
+        - "elle supprime les dépendances inutilisées"
+        explanation: "npm ci est fait pour l'intégration continue : installation reproductible, échec si package.json et le fichier de verrouillage ne correspondent pas. npm update met à jour les versions."
+      }
+      question "Quelle commande vérifie les vulnérabilités connues des paquets d’un fichier requirements.txt ?" {
+        - "pip check -r requirements.txt"
+        + "pip-audit -r requirements.txt"
+        - "pip freeze -r requirements.txt"
+        - "python -m venv requirements.txt"
+        explanation: "pip-audit compare les paquets à une base de vulnérabilités connues. pip check vérifie seulement la cohérence des dépendances installées, pip freeze les liste."
+      }
+      question "Pourquoi Log4Shell a-t-il été si difficile à traiter pour beaucoup d’organisations ?" {
+        - "parce qu'aucun correctif n'existait"
+        + "parce qu'elles ne savaient pas dans quelles applications Log4j était présent, souvent comme dépendance indirecte"
+        - "parce que la faille touchait seulement les mots de passe"
+        - "parce qu'elle nécessitait un accès physique"
+        explanation: "Des correctifs sont sortis rapidement. Le problème était de trouver toutes les copies de la bibliothèque, souvent embarquée par d'autres composants. Un inventaire à jour répond à cette question."
+      }
+      question "Que garantit l’attribut integrity sur une balise script ?" {
+        - "que le script est chiffré pendant le transfert"
+        + "que le navigateur n'exécute le fichier que si son empreinte correspond à celle attendue"
+        - "que le script ne contient pas de faille XSS"
+        - "que le CDN est disponible"
+        explanation: "Subresource Integrity compare l'empreinte du fichier reçu à celle indiquée. Si le CDN est compromis ou que le fichier change, le script est bloqué. Le chiffrement du transfert, c'est HTTPS."
+      }
+      question "Pourquoi ne faut-il jamais appeler pickle.loads() sur une donnée envoyée par un client ?" {
+        - "parce que c'est trop lent"
+        + "parce que la désérialisation pickle peut exécuter du code arbitraire"
+        - "parce que pickle ne gère pas les accents"
+        - "parce que pickle est payant"
+        explanation: "Un objet pickle peut indiquer une fonction à appeler lors de sa reconstruction. La documentation Python avertit de ne désérialiser que des données de confiance. Pour échanger des données : JSON, puis validation."
+      }
+      question "Laquelle de ces informations ne doit jamais figurer dans un journal ?" {
+        - "l'adresse IP source"
+        - "l'heure de l'événement"
+        + "le mot de passe saisi, même incorrect"
+        - "l'identifiant de l'utilisateur"
+        explanation: "Un mot de passe incorrect est souvent le bon avec une faute de frappe, ou celui d'un autre service. Les journaux sont lus par plus de monde que la base : ils ne contiennent ni mot de passe, ni jeton, ni identifiant de session."
+      }
+      question "Qu’est-ce qu’une injection dans les journaux ?" {
+        - "l'ajout de journaux par un administrateur"
+        + "une donnée contenant un retour à la ligne qui fabrique une fausse entrée de journal"
+        - "un journal trop volumineux"
+        - "la suppression des journaux par un attaquant"
+        explanation: "Si le login contient un saut de ligne, l'attaquant peut écrire une ligne qui imite une entrée légitime et tromper l'analyse. On neutralise les caractères de contrôle ou on écrit en JSON."
+      }
+      question "Quelle durée de conservation des journaux la CNIL considère-t-elle en général suffisante ?" {
+        - "1 semaine"
+        - "1 mois"
+        + "6 mois à 1 an"
+        - "10 ans"
+        explanation: "La recommandation de 2021 sur la journalisation retient 6 mois à 1 an pour la traçabilité, en durée glissante. Une durée plus longue doit être justifiée, par exemple par une obligation légale."
+      }
+      question "Pourquoi centraliser les journaux sur une autre machine ?" {
+        - "pour économiser de l'espace disque"
+        + "parce qu'un attaquant qui compromet le serveur peut effacer ou modifier les journaux locaux"
+        - "parce que la loi interdit les journaux locaux"
+        - "pour accélérer l'application"
+        explanation: "Une copie hors du serveur reste exploitable après une compromission. La centralisation permet aussi de corréler les événements et de déclencher des alertes."
+      }
+      question "Que signifie « échouer fermé » (fail closed) pour un contrôle d’accès ?" {
+        - "fermer l'application en cas d'erreur"
+        + "refuser l'accès si une erreur empêche de vérifier les droits"
+        - "fermer la connexion TCP après chaque requête"
+        - "verrouiller tous les comptes"
+        explanation: "En cas de doute, la réponse sûre est le refus. Un contrôle qui accorde l'accès quand il plante (échec ouvert) peut être contourné en provoquant une erreur."
+      }
+      question "Une opération débite un compte puis en crédite un autre. Le crédit échoue. Que doit-il se passer ?" {
+        - "le débit reste, on réessaiera plus tard"
+        + "l'ensemble est annulé grâce à une transaction"
+        - "l'erreur est ignorée"
+        - "le crédit est fait deux fois au prochain essai"
+        explanation: "Les deux étapes forment un tout : dans une transaction, une erreur annule aussi le débit. L'OWASP cite les transactions partielles parmi les scénarios d'attaque de A10."
+      }
+      question "Quelle réponse donner à l’utilisateur lors d’une erreur serveur inattendue ?" {
+        - "le message complet de l'exception pour qu'il puisse le signaler"
+        + "un message générique avec une référence, le détail étant écrit dans le journal"
+        - "la pile d'appels complète"
+        - "aucune réponse, la connexion est coupée"
+        explanation: "Le message générique ne donne rien à un attaquant ; la référence permet au support de retrouver le détail dans les journaux. Afficher l'exception est une fuite d'information (CWE-209)."
+      }
+      question "Quel réglage Flask limite la taille des requêtes acceptées ?" {
+        - "SESSION_COOKIE_SECURE"
+        - "SEND_FILE_MAX_AGE_DEFAULT"
+        + "MAX_CONTENT_LENGTH"
+        - "PERMANENT_SESSION_LIFETIME"
+        explanation: "MAX_CONTENT_LENGTH fait renvoyer une erreur 413 au-delà de la taille fixée, ce qui évite d'épuiser la mémoire avec un envoi énorme. Côté Nginx, l'équivalent est client_max_body_size."
+      }
+    }
+  }
+
+  module "synthese" {
+    title: "Chapitre 10 : synthèse, audit et correction d'une application"
+    duration: "45min"
+    content: """
+### Le mini-projet
+Tu reprends une petite application de **prêt de matériel** du lycée (ordinateurs portables, vidéoprojecteurs), écrite rapidement par un stagiaire. Elle tourne dans ton labo sur `127.0.0.1:5000`. Ta mission : l'auditer en suivant le Top 10, exploiter chaque faille **dans le labo**, la corriger, et rédiger un court rapport.
+
+Voici le code à auditer (`pret.py`) :
+
+```python
+import os, sqlite3, hashlib
+from flask import Flask, request, session, redirect, send_file
+
+app = Flask(__name__)
+app.secret_key = "pret2024"
+
+def db():
+    return sqlite3.connect("pret.db")
+
+@app.post("/connexion")
+def connexion():
+    login, mdp = request.form["login"], request.form["mdp"]
+    h = hashlib.md5(mdp.encode()).hexdigest()
+    u = db().execute(f"SELECT id, role FROM comptes WHERE login='{login}' AND mdp='{h}'").fetchone()
+    if not u:
+        return "Échec pour " + login, 401
+    session["id"], session["role"] = u
+    return redirect("/")
+
+@app.get("/materiel")
+def materiel():
+    q = request.args.get("q", "")
+    lignes = db().execute("SELECT nom FROM materiel WHERE nom LIKE ?", (f"%{q}%",)).fetchall()
+    return "<h2>Résultats pour " + q + "</h2>" + "".join(f"<p>{l[0]}</p>" for l in lignes)
+
+@app.get("/pret/<int:id>/annuler")
+def annuler(id):
+    db().execute("DELETE FROM prets WHERE id = ?", (id,)).connection.commit()
+    return "annulé"
+
+@app.get("/convention")
+def convention():
+    return send_file(os.path.join("conventions", request.args["fichier"]))
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", debug=True)
+```
+
+### Méthode d'audit
+1. **Cartographier** : liste les routes, les méthodes, les entrées (formulaire, URL, cookie) et ce qui est protégé.
+2. **Passer chaque route au crible** du Top 10 : qui a le droit (A01) ? la donnée finit-elle dans du SQL, du HTML, un chemin, une commande (A05, A01) ? que se passe-t-il en cas d'erreur (A10) ?
+3. **Vérifier la configuration** (A02), les **mots de passe** et la **session** (A04, A07), les **dépendances** (A03), les **journaux** (A09).
+4. **Prouver** chaque faille dans le labo par une requête `curl` ou une action navigateur reproductible, sans jamais viser autre chose que `127.0.0.1`.
+5. **Corriger**, puis **rejouer** la preuve pour vérifier qu'elle échoue.
+6. **Rédiger** : pour chaque faille, la catégorie, la gravité, la preuve, la correction.
+
+### À toi de jouer
+Trouve au moins **dix** problèmes dans `pret.py`, classe-les dans le Top 10 2025, donne pour chacun une preuve dans le labo et la correction. Ensuite, écris la version corrigée des routes `/connexion`, `/materiel`, `/pret/<id>/annuler` et `/convention`.
+
+### Correction
+| N° | Problème | Catégorie | Preuve dans le labo | Correction |
+|---|---|---|---|---|
+| 1 | Requête SQL de connexion en f-string | A05 | login `admin'--` connecte sans mot de passe | requête préparée |
+| 2 | MD5 sans sel pour les mots de passe | A04 | empreintes retrouvées dans une table précalculée | Argon2id (`argon2-cffi`) |
+| 3 | « Échec pour » + login renvoyé en HTML | A05 (XSS) | login `<img src=x onerror=alert(1)>` | gabarit avec échappement, message fixe |
+| 4 | Pas de limite de tentatives, session non vidée | A07 | 1 000 essais par minute acceptés | délai croissant, `session.clear()` |
+| 5 | `secret_key` faible et écrite dans le code | A02 / A07 | cookie signé fabriqué avec la clé connue | clé aléatoire en variable d'environnement |
+| 6 | `q` inséré dans la page sans échappement | A05 (XSS réfléchi) | `/materiel?q=<img src=x onerror=alert(1)>` | `render_template` + Jinja |
+| 7 | Annulation par `GET`, sans vérifier connexion ni propriétaire | A01 + CSRF | `curl /pret/3/annuler` sans cookie supprime le prêt | `POST`, connexion, `WHERE id=? AND emprunteur_id=?`, jeton CSRF |
+| 8 | Chemin construit avec `fichier` | A01 (traversée) | `/convention?fichier=../pret.py` renvoie le code source | `send_from_directory("conventions", nom)` |
+| 9 | `debug=True` et écoute sur `0.0.0.0` | A02 | débogueur joignable depuis le réseau | pas de debug, `127.0.0.1` derrière un proxy Nginx |
+| 10 | Paramètre absent (`request.form["login"]`) : erreur non prévue | A10 | requête sans champ → erreur 400 ; autres erreurs détaillées en debug | validation, gestionnaire d'erreurs global |
+| 11 | Aucun journal de sécurité, aucun en-tête de sécurité | A09 / A02 | aucune trace des 1 000 essais | journal des connexions et des refus, CSP, nosniff |
+| 12 | Cookie de session sans `Secure` ni `SameSite` | A02 / A07 | `curl -I` montre `Set-Cookie: session=...; HttpOnly; Path=/` | `SESSION_COOKIE_SECURE`, `SESSION_COOKIE_SAMESITE="Lax"` |
+
+Version corrigée (extraits) :
+
+```python
+import os, sqlite3, logging
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
+from flask import Flask, request, session, redirect, render_template, send_from_directory, abort
+from flask_wtf.csrf import CSRFProtect
+
+app = Flask(__name__)
+app.config.update(
+    SECRET_KEY=os.environ["FLASK_SECRET_KEY"],
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    MAX_CONTENT_LENGTH=1_000_000,
+)
+CSRFProtect(app)
+ph = PasswordHasher()
+journal = logging.getLogger("securite")
+
+@app.post("/connexion")
+def connexion():
+    login = request.form.get("login", "")[:64]
+    mdp = request.form.get("mdp", "")
+    u = db().execute("SELECT id, role, mdp FROM comptes WHERE login = ?", (login,)).fetchone()
+    try:
+        if u is None:
+            raise VerifyMismatchError
+        ph.verify(u[2], mdp)
+    except VerifyMismatchError:
+        journal.warning("connexion echec login=%r ip=%s", login, request.remote_addr)
+        return render_template("connexion.html", erreur=True), 401
+    session.clear()
+    session["id"], session["role"] = u[0], u[1]
+    journal.info("connexion ok id=%s ip=%s", u[0], request.remote_addr)
+    return redirect("/")
+
+@app.get("/materiel")
+def materiel():
+    q = request.args.get("q", "")
+    lignes = db().execute("SELECT nom FROM materiel WHERE nom LIKE ?", (f"%{q}%",)).fetchall()
+    return render_template("materiel.html", q=q, lignes=lignes)
+
+@app.post("/pret/<int:id>/annuler")
+def annuler(id):
+    if "id" not in session:
+        abort(401)
+    conn = db()
+    with conn:
+        n = conn.execute("DELETE FROM prets WHERE id = ? AND emprunteur_id = ?",
+                         (id, session["id"])).rowcount
+    if n == 0:
+        abort(404)
+    journal.info("pret annule id=%s par=%s", id, session["id"])
+    return redirect("/mes-prets")
+
+@app.get("/convention")
+def convention():
+    if "id" not in session:
+        abort(401)
+    return send_from_directory("conventions", request.args.get("fichier", ""))
+```
+
+Le `%r` dans le journal affiche la chaîne entre apostrophes avec les retours à la ligne échappés (`\n`), ce qui empêche l'injection dans les journaux. Il reste à ajouter la limitation des tentatives (par exemple avec Flask-Limiter), les en-têtes de sécurité (Nginx ou `after_request`), le gestionnaire d'erreurs global, et à lancer `pip-audit` sur les dépendances.
+
+### Le rapport
+Un rapport d'audit utile tient en une page par faille : titre, catégorie OWASP, gravité (critique, élevée, moyenne, faible), description en deux phrases, preuve reproductible, impact, correction, vérification. Il commence par un résumé lisible par un non-spécialiste (« un élève peut annuler les prêts des autres ; un attaquant peut se connecter comme administrateur »).
+
+### Récapitulatif du cours
+| Risque | Défense principale | Chapitre |
+|---|---|---|
+| Injection SQL, commande | requête préparée, liste d'arguments, liste blanche | 3 |
+| XSS | échappement selon le contexte, gabarits, CSP | 4, 8 |
+| CSRF | jeton, `SameSite`, contrôle de l'origine, pas d'action en `GET` | 5 |
+| Contrôle d'accès, IDOR, SSRF | refus par défaut, vérification du propriétaire, liste blanche d'URL | 6 |
+| Mots de passe, sessions | Argon2id, limite de tentatives, double authentification, `session.clear()` | 7 |
+| Configuration | pas de debug, en-têtes, TLS 1.2+, configuration versionnée | 8 |
+| Dépendances, intégrité | inventaire, audit, verrouillage, SRI, pas de `pickle` | 9 |
+| Journaux, erreurs | événements utiles sans secret, alertes, message générique, échec fermé | 9 |
+
+Et toujours : tu testes seulement tes propres environnements, ou ceux pour lesquels tu as une autorisation écrite.
+
+### Pour aller plus loin
+• OWASP Top 10:2025, fondation OWASP (top10.owasp.org).
+• OWASP Cheat Sheet Series : SQL Injection Prevention, Cross Site Scripting Prevention, Cross-Site Request Forgery Prevention, Password Storage, Session Management, HTTP Headers, Content Security Policy (cheatsheetseries.owasp.org).
+• OWASP ASVS (Application Security Verification Standard) et OWASP Juice Shop pour s'entraîner.
+• ANSSI, « Recommandations pour la sécurisation des sites web », « Recommandations de sécurité relatives à TLS » et guide sur la journalisation (cyber.gouv.fr).
+• CNIL, recommandation relative aux mots de passe (délibération 2022-100) et recommandation relative à la journalisation (délibération 2021-122).
+• MDN Web Docs, Mozilla : HTTP, cookies, Content-Security-Policy, Subresource Integrity (developer.mozilla.org).
+"""
+
+    quiz {
+      pick: 10
+      question "Quelle est la première étape d’un audit de sécurité d’une application web ?" {
+        - "lancer un scanner sur le site de production"
+        + "cartographier les routes, les méthodes, les entrées et ce qui est protégé"
+        - "corriger toutes les dépendances"
+        - "écrire le rapport"
+        explanation: "On ne peut tester que ce que l'on connaît : la cartographie donne la liste des points d'entrée. Lancer un outil sur un site de production sans autorisation est interdit, et le rapport vient en dernier."
+      }
+      question "Dans pret.py, le login admin’-- permet de se connecter sans mot de passe. Quelle est la correction ?" {
+        - "interdire l'apostrophe dans les logins"
+        + "une requête préparée avec un marqueur pour le login"
+        - "passer de MD5 à SHA-256"
+        - "limiter le login à 8 caractères"
+        explanation: "La requête préparée sépare structure et données : l'apostrophe devient un caractère ordinaire. Changer de hachage ne touche pas à l'injection, et filtrer un caractère est fragile."
+      }
+      question "Pourquoi la route GET /pret/<id>/annuler cumule-t-elle deux failles ?" {
+        - "elle est trop lente et mal nommée"
+        + "elle ne vérifie ni la connexion ni le propriétaire, et une action en GET est exposée au CSRF"
+        - "elle utilise une requête préparée"
+        - "elle renvoie du texte au lieu de JSON"
+        explanation: "N'importe qui peut annuler n'importe quel prêt (A01), et un simple lien ou une image suffit à déclencher l'action chez une victime (CSRF). Correction : POST, connexion, propriétaire, jeton."
+      }
+      question "Quel risque présente app.run avec host égal à 0.0.0.0 et debug=True ?" {
+        - "aucun, c'est la configuration de production recommandée"
+        + "le serveur de développement et son débogueur interactif sont joignables depuis tout le réseau"
+        - "l'application n'est accessible qu'en local"
+        - "le site passe automatiquement en HTTPS"
+        explanation: "0.0.0.0 écoute sur toutes les interfaces, et le débogueur Werkzeug permet d'exécuter du code. En production : pas de debug, serveur WSGI derrière un proxy, écoute en 127.0.0.1."
+      }
+      question "Quelle fonction Flask sert un fichier en refusant les chemins qui sortent du dossier prévu ?" {
+        - "send_file"
+        + "send_from_directory"
+        - "redirect"
+        - "render_template_string"
+        explanation: "send_from_directory vérifie que le chemin demandé reste dans le dossier. send_file avec un chemin construit à partir d'une donnée utilisateur permet ../ et la lecture de n'importe quel fichier."
+      }
+      question "Une page affiche Résultats pour suivi du paramètre q, sans gabarit. Quelle charge prouve la faille dans le labo ?" {
+        - "q=' OR 1=1--"
+        + "q=<img src=x onerror=alert(document.domain)>"
+        - "q=../../etc/passwd"
+        - "q=127.0.0.1; id"
+        explanation: "La donnée est insérée dans du HTML : une balise avec un gestionnaire d'événement s'exécute (XSS réfléchi). Les autres charges visent le SQL, les chemins et les commandes."
+      }
+      question "Quel ordre de priorité est raisonnable pour corriger les failles trouvées ?" {
+        - "l'ordre alphabétique des routes"
+        + "d'abord les plus graves et les plus faciles à exploiter, comme l'injection SQL de la connexion"
+        - "d'abord les en-têtes, car ils sont rapides à ajouter"
+        - "d'abord les journaux"
+        explanation: "On classe par gravité et facilité d'exploitation : une connexion contournable sans mot de passe passe avant un en-tête manquant. Les corrections rapides peuvent suivre en parallèle."
+      }
+      question "Après avoir corrigé une faille, que faut-il faire ?" {
+        - "fermer le ticket sans test"
+        + "rejouer la preuve d'exploitation pour vérifier qu'elle échoue, et vérifier que la fonction marche toujours"
+        - "supprimer la preuve du rapport"
+        - "redémarrer le serveur sans vérifier"
+        explanation: "La preuve rejouée confirme la correction ; le test fonctionnel vérifie qu'on n'a rien cassé. Les deux vont dans le rapport, et idéalement dans des tests automatiques."
+      }
+      question "Pourquoi écrire le login avec %r dans le journal ?" {
+        - "pour chiffrer le login"
+        + "pour que les retours à la ligne soient affichés échappés et ne créent pas de fausse ligne"
+        - "pour raccourcir le login"
+        - "pour cacher le login"
+        explanation: "%r affiche la représentation Python de la chaîne : un saut de ligne devient \\n. Cela empêche l'injection dans les journaux. Le login reste lisible, ce qui est voulu."
+      }
+      question "Quel attribut de cookie manque si curl -I montre Set-Cookie: session=...; HttpOnly; Path=/ sur un site HTTPS ?" {
+        - "HttpOnly"
+        + "Secure et SameSite"
+        - "Path"
+        - "aucun"
+        explanation: "HttpOnly et Path sont présents. Il manque Secure, pour réserver le cookie au HTTPS, et SameSite=Lax, pour limiter son envoi dans les requêtes intersites."
+      }
+      question "Dans une requête DELETE ... WHERE id = ? AND emprunteur_id = ?, que signifie rowcount égal à 0 ?" {
+        - "la base est en panne"
+        + "le prêt n'existe pas ou n'appartient pas à l'utilisateur"
+        - "la suppression a réussi"
+        - "la requête est vulnérable"
+        explanation: "Aucune ligne ne correspond aux deux conditions. On répond 404 dans les deux cas, sans dire si le prêt existe chez quelqu'un d'autre."
+      }
+      question "Quel outil lancer pour vérifier les dépendances Python du projet ?" {
+        - "sqlmap"
+        + "pip-audit"
+        - "nmap"
+        - "curl"
+        explanation: "pip-audit cherche les vulnérabilités connues des paquets. sqlmap teste les injections SQL, nmap scanne les ports, curl envoie des requêtes : utiles, mais pas pour les dépendances."
+      }
+      question "Un collègue propose de tester l’application de prêt directement sur le serveur du lycée, sans demander. Que réponds-tu ?" {
+        - "c'est permis puisque c'est le lycée"
+        + "non : on teste dans son labo, ou avec une autorisation écrite du responsable du système"
+        - "c'est permis le week-end"
+        - "c'est permis si on ne modifie rien"
+        explanation: "L'accès ou le maintien frauduleux dans un système est un délit (article 323-1 du Code pénal), même sans modification. Une autorisation écrite fixe le périmètre, les dates et les méthodes."
+      }
+      question "Quelle catégorie 2025 regroupe l’absence de journal et d’alerte sur 1 000 tentatives de connexion ?" {
+        - "A07 Authentication Failures"
+        + "A09 Security Logging and Alerting Failures"
+        - "A02 Security Misconfiguration"
+        - "A06 Insecure Design"
+        explanation: "L'absence de limitation relève de A07, mais le fait qu'aucune trace ni alerte n'existe relève de A09. Les deux corrections se complètent : limiter et alerter."
+      }
+      question "Pourquoi garder les requêtes préparées même si l’application a une CSP stricte et un pare-feu applicatif ?" {
+        - "parce que la CSP bloque aussi les injections SQL"
+        + "parce que chaque barrière couvre des cas différents : c'est la défense en profondeur"
+        - "parce que le pare-feu ralentit le site"
+        - "il n'est pas utile de les garder"
+        explanation: "La CSP agit dans le navigateur contre le XSS, pas contre le SQL. Un pare-feu applicatif détecte des motifs connus et peut être contourné. La correction à la source reste indispensable."
+      }
+      question "Un attaquant connaît la secret_key « pret2024 » de l’application. Que peut-il faire ?" {
+        - "lire les mots de passe en clair dans la base"
+        + "fabriquer un cookie de session signé avec role admin"
+        - "rien, la clé ne sert qu'aux en-têtes"
+        - "désactiver HTTPS"
+        explanation: "La clé signe la session Flask. Avec elle, l'attaquant fabrique une session administrateur acceptée par le serveur. Il faut une clé aléatoire, hors du code, et la changer si elle a fuité."
+      }
+      question "Une route renvoie str(exception) à l’utilisateur en cas d’erreur. Quelle catégorie est concernée ?" {
+        - "A03 Software Supply Chain Failures"
+        + "A10 Mishandling of Exceptional Conditions"
+        - "A08 Software or Data Integrity Failures"
+        - "A01 Broken Access Control"
+        explanation: "Le message d'exception peut contenir des requêtes, des chemins ou des données : c'est une fuite d'information, classée dans A10 (CWE-209). On affiche un message générique et on journalise le détail."
+      }
+      question "Quelle défense contre le CSRF est la plus fiable seule ?" {
+        - "vérifier que la méthode est POST"
+        - "configurer CORS"
+        + "un jeton anti-CSRF aléatoire lié à la session et vérifié par le serveur"
+        - "cacher le formulaire dans un onglet"
+        explanation: "Le jeton est imprévisible pour la page de l'attaquant. POST est envoyé par un formulaire auto-soumis, CORS ne bloque pas l'envoi. SameSite et le contrôle de l'origine complètent le jeton."
+      }
+      question "Pourquoi utiliser render_template plutôt que de concaténer du HTML dans une route Flask ?" {
+        - "parce que la concaténation est interdite en Python"
+        + "parce que Jinja échappe automatiquement les variables dans les gabarits .html"
+        - "parce que render_template est plus rapide"
+        - "parce que render_template chiffre la page"
+        explanation: "L'échappement automatique neutralise les balises injectées dans le contenu et les attributs entre guillemets. La concaténation n'échappe rien. Il reste à surveiller les |safe et les URL."
+      }
+      question "Quelle est la règle à ne jamais oublier quand on apprend la sécurité offensive du web ?" {
+        - "tester d'abord les sites les plus connus"
+        + "n'attaquer que ses propres environnements de test ou un système pour lequel on a une autorisation écrite"
+        - "utiliser un VPN pour ne pas être retrouvé"
+        - "ne tester que la nuit"
+        explanation: "Un labo personnel (application vulnérable, Juice Shop en 127.0.0.1) ou un programme autorisé permettent d'apprendre légalement. Un VPN ne rend pas légal un accès non autorisé."
+      }
+    }
+  }
+}

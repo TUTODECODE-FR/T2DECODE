@@ -1,0 +1,1825 @@
+tdc-version: 2
+type: course
+
+course "windows-server-active-directory" {
+  title: "Windows Server et Active Directory"
+  description: """
+Ce cours t'apprend à monter et administrer un domaine Active Directory sous Windows Server 2022, du premier contrôleur de domaine jusqu'aux stratégies de groupe et aux partages de fichiers, avec les bons réflexes de sécurité. Il s'adresse aux élèves de bac pro CIEL, BTS SIO SISR, BTS CIEL et BUT réseaux, et à toute personne qui gère le parc Windows d'un lycée ou d'une PME.
+
+À la fin, tu sauras :
+• distinguer rôle et fonctionnalité, et installer un serveur proprement (nom, IP fixe, rôles) ;
+• expliquer domaine, arborescence, forêt, contrôleur de domaine, catalogue global et rôles FSMO ;
+• promouvoir le premier contrôleur de domaine et vérifier qu'il fonctionne (dcdiag, enregistrements SRV) ;
+• organiser l'annuaire en unités d'organisation, créer utilisateurs et groupes et appliquer la méthode AGDLP ;
+• joindre un poste Windows au domaine et dépanner les échecs de jonction ;
+• créer, lier et dépanner des stratégies de groupe (ordre LSDOU, gpupdate, gpresult) ;
+• créer un partage et combiner correctement droits de partage et droits NTFS ;
+• administrer l'annuaire en PowerShell (Get-ADUser, New-ADUser, import CSV) ;
+• protéger les comptes à privilèges et déployer Windows LAPS.
+
+Le cours suit un labo que tu montes toi-même : un serveur Windows Server 2022 (version d'évaluation gratuite) et un poste Windows 10 ou 11 Professionnel, dans des machines virtuelles reliées par un réseau interne. Chaque chapitre contient au moins un exercice pratique corrigé et une banque de questions tirées au hasard.
+
+Prérequis : adressage IPv4 (192.168.10.0/24, passerelle), principes du DNS (enregistrements A, résolution), utilisation courante de Windows et de l'invite de commandes.
+"""
+  category: "network"
+  level: "intermediate"
+  duration: "8h"
+  icon: "Computer"
+  keywords: ["windows server", "active directory", "ad ds", "contrôleur de domaine", "forêt", "dns", "unité d'organisation", "agdlp", "gpo", "gpupdate", "gpresult", "ntfs", "partage", "powershell", "get-aduser", "new-aduser", "laps", "fsmo"]
+
+  module "ad-concepts" {
+    title: "Chapitre 1 : Active Directory, domaine, arborescence et forêt"
+    duration: "30min"
+    content: """
+### Le problème qu'Active Directory résout
+Dans un lycée de 300 postes sans annuaire, chaque ordinateur possède ses propres comptes locaux. Un élève qui change de salle doit avoir un compte sur chaque machine, un mot de passe changé ici ne l'est pas ailleurs, et l'administrateur passe ses journées à recréer des comptes. On appelle ce fonctionnement un **groupe de travail** (workgroup) : chaque machine est son propre maître.
+
+**Active Directory Domain Services** (AD DS) centralise tout cela. C'est un **annuaire** : une base de données qui décrit les objets du réseau (utilisateurs, groupes, ordinateurs, imprimantes, unités d'organisation) et qui sert à les **authentifier** (vérifier qui tu es) et à leur donner des **autorisations** (ce que tu as le droit de faire). Un élève a un seul compte, valable sur tous les postes du domaine, et l'administrateur applique des réglages à des centaines de machines d'un coup grâce aux stratégies de groupe.
+
+### Les protocoles derrière l'annuaire
+AD DS s'appuie sur des standards :
+| Protocole | Rôle dans AD | Port |
+|---|---|---|
+| DNS | trouver les contrôleurs de domaine (enregistrements SRV) | 53 UDP/TCP |
+| Kerberos | authentification des comptes (tickets) | 88 UDP/TCP |
+| LDAP | lecture et écriture dans l'annuaire | 389 (636 en LDAPS) |
+| Catalogue global (LDAP) | recherche dans toute la forêt | 3268 (3269 en TLS) |
+| SMB | accès à SYSVOL, NETLOGON et aux partages | 445 TCP |
+
+Kerberos impose que les horloges soient proches : par défaut, un écart de plus de **5 minutes** entre un poste et le contrôleur fait échouer l'authentification. Dans un domaine, l'heure est distribuée automatiquement à partir du contrôleur qui porte le rôle d'émulateur PDC.
+
+### Domaine, contrôleur de domaine
+• Un **domaine** est une limite d'administration et de réplication : il porte un nom DNS (`lycee.internal`) et un nom court NetBIOS (`LYCEE`, 15 caractères au plus).
+• Un **contrôleur de domaine** (DC, domain controller) est un serveur Windows qui héberge une copie de la base de l'annuaire (fichier `NTDS.dit`, par défaut dans `C:\Windows\NTDS`) et le dossier partagé **SYSVOL** (scripts et stratégies de groupe). Tous les DC d'un domaine sont égaux en écriture : on parle de réplication **multimaître**. On en installe toujours au moins **deux** par domaine : si le seul DC tombe, plus personne ne peut ouvrir de session avec un nouveau compte.
+
+### Arborescence et forêt
+• Une **arborescence** (tree) est un ensemble de domaines qui partagent un espace de noms contigu : `lycee.internal`, puis `bts.lycee.internal` et `cfa.lycee.internal` en domaines enfants.
+• Une **forêt** (forest) regroupe une ou plusieurs arborescences qui partagent le même **schéma** (la liste des classes d'objets et des attributs), la même configuration et le même **catalogue global**. Une forêt peut contenir `lycee.internal` et `college.internal`, deux arborescences aux noms différents.
+• Le premier domaine créé est le **domaine racine de la forêt** ; il porte les groupes les plus puissants (Administrateurs de l'entreprise, Administrateurs du schéma).
+
+Entre domaines d'une même forêt, des **approbations** (trusts) bidirectionnelles et transitives sont créées automatiquement : un utilisateur de `bts.lycee.internal` peut recevoir des droits sur un serveur de `lycee.internal`.
+
+Point essentiel pour la sécurité : la vraie **frontière de sécurité est la forêt**, pas le domaine. Un administrateur d'un domaine enfant peut, avec du savoir-faire, prendre le contrôle de toute la forêt. Si deux entités ne doivent vraiment pas se faire confiance, il faut deux forêts.
+
+### Catalogue global et rôles FSMO
+Le **catalogue global** (GC) est un DC qui garde une copie partielle de tous les objets de la forêt : il sert à chercher un utilisateur dans n'importe quel domaine et à connaître l'appartenance aux groupes universels lors de l'ouverture de session.
+
+Certaines opérations ne supportent pas le multimaître : elles sont confiées à un seul DC, qui porte un **rôle FSMO** (Flexible Single Master Operation). Il y en a cinq :
+| Rôle | Portée | À quoi il sert |
+|---|---|---|
+| Maître de schéma | un par forêt | seul DC autorisé à modifier le schéma |
+| Maître d'attribution de noms de domaine | un par forêt | ajout et suppression de domaines |
+| Maître RID | un par domaine | distribue des blocs d'identifiants relatifs pour créer les SID |
+| Émulateur PDC | un par domaine | référence de l'heure, changements de mot de passe urgents, verrouillages |
+| Maître d'infrastructure | un par domaine | met à jour les références vers les objets d'autres domaines |
+
+Sur le premier DC, les cinq rôles sont réunis. La commande `netdom query fsmo` les affiche.
+
+### Sites
+Un **site** décrit la géographie : un ensemble de sous-réseaux IP bien reliés entre eux (le lycée, l'annexe). Les postes s'authentifient de préférence auprès d'un DC de leur site, et la réplication entre sites est planifiée. Le domaine (logique) et le site (physique) sont indépendants : un domaine peut couvrir plusieurs sites et un site héberger plusieurs domaines.
+
+### Conteneurs et unités d'organisation
+À l'intérieur d'un domaine, les objets sont rangés dans des **conteneurs** (comme `CN=Users` et `CN=Computers`, créés d'office) et dans des **unités d'organisation** (OU) que tu crées. Seules les OU peuvent recevoir une stratégie de groupe ou une délégation fine : c'est pour cela qu'on ne laisse jamais les comptes dans `Users` ou `Computers`. Le chapitre 4 y revient.
+
+Chaque objet a un **nom distinctif** (DN, distinguished name) qui décrit son chemin, du plus précis au plus général :
+
+```text
+CN=Jean Martin,OU=Profs,OU=Utilisateurs,OU=Lycee,DC=lycee,DC=internal
+```
+
+`CN` = nom commun, `OU` = unité d'organisation, `DC` = composant du nom de domaine (domain component, à ne pas confondre avec contrôleur de domaine).
+
+### À toi de jouer
+1. Un groupe scolaire possède `lycee.internal` et veut ajouter le domaine `bts.lycee.internal` pour son pôle supérieur, puis le domaine `college.internal` pour le collège voisin, dans la même forêt. Combien y a-t-il de domaines, d'arborescences et de forêts ? Combien de maîtres de schéma ? Combien de maîtres RID ?
+2. Écris le DN d'un ordinateur nommé `PC-CDI-01` placé dans l'OU `Postes`, elle-même dans l'OU `Lycee`, du domaine `lycee.internal`.
+3. Un élève n'arrive plus à ouvrir de session : le message parle d'heure ou de date différente entre l'ordinateur et le serveur. Le poste affiche 10 h 12, le contrôleur 10 h 03. Quelle est la cause et quel protocole refuse l'authentification ?
+
+### Correction
+1. Trois domaines (`lycee.internal`, `bts.lycee.internal`, `college.internal`), deux arborescences (celle de `lycee.internal` avec son enfant, et celle de `college.internal`), une seule forêt. Le maître de schéma est unique pour la forêt (1) ; le maître RID existe dans chaque domaine (3).
+2. `CN=PC-CDI-01,OU=Postes,OU=Lycee,DC=lycee,DC=internal`. L'ordre va du plus précis (l'objet) au plus général (le domaine).
+3. L'écart est de 9 minutes, au-delà de la tolérance de 5 minutes de Kerberos : les tickets sont refusés. On corrige la synchronisation horaire du poste (service de temps Windows, `w32tm /resync`) et on vérifie que l'émulateur PDC est lui-même à l'heure.
+"""
+
+    quiz {
+      pick: 5
+      question "Quel protocole Active Directory utilise-t-il pour authentifier les comptes du domaine ?" {
+        - "DHCP"
+        + "Kerberos"
+        - "SNMP"
+        - "RADIUS"
+        explanation: "Dans un domaine, l'authentification repose sur Kerberos (port 88) : le contrôleur délivre des tickets. NTLM existe encore pour la compatibilité, mais Kerberos est le protocole normal. DHCP distribue des adresses, SNMP supervise des équipements, RADIUS authentifie des accès réseau."
+      }
+      question "Quelle est la vraie frontière de sécurité dans Active Directory ?" {
+        - "l'unité d'organisation"
+        - "le domaine"
+        + "la forêt"
+        - "le site"
+        explanation: "Les domaines d'une forêt se font confiance par construction et partagent schéma et configuration. Un administrateur de domaine peut compromettre toute la forêt : seule la forêt isole vraiment. Le site est une notion physique, l'OU une notion d'organisation."
+      }
+      question "Que partagent tous les domaines d’une même forêt ?" {
+        - "le même nom NetBIOS"
+        + "le même schéma et le même catalogue global"
+        - "la même base de comptes utilisateurs"
+        - "le même maître RID"
+        explanation: "Le schéma, la configuration et le catalogue global sont communs à toute la forêt. Chaque domaine garde ses propres comptes, son nom NetBIOS et son propre maître RID."
+      }
+      question "Combien existe-t-il de rôles FSMO dans une forêt d’un seul domaine ?" {
+        - "2"
+        - "3"
+        + "5"
+        - "7"
+        explanation: "Il y a deux rôles de forêt (maître de schéma, maître d'attribution de noms) et trois rôles de domaine (maître RID, émulateur PDC, maître d'infrastructure). Avec un seul domaine, cela fait cinq rôles, tous sur le premier DC au départ."
+      }
+      question "Quel rôle FSMO sert de référence horaire pour le domaine ?" {
+        - "le maître RID"
+        - "le maître d'infrastructure"
+        + "l'émulateur PDC"
+        - "le maître de schéma"
+        explanation: "L'émulateur PDC de la racine de la forêt est la source de temps de la hiérarchie. Il traite aussi en priorité les changements de mot de passe et les verrouillages. Le maître RID distribue des blocs d'identifiants."
+      }
+      question "Quel est l’écart d’horloge maximal toléré par défaut par Kerberos dans un domaine ?" {
+        - "30 secondes"
+        + "5 minutes"
+        - "15 minutes"
+        - "1 heure"
+        explanation: "La stratégie Kerberos fixe par défaut une tolérance de 5 minutes. Au-delà, les tickets sont refusés et l'ouverture de session échoue, d'où l'importance de la synchronisation horaire."
+      }
+      question "Dans « CN=Jean Martin,OU=Profs,DC=lycee,DC=internal », que signifie DC ?" {
+        - "Domain Controller, le serveur qui stocke l'objet"
+        + "Domain Component, une partie du nom de domaine"
+        - "Default Container, le conteneur par défaut"
+        - "Directory Class, la classe de l'objet"
+        explanation: "Dans un DN, DC signifie composant de domaine : lycee.internal s'écrit DC=lycee,DC=internal. Le sigle DC désigne aussi le contrôleur de domaine dans le langage courant, d'où la confusion fréquente."
+      }
+      question "Pourquoi installe-t-on au moins deux contrôleurs de domaine ?" {
+        - "parce que Windows refuse de créer un domaine avec un seul DC"
+        + "pour que l'authentification et l'annuaire continuent de fonctionner si un DC tombe"
+        - "parce que chaque DC ne peut contenir que la moitié des comptes"
+        - "pour séparer les comptes des élèves et ceux des professeurs"
+        explanation: "Chaque DC contient une copie complète de la base du domaine, répliquée en multimaître. Un seul DC fonctionne, mais sa panne bloque tout le domaine. Le second DC assure la continuité (et il héberge en général aussi le DNS)."
+      }
+      question "Comment s’appelle la base de données de l’annuaire sur un contrôleur de domaine ?" {
+        - "SAM"
+        + "NTDS.dit"
+        - "SYSVOL"
+        - "registry.pol"
+        explanation: "NTDS.dit (par défaut dans C:\\Windows\\NTDS) contient les objets de l'annuaire. La SAM est la base des comptes locaux d'une machine. SYSVOL est un dossier partagé (scripts, GPO), Registry.pol un fichier de réglages de GPO."
+      }
+      question "Un domaine bts.lycee.internal est ajouté sous lycee.internal. Quelle relation de confiance existe entre eux ?" {
+        - "aucune, il faut la créer à la main"
+        - "une approbation à sens unique de lycee vers bts"
+        + "une approbation bidirectionnelle et transitive créée automatiquement"
+        - "une approbation externe non transitive"
+        explanation: "Dans une forêt, chaque domaine enfant est relié à son parent par une approbation bidirectionnelle transitive créée à la promotion. Les approbations externes non transitives servent à relier des domaines de forêts différentes."
+      }
+      question "À quoi sert le catalogue global ?" {
+        - "à stocker les fichiers des stratégies de groupe"
+        - "à distribuer les adresses IP aux postes"
+        + "à rechercher des objets dans toute la forêt et à connaître les groupes universels"
+        - "à sauvegarder la base NTDS.dit"
+        explanation: "Le catalogue global garde une copie partielle de tous les objets de la forêt (port 3268). Il est consulté pour les recherches et, à l'ouverture de session, pour l'appartenance aux groupes universels."
+      }
+      question "Quelle différence y a-t-il entre un domaine et un site ?" {
+        - "aucune, ce sont deux noms pour la même chose"
+        + "le domaine est une limite logique d'administration, le site décrit des sous-réseaux bien reliés"
+        - "le site est une partie d'un domaine qui a son propre DNS"
+        - "le domaine regroupe les serveurs, le site regroupe les utilisateurs"
+        explanation: "Le domaine est logique (comptes, réplication, administration), le site est physique (sous-réseaux, emplacement). Ils sont indépendants : un domaine peut s'étendre sur plusieurs sites."
+      }
+      question "Pourquoi évite-t-on de laisser les comptes dans le conteneur Users ?" {
+        - "parce que les comptes de Users ne peuvent pas ouvrir de session"
+        + "parce qu'un conteneur ne peut pas recevoir de stratégie de groupe liée"
+        - "parce que Users est vidé à chaque redémarrage du DC"
+        - "parce que Users n'est pas répliqué vers les autres DC"
+        explanation: "CN=Users et CN=Computers sont des conteneurs, pas des OU : on ne peut pas y lier de GPO ni y déléguer finement. Les comptes y fonctionnent, mais on les range dans des OU pour pouvoir les gérer."
+      }
+    }
+  }
+
+  module "installation-dc" {
+    title: "Chapitre 2 : rôles, fonctionnalités et installation du premier contrôleur de domaine"
+    duration: "40min"
+    content: """
+### Rôle ou fonctionnalité ?
+Windows Server ne fait rien de spécial après l'installation : c'est toi qui ajoutes ce dont tu as besoin.
+• Un **rôle** est un service rendu aux autres machines du réseau : Services de domaine Active Directory (`AD-Domain-Services`), Serveur DNS (`DNS`), Serveur DHCP (`DHCP`), Serveur de fichiers (`FS-FileServer`), Serveur Web IIS (`Web-Server`).
+• Une **fonctionnalité** (feature) est un outil ou un composant utile au serveur lui-même : Sauvegarde Windows Server (`Windows-Server-Backup`), chiffrement BitLocker (`BitLocker`), outils d'administration à distance (`RSAT-AD-Tools`), .NET Framework.
+
+On les ajoute par le **Gestionnaire de serveur** (Gérer, puis Ajouter des rôles et fonctionnalités) ou en PowerShell avec `Install-WindowsFeature`. `Get-WindowsFeature` liste tout, avec une croix `[X]` devant ce qui est installé.
+
+Deux options d'installation existent : **Server Core** (sans bureau graphique, plus léger, moins de mises à jour, administré à distance) et **Expérience de bureau** (Desktop Experience). Le choix se fait à l'installation et ne se change plus ensuite (depuis Windows Server 2016). Pour un premier labo, prends l'expérience de bureau ; en production, Server Core est recommandé pour les contrôleurs de domaine.
+
+### Préparer le serveur avant la promotion
+Un contrôleur de domaine a besoin d'une identité stable. Avant toute chose :
+1. **Un nom définitif** : renommer un DC après coup est possible mais délicat. Choisis `SRV-DC1` dès le départ.
+2. **Une adresse IP fixe** : les postes trouvent le DC par le DNS ; une adresse qui change casse tout.
+3. **Un DNS client correct** : pour le premier DC d'une nouvelle forêt, le serveur sera son propre DNS. L'assistant règle automatiquement le DNS préféré sur `127.0.0.1`.
+4. **Les mises à jour** et une **heure juste**.
+5. Un mot de passe solide pour le compte Administrateur local : il deviendra l'administrateur du domaine.
+
+Plan d'adressage du labo (réseau interne de l'hyperviseur) :
+| Machine | Rôle | Adresse |
+|---|---|---|
+| SRV-DC1 | contrôleur de domaine, DNS | 192.168.10.10/24 |
+| PC-01 | poste Windows 11 Pro | DHCP ou 192.168.10.101/24 |
+| passerelle | routeur ou NAT de l'hyperviseur | 192.168.10.254 |
+
+### La promotion
+Installer le rôle AD DS ne fait pas du serveur un DC : il faut ensuite le **promouvoir**. Dans le Gestionnaire de serveur, un drapeau jaune propose « Promouvoir ce serveur en contrôleur de domaine ». Trois cas :
+• **Ajouter une nouvelle forêt** : premier DC, crée le domaine racine (notre cas) ;
+• **Ajouter un contrôleur de domaine à un domaine existant** : deuxième DC, réplique la base ;
+• **Ajouter un nouveau domaine à une forêt existante** : domaine enfant ou nouvelle arborescence.
+
+L'assistant demande :
+• le nom DNS du domaine (`lycee.internal`) et le nom NetBIOS (`LYCEE`) ;
+• le **niveau fonctionnel** de la forêt et du domaine : il fixe la version minimale des DC autorisés et les fonctions disponibles. Avec Windows Server 2022, le niveau le plus élevé est « Windows Server 2016 » (2022 n'en a pas créé de nouveau ; Windows Server 2025 en ajoute un) ;
+• l'installation du serveur DNS (cochée par défaut pour une nouvelle forêt) et le rôle de catalogue global ;
+• le mot de passe **DSRM** (Directory Services Restore Mode) : c'est le mot de passe d'un compte local de secours qui sert à démarrer le DC en mode restauration de l'annuaire. Il est distinct du compte administrateur du domaine : note-le dans un coffre à mots de passe ;
+• les chemins de la base (`C:\Windows\NTDS`), des journaux et de SYSVOL (`C:\Windows\SYSVOL`).
+
+Un avertissement sur la délégation DNS s'affiche souvent (« impossible de créer une délégation ») : il est normal pour un domaine interne dont la zone parente (`internal`) n'existe pas.
+
+Le choix du nom : Microsoft recommande un sous-domaine d'un nom que tu possèdes (`ad.mon-lycee.fr`). Le TLD `.internal`, réservé par l'ICANN à l'usage privé, est aussi acceptable pour un labo ; évite `.local`, réservé au mDNS.
+
+### Vérifier le résultat
+Après le redémarrage, tu ouvres une session avec `LYCEE\Administrateur`. Vérifie :
+• `Get-ADDomain` et `Get-ADForest` : nom, niveau fonctionnel, rôles FSMO ;
+• `Get-Service NTDS, DNS, Netlogon, Kdc` : les quatre services en `Running` ;
+• `dcdiag /q` : n'affiche que les erreurs (rien = bon signe) ;
+• les partages `SYSVOL` et `NETLOGON` (`net share`) : sans eux, les GPO ne s'appliquent pas.
+
+### Un second contrôleur
+En production, un second serveur (`SRV-DC2`, 192.168.10.11) est promu avec `Install-ADDSDomainController`. Il reçoit une copie de la base par réplication et devient aussi serveur DNS. `repadmin /replsummary` vérifie ensuite que la réplication passe sans erreur.
+
+### À toi de jouer
+Sur une VM Windows Server 2022 fraîchement installée (expérience de bureau), en PowerShell administrateur :
+1. Renomme la machine en `SRV-DC1`, fixe l'adresse 192.168.10.10/24, passerelle 192.168.10.254, puis redémarre.
+2. Installe le rôle AD DS avec ses outils d'administration et vérifie qu'il apparaît comme installé.
+3. Promeus le serveur en premier DC de la forêt `lycee.internal` (NetBIOS `LYCEE`) avec le DNS intégré, après avoir lancé le test préalable.
+4. Après redémarrage, prouve que le domaine fonctionne avec trois commandes.
+
+### Correction
+Les commandes sont dans le bloc de code ci-dessous. Résultats attendus :
+• à l'étape 2, `Get-WindowsFeature AD-Domain-Services` affiche `[X] Services AD DS` avec `Install State : Installed` ;
+• à l'étape 3, `Test-ADDSForestInstallation` se termine par `Status : Success` (des avertissements sur la délégation DNS et la cryptographie sont normaux), puis `Install-ADDSForest` demande deux fois le mot de passe DSRM et redémarre le serveur tout seul ;
+• à l'étape 4, `Get-ADDomain | Select-Object DNSRoot, NetBIOSName, DomainMode` renvoie `lycee.internal`, `LYCEE` et `Windows2016Domain` ; `Get-Service NTDS, DNS, Netlogon, Kdc` montre quatre services `Running` ; `dcdiag /q` ne renvoie rien ou seulement des avertissements sur le journal d'événements récent.
+Erreur classique : oublier l'adresse fixe. Le test préalable signale alors qu'une carte réseau utilise une adresse dynamique.
+"""
+
+    codeblock "powershell" {
+      title: "Préparer et promouvoir le premier contrôleur de domaine"
+      code: """
+# 1. Nom et adresse fixe (adapter le nom de l'interface : Get-NetAdapter)
+Rename-Computer -NewName SRV-DC1 -Restart
+New-NetIPAddress -InterfaceAlias "Ethernet" -IPAddress 192.168.10.10 -PrefixLength 24 -DefaultGateway 192.168.10.254
+Set-DnsClientServerAddress -InterfaceAlias "Ethernet" -ServerAddresses 127.0.0.1
+
+# 2. Rôle AD DS et outils (console, module PowerShell ActiveDirectory)
+Install-WindowsFeature AD-Domain-Services -IncludeManagementTools
+Get-WindowsFeature AD-Domain-Services
+
+# 3. Test préalable puis promotion (le mot de passe DSRM est demandé)
+Test-ADDSForestInstallation -DomainName lycee.internal -DomainNetbiosName LYCEE -InstallDns
+Install-ADDSForest -DomainName lycee.internal -DomainNetbiosName LYCEE -InstallDns
+
+# 4. Vérifications après redémarrage
+Get-ADDomain | Select-Object DNSRoot, NetBIOSName, DomainMode, PDCEmulator
+Get-Service NTDS, DNS, Netlogon, Kdc
+dcdiag /q
+netdom query fsmo
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Lequel de ces éléments est un rôle et non une fonctionnalité de Windows Server ?" {
+        - "Sauvegarde Windows Server"
+        - "Chiffrement de lecteur BitLocker"
+        + "Serveur DHCP"
+        - "Outils d'administration de serveur distant (RSAT)"
+        explanation: "Un rôle rend un service aux autres machines du réseau (DHCP, DNS, AD DS, serveur de fichiers). La sauvegarde, BitLocker et les outils RSAT sont des fonctionnalités qui servent au serveur lui-même ou à son administrateur."
+      }
+      question "Quelle commande installe le rôle AD DS avec ses consoles et son module PowerShell ?" {
+        - "Add-WindowsCapability AD-Domain-Services"
+        + "Install-WindowsFeature AD-Domain-Services -IncludeManagementTools"
+        - "Install-ADDSForest -IncludeManagementTools"
+        - "Enable-WindowsOptionalFeature -FeatureName ActiveDirectory"
+        explanation: "Install-WindowsFeature ajoute un rôle sur Windows Server ; -IncludeManagementTools installe aussi les outils. Install-ADDSForest sert à la promotion, une fois le rôle installé. Add-WindowsCapability sert à ajouter les RSAT sur un poste Windows 11."
+      }
+      question "Tu as installé le rôle AD DS, mais le serveur n’est pas encore contrôleur de domaine. Que manque-t-il ?" {
+        - "un redémarrage simple"
+        + "la promotion du serveur (par l'assistant ou Install-ADDSForest)"
+        - "l'activation de la licence Windows"
+        - "l'installation du rôle DHCP"
+        explanation: "L'installation du rôle copie seulement les binaires. La promotion crée la base NTDS.dit, SYSVOL, le DNS et transforme le serveur en DC. Le DHCP n'est pas nécessaire à AD DS."
+      }
+      question "À quoi sert le mot de passe DSRM demandé pendant la promotion ?" {
+        - "c'est le mot de passe du compte Administrateur du domaine"
+        + "c'est le mot de passe d'un compte local de secours pour démarrer le DC en mode restauration de l'annuaire"
+        - "il chiffre la base NTDS.dit sur le disque"
+        - "il protège la console Gestionnaire de serveur"
+        explanation: "DSRM (Directory Services Restore Mode) permet de démarrer un DC sans charger l'annuaire, par exemple pour une restauration. Son mot de passe est propre au serveur, distinct de celui de l'administrateur du domaine : il faut le conserver dans un coffre."
+      }
+      question "Pourquoi un contrôleur de domaine doit-il avoir une adresse IP fixe ?" {
+        - "parce que le rôle AD DS refuse toute carte réseau sans IPv6"
+        + "parce que les postes le trouvent par le DNS et qu'il est souvent lui-même le serveur DNS"
+        - "parce que Kerberos chiffre les tickets avec l'adresse IP"
+        - "parce que le DHCP ne fonctionne pas sur Windows Server"
+        explanation: "Les postes utilisent le DC comme serveur DNS et localisent le domaine grâce à ses enregistrements. Si son adresse change, la configuration DNS des clients devient fausse et plus rien ne fonctionne."
+      }
+      question "Quel est le niveau fonctionnel de domaine le plus élevé disponible avec des DC Windows Server 2022 ?" {
+        - "Windows Server 2022"
+        - "Windows Server 2019"
+        + "Windows Server 2016"
+        - "Windows Server 2012 R2"
+        explanation: "Windows Server 2019 et 2022 n'ont pas créé de nouveau niveau fonctionnel : le plus élevé reste Windows Server 2016 (WinThreshold). Windows Server 2025 introduit un nouveau niveau."
+      }
+      question "Quelle commande n’affiche que les erreurs du diagnostic d’un contrôleur de domaine ?" {
+        - "dcdiag /all"
+        + "dcdiag /q"
+        - "repadmin /showrepl"
+        - "netdom query fsmo"
+        explanation: "dcdiag /q (quiet) n'affiche que les tests en échec. repadmin /showrepl détaille la réplication, netdom query fsmo liste les détenteurs des rôles FSMO."
+      }
+      question "Quels deux partages doivent exister sur un DC pour que les stratégies de groupe et les scripts fonctionnent ?" {
+        - "C$ et ADMIN$"
+        + "SYSVOL et NETLOGON"
+        - "IPC$ et PRINT$"
+        - "NTDS et DNS"
+        explanation: "SYSVOL contient les GPO et les scripts, NETLOGON les scripts d'ouverture de session. S'ils manquent (souvent après un problème de réplication), les postes ne reçoivent plus leurs stratégies. C$, ADMIN$ et IPC$ sont des partages administratifs."
+      }
+      question "Pendant la promotion, un avertissement indique qu’aucune délégation DNS ne peut être créée pour lycee.internal. Que fais-tu ?" {
+        + "tu continues : c'est normal pour un domaine interne sans zone parente accessible"
+        - "tu annules et installes d'abord un serveur DNS public"
+        - "tu changes le nom du domaine en lycee.local"
+        - "tu désactives IPv4 sur la carte réseau"
+        explanation: "La délégation n'a de sens que si tu gères la zone parente. Pour un nom interne, l'avertissement est attendu et sans conséquence. Le nom .local est à éviter, car il est réservé au mDNS."
+      }
+      question "Quelle option d’installation de Windows Server n’a pas de bureau graphique ?" {
+        + "Server Core"
+        - "Expérience de bureau"
+        - "Windows Server Essentials"
+        - "Nano Workstation"
+        explanation: "Server Core n'a pas d'interface graphique complète : moins de composants, donc moins de mises à jour et une surface d'attaque réduite. On l'administre à distance (Gestionnaire de serveur, PowerShell, RSAT)."
+      }
+      question "Quelle cmdlet ajoute un deuxième contrôleur de domaine à un domaine existant ?" {
+        - "Install-ADDSForest"
+        - "Install-ADDSDomain"
+        + "Install-ADDSDomainController"
+        - "Add-ADDomainController"
+        explanation: "Install-ADDSDomainController promeut un serveur en DC supplémentaire d'un domaine existant. Install-ADDSForest crée une nouvelle forêt, Install-ADDSDomain un nouveau domaine dans une forêt existante."
+      }
+      question "Après la promotion du premier DC d’une forêt, vers quelle adresse pointe son DNS préféré ?" {
+        - "vers 8.8.8.8"
+        - "vers la passerelle 192.168.10.254"
+        + "vers l'adresse de bouclage 127.0.0.1"
+        - "vers le serveur DHCP du réseau"
+        explanation: "Avec le DNS intégré à AD, l'installation règle le DNS préféré du premier DC sur 127.0.0.1 : il s'interroge lui-même. Un DNS public ne connaît pas la zone interne et casserait la localisation du domaine."
+      }
+    }
+  }
+
+  module "dns-integre" {
+    title: "Chapitre 3 : le DNS intégré à Active Directory"
+    duration: "35min"
+    content: """
+### Pas de DNS, pas de domaine
+Un poste ne connaît pas l'adresse du contrôleur de domaine : il la **demande au DNS**. Le service Netlogon de chaque DC publie dans la zone du domaine des enregistrements **SRV** (service) qui disent « le service LDAP du domaine `lycee.internal` est rendu par `srv-dc1.lycee.internal`, port 389 ». Le poste cherche ces SRV, puis l'adresse A du serveur, puis contacte le DC.
+
+Conséquence directe, à retenir par cœur : **les postes du domaine doivent utiliser les DC comme serveurs DNS**, et seulement eux. Un poste réglé sur `8.8.8.8` ou sur la box résout Internet, mais il ne trouve pas `_ldap._tcp.dc._msdcs.lycee.internal` : la jonction au domaine échoue, les GPO ne s'appliquent plus, l'ouverture de session devient lente ou impossible. Pour Internet, c'est le DNS du DC qui transmet les questions vers l'extérieur grâce aux **redirecteurs**.
+
+### Les enregistrements essentiels
+| Enregistrement | Ce qu'il indique |
+|---|---|
+| `_ldap._tcp.dc._msdcs.lycee.internal` (SRV) | les DC du domaine |
+| `_kerberos._tcp.lycee.internal` (SRV) | les serveurs Kerberos (KDC), port 88 |
+| `_gc._tcp.lycee.internal` (SRV) | les catalogues globaux, port 3268 |
+| `_ldap._tcp.<site>._sites.dc._msdcs.lycee.internal` (SRV) | les DC d'un site donné |
+| `srv-dc1.lycee.internal` (A) | l'adresse du serveur |
+| `lycee.internal` (A) | les adresses des DC, utilisées par exemple pour `\\lycee.internal\SYSVOL` |
+
+Si ces enregistrements manquent, `ipconfig /registerdns` et un redémarrage du service Netlogon (`Restart-Service Netlogon`) les republient.
+
+### Zone intégrée à Active Directory
+Avec un DNS classique, la zone est un fichier sur un serveur primaire et des secondaires en lecture seule. Une **zone intégrée à AD** est stockée **dans l'annuaire** lui-même :
+• chaque DC qui a le rôle DNS est **primaire** pour la zone (multimaître, comme l'annuaire) ;
+• la zone est répliquée **avec la réplication AD**, sans transfert de zone à configurer ;
+• les **mises à jour dynamiques sécurisées** deviennent possibles : seul l'ordinateur propriétaire d'un enregistrement peut le modifier, grâce aux droits de l'annuaire.
+
+L'étendue de réplication se choisit : vers tous les serveurs DNS du **domaine** (partition `DomainDnsZones`), de toute la **forêt** (`ForestDnsZones`, utilisée par `_msdcs.lycee.internal`), ou vers tous les DC du domaine. Crée la zone inverse toi-même, l'assistant de promotion ne le fait pas.
+
+### Mises à jour dynamiques
+Les postes du domaine enregistrent eux-mêmes leur nom (`PC-01.lycee.internal`) à chaque démarrage, à chaque changement d'adresse ou avec `ipconfig /registerdns`. Laisse le réglage à **« Sécurisé uniquement »** (Secure only) : il empêche un appareil quelconque du réseau d'écraser l'enregistrement d'un serveur. Le **nettoyage** (scavenging) des enregistrements périmés est désactivé par défaut ; on l'active avec prudence (par exemple 7 jours d'intervalle sans actualisation plus 7 jours d'actualisation) pour éviter que d'anciens noms pointent vers des adresses réattribuées.
+
+### Redirecteurs et indications de racine
+Pour les noms qui ne sont pas dans ses zones, le DNS Windows peut :
+• interroger lui-même les serveurs racine (**indications de racine**, root hints), réglage par défaut ;
+• transmettre la question à des **redirecteurs** (forwarders) choisis : le DNS du fournisseur, de l'académie, ou un résolveur public. C'est le réglage habituel en entreprise, souvent imposé par le pare-feu.
+• Un **redirecteur conditionnel** envoie seulement les questions d'un domaine précis vers un serveur précis : par exemple `college.internal` vers 192.168.50.10 pour joindre le réseau voisin.
+
+### Les bons réglages DNS client
+• Sur un poste : DNS préféré = DC1, auxiliaire = DC2. Rien d'autre.
+• Sur un DC : Microsoft recommande d'indiquer d'abord un **autre DC** comme DNS préféré, puis lui-même (`127.0.0.1`) en auxiliaire, pour éviter qu'au démarrage il attende son propre service DNS. Avec un seul DC, `127.0.0.1` suffit.
+• Si un DHCP distribue les adresses, l'option 006 (serveurs DNS) doit contenir les DC, et l'option 015 (suffixe) `lycee.internal`.
+
+### Diagnostiquer
+• `Resolve-DnsName -Type SRV _ldap._tcp.dc._msdcs.lycee.internal` : liste les DC (ou une erreur si le DNS du poste n'est pas le bon).
+• `nltest /dsgetdc:lycee.internal` : demande à Windows de trouver un DC comme il le fait pour ouvrir une session.
+• `ipconfig /all` : quels DNS utilise vraiment le poste ?
+• `dcdiag /test:dns` sur le DC : vérifie les zones, les enregistrements et les redirecteurs.
+
+### À toi de jouer
+1. Sur `SRV-DC1`, ajoute le redirecteur 9.9.9.9, crée la zone inverse de 192.168.10.0/24 intégrée à AD, et vérifie que la zone `lycee.internal` n'accepte que les mises à jour sécurisées.
+2. Un poste a reçu une adresse de la box : DNS 192.168.10.254 (la box). `nslookup lycee.internal` répond « Non-existent domain ». Explique le problème et donne la correction.
+3. Depuis un poste correctement configuré, quelle commande affiche les contrôleurs de domaine annoncés dans le DNS ? Que vois-tu ?
+
+### Correction
+1. Voir les commandes ci-dessous. `Get-DnsServerZone` doit afficher `lycee.internal` et `10.168.192.in-addr.arpa` avec `IsDsIntegrated : True` ; la zone directe affiche `DynamicUpdate : Secure`.
+2. La box ne connaît pas la zone interne `lycee.internal` : elle transmet la question à Internet, qui répond que le domaine n'existe pas. Le poste ne peut ni joindre le domaine ni trouver un DC. Correction : régler le DNS du poste sur 192.168.10.10 (et 192.168.10.11 s'il existe un second DC), ou corriger l'option 006 du serveur DHCP. Internet continue de fonctionner grâce au redirecteur du DC.
+3. `Resolve-DnsName -Type SRV _ldap._tcp.dc._msdcs.lycee.internal` renvoie un enregistrement SRV vers `srv-dc1.lycee.internal`, port 389, priorité 0, poids 100, suivi de son adresse A 192.168.10.10. `nltest /dsgetdc:lycee.internal` confirme avec le nom du DC, son adresse et ses rôles (GC, PDC, KDC…).
+"""
+
+    codeblock "powershell" {
+      title: "Régler et contrôler le DNS intégré sur SRV-DC1"
+      code: """
+Add-DnsServerForwarder -IPAddress 9.9.9.9
+Add-DnsServerPrimaryZone -NetworkId "192.168.10.0/24" -ReplicationScope Domain
+Set-DnsServerPrimaryZone -Name lycee.internal -DynamicUpdate Secure
+Get-DnsServerZone | Select-Object ZoneName, IsDsIntegrated, DynamicUpdate, ReplicationScope
+Get-DnsServerForwarder
+
+# Côté poste : trouver les DC comme le fait Windows
+Resolve-DnsName -Type SRV _ldap._tcp.dc._msdcs.lycee.internal
+nltest /dsgetdc:lycee.internal
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Comment un poste trouve-t-il un contrôleur de domaine ?" {
+        - "par une diffusion ARP sur le réseau local"
+        + "en interrogeant le DNS pour des enregistrements SRV publiés par les DC"
+        - "grâce à une liste écrite dans le fichier hosts"
+        - "en contactant le serveur DHCP qui connaît les DC"
+        explanation: "Netlogon publie des SRV comme _ldap._tcp.dc._msdcs.lycee.internal. Le poste les demande à son serveur DNS, puis résout l'adresse A du DC. C'est pourquoi un DNS mal réglé casse tout le domaine."
+      }
+      question "Un poste a pour DNS 8.8.8.8. Que se passe-t-il quand il veut joindre le domaine lycee.internal ?" {
+        - "la jonction réussit, mais plus lentement"
+        + "la jonction échoue, car 8.8.8.8 ne connaît pas les SRV de la zone interne"
+        - "8.8.8.8 transmet la question au DC automatiquement"
+        - "le poste utilise NetBIOS et la jonction réussit toujours"
+        explanation: "Un résolveur public ne connaît pas la zone interne. Le poste ne trouve aucun DC et affiche qu'un contrôleur de domaine n'a pas pu être contacté. Les postes du domaine doivent utiliser uniquement les DC comme DNS."
+      }
+      question "Quel avantage apporte une zone DNS intégrée à Active Directory ?" {
+        - "elle est accessible depuis Internet sans configuration"
+        + "elle est répliquée avec l'annuaire et chaque DC DNS peut la modifier"
+        - "elle n'a plus besoin d'enregistrements SRV"
+        - "elle chiffre toutes les requêtes DNS des clients"
+        explanation: "La zone est stockée dans l'annuaire : réplication multimaître sans transfert de zone, et mises à jour dynamiques sécurisées. Elle ne chiffre pas les requêtes et reste interne."
+      }
+      question "Quel réglage de mise à jour dynamique est recommandé pour une zone intégrée à AD ?" {
+        - "Aucune"
+        - "Non sécurisé et sécurisé"
+        + "Sécurisé uniquement"
+        - "Mise à jour par le DHCP uniquement"
+        explanation: "« Sécurisé uniquement » n'autorise que le propriétaire authentifié d'un enregistrement à le modifier. Le mode non sécurisé laisse n'importe quel appareil écraser l'enregistrement d'un serveur. « Aucune » oblige à tout saisir à la main."
+      }
+      question "Quel enregistrement SRV désigne les contrôleurs de domaine de lycee.internal ?" {
+        - "_dc._udp.lycee.internal"
+        + "_ldap._tcp.dc._msdcs.lycee.internal"
+        - "_smb._tcp.lycee.internal"
+        - "_ad._tcp.lycee.internal"
+        explanation: "Les DC publient _ldap._tcp.dc._msdcs.<domaine>. On trouve aussi _kerberos._tcp et _gc._tcp. Les autres noms proposés n'existent pas dans AD."
+      }
+      question "À quoi sert un redirecteur sur le DNS d’un contrôleur de domaine ?" {
+        - "à rediriger les postes vers un autre contrôleur"
+        + "à transmettre à un autre serveur DNS les questions sur les noms qu'il ne gère pas, comme ceux d'Internet"
+        - "à copier la zone lycee.internal sur un serveur externe"
+        - "à convertir les noms NetBIOS en noms DNS"
+        explanation: "Le DC répond lui-même pour ses zones et envoie le reste (Internet) au redirecteur, par exemple le DNS du fournisseur. Les postes n'ont ainsi qu'un seul type de DNS à connaître : les DC."
+      }
+      question "Tu veux que seules les questions sur college.internal partent vers 192.168.50.10. Que configures-tu ?" {
+        - "un redirecteur global"
+        + "un redirecteur conditionnel"
+        - "une zone secondaire inverse"
+        - "une indication de racine"
+        explanation: "Le redirecteur conditionnel ne concerne qu'un domaine précis. Un redirecteur global enverrait toutes les questions inconnues vers ce serveur. Les indications de racine servent à interroger les serveurs racine d'Internet."
+      }
+      question "Quelle commande Windows cherche un contrôleur de domaine comme le ferait l’ouverture de session ?" {
+        - "ipconfig /displaydns"
+        + "nltest /dsgetdc:lycee.internal"
+        - "netstat -an"
+        - "tracert lycee.internal"
+        explanation: "nltest /dsgetdc utilise le même mécanisme de localisation que Windows et affiche le DC trouvé, son adresse et ses rôles. ipconfig /displaydns montre seulement le cache local."
+      }
+      question "Les enregistrements SRV d’un DC ont disparu de la zone. Quelle action les republie ?" {
+        - "ipconfig /flushdns sur un poste"
+        + "redémarrer le service Netlogon sur le DC"
+        - "supprimer et recréer la zone inverse"
+        - "relancer gpupdate /force sur le DC"
+        explanation: "Netlogon enregistre les SRV du DC à son démarrage (et régulièrement). Le redémarrer les réinscrit. Vider le cache d'un poste ne change rien à la zone."
+      }
+      question "Pourquoi évite-t-on de mettre le DNS de la box en DNS auxiliaire d’un poste du domaine ?" {
+        - "parce que Windows refuse deux serveurs DNS différents"
+        + "parce que le poste peut basculer dessus et ne plus trouver les DC ni les noms internes"
+        - "parce que la box bloque le port 88"
+        - "parce que cela désactive les mises à jour dynamiques"
+        explanation: "Le poste choisit l'auxiliaire si le préféré tarde à répondre, puis peut le garder un moment. Les noms internes renvoient alors NXDOMAIN : pannes intermittentes difficiles à comprendre. L'auxiliaire doit être un autre DC."
+      }
+      question "Sur un serveur DHCP, quelle option doit contenir les adresses des DC pour un réseau de domaine ?" {
+        - "option 003, routeur"
+        + "option 006, serveurs DNS"
+        - "option 015, nom de domaine uniquement"
+        - "option 066, serveur TFTP"
+        explanation: "L'option 006 indique les serveurs DNS. L'option 015 donne le suffixe DNS (lycee.internal), utile mais insuffisant. L'option 003 est la passerelle, 066 sert au démarrage réseau."
+      }
+      question "Le nettoyage (scavenging) des enregistrements périmés est-il actif par défaut sur le DNS Windows ?" {
+        - "oui, avec un intervalle de 24 heures"
+        + "non, il faut l'activer sur le serveur et sur la zone"
+        - "oui, mais seulement pour les zones inverses"
+        - "non, il n'existe pas sous Windows"
+        explanation: "Le nettoyage est désactivé par défaut. On l'active au niveau du serveur et de la zone, avec des délais choisis (souvent 7 jours + 7 jours), pour supprimer les enregistrements dynamiques qui ne sont plus actualisés."
+      }
+    }
+  }
+
+  module "ou-utilisateurs-groupes" {
+    title: "Chapitre 4 : unités d’organisation, utilisateurs, groupes et méthode AGDLP"
+    duration: "40min"
+    content: """
+### Concevoir l'arborescence des OU
+Une **unité d'organisation** (OU, organizational unit) sert à deux choses : **appliquer des stratégies de groupe** et **déléguer l'administration** (par exemple laisser le CPE réinitialiser les mots de passe des élèves, et rien d'autre). Elle ne donne **aucun droit sur les fichiers** : pour cela, on utilise des groupes.
+
+Règle pratique : sépare d'abord les **utilisateurs** des **ordinateurs** (les GPO utilisateur et ordinateur ne s'appliquent pas aux mêmes objets), puis découpe selon ce qui doit recevoir des réglages différents. Une arborescence simple pour le lycée :
+
+```text
+lycee.internal
+└── OU=Lycee
+    ├── OU=Utilisateurs
+    │   ├── OU=Eleves
+    │   ├── OU=Profs
+    │   └── OU=Administratif
+    ├── OU=Groupes
+    ├── OU=Ordinateurs
+    │   ├── OU=Postes-Salles
+    │   └── OU=Postes-Admin
+    ├── OU=Serveurs
+    └── OU=Admins          (comptes d'administration, chapitre 9)
+```
+
+Évite de recopier l'organigramme sur dix niveaux : trois ou quatre niveaux suffisent. Chaque OU créée par la console ou par PowerShell est **protégée contre la suppression accidentelle** par défaut : pour la supprimer, il faut d'abord décocher cette protection dans l'onglet Objet (affichage des fonctionnalités avancées).
+
+### Le compte utilisateur
+Un compte a plusieurs noms, à ne pas confondre :
+| Attribut | Exemple | Usage |
+|---|---|---|
+| Nom (CN) | `Jean Martin` | affichage, DN |
+| `sAMAccountName` | `jmartin` | ouverture de session `LYCEE\jmartin`, 20 caractères au plus |
+| `UserPrincipalName` (UPN) | `jmartin@lycee.internal` | ouverture de session au format adresse |
+
+Options utiles à la création : **l'utilisateur doit changer le mot de passe à la prochaine ouverture de session**, compte désactivé tant que la personne n'est pas arrivée, date d'expiration (pratique pour les stagiaires et les élèves en fin d'année). Le mot de passe doit respecter la stratégie du domaine (par défaut : 7 caractères minimum, complexité activée, historique de 24 mots de passe, expiration à 42 jours).
+
+### Les groupes : type et étendue
+Un groupe a un **type** :
+• **sécurité** : il reçoit des autorisations (dossiers, imprimantes, GPO) ;
+• **distribution** : liste de diffusion pour la messagerie, sans autorisations.
+
+Et une **étendue** (scope), qui décide qui peut en être membre et où il peut servir :
+| Étendue | Membres possibles | Utilisable pour des droits |
+|---|---|---|
+| **Domaine local** (DL) | comptes et groupes globaux ou universels de n'importe quel domaine de la forêt, groupes de domaine local du même domaine | uniquement sur les ressources de **son** domaine |
+| **Globale** (G) | comptes et groupes globaux **du même domaine** | sur les ressources de toute la forêt |
+| **Universelle** (U) | comptes, groupes globaux et universels de toute la forêt | sur les ressources de toute la forêt ; appartenance stockée dans le catalogue global |
+
+### La méthode AGDLP
+Mettre directement des comptes dans les droits d'un dossier fonctionne, mais devient vite ingérable : 40 dossiers × 300 comptes. Microsoft recommande **AGDLP** :
+• **A**ccounts : les comptes utilisateurs…
+• vont dans des groupes **G**lobaux qui représentent des **personnes** (métier, classe) : `G_Profs`, `G_Eleves_BTS1` ;
+• qui vont dans des groupes de **D**omaine **L**ocal qui représentent un **accès** à une ressource : `DL_Partage_Profs_RW`, `DL_Partage_Profs_R` ;
+• qui reçoivent les **P**ermissions sur la ressource.
+
+Avec plusieurs domaines, on ajoute un niveau universel : **AGUDLP**.
+
+Exemple : les professeurs doivent modifier `\\SRV-DC1\Profs`, la vie scolaire seulement le lire.
+```text
+jmartin, slefevre      → G_Profs        → DL_Profs_RW → Modification NTFS sur D:\Partages\Profs
+cpe1, cpe2             → G_VieScolaire  → DL_Profs_R  → Lecture NTFS sur D:\Partages\Profs
+```
+Un nouveau professeur ? On l'ajoute à `G_Profs`, sans toucher aux droits du dossier. La vie scolaire doit aussi écrire ? On met `G_VieScolaire` dans `DL_Profs_RW`. Les droits ne sont modifiés qu'une fois, à la création du partage.
+
+Une convention de nommage claire (`G_` pour global, `DL_` pour domaine local, suffixes `_R`, `_RW`) rend l'annuaire lisible par n'importe quel collègue.
+
+Attention : l'appartenance à un groupe est lue à l'**ouverture de session**, dans le jeton d'accès. Un utilisateur ajouté à un groupe doit se déconnecter et se reconnecter pour en profiter (`whoami /groups` montre les groupes du jeton actuel).
+
+### À toi de jouer
+1. Crée dans `lycee.internal` l'arborescence ci-dessus, au moins `Lycee`, `Utilisateurs`, `Eleves`, `Profs`, `Groupes`, `Ordinateurs`.
+2. Crée deux professeurs (`jmartin`, `slefevre`) qui devront changer leur mot de passe à la première connexion, et un élève `elv.dupont`.
+3. Applique AGDLP pour ce besoin : les professeurs modifient le dossier `Profs`, les élèves n'y ont aucun accès, la vie scolaire le lit. Donne les groupes, leurs étendues et leurs membres.
+4. `jmartin` a été ajouté au bon groupe il y a 10 minutes mais n'a toujours pas accès. Il est connecté depuis ce matin. Pourquoi ?
+
+### Correction
+1. et 2. Avec la console Utilisateurs et ordinateurs Active Directory (`dsa.msc`) : clic droit sur le domaine, Nouveau, Unité d'organisation ; puis clic droit sur `Profs`, Nouveau, Utilisateur, en cochant « L'utilisateur doit changer le mot de passe à la prochaine ouverture de session ». Les commandes PowerShell équivalentes sont au chapitre 8.
+3. `G_Profs` (globale, sécurité) contient `jmartin` et `slefevre` ; `G_VieScolaire` (globale) contient les CPE ; `DL_Profs_RW` (domaine local) contient `G_Profs` et reçoit Modification ; `DL_Profs_R` (domaine local) contient `G_VieScolaire` et reçoit Lecture et exécution. Les élèves ne sont dans aucun de ces groupes : ils n'ont aucun accès, sans qu'il faille ajouter de refus.
+4. Son jeton d'accès a été construit à l'ouverture de session, avant l'ajout. Il doit se déconnecter puis se reconnecter ; `whoami /groups` affichera alors `LYCEE\G_Profs` et `LYCEE\DL_Profs_RW`.
+"""
+
+    quiz {
+      pick: 5
+      question "À quoi sert principalement une unité d’organisation ?" {
+        - "à donner des droits NTFS sur un dossier"
+        + "à appliquer des stratégies de groupe et à déléguer l'administration"
+        - "à regrouper des comptes pour une liste de diffusion"
+        - "à séparer deux forêts"
+        explanation: "Une OU reçoit des GPO et des délégations. Elle n'est pas un principal de sécurité : on ne peut pas la mettre dans les droits d'un dossier. Pour les droits, on utilise des groupes de sécurité."
+      }
+      question "Dans la méthode AGDLP, que représente un groupe global ?" {
+        - "un accès à une ressource précise"
+        + "un ensemble de personnes ayant le même rôle (métier, classe)"
+        - "une liste de diffusion de messagerie"
+        - "un ensemble d'ordinateurs d'une salle"
+        explanation: "Les groupes globaux regroupent des personnes (G_Profs). Les groupes de domaine local représentent un accès (DL_Profs_RW) et reçoivent les permissions. Ce découplage évite de modifier les ACL à chaque arrivée."
+      }
+      question "Quel groupe reçoit les permissions NTFS dans la méthode AGDLP ?" {
+        - "le compte utilisateur directement"
+        - "le groupe global"
+        + "le groupe de domaine local"
+        - "le groupe universel"
+        explanation: "A (comptes) dans G (globaux) dans DL (domaine local), et P (permissions) données au DL. Les permissions ne touchent qu'un seul groupe par niveau d'accès."
+      }
+      question "Un groupe global peut-il contenir un utilisateur d’un autre domaine de la forêt ?" {
+        - "oui, sans restriction"
+        + "non, un groupe global ne contient que des membres de son propre domaine"
+        - "oui, s'il est de type distribution"
+        - "non, un groupe global ne contient que des ordinateurs"
+        explanation: "Un groupe global accepte seulement des comptes et des groupes globaux de son domaine. Pour réunir des comptes de plusieurs domaines, on utilise un groupe universel ou un groupe de domaine local."
+      }
+      question "Quelle est la limite de longueur du sAMAccountName d’un utilisateur ?" {
+        - "8 caractères"
+        - "15 caractères"
+        + "20 caractères"
+        - "64 caractères"
+        explanation: "Le nom d'ouverture de session « pré-Windows 2000 » (sAMAccountName) d'un utilisateur est limité à 20 caractères. La limite de 15 caractères concerne les noms NetBIOS d'ordinateurs et de domaines."
+      }
+      question "Quelle est la différence entre un groupe de sécurité et un groupe de distribution ?" {
+        - "un groupe de distribution ne peut contenir que des ordinateurs"
+        + "seul un groupe de sécurité peut recevoir des autorisations"
+        - "un groupe de sécurité ne peut pas avoir d'adresse de messagerie"
+        - "aucune, ce sont deux noms du même objet"
+        explanation: "Le groupe de sécurité porte un SID utilisé dans les ACL. Le groupe de distribution sert seulement à la messagerie et n'apparaît pas dans le jeton d'accès."
+      }
+      question "Tu ajoutes un utilisateur connecté à un groupe. Quand obtient-il les nouveaux droits sur les dossiers ?" {
+        - "immédiatement, sans rien faire"
+        - "au prochain gpupdate /force"
+        + "à sa prochaine ouverture de session, quand son jeton d'accès est recréé"
+        - "après la réplication suivante, dans 15 secondes"
+        explanation: "Les groupes sont inscrits dans le jeton d'accès à l'ouverture de session. gpupdate ne reconstruit pas ce jeton. Il faut se déconnecter puis se reconnecter (whoami /groups pour vérifier)."
+      }
+      question "Pourquoi sépare-t-on les OU des utilisateurs et des ordinateurs ?" {
+        - "parce qu'un même OU ne peut pas contenir deux types d'objets"
+        + "parce que les paramètres utilisateur et ordinateur des GPO s'appliquent à des objets différents"
+        - "parce que les ordinateurs doivent être dans le conteneur Computers"
+        - "parce que la réplication est plus rapide"
+        explanation: "La partie Configuration ordinateur d'une GPO concerne les ordinateurs de l'OU, la partie Configuration utilisateur concerne les utilisateurs de l'OU. Séparer les deux rend le ciblage clair."
+      }
+      question "Tu ne parviens pas à supprimer une OU vide : accès refusé, même en administrateur. Quelle est la cause la plus probable ?" {
+        - "l'OU contient des objets cachés de SYSVOL"
+        + "la protection contre la suppression accidentelle est activée"
+        - "une OU ne peut être supprimée que par le maître de schéma"
+        - "il faut d'abord arrêter le service DNS"
+        explanation: "Les OU sont protégées par défaut contre la suppression accidentelle (un refus sur la suppression). On décoche l'option dans l'onglet Objet (fonctionnalités avancées) ou avec Set-ADOrganizationalUnit -ProtectedFromAccidentalDeletion $false."
+      }
+      question "Quand faut-il utiliser des groupes universels ?" {
+        - "dans tout domaine unique, à la place des groupes globaux"
+        + "dans une forêt à plusieurs domaines, pour regrouper des groupes globaux de domaines différents"
+        - "seulement pour les listes de diffusion"
+        - "pour donner des droits sur les GPO"
+        explanation: "Avec plusieurs domaines, AGUDLP place les groupes globaux de chaque domaine dans un groupe universel, lui-même membre d'un DL. Dans un domaine unique, AGDLP suffit."
+      }
+      question "Quel nom permet d’ouvrir une session au format adresse, comme jmartin@lycee.internal ?" {
+        - "le sAMAccountName"
+        + "le UserPrincipalName (UPN)"
+        - "le distinguishedName"
+        - "le CN"
+        explanation: "L'UPN prend la forme utilisateur@suffixe. Le sAMAccountName s'utilise sous la forme LYCEE\\jmartin. Le DN décrit l'emplacement dans l'annuaire, le CN est le nom affiché."
+      }
+      question "Les élèves ne doivent avoir aucun accès au dossier des professeurs. Quelle est la bonne pratique ?" {
+        - "ajouter un refus explicite pour G_Eleves sur le dossier"
+        + "ne donner aucune autorisation aux élèves : sans autorisation, l'accès est refusé"
+        - "placer les élèves dans une OU séparée"
+        - "rendre le partage invisible avec un $"
+        explanation: "Ce qui n'est pas autorisé est refusé. Les refus explicites compliquent le dépannage et peuvent bloquer des personnes membres de plusieurs groupes. Une OU ne change pas les droits, et le $ masque seulement le partage."
+      }
+    }
+  }
+
+  module "jonction-poste" {
+    title: "Chapitre 5 : joindre un poste au domaine et dépanner la jonction"
+    duration: "30min"
+    content: """
+### Ce que fait la jonction
+Joindre un poste au domaine crée un **compte d'ordinateur** dans l'annuaire (`PC-01$`) et établit un **canal sécurisé** entre le poste et le domaine, protégé par un mot de passe machine que Windows change tout seul (tous les 30 jours par défaut). À partir de là, n'importe quel compte du domaine peut ouvrir une session sur le poste, et le poste reçoit les GPO de l'OU où se trouve son compte.
+
+### Les conditions
+• Une édition **Professionnel**, Éducation ou Entreprise de Windows. Les éditions **Famille** (Home) ne peuvent pas joindre un domaine.
+• Le poste utilise les **DC comme serveurs DNS** (chapitre 3). C'est la cause d'échec numéro un.
+• Le poste atteint le DC (DNS 53, Kerberos 88, LDAP 389, SMB 445, RPC 135 et ports dynamiques).
+• L'heure est correcte (écart inférieur à 5 minutes).
+• Un compte autorisé à joindre des machines. Par défaut, tout utilisateur authentifié du domaine peut joindre jusqu'à **10 ordinateurs** (attribut `ms-DS-MachineAccountQuota` = 10) ; le chapitre 9 explique pourquoi on met cette valeur à 0 et on délègue ce droit à un groupe de techniciens.
+• Un nom d'ordinateur unique de **15 caractères au plus** (limite NetBIOS).
+
+### Joindre en interface graphique
+Paramètres, Système, Informations système, **Domaine ou groupe de travail** (ou `sysdm.cpl`), Modifier, choisir **Domaine** et saisir `lycee.internal`. Windows demande un compte autorisé, affiche « Bienvenue dans le domaine lycee.internal », puis demande un redémarrage. À l'écran de connexion, choisis « Autre utilisateur » et saisis `LYCEE\jmartin`.
+
+### Joindre en PowerShell
+`Add-Computer` permet en une ligne de joindre, de choisir l'OU de destination et de redémarrer (voir le bloc de code). L'option `-OUPath` crée directement le compte au bon endroit. Sans elle, le compte atterrit dans le conteneur **`CN=Computers`**, où aucune GPO d'OU ne s'applique.
+
+Deux façons d'éviter ce piège pour toutes les jonctions futures :
+• **pré-créer** le compte d'ordinateur dans la bonne OU (`New-ADComputer`) avant la jonction ;
+• **rediriger** le conteneur par défaut vers une OU, sur le DC : `redircmp "OU=Postes-Salles,OU=Ordinateurs,OU=Lycee,DC=lycee,DC=internal"` (et `redirusr` pour les utilisateurs).
+
+### Vérifier
+• Sur le poste : `systeminfo | findstr /i "domaine"` (ou `domain` en anglais), `echo %LOGONSERVER%` après une session de domaine (affiche `\\SRV-DC1`), `nltest /sc_query:lycee.internal` (état du canal sécurisé).
+• Sur le DC : `Get-ADComputer PC-01` montre le compte, son DN et s'il est activé.
+
+### Dépanner
+| Symptôme | Cause probable | Vérification, correction |
+|---|---|---|
+| « Un contrôleur de domaine Active Directory (AD DC) pour le domaine lycee.internal n'a pas pu être contacté » | DNS du poste incorrect | `ipconfig /all`, mettre le DC en DNS |
+| « Le nom de compte est introuvable » ou accès refusé | compte sans droit de jonction ou quota de 10 atteint | utiliser un compte délégué |
+| erreur de date ou d'heure à l'ouverture de session | horloge décalée de plus de 5 minutes | `w32tm /resync`, vérifier l'émulateur PDC |
+| « La relation d'approbation entre cette station de travail et le domaine principal a échoué » | canal sécurisé cassé (restauration d'un vieil instantané, compte réinitialisé ou supprimé) | `Test-ComputerSecureChannel -Repair -Credential LYCEE\adm-tech` |
+| le poste est joint mais aucune GPO ne s'applique | compte dans `CN=Computers` | déplacer le compte dans la bonne OU |
+
+Le cas de la relation d'approbation est fréquent en labo : tu restaures un instantané de VM vieux de deux mois, le poste présente un ancien mot de passe machine que le domaine ne reconnaît plus. La réparation avec `Test-ComputerSecureChannel -Repair` se fait depuis une session locale (compte administrateur local du poste), sans sortir du domaine.
+
+### Retirer un poste
+`Remove-Computer -UnjoinDomainCredential LYCEE\adm-tech -Restart` le remet en groupe de travail. Désactive ensuite le compte d'ordinateur dans l'annuaire, puis supprime-le quand tu es sûr qu'il ne servira plus.
+
+### À toi de jouer
+1. Sur ton poste Windows 11 Pro du labo, règle le DNS sur 192.168.10.10 et vérifie avec `nltest` qu'un DC est trouvé.
+2. Joins le poste `PC-01` au domaine en plaçant directement son compte dans `OU=Postes-Salles,OU=Ordinateurs,OU=Lycee,DC=lycee,DC=internal`.
+3. Ouvre une session avec `LYCEE\elv.dupont` et prouve que le poste est bien dans le domaine.
+4. Un technicien a joint 15 postes la semaine dernière ; ils sont tous dans `Computers`. Donne la commande qui évite que cela se reproduise.
+
+### Correction
+1. `Set-DnsClientServerAddress -InterfaceAlias "Ethernet" -ServerAddresses 192.168.10.10` puis `nltest /dsgetdc:lycee.internal` qui affiche `DC: \\SRV-DC1.lycee.internal` et `Address: \\192.168.10.10`.
+2. Voir le bloc de code : `Add-Computer` avec `-OUPath`, puis redémarrage automatique. Sur le DC, `Get-ADComputer PC-01` affiche `DistinguishedName : CN=PC-01,OU=Postes-Salles,OU=Ordinateurs,OU=Lycee,DC=lycee,DC=internal`.
+3. `whoami` affiche `lycee\elv.dupont`, `echo %LOGONSERVER%` affiche `\\SRV-DC1`, `nltest /sc_query:lycee.internal` se termine par `The command completed successfully` avec un état `NERR_Success`.
+4. Sur le DC : `redircmp "OU=Postes-Salles,OU=Ordinateurs,OU=Lycee,DC=lycee,DC=internal"`. Les 15 postes déjà joints sont à déplacer (glisser-déposer dans la console, ou `Get-ADComputer -SearchBase "CN=Computers,DC=lycee,DC=internal" -Filter * | Move-ADObject -TargetPath "OU=Postes-Salles,OU=Ordinateurs,OU=Lycee,DC=lycee,DC=internal"`).
+"""
+
+    codeblock "powershell" {
+      title: "Joindre un poste et vérifier (poste Windows 11 Pro, PowerShell administrateur)"
+      code: """
+Set-DnsClientServerAddress -InterfaceAlias "Ethernet" -ServerAddresses 192.168.10.10
+nltest /dsgetdc:lycee.internal
+Rename-Computer -NewName PC-01
+Add-Computer -DomainName lycee.internal -Credential LYCEE\Administrateur `
+  -OUPath "OU=Postes-Salles,OU=Ordinateurs,OU=Lycee,DC=lycee,DC=internal" -Options JoinWithNewName -Restart
+
+# Après redémarrage et ouverture de session de domaine
+whoami
+echo $env:LOGONSERVER
+nltest /sc_query:lycee.internal
+Test-ComputerSecureChannel
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Lors de la jonction, le poste affiche qu’un contrôleur de domaine pour lycee.internal n’a pas pu être contacté. Que vérifies-tu en premier ?" {
+        - "la licence de Windows"
+        + "les serveurs DNS configurés sur le poste"
+        - "le nombre de comptes dans l'OU"
+        - "le pare-feu du poste en sortie"
+        explanation: "Ce message signifie que la recherche des enregistrements SRV a échoué. Dans la très grande majorité des cas, le poste n'utilise pas le DC comme serveur DNS (box, DNS public)."
+      }
+      question "Quelle édition de Windows ne peut pas joindre un domaine ?" {
+        + "Windows 11 Famille"
+        - "Windows 11 Professionnel"
+        - "Windows 11 Éducation"
+        - "Windows 11 Entreprise"
+        explanation: "Les éditions Famille (Home) n'ont pas la fonction de jonction à un domaine. Pro, Éducation et Entreprise l'ont. Une mise à niveau vers Pro est nécessaire."
+      }
+      question "Par défaut, combien d’ordinateurs un simple utilisateur authentifié peut-il joindre au domaine ?" {
+        - "aucun"
+        - "1"
+        + "10"
+        - "un nombre illimité"
+        explanation: "L'attribut ms-DS-MachineAccountQuota vaut 10 par défaut. C'est un risque : n'importe quel compte peut créer des comptes d'ordinateur. On le met à 0 et on délègue le droit de jonction à un groupe dédié."
+      }
+      question "Un poste a été joint sans préciser d’OU et sans redirection. Où se trouve son compte ?" {
+        - "dans OU=Domain Controllers"
+        + "dans le conteneur CN=Computers"
+        - "dans l'OU de l'utilisateur qui l'a joint"
+        - "dans CN=Users"
+        explanation: "Sans -OUPath ni redircmp, les comptes d'ordinateur vont dans CN=Computers, un conteneur sur lequel on ne peut pas lier de GPO."
+      }
+      question "Quelle commande change l’emplacement par défaut des nouveaux comptes d’ordinateur ?" {
+        - "dsmove /computers"
+        + "redircmp"
+        - "Set-ADDomain -ComputersContainer"
+        - "netdom move"
+        explanation: "redircmp, lancé sur un DC avec le DN d'une OU, redirige les nouveaux comptes d'ordinateur vers cette OU. redirusr fait de même pour les utilisateurs."
+      }
+      question "Après restauration d’un vieil instantané de VM, l’ouverture de session affiche « La relation d’approbation entre cette station de travail et le domaine principal a échoué ». Pourquoi ?" {
+        - "le compte utilisateur a expiré"
+        + "le mot de passe machine du poste ne correspond plus à celui connu du domaine"
+        - "le DNS du DC est arrêté"
+        - "la licence Windows a été réinitialisée"
+        explanation: "Le poste change son mot de passe machine régulièrement. L'instantané contient un ancien mot de passe : le canal sécurisé ne s'établit plus. On le répare avec Test-ComputerSecureChannel -Repair ou en rejoignant le domaine."
+      }
+      question "Quelle cmdlet répare le canal sécurisé sans sortir le poste du domaine ?" {
+        - "Reset-ComputerMachinePassword -Force"
+        + "Test-ComputerSecureChannel -Repair"
+        - "Repair-ADComputer"
+        - "Add-Computer -Repair"
+        explanation: "Test-ComputerSecureChannel -Repair (avec -Credential d'un compte autorisé) rétablit le canal. Repair-ADComputer et Add-Computer -Repair n'existent pas."
+      }
+      question "Quelle est la longueur maximale d’un nom d’ordinateur Windows pour rester compatible NetBIOS ?" {
+        - "8 caractères"
+        + "15 caractères"
+        - "20 caractères"
+        - "63 caractères"
+        explanation: "Le nom NetBIOS fait 15 caractères au plus. Windows avertit si le nom est plus long. 63 caractères est la limite d'une étiquette DNS, 20 celle du sAMAccountName d'un utilisateur."
+      }
+      question "Quelle option d’Add-Computer place directement le compte du poste dans une OU ?" {
+        - "-Container"
+        + "-OUPath"
+        - "-SearchBase"
+        - "-TargetPath"
+        explanation: "-OUPath reçoit le DN de l'OU. -SearchBase sert aux cmdlets Get-AD*, -TargetPath à Move-ADObject."
+      }
+      question "Après une ouverture de session de domaine, que montre la variable LOGONSERVER ?" {
+        - "le nom du serveur DNS utilisé"
+        + "le contrôleur de domaine qui a authentifié la session"
+        - "le serveur de fichiers du profil itinérant"
+        - "le serveur DHCP qui a donné l'adresse"
+        explanation: "%LOGONSERVER% contient le nom du DC qui a validé l'ouverture de session (\\\\SRV-DC1). Si elle contient le nom du poste lui-même, la session est locale."
+      }
+      question "Un poste a été joint au domaine. Que se passe-t-il pour les comptes locaux existants ?" {
+        - "ils sont supprimés"
+        - "ils sont convertis en comptes de domaine"
+        + "ils restent utilisables, et le groupe Admins du domaine devient administrateur local"
+        - "ils sont désactivés jusqu'au retrait du domaine"
+        explanation: "La jonction n'efface pas les comptes locaux. Elle ajoute Admins du domaine au groupe Administrateurs local et Utilisateurs du domaine au groupe Utilisateurs local."
+      }
+      question "Tu retires définitivement un poste du parc. Quelle est la bonne séquence ?" {
+        - "formater le poste et laisser son compte dans l'annuaire"
+        + "le retirer du domaine, désactiver son compte, puis le supprimer plus tard"
+        - "supprimer d'abord son compte puis éteindre le poste"
+        - "renommer le compte en PC-OLD pour le réutiliser"
+        explanation: "Des comptes d'ordinateur inutilisés encombrent l'annuaire et peuvent être abusés. On retire le poste, on désactive le compte (retour arrière possible), puis on le supprime."
+      }
+    }
+  }
+
+  module "strategies-groupe" {
+    title: "Chapitre 6 : les stratégies de groupe (GPO)"
+    duration: "45min"
+    content: """
+### Une GPO, c'est quoi ?
+Un **objet de stratégie de groupe** (GPO, Group Policy Object) est un ensemble de réglages appliqués automatiquement à des ordinateurs et à des utilisateurs : fond d'écran, lecteur réseau, interdiction du panneau de configuration, règles de pare-feu, mots de passe, installation de logiciels, scripts. Il est stocké en deux endroits : un objet dans l'annuaire et un dossier dans `\\lycee.internal\SYSVOL\lycee.internal\Policies\{GUID}`. C'est pourquoi la réplication de SYSVOL compte autant que celle de l'annuaire.
+
+Chaque GPO a deux parties :
+• **Configuration ordinateur** : s'applique aux **ordinateurs** situés dans l'OU liée, au démarrage puis régulièrement ;
+• **Configuration utilisateur** : s'applique aux **utilisateurs** situés dans l'OU liée, à l'ouverture de session puis régulièrement.
+
+Et deux familles de réglages :
+• **Stratégies** (Policies) : imposées, l'utilisateur ne peut pas les changer, et elles disparaissent quand la GPO ne s'applique plus ;
+• **Préférences** (Preferences) : valeurs posées une fois (lecteurs réseau, raccourcis, imprimantes), modifiables, avec un ciblage fin par élément (groupe, sous-réseau, système).
+
+### Créer et lier
+Une GPO seule ne fait rien : il faut la **lier** à un site, au domaine ou à une OU. La console est `gpmc.msc` (Gestion de stratégie de groupe). Deux façons :
+• clic droit sur l'OU, « Créer un objet GPO dans ce domaine, et le lier ici » ;
+• ou créer la GPO dans « Objets de stratégie de groupe », puis la lier où il faut (une même GPO peut être liée à plusieurs OU).
+
+Deux GPO existent dès la création du domaine :
+• **Default Domain Policy**, liée au domaine : stratégie de mots de passe et de verrouillage des comptes du domaine ;
+• **Default Domain Controllers Policy**, liée à l'OU `Domain Controllers` : droits des DC.
+Ne mets pas tes réglages dans ces deux GPO : crée des GPO dédiées, nommées clairement (`U_Eleves_Restrictions`, `C_Postes_Pare-feu`).
+
+### L'ordre d'application : LSDOU
+Les GPO s'appliquent dans cet ordre : **L**ocale (la stratégie locale du poste), **S**ite, **D**omaine, **O**U parente, puis **U**nités d'organisation enfants, de la plus haute à la plus proche de l'objet. **La dernière appliquée gagne** en cas de conflit : la GPO de l'OU la plus proche de l'objet l'emporte sur celle du domaine.
+
+Dans une même OU, plusieurs GPO liées sont classées par **ordre de liaison** : la liaison n° 1 a la **priorité la plus haute** (elle est appliquée en dernier).
+
+Deux exceptions :
+• **Bloquer l'héritage** (sur une OU) : les GPO des niveaux supérieurs ne descendent plus dans cette OU ;
+• **Appliqué** (Enforced, sur une liaison) : cette GPO s'applique même à travers un blocage d'héritage, et ses réglages gagnent contre ceux des OU inférieures. **Appliqué l'emporte sur Bloquer l'héritage.**
+
+La stratégie de mots de passe des comptes du domaine est une exception à connaître : elle n'est lue que dans les GPO **liées au domaine**. Pour un mot de passe différent par population, on utilise des stratégies de mot de passe affinées (chapitre 9), pas une GPO sur une OU.
+
+### Filtrer
+• **Filtrage de sécurité** : par défaut, une GPO s'applique à « Utilisateurs authentifiés ». Tu peux la restreindre à un groupe (`G_Profs`). Attention : la GPO doit rester lisible par les ordinateurs ; si tu retires « Utilisateurs authentifiés » du filtrage, ajoute-le en **lecture** dans l'onglet Délégation, sinon la GPO n'est plus traitée.
+• **Filtre WMI** : condition sur la machine (par exemple seulement Windows 11).
+• **Traitement par bouclage** (loopback) : applique la configuration utilisateur d'une GPO liée à une OU d'**ordinateurs** à toute personne qui se connecte sur ces ordinateurs (mode Fusion ou Remplacer). Utile pour les salles libre-service : tout le monde a les mêmes restrictions sur ces postes, professeurs compris.
+
+### Quand s'appliquent les GPO ?
+• Au démarrage (ordinateur) et à l'ouverture de session (utilisateur) ;
+• puis en arrière-plan toutes les **90 minutes**, avec un décalage aléatoire de **0 à 30 minutes** ; toutes les **5 minutes** sur les contrôleurs de domaine.
+• Certains réglages ne s'appliquent qu'au démarrage ou à l'ouverture de session (installation de logiciels, redirection de dossiers).
+
+`gpupdate` force l'actualisation des réglages modifiés ; `gpupdate /force` réapplique tous les réglages. Il peut annoncer qu'un redémarrage ou une fermeture de session est nécessaire.
+
+### Dépanner avec gpresult
+« Ma GPO ne marche pas » se diagnostique toujours dans le même ordre :
+1. L'objet est-il dans l'OU où la GPO est liée ? (Un utilisateur dans `Eleves` ne reçoit pas une GPO utilisateur liée à `Postes-Salles`, sauf bouclage.)
+2. Le réglage est-il dans la bonne partie (ordinateur ou utilisateur) ?
+3. La liaison est-elle activée, l'héritage bloqué, le filtrage correct ?
+4. Le poste a-t-il bien reçu la GPO ? `gpresult /r` liste les GPO **appliquées** et celles **filtrées** avec la raison (« Refusé (sécurité) », « Vide », « Désactivé (lien) »). `gpresult /h rapport.html` produit un rapport complet. Lance-le en administrateur pour voir la partie ordinateur ; `gpresult /r /scope:user` se limite à l'utilisateur.
+5. Les erreurs se trouvent dans l'Observateur d'événements : Journaux des applications et des services, Microsoft, Windows, GroupPolicy, Operational.
+
+### À toi de jouer
+1. Crée une GPO `U_Eleves_Restrictions` liée à `OU=Eleves` qui interdit l'accès au Panneau de configuration et aux paramètres du PC (Configuration utilisateur, Stratégies, Modèles d'administration, Panneau de configuration).
+2. Crée une GPO `C_Postes_Ecran` liée à `OU=Postes-Salles` qui verrouille la session après 10 minutes d'inactivité (Configuration ordinateur, Stratégies, Paramètres Windows, Paramètres de sécurité, Stratégies locales, Options de sécurité, « Ouverture de session interactive : limite d'inactivité de l'ordinateur », 600 secondes).
+3. Sur `PC-01`, connecte-toi avec `elv.dupont`, force l'application et vérifie avec `gpresult` que les deux GPO sont appliquées.
+4. Une GPO du domaine interdit les clés USB. L'OU `Profs` bloque l'héritage. La liaison au domaine est marquée « Appliqué ». Les professeurs peuvent-ils utiliser une clé USB ?
+
+### Correction
+1. et 2. Dans `gpmc.msc`, clic droit sur l'OU, « Créer un objet GPO dans ce domaine, et le lier ici », puis Modifier. Le paramètre « Interdire l'accès au Panneau de configuration et à l'application Paramètres du PC » passe à Activé. Les commandes PowerShell ci-dessous créent et lient les GPO.
+3. `gpupdate /force`, fermer et rouvrir la session, puis `gpresult /r` : dans « Paramètres utilisateur », la ligne « Objets Stratégie de groupe appliqués » contient `U_Eleves_Restrictions` ; dans « Paramètres de l'ordinateur » (console lancée en administrateur), `C_Postes_Ecran`. Si une GPO est absente, `gpresult /h C:\rapport.html` montre la raison.
+4. Oui, l'interdiction s'applique quand même : une liaison « Appliqué » passe à travers le blocage d'héritage. Si les professeurs doivent garder leurs clés, il faut revoir le filtrage de sécurité de cette GPO (par exemple la restreindre aux ordinateurs des salles élèves), pas compter sur le blocage.
+"""
+
+    codeblock "powershell" {
+      title: "Créer, lier et contrôler des GPO en PowerShell (module GroupPolicy)"
+      code: """
+New-GPO -Name "U_Eleves_Restrictions" |
+  New-GPLink -Target "OU=Eleves,OU=Utilisateurs,OU=Lycee,DC=lycee,DC=internal"
+New-GPO -Name "C_Postes_Ecran" |
+  New-GPLink -Target "OU=Postes-Salles,OU=Ordinateurs,OU=Lycee,DC=lycee,DC=internal"
+
+# Voir quelles GPO s'appliquent à une OU et dans quel ordre
+Get-GPInheritance -Target "OU=Eleves,OU=Utilisateurs,OU=Lycee,DC=lycee,DC=internal"
+
+# Sur le poste
+gpupdate /force
+gpresult /r
+gpresult /h C:\Temp\rapport.html
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Dans quel ordre les GPO sont-elles appliquées ?" {
+        - "OU, domaine, site, locale"
+        + "locale, site, domaine, OU"
+        - "domaine, site, OU, locale"
+        - "site, locale, OU, domaine"
+        explanation: "L'ordre est LSDOU : locale, site, domaine, puis OU de la plus haute à la plus proche. La dernière appliquée l'emporte en cas de conflit, donc l'OU la plus proche de l'objet gagne."
+      }
+      question "Une GPO liée au domaine met le fond d’écran en bleu, une GPO liée à l’OU Eleves le met en rouge. Quelle couleur voit un élève de cette OU ?" {
+        - "bleu, car le domaine est prioritaire"
+        + "rouge, car la GPO de l'OU est appliquée en dernier"
+        - "aucune, les deux GPO s'annulent"
+        - "bleu ou rouge selon le DC contacté"
+        explanation: "La GPO de l'OU s'applique après celle du domaine et écrase le réglage. Seule une liaison « Appliqué » au niveau du domaine renverserait ce résultat."
+      }
+      question "Que se passe-t-il quand une OU bloque l’héritage et qu’une GPO du domaine est marquée « Appliqué » ?" {
+        - "le blocage gagne : la GPO ne s'applique pas"
+        + "la GPO appliquée s'applique quand même dans l'OU"
+        - "les deux réglages se désactivent"
+        - "seule la partie ordinateur de la GPO s'applique"
+        explanation: "« Appliqué » (Enforced) passe à travers le blocage d'héritage et ses réglages ne peuvent pas être écrasés par les OU inférieures."
+      }
+      question "Dans une même OU, deux GPO liées sont en conflit. Laquelle gagne ?" {
+        + "celle dont l'ordre de liaison est 1"
+        - "celle dont l'ordre de liaison est le plus grand"
+        - "la plus récemment modifiée"
+        - "celle dont le nom vient en premier dans l'alphabet"
+        explanation: "L'ordre de liaison 1 a la priorité la plus haute : cette GPO est traitée en dernier et l'emporte. On modifie l'ordre avec les flèches de l'onglet Objets de stratégie de groupe liés."
+      }
+      question "Tu as lié une GPO contenant seulement des réglages de Configuration utilisateur à l’OU Postes-Salles, qui ne contient que des ordinateurs. Que se passe-t-il ?" {
+        - "les réglages s'appliquent à tous les utilisateurs qui se connectent"
+        + "rien, sauf si le traitement par bouclage est activé"
+        - "les réglages s'appliquent aux comptes d'ordinateur"
+        - "la GPO est refusée et supprimée"
+        explanation: "La configuration utilisateur s'applique aux utilisateurs situés dans l'OU liée. Aucun utilisateur n'est dans cette OU. Le traitement par bouclage permet justement d'appliquer ces réglages aux personnes qui se connectent sur ces ordinateurs."
+      }
+      question "Quel est l’intervalle par défaut d’actualisation des GPO sur un poste membre ?" {
+        - "15 minutes"
+        + "90 minutes avec un décalage aléatoire de 0 à 30 minutes"
+        - "5 minutes"
+        - "24 heures"
+        explanation: "Les postes et serveurs membres actualisent toutes les 90 minutes plus un décalage aléatoire de 0 à 30 minutes ; les DC toutes les 5 minutes. gpupdate force une actualisation immédiate."
+      }
+      question "Quelle commande affiche les GPO appliquées et filtrées pour la session en cours ?" {
+        - "gpupdate /list"
+        + "gpresult /r"
+        - "Get-GPO -All"
+        - "rsop /show"
+        explanation: "gpresult /r donne le jeu de stratégies résultant (RSoP) : GPO appliquées, GPO filtrées avec la raison, groupes de sécurité. Get-GPO -All liste les GPO du domaine sans dire où elles s'appliquent."
+      }
+      question "Où dois-tu configurer la longueur minimale des mots de passe des comptes du domaine avec une GPO ?" {
+        - "dans une GPO liée à l'OU Utilisateurs"
+        + "dans une GPO liée au domaine, comme la Default Domain Policy"
+        - "dans la Default Domain Controllers Policy"
+        - "dans la stratégie locale de chaque poste"
+        explanation: "La stratégie de mots de passe des comptes du domaine n'est prise en compte que depuis une GPO liée au domaine. Une GPO liée à une OU ne modifie que les comptes locaux des ordinateurs de cette OU."
+      }
+      question "Tu retires « Utilisateurs authentifiés » du filtrage d’une GPO et ajoutes G_Profs. Plus rien ne s’applique. Pourquoi ?" {
+        - "un groupe global ne peut pas filtrer une GPO"
+        + "les ordinateurs ne peuvent plus lire la GPO : il faut leur laisser la lecture dans la délégation"
+        - "il faut aussi lier la GPO au domaine"
+        - "la GPO doit être recréée après un changement de filtre"
+        explanation: "Depuis le correctif MS16-072, la GPO est lue avec le compte de l'ordinateur. Sans lecture pour Utilisateurs authentifiés (ou Ordinateurs du domaine), elle est ignorée. On ajoute ce droit de lecture dans l'onglet Délégation."
+      }
+      question "Quelle est la différence entre une stratégie et une préférence de GPO ?" {
+        - "les stratégies concernent les ordinateurs, les préférences les utilisateurs"
+        + "la stratégie est imposée et retirée avec la GPO, la préférence pose une valeur modifiable"
+        - "les préférences ne fonctionnent que sur les DC"
+        - "aucune, ce sont deux noms de la même chose"
+        explanation: "Une stratégie verrouille le réglage et disparaît quand la GPO ne s'applique plus. Une préférence (lecteur réseau, raccourci) pose une valeur que l'utilisateur peut changer, avec ciblage par élément."
+      }
+      question "Où sont stockés les fichiers d’une GPO ?" {
+        - "dans le registre de chaque poste uniquement"
+        + "dans le dossier Policies de SYSVOL, répliqué entre les DC"
+        - "dans NTDS.dit uniquement"
+        - "dans C:\\Windows\\GroupPolicy du serveur de fichiers"
+        explanation: "Une GPO a une partie dans l'annuaire (objet groupPolicyContainer) et une partie dans SYSVOL\\<domaine>\\Policies\\{GUID}. Si SYSVOL ne se réplique pas, les DC servent des versions différentes."
+      }
+      question "Quelle commande génère un rapport HTML complet des stratégies appliquées sur un poste ?" {
+        - "gpupdate /h rapport.html"
+        + "gpresult /h rapport.html"
+        - "gpmc /export rapport.html"
+        - "Get-GPInheritance -Html"
+        explanation: "gpresult /h produit un rapport HTML (paramètres, GPO refusées, erreurs). En administrateur, il contient aussi la partie ordinateur."
+      }
+      question "Dans quel journal trouver les erreurs détaillées d’application des GPO sur un poste ?" {
+        - "Journaux Windows, Sécurité"
+        + "Applications et services, Microsoft, Windows, GroupPolicy, Operational"
+        - "Journaux Windows, Installation"
+        - "Applications et services, Directory Service"
+        explanation: "Le journal GroupPolicy/Operational retrace chaque traitement : DC contacté, GPO trouvées, durée, erreurs. Directory Service est un journal des DC."
+      }
+    }
+  }
+
+  module "partages-ntfs" {
+    title: "Chapitre 7 : partages de fichiers, droits de partage et droits NTFS"
+    duration: "40min"
+    content: """
+### Deux couches de contrôle
+Quand un élève ouvre `\\SRV-FIC\Profs` depuis son poste, Windows vérifie **deux** listes d'autorisations :
+• les **droits de partage** (share permissions), attachés au partage réseau. Ils ne s'appliquent **qu'aux accès par le réseau** (SMB, port 445). Ils sont grossiers : Lecture, Modifier, Contrôle total ;
+• les **droits NTFS**, attachés au dossier et aux fichiers sur le disque. Ils s'appliquent **toujours**, en local comme par le réseau, et sont fins.
+
+Le droit effectif par le réseau est **le plus restrictif des deux**. Partage en Lecture + NTFS en Modification = Lecture. Partage en Contrôle total + NTFS en Lecture = Lecture. En local (session ouverte sur le serveur), seuls les droits NTFS comptent.
+
+La pratique recommandée est simple : **le partage ouvert large, la sécurité dans NTFS**. On donne par exemple « Contrôle total » ou « Modifier » au partage pour Utilisateurs authentifiés, et on règle tout dans les droits NTFS. On n'a ainsi qu'une seule liste à maintenir et à dépanner.
+
+### Les droits NTFS
+| Droit standard | Ce qu'il permet |
+|---|---|
+| Contrôle total | tout, y compris modifier les autorisations et prendre possession |
+| Modification | lire, écrire, créer, supprimer (fichiers et sous-dossiers) |
+| Lecture et exécution | lire les fichiers et lancer les programmes |
+| Affichage du contenu du dossier | lister le contenu (dossiers uniquement) |
+| Lecture | lire le contenu et les attributs |
+| Écriture | créer des fichiers et écrire dedans, sans pouvoir supprimer |
+
+Ne donne **jamais Contrôle total** aux utilisateurs : ils pourraient changer les droits eux-mêmes. « Modification » suffit pour travailler.
+
+### Héritage et refus
+Par défaut, un sous-dossier **hérite** des droits de son parent. On peut couper l'héritage (Avancé, Désactiver l'héritage) en convertissant les droits hérités en droits explicites, puis les ajuster.
+
+Quand plusieurs entrées se contredisent, Windows les évalue dans cet ordre : **refus explicite**, puis **autorisation explicite**, puis **refus hérité**, puis **autorisation héritée**. Un refus explicite l'emporte donc sur tout, mais une autorisation explicite posée sur un sous-dossier l'emporte sur un refus hérité du parent. Les droits se **cumulent** entre les groupes d'un utilisateur (Lecture par un groupe + Modification par un autre = Modification), sauf refus.
+
+Évite les refus : ils piègent les personnes membres de plusieurs groupes. Préfère ne pas accorder.
+
+### Créer un partage
+Sur un serveur de fichiers membre du domaine (ou sur le DC en labo), avec le rôle **Serveur de fichiers** :
+1. Créer le dossier `D:\Partages\Profs` (évite le disque système).
+2. Régler les droits NTFS : retirer « Utilisateurs » hérité de la racine du disque, garder `SYSTEM` et `Administrateurs` en Contrôle total, ajouter `DL_Profs_RW` en Modification et `DL_Profs_R` en Lecture et exécution.
+3. Partager le dossier avec Utilisateurs authentifiés en Modifier (ou Contrôle total), en activant **l'énumération basée sur l'accès** (ABE) : chacun ne voit que les dossiers auxquels il a accès.
+4. Distribuer le lecteur aux utilisateurs par une **préférence de GPO** (Configuration utilisateur, Préférences, Paramètres Windows, Mappages de lecteurs), lettre `P:`, chemin `\\SRV-FIC\Profs`, avec un ciblage par groupe `G_Profs`.
+
+Un nom de partage qui finit par `$` (`Admin$`) est **masqué** dans la liste du serveur, mais pas protégé : c'est de la discrétion, pas de la sécurité.
+
+### Copier ou déplacer
+Un fichier **copié** prend les droits de son dossier de destination. Un fichier **déplacé sur le même volume** garde ses droits explicites (avec l'Explorateur, les droits hérités sont ensuite recalculés). Un document « secret » déplacé dans un dossier ouvert peut donc rester inaccessible, ou l'inverse : vérifie les droits après les réorganisations.
+
+### Lire et poser les droits en ligne de commande
+`icacls` affiche et modifie les droits NTFS :
+```text
+D:\Partages\Profs NT AUTHORITY\SYSTEM:(OI)(CI)(F)
+                  BUILTIN\Administrateurs:(OI)(CI)(F)
+                  LYCEE\DL_Profs_RW:(OI)(CI)(M)
+                  LYCEE\DL_Profs_R:(OI)(CI)(RX)
+```
+`(OI)` héritage par les fichiers (object inherit), `(CI)` par les sous-dossiers (container inherit), `F` contrôle total, `M` modification, `RX` lecture et exécution, `(I)` entrée héritée.
+
+L'onglet **Accès effectif** (Sécurité, Avancé) calcule les droits NTFS d'un utilisateur donné : c'est le premier outil de dépannage.
+
+### À toi de jouer
+1. Crée le partage `Profs` comme décrit ci-dessus, avec les groupes du chapitre 4. Utilise les commandes du bloc de code.
+2. `slefevre` (membre de `G_Profs`) obtient « Accès refusé » en enregistrant un fichier dans `P:`. Le partage donne Lecture à Tout le monde, NTFS donne Modification à `DL_Profs_RW`. Explique et corrige.
+3. Un sous-dossier `Profs\Sujets-Examens` doit être lisible uniquement par `G_Direction`. Que fais-tu sur ce sous-dossier ?
+4. Calcule le droit effectif par le réseau : partage Modifier pour Utilisateurs authentifiés ; NTFS Lecture pour `G_Eleves`, Modification pour `G_BTS1` ; l'élève est membre des deux groupes.
+
+### Correction
+1. Commandes ci-dessous. `Get-SmbShareAccess Profs` doit montrer `Authenticated Users` (Utilisateurs authentifiés) `Change`, et `icacls D:\Partages\Profs` les quatre entrées attendues.
+2. Par le réseau, le droit effectif est le plus restrictif : Lecture (partage) contre Modification (NTFS) = Lecture. Correction : `Grant-SmbShareAccess -Name Profs -AccountName "Utilisateurs authentifiés" -AccessRight Change -Force`, puis retirer `Tout le monde` avec `Revoke-SmbShareAccess`. Les restrictions restent assurées par NTFS.
+3. Désactiver l'héritage sur `Sujets-Examens` (`icacls ... /inheritance:r` retire les entrées héritées), puis accorder SYSTEM et Administrateurs en Contrôle total et un groupe `DL_SujetsExamens_R` (contenant `G_Direction`) en Lecture et exécution. Avec l'ABE, les professeurs ne voient même plus ce dossier.
+4. NTFS cumule : Lecture + Modification = Modification. Le partage donne Modifier. Le plus restrictif des deux est Modification : l'élève peut modifier.
+"""
+
+    codeblock "powershell" {
+      title: "Créer le partage Profs (sécurité dans NTFS, partage large, ABE)"
+      code: """
+New-Item -ItemType Directory -Path D:\Partages\Profs
+icacls D:\Partages\Profs /inheritance:r
+icacls D:\Partages\Profs /grant "SYSTEM:(OI)(CI)F" "Administrateurs:(OI)(CI)F"
+icacls D:\Partages\Profs /grant "LYCEE\DL_Profs_RW:(OI)(CI)M" "LYCEE\DL_Profs_R:(OI)(CI)RX"
+New-SmbShare -Name Profs -Path D:\Partages\Profs -ChangeAccess "Utilisateurs authentifiés" `
+  -FolderEnumerationMode AccessBased
+Get-SmbShareAccess -Name Profs
+icacls D:\Partages\Profs
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Partage : Lecture pour Tout le monde. NTFS : Modification pour l’utilisateur. Quel est son droit effectif par le réseau ?" {
+        + "Lecture"
+        - "Modification"
+        - "Contrôle total"
+        - "aucun accès"
+        explanation: "Par le réseau, Windows applique le plus restrictif des deux : Lecture. C'est pour cela qu'on ouvre largement le partage et qu'on règle la sécurité dans NTFS."
+      }
+      question "Un utilisateur ouvre une session directement sur le serveur et accède au dossier par D:\\Partages. Quels droits s’appliquent ?" {
+        - "les droits de partage seulement"
+        + "les droits NTFS seulement"
+        - "le plus restrictif des droits de partage et NTFS"
+        - "aucun, l'accès local est toujours autorisé"
+        explanation: "Les droits de partage ne concernent que l'accès réseau par SMB. En local, seuls les droits NTFS sont évalués."
+      }
+      question "Quelle est la pratique recommandée pour combiner partage et NTFS ?" {
+        - "partage restrictif et NTFS en Contrôle total pour tous"
+        + "partage ouvert largement aux utilisateurs authentifiés, sécurité fine dans NTFS"
+        - "mêmes réglages détaillés dans les deux listes"
+        - "pas de droits NTFS, seulement des droits de partage"
+        explanation: "Une seule liste à maintenir (NTFS) évite les incohérences. Le partage large ne donne rien de plus, puisque NTFS limite ensuite l'accès."
+      }
+      question "Pourquoi ne donne-t-on pas Contrôle total aux utilisateurs sur un dossier partagé ?" {
+        - "parce que Contrôle total empêche la lecture des fichiers"
+        + "parce qu'ils pourraient modifier les autorisations ou prendre possession"
+        - "parce que Contrôle total n'existe que pour les administrateurs"
+        - "parce que cela désactive l'héritage"
+        explanation: "Contrôle total ajoute à Modification la modification des autorisations et la prise de possession. Modification suffit pour travailler normalement."
+      }
+      question "Un utilisateur a Lecture par G_Eleves et Modification par G_BTS1 (droits NTFS, aucun refus). Quel est son droit NTFS ?" {
+        - "Lecture, le plus restrictif"
+        + "Modification, car les autorisations se cumulent"
+        - "aucun, les droits se contredisent"
+        - "Contrôle total"
+        explanation: "Les autorisations NTFS de tous les groupes d'un utilisateur se cumulent. La règle du plus restrictif ne s'applique qu'entre partage et NTFS, pas entre groupes."
+      }
+      question "Une autorisation explicite sur un sous-dossier et un refus hérité du parent se contredisent. Lequel l’emporte ?" {
+        + "l'autorisation explicite"
+        - "le refus hérité, car un refus gagne toujours"
+        - "celui qui a été créé en dernier"
+        - "aucun, l'accès est bloqué par conflit"
+        explanation: "L'ordre d'évaluation est refus explicite, autorisation explicite, refus hérité, autorisation héritée. Une entrée explicite passe avant une entrée héritée, même un refus hérité."
+      }
+      question "Dans la sortie d’icacls, que signifie « LYCEE\\DL_Profs_RW:(OI)(CI)(M) » ?" {
+        - "lecture seule, sans héritage"
+        + "modification, héritée par les fichiers et les sous-dossiers"
+        - "contrôle total sur le dossier seulement"
+        - "droit de propriétaire hérité du parent"
+        explanation: "(OI) et (CI) indiquent l'héritage vers les fichiers et les sous-dossiers, M signifie Modification. Une entrée héritée porterait aussi (I)."
+      }
+      question "Un partage s’appelle Notes$. Qu’est-ce que cela change ?" {
+        - "il est chiffré"
+        - "il n'est accessible qu'aux administrateurs"
+        + "il n'apparaît pas dans la liste des partages, mais reste accessible à qui connaît le chemin et a les droits"
+        - "il est en lecture seule"
+        explanation: "Le $ masque le partage de la navigation réseau, rien de plus. Ce n'est pas une protection : la sécurité dépend toujours des droits."
+      }
+      question "À quoi sert l’énumération basée sur l’accès (ABE) ?" {
+        - "à chiffrer les fichiers du partage"
+        + "à masquer à chaque utilisateur les dossiers auxquels il n'a pas accès"
+        - "à journaliser les accès refusés"
+        - "à accélérer la copie de gros fichiers"
+        explanation: "Avec l'ABE, l'utilisateur ne voit dans le partage que ce qu'il peut au moins lire. Cela évite la curiosité et les appels pour « accès refusé »."
+      }
+      question "Un fichier est copié d’un dossier à accès restreint vers un dossier ouvert à tous. Quels droits a la copie ?" {
+        - "ceux du dossier d'origine"
+        + "ceux hérités du dossier de destination"
+        - "aucun droit, seul le propriétaire y accède"
+        - "Contrôle total pour tout le monde"
+        explanation: "Une copie crée un nouveau fichier qui hérite des droits de la destination. Copier un document confidentiel dans un dossier ouvert le rend donc lisible par tous."
+      }
+      question "Quel outil montre les droits NTFS réellement obtenus par un utilisateur précis sur un dossier ?" {
+        - "l'onglet Partage des propriétés"
+        + "l'onglet Accès effectif des paramètres de sécurité avancés"
+        - "gpresult /r"
+        - "Get-SmbShare"
+        explanation: "Accès effectif calcule les droits NTFS en tenant compte de tous les groupes de l'utilisateur. gpresult concerne les GPO, Get-SmbShare liste les partages."
+      }
+      question "Comment distribuer automatiquement le lecteur P: vers \\\\SRV-FIC\\Profs aux seuls professeurs ?" {
+        - "en mettant net use dans le profil de chaque professeur à la main"
+        + "par une préférence de GPO Mappages de lecteurs avec ciblage sur le groupe G_Profs"
+        - "en liant le partage à l'OU Profs"
+        - "en ajoutant le partage dans les options DHCP"
+        explanation: "Les préférences de GPO créent les lecteurs réseau, et le ciblage par élément limite chaque lecteur à un groupe. On ne lie pas un partage à une OU : on lie des GPO."
+      }
+    }
+  }
+
+  module "powershell-ad" {
+    title: "Chapitre 8 : administrer l’annuaire en PowerShell"
+    duration: "40min"
+    content: """
+### Pourquoi PowerShell
+Créer trois comptes à la souris, c'est rapide. Créer 450 comptes d'élèves à la rentrée, désactiver ceux qui sont partis, lister les comptes jamais utilisés : seul un script le fait sans erreur. Le **module ActiveDirectory** est installé avec les outils AD DS sur le serveur, et sur un poste Windows 11 avec les RSAT (`Add-WindowsCapability -Online -Name Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0`). Toutes les cmdlets suivent la forme **Verbe-ADNom** : `Get-ADUser`, `New-ADUser`, `Set-ADUser`, `Remove-ADUser`, `Get-ADGroupMember`… `Get-Command -Module ActiveDirectory` les liste.
+
+### Lire : Get-ADUser
+• `Get-ADUser jmartin` : un compte précis, par son sAMAccountName (ou DN, GUID, SID).
+• `Get-ADUser -Filter *` : tous les comptes. Le paramètre `-Filter` est **obligatoire** si tu ne donnes pas `-Identity`.
+• `Get-ADUser -Filter * -SearchBase "OU=Eleves,OU=Utilisateurs,OU=Lycee,DC=lycee,DC=internal"` : limité à une OU.
+• `Get-ADUser -Filter 'Enabled -eq $false'` : comptes désactivés.
+• `Get-ADUser -Filter "Surname -like 'Mart*'"` : filtre avec joker.
+
+Par défaut, Get-ADUser ne renvoie qu'une **dizaine de propriétés** (DistinguishedName, Enabled, GivenName, Name, ObjectClass, ObjectGUID, SamAccountName, SID, Surname, UserPrincipalName). Pour les autres, il faut les demander avec `-Properties` : `Get-ADUser jmartin -Properties LastLogonDate, MemberOf, Department`. `-Properties *` les affiche toutes (lent sur de gros annuaires, à réserver à l'exploration).
+
+`LastLogonDate` est une valeur répliquée avec un retard possible de 9 à 14 jours : elle suffit pour repérer un compte inactif depuis des mois, pas pour savoir qui s'est connecté ce matin.
+
+### Créer : New-ADUser
+```text
+New-ADUser -Name "Jean Martin" -GivenName Jean -Surname Martin `
+  -SamAccountName jmartin -UserPrincipalName jmartin@lycee.internal `
+  -Path "OU=Profs,OU=Utilisateurs,OU=Lycee,DC=lycee,DC=internal" `
+  -AccountPassword (Read-Host -AsSecureString "Mot de passe") `
+  -ChangePasswordAtLogon $true -Enabled $true
+```
+Points importants :
+• `-Name` est obligatoire ; sans `-Path`, le compte va dans `CN=Users` ;
+• `-AccountPassword` attend une **SecureString**, pas un texte : `Read-Host -AsSecureString` ou `ConvertTo-SecureString` ;
+• sans mot de passe, ou sans `-Enabled $true`, le compte est créé **désactivé** ;
+• le caractère accent grave (backtick) en fin de ligne poursuit la commande sur la ligne suivante.
+
+### Modifier, déplacer, désactiver
+• `Set-ADUser jmartin -Department "Mathématiques" -Title "Professeur"`
+• `Set-ADAccountPassword jmartin -Reset -NewPassword (Read-Host -AsSecureString)` puis `Set-ADUser jmartin -ChangePasswordAtLogon $true`
+• `Unlock-ADAccount jmartin` (compte verrouillé après trop d'erreurs)
+• `Disable-ADAccount elv.dupont`, `Enable-ADAccount`
+• `Move-ADObject` pour changer d'OU (avec le DN du compte et `-TargetPath`)
+
+### Groupes et OU
+• `New-ADOrganizationalUnit -Name Eleves -Path "OU=Utilisateurs,OU=Lycee,DC=lycee,DC=internal"`
+• `New-ADGroup -Name G_Profs -GroupScope Global -GroupCategory Security -Path "OU=Groupes,OU=Lycee,DC=lycee,DC=internal"`
+• `Add-ADGroupMember -Identity G_Profs -Members jmartin, slefevre`
+• `Get-ADGroupMember G_Profs` et, dans l'autre sens, `Get-ADPrincipalGroupMembership jmartin`
+
+### Le pipeline et l'import CSV
+Les cmdlets AD se chaînent avec `|` : `Get-ADUser -Filter * -SearchBase "OU=Eleves,…" | Disable-ADAccount` désactive toute l'OU (prudence : ajoute `-WhatIf` pour simuler avant d'exécuter).
+
+Pour la rentrée, on part d'un export du logiciel de vie scolaire en CSV :
+```text
+Prenom;Nom;Login;Classe
+Lina;Dupont;elv.ldupont;BTS1
+Hugo;Bernard;elv.hbernard;BTS1
+```
+`Import-Csv -Delimiter ";"` transforme chaque ligne en objet, et `ForEach-Object` crée le compte (script dans le bloc de code). En France, les exports de tableurs utilisent souvent `;` comme séparateur et un encodage à vérifier (`-Encoding UTF8`).
+
+### Retrouver les comptes à nettoyer
+• `Search-ADAccount -AccountInactive -TimeSpan 90.00:00:00 -UsersOnly` : comptes sans connexion depuis 90 jours ;
+• `Search-ADAccount -AccountDisabled -UsersOnly` : comptes désactivés ;
+• `Search-ADAccount -PasswordNeverExpires` : comptes dont le mot de passe n'expire jamais (à justifier un par un) ;
+• `Search-ADAccount -LockedOut` : comptes verrouillés.
+
+### Exporter un rapport
+`Get-ADUser -Filter * -SearchBase "OU=Profs,…" -Properties LastLogonDate | Select-Object Name, SamAccountName, Enabled, LastLogonDate | Export-Csv profs.csv -NoTypeInformation -Delimiter ";" -Encoding UTF8` produit un fichier lisible dans un tableur.
+
+### À toi de jouer
+1. Crée en PowerShell l'OU `BTS1` sous `Eleves`, puis le groupe global `G_Eleves_BTS1` dans l'OU `Groupes`.
+2. Avec le fichier CSV ci-dessus (enregistré dans `C:\Scripts\bts1.csv`), crée les comptes dans `OU=BTS1`, avec changement du mot de passe à la première connexion, et ajoute-les au groupe.
+3. Liste les noms et dates de dernière connexion des élèves de `BTS1`.
+4. Un collègue tape `Get-ADUser jmartin | Select-Object LastLogonDate` et obtient une colonne vide. Pourquoi ?
+5. Un collègue tape `Get-ADUser -SearchBase "OU=BTS1,…"` et obtient une erreur. Pourquoi ?
+
+### Correction
+1. `New-ADOrganizationalUnit -Name BTS1 -Path "OU=Eleves,OU=Utilisateurs,OU=Lycee,DC=lycee,DC=internal"` puis `New-ADGroup -Name G_Eleves_BTS1 -GroupScope Global -GroupCategory Security -Path "OU=Groupes,OU=Lycee,DC=lycee,DC=internal"`.
+2. Voir le script du bloc de code. Le mot de passe initial est demandé une fois puis appliqué à tous ; chaque élève doit le changer à la première connexion. Vérification : `Get-ADGroupMember G_Eleves_BTS1 | Select-Object SamAccountName` affiche `elv.ldupont` et `elv.hbernard`.
+3. `Get-ADUser -Filter * -SearchBase "OU=BTS1,OU=Eleves,OU=Utilisateurs,OU=Lycee,DC=lycee,DC=internal" -Properties LastLogonDate | Select-Object Name, LastLogonDate`. Les comptes jamais utilisés ont une date vide.
+4. `LastLogonDate` ne fait pas partie des propriétés renvoyées par défaut : `Select-Object` cherche une propriété absente et affiche du vide. Il faut `Get-ADUser jmartin -Properties LastLogonDate`.
+5. Sans `-Identity`, `-Filter` (ou `-LDAPFilter`) est obligatoire. Il faut ajouter `-Filter *`.
+"""
+
+    codeblock "powershell" {
+      title: "Créer les comptes d'une classe à partir d'un CSV"
+      code: """
+$ou     = "OU=BTS1,OU=Eleves,OU=Utilisateurs,OU=Lycee,DC=lycee,DC=internal"
+$mdp    = Read-Host -AsSecureString "Mot de passe initial"
+Import-Csv C:\Scripts\bts1.csv -Delimiter ";" -Encoding UTF8 | ForEach-Object {
+    New-ADUser -Name "$($_.Prenom) $($_.Nom)" -GivenName $_.Prenom -Surname $_.Nom `
+      -SamAccountName $_.Login -UserPrincipalName "$($_.Login)@lycee.internal" `
+      -Path $ou -AccountPassword $mdp -ChangePasswordAtLogon $true -Enabled $true
+    Add-ADGroupMember -Identity G_Eleves_BTS1 -Members $_.Login
+}
+Get-ADGroupMember G_Eleves_BTS1 | Select-Object SamAccountName
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle commande liste tous les utilisateurs de l’OU Profs ?" {
+        - "Get-ADUser -SearchBase 'OU=Profs,OU=Utilisateurs,OU=Lycee,DC=lycee,DC=internal'"
+        + "Get-ADUser -Filter * -SearchBase 'OU=Profs,OU=Utilisateurs,OU=Lycee,DC=lycee,DC=internal'"
+        - "Get-ADUser -OU Profs"
+        - "Get-ADGroupMember Profs"
+        explanation: "Sans -Identity, Get-ADUser exige -Filter (ou -LDAPFilter). -SearchBase limite la recherche à l'OU. Une OU n'est pas un groupe : Get-ADGroupMember ne s'y applique pas."
+      }
+      question "Get-ADUser jmartin | Select-Object LastLogonDate affiche une valeur vide. Pourquoi ?" {
+        - "jmartin ne s'est jamais connecté"
+        + "LastLogonDate n'est pas renvoyée par défaut : il faut -Properties LastLogonDate"
+        - "il faut lancer la commande sur l'émulateur PDC"
+        - "LastLogonDate n'existe que pour les ordinateurs"
+        explanation: "Get-ADUser ne renvoie qu'un jeu réduit de propriétés. Les autres doivent être demandées avec -Properties. Select-Object affiche simplement du vide pour une propriété absente."
+      }
+      question "Tu crées un compte avec New-ADUser -Name « Test » sans autre paramètre. Dans quel état est-il ?" {
+        - "activé, sans mot de passe"
+        + "désactivé, dans le conteneur CN=Users"
+        - "activé, dans l'OU Utilisateurs"
+        - "la commande échoue, -Path est obligatoire"
+        explanation: "Sans -Path, le compte va dans le conteneur par défaut CN=Users. Sans mot de passe ni -Enabled $true, il est créé désactivé. Seul -Name est obligatoire."
+      }
+      question "Quel type de valeur attend le paramètre -AccountPassword ?" {
+        - "une chaîne de caractères ordinaire"
+        + "une SecureString"
+        - "un hachage NTLM"
+        - "un fichier .pfx"
+        explanation: "-AccountPassword attend une SecureString, obtenue avec Read-Host -AsSecureString ou ConvertTo-SecureString. Passer un texte brut provoque une erreur de type."
+      }
+      question "Quelle commande ajoute jmartin au groupe G_Profs ?" {
+        - "Set-ADUser jmartin -MemberOf G_Profs"
+        + "Add-ADGroupMember -Identity G_Profs -Members jmartin"
+        - "New-ADGroupMember G_Profs jmartin"
+        - "Add-ADUser -Group G_Profs jmartin"
+        explanation: "Add-ADGroupMember prend le groupe en -Identity et les membres en -Members. Add-ADPrincipalGroupMembership fait l'inverse (un compte vers des groupes). Les autres syntaxes n'existent pas."
+      }
+      question "Quelle commande trouve les comptes utilisateurs sans connexion depuis 90 jours ?" {
+        - "Get-ADUser -Filter 'LastLogon -gt 90'"
+        + "Search-ADAccount -AccountInactive -TimeSpan 90.00:00:00 -UsersOnly"
+        - "Search-ADAccount -Expired -Days 90"
+        - "Get-ADUser -Inactive 90"
+        explanation: "Search-ADAccount -AccountInactive avec -TimeSpan (jours.heures:minutes:secondes) repère les comptes inactifs. -UsersOnly exclut les ordinateurs."
+      }
+      question "À quoi sert le paramètre -WhatIf ajouté à Disable-ADAccount dans un pipeline ?" {
+        - "à demander une confirmation pour chaque compte"
+        + "à afficher ce qui serait fait sans rien modifier"
+        - "à enregistrer un journal des modifications"
+        - "à annuler la dernière désactivation"
+        explanation: "-WhatIf simule l'opération et affiche chaque action prévue. -Confirm demande une confirmation. Il n'existe pas d'annulation automatique : d'où l'intérêt de simuler avant."
+      }
+      question "Quelle cmdlet crée un groupe global de sécurité ?" {
+        - "New-ADGroup -Name G_Profs -Type Global"
+        + "New-ADGroup -Name G_Profs -GroupScope Global -GroupCategory Security"
+        - "New-ADSecurityGroup -Name G_Profs -Global"
+        - "Add-ADGroup G_Profs -Scope Global"
+        explanation: "New-ADGroup utilise -GroupScope (DomainLocal, Global, Universal) et -GroupCategory (Security, Distribution). -GroupScope est obligatoire."
+      }
+      question "Quel séparateur faut-il souvent préciser à Import-Csv pour un export de tableur français ?" {
+        - "-Delimiter ','"
+        + "-Delimiter ';'"
+        - "-Delimiter '|'"
+        - "-Delimiter `t (tabulation)"
+        explanation: "Les tableurs en français utilisent la virgule comme séparateur décimal, donc le point-virgule comme séparateur de colonnes. Import-Csv utilise la virgule par défaut."
+      }
+      question "Comment déverrouiller le compte de jmartin après trop d’erreurs de mot de passe ?" {
+        - "Enable-ADAccount jmartin"
+        + "Unlock-ADAccount jmartin"
+        - "Set-ADUser jmartin -Locked $false"
+        - "Reset-ADAccount jmartin"
+        explanation: "Unlock-ADAccount lève le verrouillage. Enable-ADAccount réactive un compte désactivé, ce qui est différent : un compte peut être activé et verrouillé."
+      }
+      question "Quelle commande montre les groupes dont jmartin est membre ?" {
+        - "Get-ADGroupMember jmartin"
+        + "Get-ADPrincipalGroupMembership jmartin"
+        - "Get-ADUser jmartin -Groups"
+        - "whoami /groups jmartin"
+        explanation: "Get-ADPrincipalGroupMembership liste les groupes d'un compte. Get-ADGroupMember fait l'inverse (membres d'un groupe). whoami /groups ne concerne que la session en cours."
+      }
+      question "Comment installer le module ActiveDirectory sur un poste Windows 11 d’administration ?" {
+        - "Install-WindowsFeature RSAT-AD-PowerShell"
+        + "Add-WindowsCapability -Online -Name Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0"
+        - "Install-Module ActiveDirectory depuis la PowerShell Gallery"
+        - "il est installé par défaut sur Windows 11"
+        explanation: "Sur Windows 10 et 11, les RSAT sont des fonctionnalités à la demande ajoutées par Add-WindowsCapability (ou Paramètres, Fonctionnalités facultatives). Install-WindowsFeature est réservé à Windows Server."
+      }
+    }
+  }
+
+  module "securite-ad" {
+    title: "Chapitre 9 : sécuriser l’annuaire, comptes à privilèges et Windows LAPS"
+    duration: "45min"
+    content: """
+### Pourquoi l'annuaire est la cible numéro un
+Dans la plupart des attaques par rançongiciel, l'attaquant entre par un poste (pièce jointe, mot de passe réutilisé), récupère des identifiants en mémoire, rebondit de machine en machine, puis vise un compte **Admins du domaine**. Une fois ce compte obtenu, il contrôle tous les postes, tous les serveurs et toutes les sauvegardes jointes au domaine. L'ANSSI rappelle que la compromission d'Active Directory équivaut à celle de tout le système d'information. Les mesures de ce chapitre visent à couper ce chemin.
+
+### Les groupes à privilèges
+| Groupe | Pouvoir |
+|---|---|
+| Administrateurs de l'entreprise (Enterprise Admins) | toute la forêt |
+| Administrateurs du schéma (Schema Admins) | modification du schéma |
+| Admins du domaine (Domain Admins) | tout le domaine, administrateur local de chaque machine jointe |
+| Administrateurs (BUILTIN, sur les DC) | les contrôleurs de domaine |
+| Opérateurs de compte, de serveur, de sauvegarde | droits étendus souvent sous-estimés |
+
+Règles de base :
+• Ces groupes doivent être **presque vides**. Administrateurs de l'entreprise et du schéma restent vides en temps normal ; on y ajoute quelqu'un le temps d'une opération.
+• **Comptes séparés** : chaque administrateur a un compte normal (`jmartin`) pour la messagerie et le web, et un compte d'administration (`adm-jmartin`) utilisé uniquement pour administrer. Le compte normal n'a aucun privilège.
+• **Pas de compte Admins du domaine sur un poste de travail.** Ouvrir une session avec ce compte sur un poste d'élève laisse son empreinte d'identifiants en mémoire : un attaquant qui contrôle ce poste peut la récupérer. Les comptes à hauts privilèges ne se connectent qu'aux DC et à des postes d'administration dédiés.
+• Le compte **Administrateur** intégré du domaine ne sert pas au quotidien : mot de passe long, conservé dans un coffre, usage de secours.
+
+### Le modèle en niveaux
+L'ANSSI et Microsoft recommandent de séparer l'administration en **niveaux** (tiers) :
+• **niveau 0** : ce qui contrôle l'annuaire (DC, comptes Admins du domaine, serveurs de sauvegarde des DC) ;
+• **niveau 1** : les serveurs et applications métier ;
+• **niveau 2** : les postes de travail et leurs utilisateurs.
+Un compte d'un niveau ne se connecte jamais à une machine d'un niveau inférieur. Les techniciens du niveau 2 ont un groupe délégué sur l'OU des postes (réinitialiser les mots de passe, joindre des postes), pas Admins du domaine.
+
+### Le groupe Protected Users
+Les membres du groupe **Utilisateurs protégés** (Protected Users, niveau fonctionnel 2012 R2 minimum) bénéficient de protections automatiques : pas d'authentification NTLM, pas de chiffrement DES ou RC4 pour Kerberos, pas de délégation, pas de mise en cache des identifiants, tickets Kerberos limités à 4 heures. On y place les comptes d'administration humains, **jamais** les comptes de service ni les comptes d'ordinateur (ils cesseraient de fonctionner). Teste avec un compte avant de généraliser.
+
+### Mots de passe et verrouillage
+Les valeurs par défaut de la Default Domain Policy sont faibles : 7 caractères minimum, et **aucun verrouillage** de compte (seuil 0). La CNIL recommande au moins 12 caractères mêlant majuscules, minuscules, chiffres et caractères spéciaux (ou 14 caractères sans caractère spécial obligatoire), et l'ANSSI demande des mots de passe plus robustes encore pour les comptes d'administration. Un seuil de verrouillage raisonnable (par exemple 10 essais avec une réinitialisation du compteur après 10 à 15 minutes) freine les essais en masse sans bloquer les élèves à chaque faute de frappe.
+
+Pour un mot de passe plus exigeant pour les administrateurs seulement, on utilise une **stratégie de mot de passe affinée** (PSO, Fine-Grained Password Policy), appliquée à un groupe : `New-ADFineGrainedPasswordPolicy`, puis `Add-ADFineGrainedPasswordPolicySubject`.
+
+### Le mot de passe administrateur local : Windows LAPS
+Problème classique : tous les postes du lycée ont été installés depuis la même image, avec le même mot de passe administrateur local. Un attaquant qui le trouve sur un poste se connecte à tous les autres : c'est le **mouvement latéral** (pass-the-hash).
+
+**Windows LAPS** (Local Administrator Password Solution) règle cela : chaque poste génère un mot de passe aléatoire pour son compte administrateur local, le change régulièrement et le **sauvegarde dans son propre objet ordinateur de l'annuaire**, lisible seulement par les personnes autorisées. Windows LAPS est **intégré** à Windows 11, Windows 10 et Windows Server 2019/2022 à jour depuis la mise à jour d'**avril 2023**, et à Windows Server 2025 : rien à installer. L'ancien produit « Microsoft LAPS » à installer séparément est obsolète.
+
+Mise en place avec Active Directory :
+1. **Étendre le schéma**, une fois pour la forêt : `Update-LapsADSchema`.
+2. **Donner aux ordinateurs le droit d'écrire leur mot de passe** sur l'OU qui les contient : `Set-LapsADComputerSelfPermission -Identity "OU=Ordinateurs,OU=Lycee,DC=lycee,DC=internal"`.
+3. (Facultatif) **Autoriser un groupe de techniciens à lire** les mots de passe : `Set-LapsADReadPasswordPermission`. Les Admins du domaine ont ce droit par défaut.
+4. **Créer une GPO** liée à l'OU des postes : Configuration ordinateur, Stratégies, Modèles d'administration, Système, LAPS. Le réglage minimal est « Configurer le répertoire de sauvegarde des mots de passe » (Configure password backup directory) sur **Active Directory**. On règle aussi les paramètres de mot de passe (longueur 14 et âge de 30 jours par défaut) et, avec un niveau fonctionnel 2016, le **chiffrement** du mot de passe dans l'annuaire.
+5. Sur un poste, `gpupdate` puis `Invoke-LapsPolicyProcessing` force le traitement ; le journal Microsoft, Windows, LAPS, Operational doit contenir l'événement **10018** (mot de passe sauvegardé dans AD).
+6. **Lire** le mot de passe : `Get-LapsADPassword -Identity PC-01 -AsPlainText`, ou l'onglet LAPS des propriétés de l'ordinateur dans la console. Après usage, `Reset-LapsPassword` sur le poste, ou `Set-LapsADPasswordExpirationTime` depuis l'annuaire, force un nouveau mot de passe.
+
+### Autres mesures simples et efficaces
+• Mettre `ms-DS-MachineAccountQuota` à **0** et déléguer la jonction à un groupe de techniciens.
+• Activer la **corbeille Active Directory** (`Enable-ADOptionalFeature "Recycle Bin Feature" -Scope ForestOrConfigurationSet -Target lycee.internal`) : un compte supprimé par erreur se restaure avec tous ses attributs et ses groupes. Attention, l'activation est irréversible.
+• Désactiver puis supprimer les comptes inactifs (chapitre 8), revoir les comptes dont le mot de passe n'expire jamais.
+• **Sauvegarder l'état du système des DC** (Sauvegarde Windows Server ou outil équivalent), hors ligne ou isolé du domaine, et tester une restauration.
+• Mettre à jour les DC rapidement et auditer régulièrement l'annuaire, par exemple avec l'outil ORADAD et les points de contrôle AD publiés par l'ANSSI.
+
+### À toi de jouer
+1. Crée `OU=Admins` (si ce n'est pas fait) et un compte `adm-jmartin`, membre de Admins du domaine et de Protected Users. Retire tout privilège du compte `jmartin`.
+2. Déploie Windows LAPS sur l'OU `Ordinateurs` et vérifie que le mot de passe de `PC-01` est lisible depuis le DC.
+3. Mets à 0 le nombre de jonctions autorisées pour les simples utilisateurs.
+4. Un technicien a l'habitude d'ouvrir une session `LYCEE\Administrateur` sur les postes des salles pour installer des logiciels. Explique le risque et propose une organisation correcte.
+
+### Correction
+1. `New-ADUser -Name "adm-jmartin" -SamAccountName adm-jmartin -Path "OU=Admins,OU=Lycee,DC=lycee,DC=internal" -AccountPassword (Read-Host -AsSecureString) -Enabled $true`, puis `Add-ADGroupMember "Admins du domaine" -Members adm-jmartin` et `Add-ADGroupMember "Protected Users" -Members adm-jmartin`. Le nom du groupe Admins du domaine dépend de la langue d'installation (« Domain Admins » en anglais) ; Protected Users garde son nom anglais. `Get-ADPrincipalGroupMembership jmartin` ne doit montrer que des groupes sans privilège.
+2. Commandes ci-dessous. Résultat attendu de `Get-LapsADPassword -Identity PC-01 -AsPlainText` : `ComputerName : PC-01`, `Account : Administrateur` (ou `Administrator`), un mot de passe de 14 caractères, `ExpirationTimestamp` à 30 jours, et `Source : EncryptedPassword` si le chiffrement est activé.
+3. `Set-ADDomain -Identity lycee.internal -Replace @{"ms-DS-MachineAccountQuota"="0"}`. Ensuite, délègue sur l'OU `Ordinateurs` la création et la suppression d'objets ordinateur à un groupe `DL_Techniciens_Jonction` (Assistant Délégation de contrôle).
+4. Le compte du domaine le plus puissant laisse ses identifiants en mémoire sur des postes d'élèves (niveau 2). Un seul poste compromis suffit pour prendre tout le domaine. Organisation correcte : les techniciens ont un compte `adm-` sans privilège de domaine, membre d'un groupe administrateur local des seuls postes (par GPO), ou utilisent le mot de passe LAPS propre à chaque poste ; Administrateur reste un compte de secours dans un coffre.
+"""
+
+    codeblock "powershell" {
+      title: "Déployer Windows LAPS (DC, PowerShell administrateur)"
+      code: """
+Update-LapsADSchema
+Set-LapsADComputerSelfPermission -Identity "OU=Ordinateurs,OU=Lycee,DC=lycee,DC=internal"
+New-GPO -Name "C_Postes_LAPS" |
+  New-GPLink -Target "OU=Ordinateurs,OU=Lycee,DC=lycee,DC=internal"
+# Éditer la GPO : Système > LAPS > répertoire de sauvegarde = Active Directory
+
+# Sur PC-01
+gpupdate /force
+Invoke-LapsPolicyProcessing
+Get-WinEvent -LogName "Microsoft-Windows-LAPS/Operational" -MaxEvents 5
+
+# Sur le DC
+Get-LapsADPassword -Identity PC-01 -AsPlainText
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Pourquoi un administrateur doit-il avoir deux comptes distincts ?" {
+        - "parce qu'un compte ne peut pas être membre de plus de 10 groupes"
+        + "pour que la messagerie et le web se fassent avec un compte sans privilège, et l'administration avec un compte dédié"
+        - "parce que Windows impose un compte par type de machine"
+        - "pour doubler le nombre de licences"
+        explanation: "Un lien piégé ouvert avec un compte sans privilège ne donne pas le domaine. Le compte d'administration ne sert qu'à administrer, depuis des postes sûrs."
+      }
+      question "Quel risque présente l’ouverture d’une session Admins du domaine sur un poste d’élève ?" {
+        - "le poste redémarre en mode restauration"
+        + "les identifiants restent en mémoire et peuvent être volés si le poste est compromis"
+        - "la session supprime les GPO du poste"
+        - "le compte est automatiquement verrouillé"
+        explanation: "Les traces d'authentification en mémoire permettent à un attaquant ayant les droits sur le poste de réutiliser le compte. C'est le chemin classique vers la prise du domaine."
+      }
+      question "Quel problème Windows LAPS résout-il ?" {
+        - "l'oubli du mot de passe des utilisateurs du domaine"
+        + "le même mot de passe administrateur local sur tous les postes"
+        - "la synchronisation horaire entre poste et DC"
+        - "le chiffrement des disques des postes"
+        explanation: "Windows LAPS donne à chaque poste un mot de passe administrateur local unique, aléatoire et renouvelé, stocké dans l'annuaire. Cela bloque le mouvement latéral avec un mot de passe commun."
+      }
+      question "Quelle commande étend le schéma pour Windows LAPS ?" {
+        - "adprep /forestprep"
+        + "Update-LapsADSchema"
+        - "Install-WindowsFeature LAPS"
+        - "Set-LapsADComputerSelfPermission"
+        explanation: "Update-LapsADSchema ajoute les attributs nécessaires, une seule fois pour la forêt. Set-LapsADComputerSelfPermission donne ensuite aux ordinateurs le droit d'écrire leur mot de passe."
+      }
+      question "Quelle commande affiche en clair le mot de passe LAPS du poste PC-01 ?" {
+        - "Get-ADComputer PC-01 -Properties Password"
+        + "Get-LapsADPassword -Identity PC-01 -AsPlainText"
+        - "Reset-LapsPassword PC-01"
+        - "Invoke-LapsPolicyProcessing -Show"
+        explanation: "Get-LapsADPassword lit (et déchiffre si autorisé) le mot de passe stocké. Reset-LapsPassword, lancé sur le poste, en génère un nouveau."
+      }
+      question "Depuis quand Windows LAPS est-il intégré à Windows 10, Windows 11 et Windows Server 2019/2022 ?" {
+        - "depuis Windows Server 2008 R2"
+        + "depuis la mise à jour d'avril 2023"
+        - "depuis Windows Server 2025 uniquement"
+        - "il faut toujours l'installer à part"
+        explanation: "Windows LAPS a été livré dans les mises à jour du 11 avril 2023. L'ancien Microsoft LAPS, téléchargé séparément, est obsolète."
+      }
+      question "Quel compte ne faut-il pas placer dans le groupe Protected Users ?" {
+        - "le compte d'administration adm-jmartin"
+        + "un compte de service utilisé par une application"
+        - "le compte d'un administrateur réseau"
+        - "un compte d'administration de secours testé"
+        explanation: "Protected Users interdit NTLM, la délégation et le cache des identifiants. Les comptes de service et d'ordinateur en dépendent souvent et cesseraient de fonctionner."
+      }
+      question "Quel est le seuil de verrouillage de compte dans la Default Domain Policy d’origine ?" {
+        + "0, aucun verrouillage"
+        - "3 tentatives"
+        - "5 tentatives"
+        - "10 tentatives"
+        explanation: "Par défaut, la Default Domain Policy ne verrouille jamais les comptes. Il faut définir un seuil pour freiner les attaques par essais répétés."
+      }
+      question "Comment appliquer une stratégie de mot de passe plus stricte aux seuls administrateurs ?" {
+        - "avec une GPO liée à l'OU Admins"
+        + "avec une stratégie de mot de passe affinée (PSO) appliquée à un groupe"
+        - "en modifiant la Default Domain Controllers Policy"
+        - "avec un filtre WMI sur la Default Domain Policy"
+        explanation: "Une GPO liée à une OU ne change pas la stratégie de mot de passe des comptes du domaine. Les PSO (New-ADFineGrainedPasswordPolicy) s'appliquent à des groupes ou à des utilisateurs."
+      }
+      question "Dans le modèle en niveaux, à quel niveau appartiennent les contrôleurs de domaine ?" {
+        + "niveau 0"
+        - "niveau 1"
+        - "niveau 2"
+        - "ils sont hors niveau"
+        explanation: "Le niveau 0 regroupe tout ce qui contrôle l'annuaire : DC, comptes Admins du domaine, outils qui les administrent. Le niveau 1 concerne les serveurs, le niveau 2 les postes de travail."
+      }
+      question "Pourquoi met-on ms-DS-MachineAccountQuota à 0 ?" {
+        - "pour empêcher les postes de changer leur mot de passe machine"
+        + "pour que de simples utilisateurs ne puissent plus créer de comptes d'ordinateur"
+        - "pour interdire les sessions simultanées"
+        - "pour désactiver les anciens postes"
+        explanation: "Avec la valeur par défaut de 10, tout utilisateur authentifié peut créer des comptes d'ordinateur, ce qu'exploitent plusieurs attaques. On délègue ce droit à un groupe de techniciens."
+      }
+      question "Quel événement confirme que Windows LAPS a sauvegardé le mot de passe dans l’annuaire ?" {
+        - "l'événement 4624 du journal Sécurité"
+        + "l'événement 10018 du journal LAPS Operational"
+        - "l'événement 1502 du journal GroupPolicy"
+        - "l'événement 6005 du journal Système"
+        explanation: "L'événement 10018 indique une mise à jour réussie du mot de passe dans Active Directory. 4624 est une ouverture de session, 6005 le démarrage du journal des événements."
+      }
+      question "Quel est l’intérêt de la corbeille Active Directory ?" {
+        - "elle vide automatiquement les comptes inactifs"
+        + "elle permet de restaurer un objet supprimé avec ses attributs et ses appartenances aux groupes"
+        - "elle sauvegarde NTDS.dit chaque nuit"
+        - "elle empêche toute suppression d'OU"
+        explanation: "Une fois activée (opération irréversible), la corbeille conserve les objets supprimés avec tous leurs attributs pendant une durée définie. Ce n'est pas une sauvegarde : il faut quand même sauvegarder les DC."
+      }
+    }
+  }
+
+  module "synthese" {
+    title: "Chapitre 10 : synthèse, mini-projet guidé"
+    duration: "60min"
+    content: """
+### Le projet
+Tu livres l'annuaire d'un petit lycée : 3 professeurs, 1 CPE, 2 classes de 2 élèves (en vrai, des centaines, d'où le script), une salle informatique de postes Windows 11 Pro, un serveur de fichiers (le DC en labo).
+
+À livrer :
+• le domaine `lycee.internal` sur `SRV-DC1` (192.168.10.10), DNS intégré avec zone inverse et redirecteur ;
+• l'arborescence d'OU du chapitre 4 et l'OU `Admins` ;
+• les comptes et groupes créés **par script** à partir de deux fichiers CSV (personnels et élèves) ;
+• les partages `Profs` (professeurs en modification, CPE en lecture) et `Classes\BTS1`, `Classes\BTS2` (chaque classe ne voit que son dossier, les professeurs voient tout), selon AGDLP ;
+• deux GPO : `U_Eleves_Restrictions` et `U_Lecteurs` (lecteurs réseau par préférences avec ciblage) ;
+• Windows LAPS sur l'OU des postes, comptes `adm-` séparés, quota de jonction à 0 ;
+• une fiche de recette et une page de documentation (plan d'adressage, schéma des OU, tableau AGDLP).
+
+### Étapes conseillées
+1. **Plan** : sur papier, dessine les OU, puis le tableau AGDLP : pour chaque ressource, les groupes de domaine local (`DL_Profs_RW`, `DL_Profs_R`, `DL_BTS1_RW`…) et les groupes globaux qui y entrent.
+2. **Serveur** : nom, IP fixe, rôle AD DS, promotion, puis DNS (chapitres 2 et 3).
+3. **Annuaire** : OU, groupes, comptes par script, imbrication AGDLP (chapitres 4 et 8).
+4. **Poste** : jonction directe dans `Postes-Salles` (chapitre 5).
+5. **Partages** : dossiers, NTFS, partage, ABE (chapitre 7).
+6. **GPO** : création, liaison, test avec `gpresult` (chapitre 6).
+7. **Sécurité** : comptes `adm-`, LAPS, quota, verrouillage, corbeille (chapitre 9).
+8. **Recette** : chaque ligne de la fiche est un test avec son résultat attendu, coché ou non.
+
+### Exemple de tableau AGDLP
+| Ressource | Accès | Groupe DL | Groupes globaux membres |
+|---|---|---|---|
+| `Profs` | Modification | `DL_Profs_RW` | `G_Profs` |
+| `Profs` | Lecture | `DL_Profs_R` | `G_VieScolaire` |
+| `Classes\BTS1` | Modification | `DL_BTS1_RW` | `G_Eleves_BTS1`, `G_Profs` |
+| `Classes\BTS2` | Modification | `DL_BTS2_RW` | `G_Eleves_BTS2`, `G_Profs` |
+
+Sur `Classes`, l'héritage vers `BTS1` et `BTS2` est coupé ; le dossier `Classes` lui-même donne seulement « Affichage du contenu du dossier », ce dossier uniquement, aux élèves et aux professeurs, pour qu'ils puissent l'ouvrir et voir (grâce à l'ABE) leur seul sous-dossier.
+
+### Fiche de recette (extrait)
+| Test | Commande ou action | Attendu |
+|---|---|---|
+| le DC répond | `nltest /dsgetdc:lycee.internal` sur PC-01 | `DC: \\SRV-DC1.lycee.internal` |
+| SRV dans le DNS | `Resolve-DnsName -Type SRV _ldap._tcp.dc._msdcs.lycee.internal` | `srv-dc1.lycee.internal`, port 389 |
+| poste dans la bonne OU | `Get-ADComputer PC-01` | DN dans `OU=Postes-Salles` |
+| AGDLP | `Get-ADGroupMember DL_BTS1_RW` | `G_Eleves_BTS1`, `G_Profs` |
+| droits élève | ouvrir `\\SRV-DC1\Classes` avec `elv.ldupont` | voit seulement `BTS1`, peut y écrire |
+| droits CPE | écrire dans `\\SRV-DC1\Profs` avec un CPE | accès refusé à l'écriture, lecture possible |
+| GPO | `gpresult /r` en élève sur PC-01 | `U_Eleves_Restrictions` et `U_Lecteurs` appliquées |
+| LAPS | `Get-LapsADPassword -Identity PC-01 -AsPlainText` | mot de passe présent, expiration à 30 jours |
+| quota | `Get-ADDomain` puis lecture de l'attribut | `ms-DS-MachineAccountQuota` = 0 |
+
+### À toi de jouer
+Réalise le projet, puis réponds à ces deux questions de recette :
+1. L'élève `elv.ldupont` voit le dossier `BTS2` mais obtient « Accès refusé » en l'ouvrant. Qu'as-tu oublié ?
+2. Une professeure arrivée en cours d'année doit tout avoir dès lundi. Combien de modifications de droits NTFS dois-tu faire ?
+
+### Correction
+1. L'énumération basée sur l'accès n'est pas activée sur le partage `Classes` : sans elle, les dossiers inaccessibles restent visibles. `Set-SmbShare -Name Classes -FolderEnumerationMode AccessBased -Force` corrige l'affichage ; les droits, eux, étaient déjà bons puisque l'accès est refusé.
+2. Aucune. Tu crées son compte (par le script, avec le CSV des personnels) et tu l'ajoutes à `G_Profs`. Grâce à AGDLP, elle hérite de tous les accès des professeurs. Elle les obtient dès sa première ouverture de session.
+
+### Pour aller plus loin
+• Documentation Active Directory Domain Services et Windows LAPS, Microsoft Learn : https://learn.microsoft.com/windows-server/identity/ad-ds/
+• Référence des modules PowerShell ActiveDirectory, ADDSDeployment et GroupPolicy, Microsoft Learn : https://learn.microsoft.com/powershell/module/activedirectory/
+• Recommandations de sécurité relatives à Active Directory et points de contrôle Active Directory (outil ORADAD), ANSSI : https://cyber.gouv.fr
+• Recommandations relatives à l'authentification multifacteur et aux mots de passe, ANSSI : https://cyber.gouv.fr
+• RFC 4120, The Kerberos Network Authentication Service (V5), et RFC 4511, LDAP : The Protocol, IETF : https://www.rfc-editor.org
+• Référentiel du BTS SIO, option SISR, ministère de l'Éducation nationale
+"""
+
+    codeblock "powershell" {
+      title: "Recette rapide sur SRV-DC1"
+      code: """
+Get-ADDomain | Select-Object DNSRoot, NetBIOSName, DomainMode
+Get-ADOrganizationalUnit -Filter * | Select-Object DistinguishedName
+Get-ADGroupMember DL_BTS1_RW | Select-Object Name
+Get-SmbShare Profs, Classes | Select-Object Name, Path, FolderEnumerationMode
+Get-GPInheritance -Target "OU=Eleves,OU=Utilisateurs,OU=Lycee,DC=lycee,DC=internal"
+Get-LapsADPassword -Identity PC-01 -AsPlainText
+Get-ADObject (Get-ADDomain).DistinguishedName -Properties ms-DS-MachineAccountQuota
+dcdiag /q
+"""
+    }
+
+    quiz {
+      pick: 10
+      question "Que contient une forêt Active Directory ?" {
+        - "un seul domaine et ses sites"
+        + "une ou plusieurs arborescences de domaines qui partagent schéma, configuration et catalogue global"
+        - "tous les ordinateurs d'un même sous-réseau"
+        - "uniquement les contrôleurs de domaine"
+        explanation: "Une forêt réunit une ou plusieurs arborescences. Elles partagent le schéma, la configuration et le catalogue global, et la forêt est la frontière de sécurité."
+      }
+      question "Quel rôle FSMO distribue des blocs d’identifiants pour créer les SID dans un domaine ?" {
+        - "l'émulateur PDC"
+        + "le maître RID"
+        - "le maître de schéma"
+        - "le maître d'infrastructure"
+        explanation: "Le maître RID attribue aux DC des blocs d'identifiants relatifs, ajoutés au SID du domaine pour former le SID de chaque nouvel objet."
+      }
+      question "Quelle cmdlet crée une nouvelle forêt avec son premier domaine ?" {
+        - "Install-ADDSDomainController"
+        - "New-ADForest"
+        + "Install-ADDSForest"
+        - "Install-WindowsFeature AD-Forest"
+        explanation: "Install-ADDSForest (module ADDSDeployment) promeut le serveur en premier DC d'une nouvelle forêt. New-ADForest n'existe pas."
+      }
+      question "Pourquoi les postes du domaine doivent-ils utiliser uniquement les DC comme serveurs DNS ?" {
+        - "parce que les DC sont plus rapides que les DNS publics"
+        + "parce que seuls les DC connaissent la zone interne et les SRV qui localisent le domaine"
+        - "parce que Windows ne sait pas utiliser de DNS externe"
+        - "parce que Kerberos fonctionne par le port 53"
+        explanation: "Les SRV _ldap._tcp.dc._msdcs.<domaine> ne sont publiés que dans la zone interne. Pour Internet, le DC utilise ses redirecteurs."
+      }
+      question "Quelle est la bonne chaîne AGDLP pour donner aux professeurs la modification d’un dossier ?" {
+        - "comptes → DL_Profs_RW → G_Profs → permission"
+        + "comptes → G_Profs → DL_Profs_RW → permission Modification"
+        - "comptes → OU Profs → permission Modification"
+        - "comptes → G_Profs → permission Modification"
+        explanation: "Les comptes vont dans le groupe global (les personnes), le global dans le domaine local (l'accès), et le domaine local reçoit la permission. Une OU ne reçoit pas de permission."
+      }
+      question "Un poste a été joint mais aucune GPO d’OU ne s’applique. gpresult ne montre que la Default Domain Policy. Où est probablement son compte ?" {
+        - "dans OU=Domain Controllers"
+        + "dans le conteneur CN=Computers"
+        - "dans l'OU Postes-Salles"
+        - "dans le catalogue global"
+        explanation: "Dans CN=Computers, seules les GPO liées au domaine (et au site) s'appliquent. Il faut déplacer le compte dans l'OU cible, et utiliser redircmp ou -OUPath pour la suite."
+      }
+      question "Une GPO liée à l’OU Eleves ne s’applique pas à un élève. Quelle première vérification fais-tu sur son poste ?" {
+        - "ipconfig /release"
+        + "gpresult /r pour voir si la GPO est appliquée ou filtrée et pourquoi"
+        - "dcdiag /q sur le poste"
+        - "Get-ADUser -Properties *"
+        explanation: "gpresult /r donne la liste des GPO appliquées et refusées avec la raison (sécurité, lien désactivé, vide). C'est le point de départ de tout dépannage de GPO."
+      }
+      question "Quelle commande force la réapplication de tous les paramètres de stratégie sur un poste ?" {
+        - "gpresult /force"
+        + "gpupdate /force"
+        - "Invoke-GPUpdate -All"
+        - "gpmc /refresh"
+        explanation: "gpupdate /force réapplique tous les paramètres, modifiés ou non. gpresult sert à lire le résultat, pas à appliquer."
+      }
+      question "Une GPO du domaine est « Appliqué », l’OU Profs bloque l’héritage. Qui reçoit la GPO ?" {
+        - "personne dans l'OU Profs"
+        + "tous les objets du domaine, OU Profs comprise"
+        - "seulement les objets hors de l'OU Profs"
+        - "seulement les DC"
+        explanation: "Une liaison appliquée traverse le blocage d'héritage. Le blocage n'arrête que les GPO non appliquées."
+      }
+      question "Partage : Contrôle total pour Utilisateurs authentifiés. NTFS : Lecture et exécution pour le groupe de l’utilisateur. Quel droit a-t-il par le réseau ?" {
+        - "Contrôle total"
+        - "Modification"
+        + "Lecture et exécution"
+        - "aucun"
+        explanation: "Le plus restrictif des deux couches s'applique par le réseau. Le partage ouvert ne donne rien de plus que NTFS."
+      }
+      question "Un élève a été ajouté à G_Eleves_BTS1 pendant qu’il était connecté. Il n’accède pas encore au dossier BTS1. Que doit-il faire ?" {
+        - "lancer gpupdate /force"
+        + "fermer sa session et se reconnecter"
+        - "redémarrer le serveur de fichiers"
+        - "vider le cache DNS"
+        explanation: "L'appartenance aux groupes est figée dans le jeton d'accès créé à l'ouverture de session. Une nouvelle session crée un nouveau jeton."
+      }
+      question "Quelle commande crée un utilisateur directement dans l’OU Profs ?" {
+        - "New-ADUser -Name 'Jean Martin' -OU Profs"
+        + "New-ADUser -Name 'Jean Martin' -Path 'OU=Profs,OU=Utilisateurs,OU=Lycee,DC=lycee,DC=internal'"
+        - "Add-ADUser 'Jean Martin' -Target Profs"
+        - "New-ADUser -Name 'Jean Martin' -SearchBase Profs"
+        explanation: "-Path reçoit le DN complet de l'OU. -SearchBase sert aux recherches, et il n'existe pas de paramètre -OU."
+      }
+      question "Get-ADUser -Filter * -Properties LastLogonDate est lancé. Pourquoi ajoute-t-on -Properties ?" {
+        - "pour accélérer la requête"
+        + "parce que LastLogonDate ne fait pas partie des propriétés renvoyées par défaut"
+        - "pour inclure les comptes désactivés"
+        - "pour lire la propriété sur le catalogue global"
+        explanation: "Get-ADUser renvoie un petit jeu de propriétés par défaut. Toute autre propriété doit être demandée explicitement avec -Properties."
+      }
+      question "Le compte d’un nouveau professeur a été créé par New-ADUser sans mot de passe. Il ne peut pas se connecter. Pourquoi ?" {
+        - "le compte est verrouillé"
+        + "le compte a été créé désactivé"
+        - "le compte n'a pas d'UPN"
+        - "le compte n'est pas dans un groupe"
+        explanation: "Sans mot de passe valide et -Enabled $true, New-ADUser crée un compte désactivé. On lui donne un mot de passe avec Set-ADAccountPassword -Reset puis Enable-ADAccount."
+      }
+      question "Quel est le rôle de Windows LAPS ?" {
+        - "chiffrer les mots de passe des utilisateurs du domaine"
+        + "générer, renouveler et sauvegarder dans l'annuaire un mot de passe administrateur local unique par poste"
+        - "verrouiller les comptes après trop d'erreurs"
+        - "remplacer Kerberos par une authentification plus forte"
+        explanation: "Windows LAPS gère le compte administrateur local de chaque machine : mot de passe aléatoire, renouvelé, stocké dans l'objet ordinateur et lisible par les seules personnes autorisées."
+      }
+      question "Où un compte Admins du domaine doit-il ouvrir des sessions interactives ?" {
+        - "sur n'importe quel poste du lycée, pour dépanner vite"
+        + "seulement sur les contrôleurs de domaine et des postes d'administration dédiés"
+        - "seulement sur le serveur de fichiers"
+        - "sur les postes des professeurs uniquement"
+        explanation: "Un compte de niveau 0 ne se connecte qu'à des machines de niveau 0. Sur un poste ordinaire, ses identifiants peuvent être volés."
+      }
+      question "Le premier DC d’une forêt est en panne et c’est le seul. Que se passe-t-il pour les utilisateurs ?" {
+        - "rien, les postes ont une copie complète de l'annuaire"
+        + "les nouvelles authentifications de domaine, les GPO et la résolution des noms internes échouent"
+        - "les postes deviennent automatiquement contrôleurs"
+        - "seuls les partages de fichiers sont touchés"
+        explanation: "Sans DC ni DNS, plus d'authentification Kerberos, plus de GPO, plus de noms internes. Les postes peuvent seulement utiliser des identifiants mis en cache. D'où au moins deux DC."
+      }
+      question "Quelle commande d’icacls retire les droits hérités d’un dossier ?" {
+        - "icacls D:\\Partages\\Profs /reset"
+        + "icacls D:\\Partages\\Profs /inheritance:r"
+        - "icacls D:\\Partages\\Profs /remove:inherited"
+        - "icacls D:\\Partages\\Profs /deny Everyone"
+        explanation: "/inheritance:r désactive l'héritage et retire les entrées héritées ; /inheritance:d le désactive en copiant les entrées. /reset rétablit au contraire les droits hérités par défaut."
+      }
+      question "Quel attribut limite le nombre de postes qu’un simple utilisateur peut joindre au domaine ?" {
+        - "maxPwdAge"
+        + "ms-DS-MachineAccountQuota"
+        - "userAccountControl"
+        - "lockoutThreshold"
+        explanation: "ms-DS-MachineAccountQuota (10 par défaut) fixe ce nombre. userAccountControl porte les indicateurs d'un compte (désactivé, mot de passe sans expiration…), lockoutThreshold concerne le verrouillage."
+      }
+      question "Pourquoi crée-t-on des GPO dédiées plutôt que de modifier la Default Domain Policy ?" {
+        - "parce que la Default Domain Policy ne peut pas être modifiée"
+        + "pour garder les réglages lisibles, ciblés et faciles à désactiver ou à corriger"
+        - "parce que la Default Domain Policy ne s'applique qu'aux DC"
+        - "parce que les GPO dédiées s'appliquent plus vite"
+        explanation: "Une GPO par besoin, nommée clairement, se lie à la bonne OU et se désactive sans tout casser. La Default Domain Policy garde surtout la stratégie de mots de passe et de verrouillage."
+      }
+    }
+  }
+}

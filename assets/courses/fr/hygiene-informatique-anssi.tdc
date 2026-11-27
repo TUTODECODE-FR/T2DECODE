@@ -1,0 +1,2088 @@
+tdc-version: 2
+type: course
+
+course "hygiene-informatique-anssi" {
+  title: "Sécuriser un parc informatique : hygiène et durcissement"
+  description: """
+Ce cours t'apprend à appliquer les règles d'hygiène informatique de l'ANSSI à un vrai parc de quelques dizaines de postes : savoir ce que tu protèges, qui y a accès, comment le tenir à jour, le cloisonner, l'administrer sans risque, le sauvegarder et réagir quand quelque chose tourne mal. Il s'adresse aux élèves de bac pro CIEL, BTS SIO SISR, BTS CIEL et BUT réseaux, et à toute personne qui gère l'informatique d'une petite structure (PME, association, établissement scolaire).
+
+À la fin, tu sauras :
+• expliquer l'organisation du guide d'hygiène informatique de l'ANSSI (42 mesures, 10 chapitres, niveaux standard et renforcé) et t'en servir comme grille ;
+• dresser l'inventaire d'un parc (matériel, logiciels, comptes privilégiés, flux) avec des commandes Windows et Linux ;
+• appliquer une politique de comptes et de mots de passe conforme aux recommandations de la CNIL et de l'ANSSI, et choisir une authentification multifacteur ;
+• organiser les mises à jour et repérer les systèmes en fin de vie ;
+• durcir un poste Windows 10/11 (pare-feu, Defender, BitLocker, SMBv1, exécution automatique, comptes locaux) ;
+• proposer un cloisonnement réseau (VLAN, Wi-Fi invité, DMZ) et remplacer les protocoles non chiffrés ;
+• mettre en place une administration sécurisée et des règles pour le nomadisme ;
+• durcir un serveur Debian (SSH par clé, sudo, nftables, fail2ban, mises à jour automatiques, auditd) ;
+• bâtir une politique de sauvegarde 3-2-1, activer les bons journaux et suivre une procédure d'incident ;
+• conduire l'audit d'hygiène d'une petite structure avec une checklist et un plan d'action priorisé.
+
+Le cours s'appuie sur un labo que tu montes toi-même : une machine virtuelle Windows 10 ou 11 (édition Professionnelle pour BitLocker) et une machine virtuelle Debian 12, reliées par un réseau interne. Chaque chapitre contient au moins un exercice pratique avec sa correction, et une banque de questions tirées au hasard.
+
+Prérequis : utilisation courante de Windows et du terminal Linux (sudo, éditer un fichier, systemctl), notions de réseau (adresse IP, masque, VLAN, port TCP/UDP). Le cours « Services réseau : DNS et DHCP » et le cours sur les VLAN sont utiles mais pas obligatoires.
+"""
+  category: "security"
+  level: "intermediate"
+  duration: "8h"
+  icon: "Shield"
+  keywords: ["anssi", "hygiène informatique", "durcissement", "hardening", "inventaire", "mots de passe", "cnil", "mfa", "mises à jour", "bitlocker", "defender", "pare-feu", "vlan", "wi-fi", "ssh", "nftables", "fail2ban", "sauvegarde", "3-2-1", "journalisation", "incident", "audit", "laps"]
+
+  module "cadre-hygiene" {
+    title: "Chapitre 1 : l'hygiène informatique et le guide de l'ANSSI"
+    duration: "25min"
+    content: """
+### Pourquoi parler d'« hygiène »
+La plupart des attaques qui touchent une PME, une mairie ou un lycée ne sont pas sophistiquées. Elles exploitent des faiblesses connues : un mot de passe réutilisé, un serveur qui n'a pas reçu de mise à jour depuis deux ans, un compte d'ancien stagiaire toujours actif, un accès bureau à distance ouvert sur Internet, une sauvegarde branchée en permanence que le rançongiciel (ransomware) chiffre avec le reste.
+
+L'**hygiène informatique**, c'est l'ensemble des gestes de base qui ferment ces portes. Comme l'hygiène en médecine, elle ne protège pas de tout, mais elle évite la grande majorité des infections courantes, pour un coût modeste.
+
+Les menaces les plus fréquentes pour une petite structure :
+• **hameçonnage** (phishing) : un message pousse l'utilisateur à donner son mot de passe ou à ouvrir une pièce jointe piégée ;
+• **rançongiciel** : les fichiers et les sauvegardes accessibles sont chiffrés, une rançon est demandée ;
+• **vol d'identifiants** puis connexion avec un compte légitime (messagerie, VPN, bureau à distance) ;
+• **exploitation d'une vulnérabilité connue** sur un équipement exposé à Internet et non mis à jour ;
+• **compromission par un prestataire** dont l'accès à distance est mal protégé.
+
+### Le guide d'hygiène informatique de l'ANSSI
+L'ANSSI (Agence nationale de la sécurité des systèmes d'information) publie un guide gratuit, « Guide d'hygiène informatique : renforcer la sécurité de son système d'information en 42 mesures ». La première édition date de janvier 2013 (40 règles) ; la version 2.0, de septembre 2017, compte **42 mesures** réparties en **10 chapitres** :
+
+| Chapitre | Thème | Mesures |
+|---|---|---|
+| I | Sensibiliser et former | 1 à 3 |
+| II | Connaître le système d'information | 4 à 7 |
+| III | Authentifier et contrôler les accès | 8 à 13 |
+| IV | Sécuriser les postes | 14 à 18 |
+| V | Sécuriser le réseau | 19 à 26 |
+| VI | Sécuriser l'administration | 27 à 29 |
+| VII | Gérer le nomadisme | 30 à 33 |
+| VIII | Maintenir le système d'information à jour | 34 et 35 |
+| IX | Superviser, auditer, réagir | 36 à 40 |
+| X | Pour aller plus loin | 41 et 42 |
+
+Chaque mesure existe en deux niveaux :
+• **standard** : le minimum que toute organisation devrait atteindre ;
+• **renforcé** : pour les organisations plus exposées ou plus mûres.
+
+À la fin du guide, un **outil de suivi** reprend les 42 mesures sous forme de tableau. C'est la base d'un audit d'hygiène : pour chaque mesure, tu notes « fait », « partiel » ou « non fait », puis tu priorises. Ce cours suit l'ordre du guide et te fait appliquer les mesures sur de vraies machines.
+
+### Les trois premières mesures : les personnes
+La technique ne suffit pas si les personnes ne suivent pas :
+• **mesure 1** : former les équipes informatiques (administrateurs, techniciens) à la sécurité ;
+• **mesure 2** : sensibiliser tous les utilisateurs aux règles de base (charte informatique, verrouillage de session, signalement des messages suspects, usage des clés USB) ;
+• **mesure 3** : maîtriser les risques de l'**infogérance**, c'est-à-dire des prestataires : clauses de sécurité dans le contrat, accès à distance contrôlés, réversibilité.
+
+Une **charte informatique** signée par chaque utilisateur fixe les règles d'usage. Elle est d'autant plus utile qu'elle est courte et expliquée.
+
+### Les deux dernières : aller plus loin
+• **mesure 41** : mener une **analyse de risques** formelle (par exemple avec la méthode EBIOS Risk Manager de l'ANSSI) ;
+• **mesure 42** : privilégier les produits et services **qualifiés** par l'ANSSI (produits certifiés ou qualifiés, prestataires d'audit PASSI, de réponse aux incidents PRIS, de détection PDIS, offres de cloud SecNumCloud).
+
+### Les critères de sécurité
+Pour décider ce qui compte, on évalue chaque information ou service selon quatre critères (souvent notés **DICT**) :
+• **Disponibilité** : le service fonctionne quand on en a besoin ;
+• **Intégrité** : les données ne sont pas modifiées sans autorisation ;
+• **Confidentialité** : seules les personnes autorisées y accèdent ;
+• **Traçabilité** (ou preuve) : on peut savoir qui a fait quoi et quand.
+
+Une sauvegarde protège surtout la disponibilité et l'intégrité ; le chiffrement, la confidentialité ; les journaux, la traçabilité.
+
+### La défense en profondeur
+Aucune mesure n'est parfaite. On empile donc plusieurs barrières indépendantes : si l'utilisateur clique sur le lien piégé, l'antivirus peut bloquer le fichier ; s'il ne le bloque pas, l'absence de droits administrateur limite les dégâts ; si le poste est quand même compromis, le cloisonnement réseau empêche d'atteindre les serveurs ; et en dernier recours, la sauvegarde hors ligne permet de tout reconstruire. C'est ce qu'on appelle la **défense en profondeur**.
+
+### À toi de jouer
+Une PME de 20 postes te décrit sa situation. Pour chaque constat, indique le chapitre du guide (I à X) concerné et le critère DICT principalement menacé.
+1. La sauvegarde est faite chaque nuit sur un disque USB qui reste branché au serveur.
+2. Tous les salariés utilisent un compte administrateur local sur leur poste.
+3. Personne ne sait combien de postes ni quelles versions de Windows il y a.
+4. Le Wi-Fi des visiteurs donne accès au serveur de fichiers.
+5. Le serveur de comptabilité n'enregistre aucun journal de connexion.
+6. Le prestataire de maintenance se connecte avec un compte partagé dont le mot de passe n'a jamais changé.
+
+Ensuite, choisis les trois constats à traiter en premier et justifie ton choix en une phrase chacun.
+
+### Correction
+1. Chapitre IX (sauvegardes, mesure 37) ; disponibilité. Un rançongiciel chiffre aussi un disque branché en permanence : il faut une copie hors ligne.
+2. Chapitre VI (mesure 29, droits d'administration réduits) et IV ; intégrité. Un logiciel malveillant lancé par l'utilisateur obtient tous les droits sur le poste.
+3. Chapitre II (inventaire, mesure 4) ; tous les critères, car on ne protège pas ce qu'on ne connaît pas.
+4. Chapitre V (mesure 20, Wi-Fi séparé ; mesure 19, cloisonnement) ; confidentialité.
+5. Chapitre IX (mesure 36, journaux) ; traçabilité.
+6. Chapitres I (mesure 3, prestataires) et III (mesure 8, comptes nominatifs) ; confidentialité et traçabilité.
+
+Priorités raisonnables : la sauvegarde hors ligne (sans elle, un rançongiciel peut arrêter l'entreprise), les droits administrateur des utilisateurs (porte d'entrée la plus fréquente) et l'accès du prestataire (accès à distance privilégié non maîtrisé). L'inventaire vient juste après, car il conditionne tout le reste. D'autres ordres sont acceptables s'ils sont justifiés par le risque.
+"""
+
+    quiz {
+      pick: 5
+      question "Combien de mesures compte la version 2.0 du guide d’hygiène informatique de l’ANSSI ?" {
+        - "40"
+        + "42"
+        - "36"
+        - "50"
+        explanation: "La version 2.0 (septembre 2017) compte 42 mesures en 10 chapitres. La première édition, en 2013, comptait 40 règles : c'est l'erreur classique."
+      }
+      question "Que signifient les niveaux standard et renforcé dans le guide ?" {
+        - "standard pour Windows, renforcé pour Linux"
+        + "standard est le minimum attendu, renforcé vise les organisations plus exposées ou plus mûres"
+        - "standard est facultatif, renforcé est obligatoire par la loi"
+        - "standard concerne les postes, renforcé concerne les serveurs"
+        explanation: "Chaque mesure a un niveau standard, que toute organisation devrait atteindre, et un niveau renforcé pour aller plus loin. Le guide est une recommandation, pas une obligation légale en lui-même."
+      }
+      question "Dans quel chapitre du guide se trouve la gestion des sauvegardes ?" {
+        - "II, Connaître le système d'information"
+        - "IV, Sécuriser les postes"
+        + "IX, Superviser, auditer, réagir"
+        - "VIII, Maintenir le système d'information à jour"
+        explanation: "La mesure 37 (politique de sauvegarde) fait partie du chapitre IX, avec les journaux, les audits, le référent sécurité et la gestion des incidents."
+      }
+      question "À quoi sert la mesure 3 du guide ?" {
+        - "à chiffrer les disques des portables"
+        - "à tenir l'inventaire des comptes privilégiés"
+        + "à maîtriser les risques liés aux prestataires (infogérance)"
+        - "à interdire Internet aux postes d'administration"
+        explanation: "La mesure 3 porte sur l'infogérance : clauses de sécurité, contrôle des accès du prestataire, réversibilité. Les autres propositions correspondent aux mesures 31, 5 et 27."
+      }
+      question "Quel critère de sécurité est d’abord protégé par la journalisation ?" {
+        - "la disponibilité"
+        - "la confidentialité"
+        + "la traçabilité"
+        - "l'intégrité"
+        explanation: "Les journaux permettent de savoir qui a fait quoi et quand : c'est la traçabilité, le T de DICT. Ils ne rendent pas un service plus disponible et ne cachent aucune donnée."
+      }
+      question "Qu’est-ce que la défense en profondeur ?" {
+        - "installer l'antivirus le plus complet possible"
+        + "empiler plusieurs barrières indépendantes pour qu'une défaillance ne suffise pas"
+        - "placer le pare-feu au plus profond du réseau"
+        - "chiffrer les données deux fois"
+        explanation: "Aucune mesure n'est parfaite : on combine antivirus, droits limités, cloisonnement, sauvegardes, etc. Si une barrière cède, la suivante limite les dégâts."
+      }
+      question "Une PME veut faire auditer sa sécurité par un prestataire reconnu par l’ANSSI. Quel sigle cherche-t-elle ?" {
+        + "PASSI"
+        - "PRIS"
+        - "SecNumCloud"
+        - "EBIOS"
+        explanation: "PASSI désigne les prestataires d'audit de la sécurité des systèmes d'information qualifiés. PRIS concerne la réponse aux incidents, SecNumCloud le cloud, et EBIOS Risk Manager est une méthode d'analyse de risques."
+      }
+      question "Pourquoi une sauvegarde sur un disque USB branché en permanence est-elle insuffisante ?" {
+        - "parce que l'USB est trop lent pour une sauvegarde"
+        + "parce qu'un rançongiciel peut chiffrer ce disque en même temps que les données"
+        - "parce que la loi interdit les disques USB en entreprise"
+        - "parce que Windows ne sait pas sauvegarder sur un disque externe"
+        explanation: "Tout support accessible depuis le système compromis peut être chiffré ou effacé. Il faut au moins une copie déconnectée (hors ligne)."
+      }
+      question "Quel est l’intérêt de l’outil de suivi placé à la fin du guide de l’ANSSI ?" {
+        - "il installe automatiquement les mesures sur les postes"
+        + "il permet de noter l'état de chaque mesure et de suivre leur mise en œuvre"
+        - "il calcule une note de conformité légale"
+        - "il remplace l'analyse de risques"
+        explanation: "C'est un tableau qui reprend les 42 mesures : on y note, mesure par mesure, ce qui est fait, partiel ou à faire. Il sert de grille d'audit et de plan d'action, sans valeur légale."
+      }
+      question "Quelle menace consiste à pousser un utilisateur à donner son mot de passe par un faux message ?" {
+        - "le déni de service"
+        + "l'hameçonnage (phishing)"
+        - "l'attaque par force brute"
+        - "le rançongiciel"
+        explanation: "L'hameçonnage trompe l'utilisateur pour obtenir ses identifiants ou lui faire ouvrir une pièce jointe. La force brute essaie des mots de passe sans intervention de l'utilisateur."
+      }
+      question "Quelle mesure relève du chapitre X « Pour aller plus loin » ?" {
+        - "activer le pare-feu des postes"
+        - "définir une politique de mise à jour"
+        + "mener une analyse de risques formelle"
+        - "sensibiliser les utilisateurs"
+        explanation: "Le chapitre X contient la mesure 41 (analyse de risques, par exemple avec EBIOS Risk Manager) et la mesure 42 (produits et services qualifiés)."
+      }
+      question "Un document signé par chaque utilisateur fixe les règles d’usage du système d’information. Comment l’appelle-t-on ?" {
+        - "la politique de sauvegarde"
+        + "la charte informatique"
+        - "le plan de continuité"
+        - "le registre des traitements"
+        explanation: "La charte informatique décrit les droits et devoirs des utilisateurs. Le registre des traitements est une obligation du RGPD sur les données personnelles, autre sujet."
+      }
+    }
+  }
+
+  module "inventaire" {
+    title: "Chapitre 2 : connaître son système d'information"
+    duration: "35min"
+    content: """
+### On ne protège pas ce qu'on ne connaît pas
+Le chapitre II du guide (mesures 4 à 7) demande de savoir exactement ce qui compose le système d'information :
+• **mesure 4** : identifier les informations et serveurs les plus sensibles et tenir à jour un **schéma du réseau** ;
+• **mesure 5** : disposer d'un inventaire exhaustif des **comptes privilégiés** et le maintenir à jour ;
+• **mesure 6** : organiser les procédures d'**arrivée, de départ et de changement de fonction** des utilisateurs ;
+• **mesure 7** : n'autoriser la connexion au réseau que des **équipements maîtrisés** par l'organisation.
+
+Sans inventaire, tu ne sais pas quel poste n'a pas reçu la dernière mise à jour, quel serveur est encore sous un système en fin de vie, ni qui peut administrer quoi.
+
+### Que mettre dans l'inventaire
+| Élément | Ce qu'on note | Pourquoi |
+|---|---|---|
+| Matériel | nom, numéro de série, emplacement, utilisateur, date d'achat | suivre le parc, gérer les pannes et le renouvellement |
+| Système | édition, version, numéro de build | savoir ce qui est encore maintenu |
+| Logiciels | nom, version, éditeur | repérer les versions vulnérables |
+| Réseau | adresse IP, adresse MAC, VLAN, prise ou port du commutateur | retrouver un équipement, détecter un intrus |
+| Comptes | comptes à privilèges, comptes de service, propriétaire | mesure 5 |
+| Données | où sont les données sensibles, qui y accède | prioriser la protection |
+| Flux | qui parle à qui, sur quels ports, vers Internet ou non | concevoir le cloisonnement et le filtrage |
+
+Dans une structure de plus de quelques postes, un outil d'inventaire automatique évite les tableurs périmés. **GLPI** (libre, très utilisé dans l'enseignement et les collectivités), avec son agent installé sur chaque poste, remonte automatiquement le matériel et les logiciels.
+
+### Inventorier un poste Windows
+Toutes ces commandes se lancent dans PowerShell, sans droits d'administration sauf mention contraire.
+
+```powershell
+# Système : édition, version, build
+Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNumber
+# Numéro de série et modèle
+Get-CimInstance Win32_BIOS | Select-Object SerialNumber
+Get-CimInstance Win32_ComputerSystem | Select-Object Manufacturer, Model
+# Adresses IP et MAC
+Get-NetIPAddress -AddressFamily IPv4 | Select-Object InterfaceAlias, IPAddress, PrefixLength
+Get-NetAdapter | Select-Object Name, MacAddress, Status
+# Logiciels installés connus de winget
+winget list
+# Comptes locaux et membres du groupe Administrateurs (SID S-1-5-32-544)
+Get-LocalUser | Select-Object Name, Enabled, LastLogon
+Get-LocalGroupMember -SID S-1-5-32-544
+```
+
+Le groupe des administrateurs locaux s'appelle « Administrateurs » sur un Windows français et « Administrators » en anglais. Passer par son identifiant de sécurité fixe, `S-1-5-32-544`, rend le script valable quelle que soit la langue.
+
+### Inventorier un serveur Linux (Debian)
+```bash
+hostnamectl                       # nom, système, noyau, matériel virtuel ou non
+cat /etc/os-release               # version exacte de la distribution
+ip -br a                          # adresses par interface
+ip neigh                          # voisins connus (table ARP/NDP)
+dpkg -l | grep '^ii' | wc -l      # nombre de paquets installés
+sudo ss -tulpn                    # ports en écoute et programme associé
+getent group sudo                 # comptes qui peuvent devenir root
+awk -F: '$3 == 0' /etc/passwd     # comptes d'UID 0 (seul root est attendu)
+```
+
+`ss -tulpn` est l'une des commandes les plus utiles en audit : elle montre chaque service qui écoute (`t` TCP, `u` UDP, `l` en écoute, `p` programme, `n` sans résolution de noms). Un service qui écoute sur `0.0.0.0` ou `[::]` est joignable depuis toutes les interfaces ; sur `127.0.0.1`, seulement depuis la machine elle-même.
+
+### Découvrir les équipements du réseau
+Pour vérifier que l'inventaire est complet, on compare avec ce qui répond réellement sur le réseau :
+
+```bash
+sudo nmap -sn 192.168.10.0/24     # découverte des hôtes actifs, sans scan de ports
+```
+
+Attention : un scan réseau n'est légal **que sur un réseau dont tu as la responsabilité ou une autorisation écrite**. Dans ton labo, aucun problème ; sur le réseau du lycée ou d'un client, demande l'accord avant.
+
+### Comptes privilégiés : l'inventaire le plus sensible
+La mesure 5 vise les comptes qui ont des droits élevés : administrateurs du domaine, administrateurs locaux, `root` et membres de `sudo`, comptes d'administration des équipements réseau, de l'hyperviseur, de la sauvegarde, comptes de service. Pour chacun, note : le titulaire (une personne nommée), le périmètre, la date de dernière revue. Un compte privilégié sans titulaire identifié est une anomalie à corriger.
+
+### Arrivées, départs, changements de poste
+La mesure 6 demande une procédure écrite, suivie à chaque mouvement :
+• **arrivée** : création du compte avec les seuls droits du poste, remise du matériel inventorié, signature de la charte ;
+• **départ** : désactivation des comptes **le jour du départ**, récupération du matériel et des badges, changement des mots de passe partagés que la personne connaissait, transfert des données utiles ;
+• **changement de fonction** : retrait des anciens droits avant l'ajout des nouveaux, sinon les droits s'accumulent.
+
+### Seulement des équipements maîtrisés
+La mesure 7 vise à empêcher qu'un appareil inconnu (ordinateur personnel, mini-PC posé par un attaquant) se branche sur le réseau interne. Niveau standard : désactiver les prises réseau inutilisées et réserver un réseau séparé aux appareils personnels. Niveau renforcé : authentifier les équipements avant de les admettre sur le réseau, avec **802.1X** (le commutateur interroge un serveur RADIUS avant d'ouvrir le port).
+
+### À toi de jouer
+Tu reprends l'informatique d'une association. Voici ce que tu relèves sur trois machines :
+
+```text
+PC-ACCUEIL   Caption: Microsoft Windows 10 Professionnel  BuildNumber: 19045
+             Get-LocalGroupMember -SID S-1-5-32-544 :
+               PC-ACCUEIL\Administrateur   (désactivé)
+               PC-ACCUEIL\accueil
+               PC-ACCUEIL\stagiaire2023
+PC-COMPTA    Caption: Microsoft Windows 11 Professionnel  BuildNumber: 26100
+SRV-FICHIERS Debian GNU/Linux 12 (bookworm)
+             getent group sudo -> sudo:x:27:admin,jmartin,ancien-presta
+             ss -tulpn : 0.0.0.0:22 (sshd), 0.0.0.0:21 (vsftpd), 0.0.0.0:445 (smbd)
+```
+
+1. Construis le tableau d'inventaire de ces trois machines (nom, système, rôle supposé, comptes privilégiés).
+2. Relève toutes les anomalies et classe-les par gravité.
+3. Quelle procédure du guide aurait évité la présence de `stagiaire2023` et `ancien-presta` ?
+
+### Correction
+1. Inventaire attendu : PC-ACCUEIL, Windows 10 Professionnel build 19045 (version 22H2), poste d'accueil, administrateurs `accueil` et `stagiaire2023` ; PC-COMPTA, Windows 11 Professionnel build 26100 (version 24H2), poste de comptabilité, administrateurs à relever ; SRV-FICHIERS, Debian 12, serveur de fichiers, comptes `sudo` : `admin`, `jmartin`, `ancien-presta`.
+2. Anomalies, de la plus grave à la moins grave :
+• `ancien-presta` peut devenir root sur le serveur de fichiers : accès privilégié d'un tiers qui n'intervient plus. À supprimer du groupe et à désactiver tout de suite.
+• Windows 10 a atteint sa fin de support le 14 octobre 2025 : sans programme de mises à jour étendues (ESU), PC-ACCUEIL ne reçoit plus de correctifs de sécurité. À migrer vers Windows 11 ou à remplacer.
+• `stagiaire2023` est administrateur local : compte d'une personne partie, avec des droits élevés.
+• `accueil` est administrateur : l'utilisateur quotidien ne devrait pas l'être (chapitre VI, mesure 29).
+• Le serveur écoute en FTP (port 21), protocole qui transmet les mots de passe en clair : à remplacer par SFTP (mesure 21).
+• Le SSH et le SMB écoutent sur toutes les interfaces : à vérifier avec le schéma des flux, et à filtrer (chapitre 8).
+3. La procédure de départ (mesure 6), et la revue régulière de l'inventaire des comptes privilégiés (mesure 5).
+"""
+
+    codeblock "powershell" {
+      title: "Fiche d'inventaire d'un poste Windows en une commande"
+      code: """
+$os  = Get-CimInstance Win32_OperatingSystem
+$cs  = Get-CimInstance Win32_ComputerSystem
+$bio = Get-CimInstance Win32_BIOS
+[PSCustomObject]@{
+  Nom      = $env:COMPUTERNAME
+  Systeme  = $os.Caption
+  Build    = $os.BuildNumber
+  Modele   = "$($cs.Manufacturer) $($cs.Model)"
+  Serie    = $bio.SerialNumber
+  Admins   = (Get-LocalGroupMember -SID S-1-5-32-544).Name -join ', '
+}
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle mesure du guide demande un inventaire exhaustif des comptes privilégiés ?" {
+        - "la mesure 1"
+        + "la mesure 5"
+        - "la mesure 13"
+        - "la mesure 29"
+        explanation: "La mesure 5 vise les comptes à privilèges : administrateurs, root, comptes de service. La mesure 29 porte sur la réduction des droits d'administration sur les postes, la 13 sur l'authentification à deux facteurs."
+      }
+      question "Que fait la commande « ss -tulpn » ?" {
+        - "elle liste les utilisateurs connectés"
+        + "elle affiche les ports TCP et UDP en écoute avec le programme associé"
+        - "elle teste la connexion vers un serveur distant"
+        - "elle affiche la table de routage"
+        explanation: "t pour TCP, u pour UDP, l pour les sockets en écoute, p pour le programme, n pour ne pas résoudre les noms. Lancée avec sudo, elle montre tous les processus."
+      }
+      question "Pourquoi utiliser « Get-LocalGroupMember -SID S-1-5-32-544 » plutôt que le nom du groupe ?" {
+        - "parce que le SID donne aussi les comptes du domaine"
+        + "parce que le nom du groupe Administrateurs change selon la langue de Windows"
+        - "parce que la commande ne fonctionne pas avec un nom"
+        - "parce que le SID affiche les mots de passe"
+        explanation: "Le groupe s'appelle Administrateurs en français et Administrators en anglais, mais son SID S-1-5-32-544 est le même partout. Le script devient indépendant de la langue."
+      }
+      question "Un service apparaît dans ss -tulpn sur 127.0.0.1:5432. Qui peut s’y connecter ?" {
+        - "toutes les machines du réseau local"
+        + "seulement les programmes de la machine elle-même"
+        - "toutes les machines d'Internet"
+        - "personne, le service est arrêté"
+        explanation: "127.0.0.1 est l'adresse de boucle locale : le service n'est joignable que depuis la machine. Sur 0.0.0.0, il serait joignable par toutes les interfaces."
+      }
+      question "Un salarié quitte l’entreprise vendredi. Quand faut-il désactiver ses comptes ?" {
+        - "à la fin du mois, avec la paie"
+        - "quand son remplaçant arrive"
+        + "le jour de son départ"
+        - "après un an, pour garder ses fichiers"
+        explanation: "La procédure de départ (mesure 6) désactive les comptes le jour du départ. Les données utiles sont transférées, mais le compte ne doit plus permettre de se connecter."
+      }
+      question "Que fait « nmap -sn 192.168.10.0/24 » ?" {
+        - "un scan complet des 65 535 ports de chaque hôte"
+        + "une découverte des hôtes actifs, sans scan de ports"
+        - "une attaque par force brute sur les services"
+        - "un relevé des adresses MAC sans envoyer de paquet"
+        explanation: "L'option -sn fait seulement la découverte des hôtes. Même ainsi, le scan n'est autorisé que sur un réseau dont tu es responsable ou avec une autorisation écrite."
+      }
+      question "Quel protocole permet à un commutateur d’authentifier un équipement avant d’ouvrir son port ?" {
+        - "LLDP"
+        - "STP"
+        + "802.1X"
+        - "DHCP"
+        explanation: "Avec 802.1X, le commutateur relaie l'authentification vers un serveur RADIUS et n'ouvre le port qu'en cas de succès. LLDP annonce les voisins, STP évite les boucles."
+      }
+      question "Un salarié change de service. Que prévoit une bonne procédure ?" {
+        - "ajouter les droits du nouveau service et garder les anciens au cas où"
+        + "retirer les anciens droits, puis ajouter ceux du nouveau poste"
+        - "créer un second compte et garder le premier"
+        - "ne rien faire tant qu'il ne se plaint pas"
+        explanation: "Sans retrait, les droits s'accumulent au fil des mutations et une personne finit par accéder à tout. Le principe est le moindre privilège."
+      }
+      question "Quelle commande Linux liste les comptes ayant l’UID 0 ?" {
+        - "getent group sudo"
+        + "awk -F: '$3 == 0' /etc/passwd"
+        - "who -a"
+        - "ls -l /root"
+        explanation: "Le troisième champ de /etc/passwd est l'UID. Un compte d'UID 0 a les droits de root : seul root est attendu. getent group sudo liste les membres du groupe sudo, autre contrôle utile."
+      }
+      question "Quel outil libre, très répandu dans les collectivités et l’enseignement, inventorie automatiquement un parc grâce à un agent ?" {
+        - "Wireshark"
+        + "GLPI"
+        - "Nmap"
+        - "Bind9"
+        explanation: "GLPI gère le parc et les tickets ; son agent remonte le matériel et les logiciels de chaque poste. Nmap découvre le réseau mais ne tient pas d'inventaire."
+      }
+      question "Sur une machine, « Get-CimInstance Win32_OperatingSystem » affiche BuildNumber 19045. De quel système s’agit-il ?" {
+        + "Windows 10 version 22H2"
+        - "Windows 11 version 24H2"
+        - "Windows Server 2022"
+        - "Windows 11 version 23H2"
+        explanation: "Le build 19045 correspond à Windows 10 22H2, la dernière version de Windows 10. Windows 11 24H2 est le build 26100 et 23H2 le build 22631."
+      }
+      question "Pourquoi un schéma du réseau à jour est-il demandé par le guide ?" {
+        - "pour l'afficher à l'accueil"
+        + "pour savoir quels flux et quelles zones existent avant de cloisonner et de filtrer"
+        - "parce qu'il remplace l'inventaire des logiciels"
+        - "parce qu'il est obligatoire pour obtenir une adresse IP publique"
+        explanation: "On ne peut pas cloisonner ni écrire des règles de pare-feu sans savoir quelles zones existent et qui doit parler à qui. Le schéma complète l'inventaire, il ne le remplace pas."
+      }
+    }
+  }
+
+  module "comptes-authentification" {
+    title: "Chapitre 3 : comptes, droits et authentification"
+    duration: "40min"
+    content: """
+### Un compte par personne, un rôle par compte
+Le chapitre III du guide (mesures 8 à 13) organise les accès :
+• **mesure 8** : identifier nommément chaque personne qui accède au système et **distinguer les rôles utilisateur et administrateur** ;
+• **mesure 9** : attribuer les bons droits sur les ressources sensibles ;
+• **mesure 10** : définir et vérifier des règles de choix et de dimensionnement des mots de passe ;
+• **mesure 11** : protéger les mots de passe stockés sur les systèmes ;
+• **mesure 12** : changer les éléments d'authentification par défaut des équipements et services ;
+• **mesure 13** : privilégier, dès que possible, une authentification à deux facteurs.
+
+Concrètement :
+• **pas de compte partagé** (« compta », « accueil », « admin ») : sans nom, impossible de savoir qui a fait quoi, et impossible de retirer l'accès d'une seule personne ;
+• chaque administrateur a **deux comptes** : un compte utilisateur pour la messagerie et la bureautique (`jmartin`), un compte d'administration réservé aux tâches d'administration (`adm-jmartin`). Un message piégé ouvert avec le compte utilisateur n'obtient pas les droits d'administration ;
+• les **comptes de service** (sauvegarde, base de données) ont un propriétaire identifié, un mot de passe long et aucun droit d'ouverture de session interactive quand c'est possible.
+
+### Les droits : moindre privilège et revue
+Chaque personne n'a que les droits nécessaires à son travail : c'est le **principe du moindre privilège**. Sur un serveur de fichiers, on donne les droits à des **groupes** (« Compta-Lecture », « Compta-Modification ») et jamais directement aux personnes : quand quelqu'un change de poste, il suffit de le changer de groupe.
+
+La mesure 9 demande aussi une **revue régulière des droits** : au moins une fois par an, chaque responsable confirme qui doit garder l'accès à ses dossiers.
+
+### Les mots de passe : la recommandation de la CNIL (2022)
+La CNIL a publié en juillet 2022 une recommandation (délibération n° 2022-100) qui raisonne en **entropie**, c'est-à-dire en nombre de combinaisons à essayer, exprimé en bits. Elle distingue plusieurs cas :
+
+| Situation | Entropie minimale | Exemple |
+|---|---|---|
+| Mot de passe seul, sans autre protection | 80 bits | 12 caractères mêlant majuscules, minuscules, chiffres et caractères spéciaux ; ou 14 caractères avec majuscules, minuscules et chiffres ; ou une phrase de passe d'au moins 7 mots |
+| Mot de passe avec restriction des tentatives (temporisation, blocage après 10 échecs, CAPTCHA) | 50 bits | 8 caractères de 3 types différents |
+| Matériel détenu par la personne (carte SIM, carte bancaire) avec blocage après 3 échecs | 13 bits | code à 4 chiffres |
+
+Le calcul : un mot de passe de `L` caractères tirés au hasard dans un alphabet de `N` symboles offre `N^L` combinaisons, soit `L × log2(N)` bits. Avec 62 symboles (26 minuscules, 26 majuscules, 10 chiffres), `log2(62) ≈ 5,95` : 14 caractères donnent environ 83 bits. Attention, ce calcul ne vaut que pour un mot de passe **tiré au hasard** : `Bonjour2024!` a 12 caractères de 4 types, mais il sera trouvé très vite car il suit un modèle courant.
+
+Autres points de la recommandation :
+• la CNIL ne recommande plus d'**imposer un renouvellement périodique** aux utilisateurs ordinaires (il pousse à des variantes prévisibles comme `Ete2025!` puis `Automne2025!`), mais le maintient pour les **comptes à privilèges** ; le mot de passe doit être changé dès qu'une compromission est suspectée ;
+• un **gestionnaire de mots de passe** (KeePassXC, par exemple) permet d'avoir un mot de passe différent et long pour chaque service ;
+• les mots de passe ne doivent **jamais être stockés en clair** (mesure 11) : on stocke une **empreinte** calculée par une fonction lente et salée, comme Argon2, scrypt, bcrypt ou yescrypt. Debian, depuis la version 11, utilise yescrypt : dans `/etc/shadow`, les empreintes commencent par `$y$`.
+
+### Les mots de passe par défaut
+Imprimantes, bornes Wi-Fi, caméras, commutateurs, interfaces d'onduleurs et de NAS sont souvent livrés avec un identifiant du type `admin` / `admin` publié dans la documentation du fabricant. La mesure 12 impose de les changer **avant la mise en service**, et de désactiver les comptes ou services inutiles.
+
+### Limiter les essais : le verrouillage de compte
+Sous Windows, la stratégie de verrouillage bloque un compte après un nombre d'échecs. Pour l'afficher sur un poste :
+
+```powershell
+net accounts
+```
+
+La sortie indique notamment le seuil de verrouillage, sa durée et la longueur minimale. Dans un domaine Active Directory, ces valeurs se règlent par stratégie de groupe (GPO), dans `Configuration ordinateur > Stratégies > Paramètres Windows > Paramètres de sécurité > Stratégies de comptes`.
+
+### Le mot de passe administrateur local : Windows LAPS
+Si tous les postes ont le même mot de passe pour le compte administrateur local, un attaquant qui le récupère sur un poste ouvre tous les autres. **Windows LAPS** (Local Administrator Password Solution), intégré à Windows 10, Windows 11 et Windows Server depuis la mise à jour d'avril 2023, génère un mot de passe aléatoire différent sur chaque poste, le change régulièrement et le stocke dans Active Directory (ou Microsoft Entra ID). Un administrateur autorisé le lit avec :
+
+```powershell
+Get-LapsADPassword -Identity PC-ACCUEIL -AsPlainText
+```
+
+### L'authentification multifacteur
+Un facteur, c'est une preuve d'un type donné : ce que je **sais** (mot de passe, code), ce que je **possède** (téléphone, clé de sécurité), ce que je **suis** (empreinte). L'authentification **multifacteur** (MFA) combine au moins deux types différents. Deux mots de passe ne font pas deux facteurs.
+
+Ordre de robustesse, du moins au plus solide :
+• code reçu par **SMS** : mieux que rien, mais exposé au détournement de ligne et à l'hameçonnage ;
+• code temporaire d'une application (**TOTP**, 6 chiffres renouvelés toutes les 30 secondes) : bon niveau, mais un faux site peut le relayer en temps réel ;
+• **clé de sécurité FIDO2** ou passkey : la clé vérifie l'adresse du site, ce qui la rend résistante à l'hameçonnage.
+
+Priorité d'activation : messagerie, accès à distance (VPN, bureau à distance), comptes d'administration, consoles cloud.
+
+### À toi de jouer
+1. Calcule l'entropie d'un code PIN de 6 chiffres, puis d'un mot de passe aléatoire de 10 caractères en minuscules seulement (`log2(10) ≈ 3,32` ; `log2(26) ≈ 4,70`). Lequel des cas de la CNIL chacun peut-il couvrir ?
+2. Dans une PME, la direction veut imposer « 8 caractères, changement tous les 30 jours, pas de MFA » pour la messagerie accessible depuis Internet. Propose une politique conforme à la recommandation de la CNIL et justifie chaque point.
+3. Sur ta machine Debian, affiche la ligne de ton compte dans `/etc/shadow` avec `sudo grep "^$USER:" /etc/shadow`. Quel algorithme d'empreinte est utilisé ? Que se passerait-il si un attaquant volait ce fichier ?
+
+### Correction
+1. PIN : `6 × 3,32 ≈ 20` bits. C'est suffisant seulement dans le cas d'un matériel détenu par la personne avec blocage après 3 essais (13 bits minimum), comme le PIN d'une carte à puce ou d'une clé de sécurité. Mot de passe : `10 × 4,70 = 47` bits, en dessous des 50 bits du cas avec restriction et très loin des 80 bits du mot de passe seul.
+2. Politique possible : MFA obligatoire pour la messagerie (application TOTP ou clé FIDO2) ; mot de passe d'au moins 12 caractères de 4 types ou 14 caractères sans caractère spécial obligatoire, ou une phrase de passe de 7 mots, ce qui atteint 80 bits ; blocage temporaire après plusieurs échecs ; pas de renouvellement périodique imposé, mais changement immédiat en cas de doute ; renouvellement maintenu pour les comptes d'administration ; gestionnaire de mots de passe fourni. Le changement tous les 30 jours est déconseillé car il produit des mots de passe prévisibles.
+3. La ligne ressemble à `jmartin:$y$j9T$...:20419:0:99999:7:::`. Le préfixe `$y$` indique yescrypt. Le sel aléatoire empêche d'utiliser des tables précalculées et rend deux mots de passe identiques différents dans le fichier ; la lenteur de yescrypt rend chaque essai coûteux. Un attaquant qui vole le fichier peut quand même tester des mots de passe faibles hors ligne : c'est pourquoi la longueur reste indispensable et pourquoi `/etc/shadow` n'est lisible que par root.
+"""
+
+    quiz {
+      pick: 5
+      question "Selon la recommandation CNIL de 2022, quelle entropie minimale faut-il pour un mot de passe utilisé seul, sans autre mesure ?" {
+        - "50 bits"
+        + "80 bits"
+        - "13 bits"
+        - "128 bits"
+        explanation: "Sans aucune mesure complémentaire, la CNIL demande 80 bits. 50 bits suffisent si les tentatives sont limitées, 13 bits avec un matériel détenu par la personne et un blocage après 3 essais."
+      }
+      question "Combien de bits d’entropie offre un mot de passe aléatoire de 14 caractères parmi 62 symboles (log2(62) ≈ 5,95) ?" {
+        - "environ 62 bits"
+        + "environ 83 bits"
+        - "environ 14 bits"
+        - "environ 128 bits"
+        explanation: "Entropie = L × log2(N) = 14 × 5,95 ≈ 83 bits. C'est l'exemple de la CNIL : 14 caractères avec majuscules, minuscules et chiffres atteignent les 80 bits."
+      }
+      question "Que dit la CNIL sur le renouvellement périodique obligatoire des mots de passe des utilisateurs ordinaires ?" {
+        - "il doit avoir lieu tous les 30 jours"
+        - "il doit avoir lieu tous les 90 jours"
+        + "il n'est plus recommandé, sauf pour les comptes à privilèges ou en cas de compromission"
+        - "il est interdit dans tous les cas"
+        explanation: "Le renouvellement forcé pousse à des variantes prévisibles. La CNIL ne le recommande plus pour les comptes ordinaires, mais le garde pour les comptes à privilèges et en cas de doute."
+      }
+      question "Pourquoi un administrateur doit-il avoir deux comptes distincts ?" {
+        - "pour pouvoir travailler sur deux postes en même temps"
+        + "pour qu'un message piégé ouvert pendant la bureautique n'obtienne pas les droits d'administration"
+        - "parce qu'un compte ne peut pas avoir plus de 10 groupes"
+        - "pour doubler la durée de vie du mot de passe"
+        explanation: "La mesure 8 distingue les rôles. Le compte du quotidien sert à la messagerie et au web ; le compte d'administration n'est utilisé que pour administrer."
+      }
+      question "Dans /etc/shadow sur Debian 12, une empreinte commence par $y$. Quel algorithme est utilisé ?" {
+        - "MD5"
+        - "SHA-512 crypt"
+        + "yescrypt"
+        - "bcrypt"
+        explanation: "$y$ désigne yescrypt, l'algorithme par défaut depuis Debian 11. $6$ correspondrait à SHA-512 crypt, $1$ à MD5 crypt, $2b$ à bcrypt."
+      }
+      question "Quel moyen d’authentification résiste le mieux à l’hameçonnage ?" {
+        - "un code reçu par SMS"
+        - "un code TOTP d'une application"
+        + "une clé de sécurité FIDO2"
+        - "une question secrète"
+        explanation: "La clé FIDO2 vérifie l'adresse du site avant de signer : un faux site n'obtient rien d'utilisable. Un code SMS ou TOTP peut être saisi sur un faux site et relayé en temps réel."
+      }
+      question "Un mot de passe et un code PIN sont demandés à la connexion. Est-ce une authentification à deux facteurs ?" {
+        - "oui, car il y a deux secrets"
+        + "non, car les deux sont des facteurs du même type (ce que je sais)"
+        - "oui, si le PIN fait au moins 6 chiffres"
+        - "non, car un PIN n'est jamais un facteur"
+        explanation: "Deux facteurs doivent être de types différents : savoir, posséder, être. Deux éléments que l'on connaît restent un seul facteur."
+      }
+      question "Quel problème résout Windows LAPS ?" {
+        - "il chiffre le disque des postes"
+        + "il donne un mot de passe administrateur local aléatoire et différent à chaque poste"
+        - "il bloque les clés USB inconnues"
+        - "il synchronise l'heure des postes"
+        explanation: "Sans LAPS, le même mot de passe d'administrateur local sur tout le parc permet de passer d'un poste à l'autre. LAPS génère, change et stocke un mot de passe unique par machine."
+      }
+      question "Pourquoi donner les droits d’un dossier partagé à des groupes plutôt qu’à des personnes ?" {
+        - "parce que Windows refuse les droits individuels"
+        + "parce qu'un changement de poste se gère en changeant la personne de groupe"
+        - "parce que cela chiffre automatiquement le dossier"
+        - "parce que les groupes n'ont pas besoin de mot de passe"
+        explanation: "Les droits par groupe rendent les mouvements de personnel simples et la revue des droits lisible. Windows accepte les droits individuels, mais ils deviennent vite ingérables."
+      }
+      question "Quelle commande affiche la stratégie de mots de passe et de verrouillage d’un poste Windows ?" {
+        - "ipconfig /all"
+        + "net accounts"
+        - "whoami /priv"
+        - "gpupdate /force"
+        explanation: "net accounts affiche la longueur minimale, la durée de vie et les paramètres de verrouillage. gpupdate applique les stratégies de groupe sans les afficher."
+      }
+      question "Une nouvelle imprimante réseau est livrée avec le compte admin / admin. Que demande la mesure 12 ?" {
+        - "le garder, car il est documenté par le fabricant"
+        + "le changer avant la mise en service et désactiver les services inutiles"
+        - "le changer seulement si l'imprimante est exposée à Internet"
+        - "noter le mot de passe sur l'imprimante pour le support"
+        explanation: "Les identifiants par défaut sont publics : n'importe qui sur le réseau peut les essayer. Ils doivent être changés avant la mise en service, que l'appareil soit exposé à Internet ou non."
+      }
+      question "Pourquoi le mot de passe « Bonjour2024! » est-il faible malgré ses 12 caractères de 4 types ?" {
+        - "parce qu'il contient un point d'exclamation"
+        + "parce qu'il suit un modèle courant (mot du dictionnaire, année, symbole) testé en priorité"
+        - "parce qu'il dépasse la longueur maximale"
+        - "parce que les majuscules sont interdites"
+        explanation: "Le calcul d'entropie suppose un tirage au hasard. Un mot courant suivi d'une année et d'un symbole fait partie des premiers essais des outils de cassage."
+      }
+      question "Pourquoi les empreintes de mots de passe sont-elles salées ?" {
+        - "pour pouvoir retrouver le mot de passe en clair"
+        + "pour que deux mots de passe identiques donnent des empreintes différentes et rendre inutiles les tables précalculées"
+        - "pour accélérer la vérification"
+        - "pour compresser le fichier /etc/shadow"
+        explanation: "Le sel est une valeur aléatoire propre à chaque compte. Il empêche les tables précalculées et masque les mots de passe identiques. La lenteur de la fonction rend en plus chaque essai coûteux."
+      }
+    }
+  }
+
+  module "mises-a-jour" {
+    title: "Chapitre 4 : maintenir le parc à jour"
+    duration: "30min"
+    content: """
+### Pourquoi c'est la mesure la plus rentable
+Quand un éditeur publie un correctif de sécurité, il publie aussi, indirectement, la description de la faille. Des attaquants comparent la version corrigée et l'ancienne, écrivent un code d'exploitation, puis balayent Internet à la recherche des systèmes non corrigés. Le délai entre la publication d'un correctif et les premières attaques se compte parfois en jours. Un équipement non mis à jour, surtout s'il est exposé à Internet (VPN, pare-feu, messagerie, bureau à distance), est une cible directe.
+
+Le chapitre VIII du guide contient deux mesures :
+• **mesure 34** : définir une **politique de mise à jour** des composants du système d'information ;
+• **mesure 35** : **anticiper la fin de maintenance** des logiciels et systèmes et limiter les adhérences logicielles (dépendance à une vieille version dont on ne peut plus sortir).
+
+### Ce que contient une politique de mise à jour
+• **le périmètre** : systèmes, logiciels (navigateurs, suites bureautiques, lecteurs PDF), micrologiciels (firmware) des équipements réseau, BIOS/UEFI, NAS, imprimantes, hyperviseurs ;
+• **la veille** : qui suit les annonces des éditeurs et les avis du **CERT-FR** (le centre gouvernemental de veille et de réponse aux attaques, rattaché à l'ANSSI) ;
+• **les délais** selon la gravité et l'exposition : par exemple sous 48 heures pour une faille activement exploitée sur un équipement exposé à Internet, au cycle mensuel normal pour le reste ;
+• **les tests** : un groupe pilote de quelques postes reçoit les mises à jour quelques jours avant les autres ;
+• **le contrôle** : un tableau de bord ou une vérification régulière montre les machines en retard ;
+• **les exceptions** : une machine qu'on ne peut pas mettre à jour (logiciel métier ancien, automate) est **isolée** du reste du réseau, comme le demande aussi la mesure 14.
+
+### Les fins de vie à connaître
+Un système en fin de support ne reçoit plus aucun correctif, même pour une faille critique. Quelques repères :
+• **Windows 10** : fin de support le 14 octobre 2025. Microsoft propose un programme payant de mises à jour de sécurité étendues (ESU) pour une durée limitée ; sinon, il faut migrer vers Windows 11 ou remplacer le poste ;
+• **Debian** : chaque version reçoit environ trois ans de support de sécurité par l'équipe Debian, puis deux ans de support à long terme (LTS) par une équipe dédiée, soit environ cinq ans en tout. Vérifie toujours les dates exactes sur la page « Debian LTS » du projet ;
+• les équipements réseau ont aussi une date de fin de vie (EOL) publiée par le fabricant : un pare-feu en fin de vie exposé à Internet est un risque majeur.
+
+### Mettre à jour un poste Windows
+Les mises à jour du système passent par Windows Update. Sur un parc, on les pilote de façon centralisée (stratégies de groupe, Intune ou WSUS). Pour les logiciels, `winget` (le gestionnaire de paquets de Windows 10 et 11) rend de grands services :
+
+```powershell
+winget upgrade                      # liste les logiciels qui ont une version plus récente
+winget upgrade --all                # les met tous à jour
+Get-HotFix | Sort-Object InstalledOn -Descending | Select-Object -First 5
+```
+
+`Get-HotFix` liste les derniers correctifs installés avec leur date : un poste dont le dernier correctif date de plusieurs mois est à examiner.
+
+### Mettre à jour un serveur Debian
+```bash
+sudo apt update                     # rafraîchit la liste des paquets
+apt list --upgradable               # montre ce qui peut être mis à jour
+sudo apt upgrade                    # installe les mises à jour
+```
+
+Pour que les correctifs de sécurité s'installent seuls, Debian fournit `unattended-upgrades` :
+
+```bash
+sudo apt install unattended-upgrades apt-listchanges
+sudo dpkg-reconfigure -plow unattended-upgrades    # répondre Oui
+cat /etc/apt/apt.conf.d/20auto-upgrades
+```
+
+Le fichier `20auto-upgrades` doit contenir :
+
+```text
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+```
+
+La valeur `1` signifie « tous les jours ». Par défaut, sur Debian, seules les mises à jour de l'archive de sécurité sont installées automatiquement (réglage `Origins-Pattern` dans `/etc/apt/apt.conf.d/50unattended-upgrades`). Pour vérifier sans rien installer, puis lire le journal :
+
+```bash
+sudo unattended-upgrade --dry-run --debug
+less /var/log/unattended-upgrades/unattended-upgrades.log
+```
+
+Après la mise à jour d'une bibliothèque ou du noyau, les services qui utilisent l'ancienne version doivent être redémarrés. L'outil `needrestart` (paquet du même nom) indique lesquels, et si un redémarrage complet est nécessaire pour charger le nouveau noyau.
+
+### À toi de jouer
+Un lycée possède : 180 postes Windows 11, 12 postes Windows 10 qui pilotent des machines-outils en atelier, un serveur Debian 12 de fichiers, un pare-feu exposé à Internet et un portail VPN.
+
+1. Rédige les grandes lignes de sa politique de mise à jour (périmètre, délais, tests, contrôle).
+2. Que proposes-tu pour les 12 postes Windows 10 dont le logiciel de pilotage ne fonctionne pas sous Windows 11 ?
+3. Sur ta machine Debian du labo, installe et active `unattended-upgrades`, puis montre la preuve que la configuration est active.
+
+### Correction
+1. Exemple de politique : périmètre = postes, serveur, pare-feu, VPN, commutateurs, bornes Wi-Fi, imprimantes et BIOS ; veille hebdomadaire des avis du CERT-FR et des éditeurs par un responsable nommé ; correctif d'une faille exploitée sur le pare-feu ou le VPN sous 48 heures, hors heures de cours si possible ; mises à jour mensuelles des postes, d'abord sur un groupe pilote (par exemple une salle), puis sur le reste une semaine plus tard ; mises à jour de sécurité automatiques sur le serveur Debian ; contrôle mensuel des postes en retard.
+2. C'est une exception à traiter explicitement : souscrire au programme ESU si c'est possible, et dans tous les cas **isoler** ces postes dans un VLAN dédié sans accès à Internet ni à la messagerie, avec seulement les flux nécessaires vers les machines-outils ; interdire les clés USB non contrôlées ; prévoir avec l'éditeur ou le fabricant une migration (mesure 35). Le risque restant est noté et accepté par la direction.
+3. Après `sudo dpkg-reconfigure -plow unattended-upgrades`, `cat /etc/apt/apt.conf.d/20auto-upgrades` montre les deux lignes à `"1"`. `systemctl list-timers apt-daily*` montre les minuteries `apt-daily.timer` et `apt-daily-upgrade.timer` qui déclenchent le travail. `sudo unattended-upgrade --dry-run --debug` affiche les paquets qui seraient installés, et le journal `/var/log/unattended-upgrades/unattended-upgrades.log` garde la trace des passages.
+"""
+
+    quiz {
+      pick: 5
+      question "Quelle est la date de fin de support de Windows 10 ?" {
+        - "14 janvier 2020"
+        + "14 octobre 2025"
+        - "31 décembre 2026"
+        - "il n'a pas de fin de support"
+        explanation: "Windows 10 n'est plus maintenu depuis le 14 octobre 2025, sauf programme payant ESU. Le 14 janvier 2020 était la fin de support de Windows 7."
+      }
+      question "Que fait la commande « winget upgrade » sans autre option ?" {
+        + "elle liste les logiciels pour lesquels une version plus récente existe"
+        - "elle met à jour Windows vers la version suivante"
+        - "elle installe tous les correctifs Windows Update"
+        - "elle désinstalle les logiciels obsolètes"
+        explanation: "Sans option, winget upgrade affiche la liste des mises à jour disponibles. winget upgrade --all les installe. Les correctifs du système passent par Windows Update."
+      }
+      question "Sur Debian, que contient le fichier /etc/apt/apt.conf.d/20auto-upgrades pour activer les mises à jour automatiques quotidiennes ?" {
+        - "AutoUpdate=true"
+        + "APT::Periodic::Update-Package-Lists « 1 » et APT::Periodic::Unattended-Upgrade « 1 »"
+        - "Unattended-Upgrade::Enable yes"
+        - "apt-get upgrade -y dans une tâche cron"
+        explanation: "Ces deux directives, à la valeur 1, demandent chaque jour la mise à jour de la liste des paquets et le passage d'unattended-upgrades. dpkg-reconfigure -plow unattended-upgrades écrit ce fichier."
+      }
+      question "Un poste ne peut pas être mis à jour à cause d’un logiciel métier ancien. Que recommande le guide ?" {
+        - "le laisser tel quel, puisqu'il fonctionne"
+        + "l'isoler du reste du système d'information et limiter ses flux au strict nécessaire"
+        - "désactiver son antivirus pour éviter les conflits"
+        - "lui donner un accès Internet direct pour faciliter le support"
+        explanation: "Une exception aux règles de sécurité doit être isolée (mesure 14) et sa fin de vie anticipée (mesure 35). Le laisser sur le réseau commun expose tout le parc."
+      }
+      question "Quel organisme publie en France des avis et alertes de sécurité sur les vulnérabilités ?" {
+        - "la CNIL"
+        + "le CERT-FR"
+        - "l'Afnic"
+        - "l'Arcom"
+        explanation: "Le CERT-FR, rattaché à l'ANSSI, publie des avis et alertes. La CNIL protège les données personnelles, l'Afnic gère le .fr, l'Arcom régule l'audiovisuel et le numérique."
+      }
+      question "Pourquoi le délai entre un correctif et les premières attaques est-il souvent court ?" {
+        - "parce que les correctifs contiennent des virus"
+        + "parce que la comparaison de l'ancienne et de la nouvelle version révèle la faille à exploiter"
+        - "parce que les éditeurs publient le code d'attaque avec le correctif"
+        - "parce que les mises à jour désactivent le pare-feu"
+        explanation: "Le correctif montre où se trouvait la faille. Les attaquants l'analysent et ciblent les systèmes qui ne l'ont pas encore installé."
+      }
+      question "À quoi sert un groupe pilote dans une politique de mise à jour ?" {
+        - "à recevoir les mises à jour après tous les autres"
+        + "à détecter un problème sur quelques postes avant le déploiement général"
+        - "à éviter définitivement les mises à jour sur les postes sensibles"
+        - "à remplacer la veille de sécurité"
+        explanation: "Quelques postes représentatifs reçoivent les mises à jour en premier. Si un logiciel métier casse, on le voit avant que tout le parc soit touché."
+      }
+      question "Quel outil Debian indique les services à redémarrer après une mise à jour de bibliothèque ?" {
+        - "apt-listchanges"
+        + "needrestart"
+        - "dpkg-reconfigure"
+        - "systemd-analyze"
+        explanation: "needrestart repère les processus qui utilisent encore d'anciennes bibliothèques et signale si un nouveau noyau demande un redémarrage. apt-listchanges affiche les changements des paquets."
+      }
+      question "Que vise la mesure 35 du guide ?" {
+        - "installer les mises à jour la nuit"
+        + "anticiper la fin de maintenance des logiciels et limiter les adhérences"
+        - "désactiver les mises à jour automatiques"
+        - "chiffrer les mises à jour"
+        explanation: "La mesure 35 demande de prévoir les fins de vie et d'éviter de dépendre d'une version dont on ne peut plus sortir. La mesure 34 porte sur la politique de mise à jour elle-même."
+      }
+      question "Quelle commande Debian vérifie ce qu’unattended-upgrades ferait, sans rien installer ?" {
+        - "sudo apt upgrade --simulate-all"
+        + "sudo unattended-upgrade --dry-run --debug"
+        - "sudo apt-get check"
+        - "sudo unattended-upgrades --status"
+        explanation: "--dry-run simule le passage et --debug affiche le détail des paquets retenus ou écartés. Le programme s'appelle unattended-upgrade, sans s, même si le paquet a un s."
+      }
+      question "Quels éléments, en plus des systèmes et logiciels, doivent figurer dans le périmètre des mises à jour ?" {
+        - "seulement les serveurs exposés à Internet"
+        + "les micrologiciels des équipements réseau, BIOS/UEFI, NAS et imprimantes"
+        - "les documents bureautiques"
+        - "les comptes utilisateurs"
+        explanation: "Un pare-feu, un NAS ou une borne Wi-Fi ont un micrologiciel qui reçoit aussi des correctifs de sécurité. Les oublier laisse des failles sur des équipements souvent exposés."
+      }
+      question "Quelle commande PowerShell affiche les derniers correctifs installés avec leur date ?" {
+        - "Get-WindowsUpdateLog"
+        + "Get-HotFix | Sort-Object InstalledOn -Descending"
+        - "winget list --updates"
+        - "Get-Service wuauserv"
+        explanation: "Get-HotFix liste les correctifs installés et leur date. Get-Service wuauserv montre seulement l'état du service Windows Update."
+      }
+    }
+  }
+
+  module "poste-windows" {
+    title: "Chapitre 5 : sécuriser et durcir un poste Windows"
+    duration: "40min"
+    content: """
+### Ce que demande le guide pour les postes
+Le chapitre IV (mesures 14 à 18) fixe un socle pour tout le parc :
+• **mesure 14** : un niveau de sécurité minimal partout : limiter les applications et les extensions de navigateur au nécessaire, un antivirus et un pare-feu local actifs, le **chiffrement** des partitions qui contiennent des données, la désactivation de l'**exécution automatique** (autorun) ;
+• **mesure 15** : se protéger des menaces liées aux **supports amovibles** : ne jamais brancher une clé trouvée, faire analyser les clés d'origine inconnue, et au niveau renforcé bloquer l'exécution de programmes depuis ces supports (AppLocker sous Windows, option `noexec` sous Linux) ;
+• **mesure 16** : utiliser un outil de **gestion centralisée** pour appliquer les mêmes règles partout (stratégies de groupe Active Directory, Intune) ;
+• **mesure 17** : activer et configurer le **pare-feu local** des postes ;
+• **mesure 18** : **chiffrer** les données sensibles transmises par Internet.
+
+S'y ajoute la **mesure 29** (chapitre VI) : réduire les droits d'administration sur les postes aux seuls besoins réels. Un utilisateur qui travaille au quotidien avec un compte administrateur donne tous les droits au premier logiciel malveillant qu'il lance.
+
+**Durcir** (hardening), c'est réduire la surface d'attaque : retirer ce qui ne sert pas, activer les protections livrées mais pas toujours actives, et vérifier.
+
+### Avant de commencer
+Travaille sur ta machine virtuelle Windows 10 ou 11 Professionnelle, dans un PowerShell **lancé en tant qu'administrateur**. Prends un instantané (snapshot) de la machine avant de commencer : tu pourras revenir en arrière en cas d'erreur.
+
+### 1. Pare-feu Windows (mesure 17)
+```powershell
+Get-NetFirewallProfile | Format-Table Name, Enabled, DefaultInboundAction, DefaultOutboundAction
+Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled True
+```
+
+Les trois profils (domaine, privé, public) doivent être actifs. Par défaut, les connexions **entrantes** non autorisées par une règle sont bloquées et les connexions sortantes autorisées. Une valeur `NotConfigured` signifie que le réglage par défaut s'applique. Un poste de travail n'a presque jamais besoin de recevoir des connexions entrantes : chaque règle d'exception doit avoir une raison.
+
+### 2. Antivirus Microsoft Defender (mesure 14)
+```powershell
+Get-MpComputerStatus | Select-Object AMRunningMode, RealTimeProtectionEnabled, AntivirusSignatureLastUpdated
+Update-MpSignature
+Start-MpScan -ScanType QuickScan
+Set-MpPreference -PUAProtection Enabled
+```
+
+`AMRunningMode` doit valoir `Normal` (ou `Passive mode` si un autre antivirus est installé), `RealTimeProtectionEnabled` doit être `True`, et la date des signatures doit être récente. La dernière ligne active le blocage des applications potentiellement indésirables (PUA). La **protection contre les falsifications** (Tamper Protection), qui empêche un programme de désactiver Defender, se règle dans l'application Sécurité Windows ou par Intune.
+
+### 3. Chiffrement du disque avec BitLocker (mesures 14 et 31)
+BitLocker est disponible dans les éditions Professionnelle, Entreprise et Éducation. Il protège les données si le disque ou l'ordinateur est volé : sans la clé, le disque est illisible. Il s'appuie sur la puce **TPM** de la machine (dans une machine virtuelle, il faut ajouter un TPM virtuel).
+
+L'activation se fait le plus simplement depuis `Panneau de configuration > Système et sécurité > Chiffrement de lecteur BitLocker > Activer BitLocker`. L'assistant fait sauvegarder la **clé de récupération** de 48 chiffres : range-la hors du poste (dans Active Directory, Entra ID, ou un coffre de mots de passe de l'équipe). Sans elle, une panne de TPM ou un changement de carte mère peut rendre les données définitivement perdues.
+
+Vérification :
+```powershell
+manage-bde -status C:
+Get-BitLockerVolume -MountPoint C: | Select-Object VolumeStatus, EncryptionMethod, ProtectionStatus
+manage-bde -protectors -get C:
+```
+
+Résultat attendu : `VolumeStatus` à `FullyEncrypted`, `ProtectionStatus` à `On`, et au moins deux protecteurs (`Tpm` et `RecoveryPassword`).
+
+### 4. Désactiver SMBv1
+SMB version 1 est un ancien protocole de partage de fichiers, à l'origine de la propagation de rançongiciels célèbres (WannaCry en 2017). Il n'est plus installé par défaut sur les versions récentes de Windows, mais il peut subsister sur un poste mis à niveau.
+
+```powershell
+Get-WindowsOptionalFeature -Online -FeatureName SMB1Protocol | Select-Object FeatureName, State
+Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol
+```
+
+L'état attendu est `Disabled`. Le retrait demande un redémarrage.
+
+### 5. Désactiver l'exécution automatique (mesures 14 et 15)
+Sur un parc, la stratégie de groupe se trouve dans `Configuration ordinateur > Modèles d'administration > Composants Windows > Stratégies d'exécution automatique > Désactiver l'exécution automatique`, réglée sur « Activé » pour « Tous les lecteurs ». Sur un poste isolé, la même valeur s'écrit dans le registre :
+
+```powershell
+$cle = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer'
+New-Item -Path $cle -Force | Out-Null
+Set-ItemProperty -Path $cle -Name NoDriveTypeAutoRun -Value 255 -Type DWord
+```
+
+La valeur 255 (0xFF) désactive l'exécution automatique sur tous les types de lecteurs.
+
+### 6. Comptes locaux et droits (mesures 8 et 29)
+```powershell
+Get-LocalUser | Select-Object Name, Enabled, SID
+Get-LocalGroupMember -SID S-1-5-32-544
+Remove-LocalGroupMember -SID S-1-5-32-544 -Member 'accueil'
+(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System').EnableLUA
+```
+
+Le compte **Invité** (SID terminé par `-501`) et le compte **Administrateur** intégré (SID terminé par `-500`) doivent être désactivés sur un poste de travail, ou gérés par LAPS. L'utilisateur quotidien sort du groupe des administrateurs. `EnableLUA` doit valoir `1` : c'est le **contrôle de compte d'utilisateur** (UAC), qui demande une confirmation avant toute action d'administration.
+
+Attention : avant de retirer un compte du groupe des administrateurs, vérifie qu'il reste un autre compte administrateur actif dont tu connais le mot de passe, sinon tu perds la main sur le poste.
+
+### 7. Verrouillage de session et chiffrement des échanges
+• Verrouillage automatique après quelques minutes d'inactivité : stratégie `Ouverture de session interactive : seuil d'inactivité de l'ordinateur` dans les options de sécurité. Rappelle aux utilisateurs le raccourci `Windows + L`.
+• Mesure 18 : un fichier sensible envoyé par Internet est chiffré (archive 7-Zip en AES-256, par exemple), et le mot de passe est transmis **par un autre canal** (téléphone, SMS), jamais dans le même courriel.
+
+### Passer à l'échelle
+Sur un parc, tout cela se règle une seule fois par stratégie de groupe ou par Intune (mesure 16). Microsoft publie des **lignes de base de sécurité** (security baselines), avec l'outil Security Compliance Toolkit, qui donnent un point de départ ; l'ANSSI publie aussi des recommandations de configuration pour Windows. On les adapte, on teste sur un groupe pilote, puis on déploie.
+
+### À toi de jouer
+Sur ta machine virtuelle Windows, après un instantané :
+1. Relève l'état initial des sept points ci-dessus dans un tableau « avant ».
+2. Applique les réglages : pare-feu sur les trois profils, Defender à jour avec PUA bloqués, BitLocker actif avec clé de récupération sauvegardée hors de la machine, SMBv1 absent, exécution automatique désactivée, utilisateur quotidien standard.
+3. Relève l'état « après » et prouve chaque point par la sortie d'une commande.
+4. Explique, pour chaque réglage, quelle attaque concrète il gêne.
+
+### Correction
+Tableau « après » attendu :
+• pare-feu : `Enabled` à `True` sur Domain, Private et Public ;
+• Defender : `RealTimeProtectionEnabled` à `True`, date de signatures du jour, `(Get-MpPreference).PUAProtection` à `1` ;
+• BitLocker : `ProtectionStatus` à `On`, protecteurs `Tpm` et `RecoveryPassword`, clé copiée hors de la machine ;
+• SMBv1 : `State` à `Disabled` ;
+• exécution automatique : `NoDriveTypeAutoRun` à `255` ;
+• comptes : Invité et Administrateur intégré désactivés, l'utilisateur quotidien n'apparaît plus dans `Get-LocalGroupMember -SID S-1-5-32-544`, `EnableLUA` à `1`.
+
+Attaques gênées : le pare-feu bloque l'accès à un service vulnérable depuis le réseau ; Defender détecte les logiciels malveillants connus ; BitLocker rend illisible un portable volé ; l'absence de SMBv1 empêche les vers qui l'exploitent ; la désactivation de l'exécution automatique empêche une clé piégée de lancer un programme toute seule ; l'utilisateur standard empêche un programme malveillant de s'installer pour tout le système ou de désactiver les protections.
+"""
+
+    codeblock "powershell" {
+      title: "Contrôle rapide de l'hygiène d'un poste Windows (lecture seule)"
+      code: """
+Get-NetFirewallProfile | Format-Table Name, Enabled
+Get-MpComputerStatus | Select-Object RealTimeProtectionEnabled, AntivirusSignatureLastUpdated
+Get-BitLockerVolume -MountPoint C: | Select-Object VolumeStatus, ProtectionStatus
+Get-WindowsOptionalFeature -Online -FeatureName SMB1Protocol | Select-Object State
+Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer' -Name NoDriveTypeAutoRun -ErrorAction SilentlyContinue
+Get-LocalGroupMember -SID S-1-5-32-544
+Get-LocalUser | Where-Object { $_.SID -like '*-500' -or $_.SID -like '*-501' } | Select-Object Name, Enabled
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle valeur de NoDriveTypeAutoRun désactive l’exécution automatique sur tous les types de lecteurs ?" {
+        - "0"
+        - "1"
+        + "255 (0xFF)"
+        - "91 (0x5B)"
+        explanation: "Chaque bit correspond à un type de lecteur ; 255 (0xFF) les coche tous. 0 ne désactive rien. Sur un parc, on règle plutôt la stratégie de groupe « Désactiver l'exécution automatique »."
+      }
+      question "Pourquoi faut-il sauvegarder la clé de récupération BitLocker hors du poste ?" {
+        - "parce que BitLocker la supprime après 30 jours"
+        + "parce qu'une panne du TPM ou un changement de carte mère peut rendre le disque illisible sans elle"
+        - "parce qu'elle sert à se connecter chaque matin"
+        - "parce que la loi l'impose"
+        explanation: "La clé de 48 chiffres est le seul moyen de déverrouiller le disque si le TPM ne libère plus la clé. Stockée seulement sur le poste chiffré, elle serait inaccessible au moment où on en a besoin."
+      }
+      question "Quelle commande vérifie que la protection en temps réel de Microsoft Defender est active ?" {
+        - "Get-NetFirewallProfile"
+        + "Get-MpComputerStatus"
+        - "Get-BitLockerVolume"
+        - "Get-Service WinRM"
+        explanation: "Get-MpComputerStatus affiche notamment RealTimeProtectionEnabled et la date des signatures. Get-NetFirewallProfile concerne le pare-feu."
+      }
+      question "Quel protocole ancien, exploité par WannaCry en 2017, faut-il désactiver sur les postes ?" {
+        - "SMBv3"
+        + "SMBv1"
+        - "RDP"
+        - "Kerberos"
+        explanation: "WannaCry se propageait par une faille de SMBv1. SMBv3 est la version actuelle et chiffrable ; il ne faut pas le désactiver."
+      }
+      question "Par défaut, que fait le pare-feu Windows d’une connexion entrante qu’aucune règle n’autorise ?" {
+        + "il la bloque"
+        - "il l'autorise"
+        - "il la redirige vers le port 443"
+        - "il demande toujours à l'utilisateur"
+        explanation: "Le comportement par défaut bloque l'entrant non autorisé et autorise le sortant. Une fenêtre peut apparaître quand un programme veut écouter, mais la règle de base reste le blocage."
+      }
+      question "Un SID local se termine par -501. De quel compte s’agit-il ?" {
+        - "l'administrateur intégré"
+        + "le compte Invité"
+        - "le premier utilisateur créé"
+        - "le compte SYSTEM"
+        explanation: "Le RID 500 désigne l'administrateur intégré et 501 le compte Invité, quelle que soit la langue. Le compte Invité doit rester désactivé."
+      }
+      question "Que mesure la valeur EnableLUA à 1 dans le registre ?" {
+        - "que BitLocker est actif"
+        + "que le contrôle de compte d'utilisateur (UAC) est activé"
+        - "que le pare-feu bloque le sortant"
+        - "que l'exécution automatique est désactivée"
+        explanation: "EnableLUA à 1 active l'UAC, qui demande une élévation avant les actions d'administration. À 0, tous les programmes d'un administrateur tournent avec les pleins droits."
+      }
+      question "Comment transmettre un fichier sensible chiffré à un partenaire ?" {
+        - "envoyer l'archive et le mot de passe dans le même courriel"
+        + "envoyer l'archive chiffrée par courriel et le mot de passe par un autre canal"
+        - "renommer le fichier pour cacher son contenu"
+        - "l'envoyer sans chiffrement mais en pièce jointe compressée"
+        explanation: "Si le mot de passe voyage avec l'archive, quiconque intercepte le courriel ouvre le fichier. Un second canal (téléphone, SMS) sépare les deux éléments. Renommer ou compresser ne chiffre rien."
+      }
+      question "Que recommande le guide face aux clés USB trouvées dans un lieu public ?" {
+        - "les brancher sur un poste à jour pour retrouver le propriétaire"
+        + "ne jamais les connecter au système d'information"
+        - "les formater puis les utiliser"
+        - "les brancher seulement sur un serveur"
+        explanation: "Une clé abandonnée peut être un piège, y compris un faux clavier qui tape des commandes. La mesure 15 interdit de connecter les clés inconnues."
+      }
+      question "Sur un parc de 150 postes, comment appliquer les réglages de durcissement de façon cohérente ?" {
+        - "en passant sur chaque poste avec une clé USB de scripts"
+        + "par un outil de gestion centralisée : stratégies de groupe Active Directory ou Intune"
+        - "en demandant à chaque utilisateur de suivre une fiche"
+        - "en installant un second antivirus"
+        explanation: "La mesure 16 demande une gestion centralisée : les réglages s'appliquent partout, de façon identique, et se corrigent d'un seul endroit."
+      }
+      question "Pourquoi un utilisateur ne doit-il pas travailler au quotidien avec un compte administrateur local ?" {
+        - "parce que le poste est plus lent"
+        + "parce qu'un programme malveillant qu'il lance obtient alors tous les droits sur le poste"
+        - "parce que les comptes administrateurs n'ont pas accès à Internet"
+        - "parce que Windows supprime ses fichiers à la déconnexion"
+        explanation: "Un logiciel hérite des droits de celui qui le lance. Avec un compte standard, il ne peut ni s'installer pour tout le système ni désactiver les protections (mesure 29)."
+      }
+      question "Quel résultat de « Get-BitLockerVolume » montre qu’un disque est protégé ?" {
+        - "VolumeStatus FullyDecrypted et ProtectionStatus Off"
+        + "VolumeStatus FullyEncrypted et ProtectionStatus On"
+        - "EncryptionMethod None"
+        - "KeyProtector vide"
+        explanation: "Le volume doit être entièrement chiffré et la protection active. Un volume chiffré avec la protection suspendue (Off) laisse la clé accessible sans vérification."
+      }
+    }
+  }
+
+  module "reseau" {
+    title: "Chapitre 6 : cloisonner et protéger le réseau"
+    duration: "40min"
+    content: """
+### Un réseau « à plat » est un réseau fragile
+Dans beaucoup de petites structures, tous les appareils sont dans le même réseau : postes, serveurs, imprimantes, caméras, téléphones personnels sur le Wi-Fi. Un seul poste compromis voit alors tout le reste, et un rançongiciel se propage sans obstacle. Le chapitre V du guide (mesures 19 à 26) traite ce problème :
+• **mesure 19** : segmenter le réseau et mettre en place un **cloisonnement** entre les zones ;
+• **mesure 20** : sécuriser le **Wi-Fi** et séparer les usages ;
+• **mesure 21** : utiliser des **protocoles sécurisés** quand ils existent ;
+• **mesure 22** : mettre en place une **passerelle d'accès à Internet** sécurisée ;
+• **mesure 23** : cloisonner les **services visibles depuis Internet** du reste du système ;
+• **mesure 24** : protéger la **messagerie** professionnelle ;
+• **mesure 25** : sécuriser les **interconnexions** avec les partenaires ;
+• **mesure 26** : contrôler l'**accès physique** aux salles serveurs et locaux techniques.
+
+### Découper en zones
+On regroupe les équipements qui ont le même niveau de sensibilité et les mêmes besoins. Exemple pour une PME de 20 postes :
+
+| Zone | VLAN | Réseau | Contenu |
+|---|---|---|---|
+| Postes | 10 | 192.168.10.0/24 | postes des salariés |
+| Serveurs | 20 | 192.168.20.0/24 | fichiers, applications, annuaire |
+| Administration | 99 | 192.168.99.0/24 | interfaces d'administration, postes d'administration |
+| Impression et objets | 30 | 192.168.30.0/24 | imprimantes, caméras, badgeuse |
+| Invités | 50 | 192.168.50.0/24 | Wi-Fi visiteurs et appareils personnels, accès Internet seul |
+| DMZ | 60 | 192.168.60.0/24 | services joignables depuis Internet (site web, relais de messagerie) |
+
+Point essentiel : **un VLAN ne filtre rien à lui seul**. Il sépare les domaines de diffusion ; c'est le **pare-feu** (ou le routeur avec des listes de contrôle d'accès) qui route entre les VLAN qui décide quels flux passent. Sans règles de filtrage, des VLAN routés librement entre eux n'apportent presque aucune sécurité.
+
+### La matrice des flux
+On écrit les règles sous forme de tableau, en partant du principe « **tout ce qui n'est pas explicitement autorisé est interdit** » :
+
+| Source | Destination | Service | Décision |
+|---|---|---|---|
+| Postes (10) | Serveurs (20) | SMB 445, annuaire (Kerberos 88, LDAP 389), DNS 53 | autorisé |
+| Postes (10) | Impression (30) | IPP 631, impression brute 9100 | autorisé |
+| Postes (10) | Internet | HTTP/HTTPS via le proxy | autorisé |
+| Administration (99) | toutes zones | SSH 22, RDP 3389, HTTPS des interfaces | autorisé |
+| Invités (50) | Internet | HTTP/HTTPS, DNS | autorisé |
+| Invités (50) | zones internes | tout | **interdit** |
+| Internet | DMZ (60) | HTTPS 443, SMTP 25 | autorisé |
+| DMZ (60) | zones internes | tout, sauf flux précis et justifiés | **interdit** |
+| toute autre combinaison | | | **interdit** |
+
+La DMZ (zone démilitarisée) répond à la mesure 23 : un serveur web compromis ne doit pas donner un accès direct au réseau interne.
+
+### Le Wi-Fi (mesure 20)
+Le Wi-Fi déborde des murs : un attaquant peut l'atteindre depuis le parking. Le guide recommande :
+• un chiffrement robuste : le guide de 2017 cite WPA2 avec AES-CCMP ; aujourd'hui, on vise **WPA3** quand tous les appareils le supportent, et jamais WEP ni WPA (premier du nom) avec TKIP ;
+• une **authentification centralisée** (WPA2/WPA3 Entreprise, 802.1X avec un serveur RADIUS), si possible par certificat sur les appareils de l'organisation. Un mot de passe unique partagé (mode Personnel, PSK) est déconseillé ; s'il est inévitable, il doit être long, renouvelé et jamais donné aux tiers ;
+• des **réseaux séparés** : le Wi-Fi des appareils de l'organisation, et un autre SSID, dans un autre VLAN, pour les visiteurs et appareils personnels, avec un accès Internet seul ;
+• des bornes administrées de façon sécurisée : mot de passe par défaut changé, interface d'administration dans la zone d'administration ;
+• **WPS désactivé** : ce mécanisme d'appairage par code PIN a des faiblesses connues.
+
+### Les protocoles en clair (mesure 21)
+| À éviter (en clair) | À utiliser (chiffré) |
+|---|---|
+| Telnet (TCP 23) | SSH (TCP 22) |
+| FTP (TCP 21) | SFTP (sur SSH, TCP 22) ou FTPS |
+| HTTP (TCP 80) | HTTPS (TCP 443) |
+| POP3 (110) et IMAP (143) sans TLS | POP3S (995) et IMAPS (993) |
+| SNMP v1 et v2c (UDP 161, communauté en clair) | SNMPv3 avec authentification et chiffrement |
+| LDAP simple (389) sans TLS | LDAPS (636) ou LDAP avec StartTLS |
+
+Avec un protocole en clair, un attaquant placé sur le chemin lit les mots de passe avec une simple capture réseau.
+
+### Internet : passerelle et exposition (mesures 22 et 23)
+• Les postes sortent vers Internet par une **passerelle** maîtrisée : pare-feu, et si possible proxy web avec filtrage et journalisation, résolveur DNS interne.
+• **Jamais** de bureau à distance (RDP, TCP 3389) ni d'interface d'administration ouverts directement sur Internet : on passe par un **VPN** avec authentification multifacteur. Les RDP exposés font partie des premières portes d'entrée des rançongiciels.
+• Tout service exposé est placé en DMZ, mis à jour en priorité et surveillé.
+
+### La messagerie (mesure 24)
+• Filtrage antivirus et antispam des messages entrants.
+• Publication dans le DNS des enregistrements qui empêchent l'usurpation du domaine : **SPF** (serveurs autorisés à envoyer pour le domaine, RFC 7208), **DKIM** (signature des messages, RFC 6376) et **DMARC** (politique à appliquer aux messages qui échouent, RFC 7489).
+• Pas de redirection automatique des messages professionnels vers des boîtes personnelles.
+• Chiffrement TLS entre les serveurs et vers les clients.
+
+Vérifier la politique DMARC d'un domaine :
+
+```bash
+dig +short TXT _dmarc.example.fr
+# "v=DMARC1; p=reject; rua=mailto:dmarc@example.fr"
+dig +short TXT example.fr | grep spf
+# "v=spf1 mx include:_spf.hebergeur.example -all"
+```
+
+`p=reject` demande aux serveurs destinataires de rejeter les messages qui usurpent le domaine ; `p=none` se contente d'observer. Dans un enregistrement SPF, `-all` refuse tout serveur non listé, `~all` le signale seulement.
+
+### Les locaux (mesure 26)
+La sécurité logique ne sert à rien si n'importe qui peut entrer dans la baie et brancher un câble ou repartir avec le serveur. Salle ou baie fermée à clé, liste nominative des personnes autorisées, pas de matériel sensible dans un lieu de passage, accompagnement des intervenants extérieurs.
+
+### À toi de jouer
+Une association de 15 salariés a un réseau unique `192.168.1.0/24` avec une box, un NAS, deux imprimantes, une caméra, un Wi-Fi unique dont la clé est affichée dans la salle d'accueil, et un accès RDP au serveur ouvert sur Internet pour la comptable en télétravail.
+1. Propose un découpage en zones (VLAN, adresses) et la matrice des flux principale.
+2. Corrige l'accès de la comptable en télétravail.
+3. Le domaine de l'association renvoie `"v=DMARC1; p=none"`. Qu'en conclus-tu et que conseilles-tu ?
+
+### Correction
+1. Exemple : VLAN 10 postes (`192.168.10.0/24`), VLAN 20 serveurs et NAS, VLAN 30 imprimantes et caméra, VLAN 50 invités, VLAN 99 administration. Cela suppose un commutateur administrable et un routeur ou pare-feu qui gère les VLAN (une box grand public ne suffit généralement pas). Flux : postes vers NAS en SMB 445 ; postes vers imprimantes en 631 et 9100 ; caméra vers son enregistreur seulement, aucun accès Internet ; invités vers Internet uniquement ; administration vers tout ; tout le reste interdit. Deux SSID : un pour les salariés (WPA3 ou WPA2 Entreprise si possible, sinon clé longue non affichée), un pour les invités dans le VLAN 50.
+2. Fermer immédiatement la redirection du port 3389 sur la box. Mettre en place un VPN (sur le pare-feu) avec authentification multifacteur ; la comptable se connecte au VPN puis au serveur. Vérifier dans les journaux du serveur s'il y a eu des connexions suspectes pendant la période d'exposition (événements 4624 et 4625, voir chapitre 9).
+3. `p=none` : la politique DMARC existe mais n'a aucun effet, les messages usurpés sont livrés. Conseil : vérifier que SPF et DKIM sont corrects pour tous les services qui envoient au nom du domaine (rapports `rua`), puis passer progressivement à `p=quarantine`, puis à `p=reject`.
+"""
+
+    quiz {
+      pick: 5
+      question "Deux VLAN sont routés par un routeur sans aucune liste de contrôle d’accès. Quel est l’effet sur la sécurité ?" {
+        - "le trafic entre eux est chiffré"
+        - "le trafic entre eux est bloqué"
+        + "presque aucun : tout le trafic passe librement d'un VLAN à l'autre"
+        - "seul le trafic web passe"
+        explanation: "Un VLAN sépare les domaines de diffusion mais ne filtre rien. C'est le pare-feu ou les ACL du routeur qui décident quels flux passent entre les zones."
+      }
+      question "Quel principe guide l’écriture d’une matrice des flux ?" {
+        - "tout est autorisé sauf ce qui pose problème"
+        + "tout ce qui n'est pas explicitement autorisé est interdit"
+        - "seul Internet est filtré"
+        - "chaque utilisateur choisit ses flux"
+        explanation: "On liste les flux nécessaires et on interdit le reste (liste blanche). L'inverse oublie forcément des cas dangereux."
+      }
+      question "Quel protocole doit remplacer Telnet pour administrer un équipement ?" {
+        - "FTP"
+        + "SSH"
+        - "SNMPv2c"
+        - "HTTP"
+        explanation: "Telnet transmet tout en clair, mot de passe compris. SSH chiffre la session et authentifie le serveur. SNMPv2c et HTTP sont eux aussi en clair."
+      }
+      question "Pourquoi ne faut-il jamais ouvrir le port 3389 (RDP) directement sur Internet ?" {
+        - "parce que RDP ne fonctionne pas à travers Internet"
+        + "parce que les RDP exposés sont massivement attaqués et sont une porte d'entrée fréquente des rançongiciels"
+        - "parce que le port 3389 est réservé au DNS"
+        - "parce que RDP consomme trop de bande passante"
+        explanation: "Des robots balaient Internet en continu à la recherche de RDP ouverts pour tester des mots de passe ou exploiter des failles. On passe par un VPN avec authentification multifacteur."
+      }
+      question "Que recommande le guide pour le Wi-Fi des visiteurs ?" {
+        - "le même SSID que les salariés avec un autre mot de passe"
+        + "un SSID et un VLAN distincts, avec un accès Internet seul"
+        - "un réseau ouvert relié au serveur de fichiers"
+        - "l'accès par câble seulement"
+        explanation: "Les appareils non maîtrisés doivent être séparés des appareils de l'organisation : SSID et VLAN distincts, accès Internet dédié, aucun accès aux zones internes."
+      }
+      question "Que demande un enregistrement DMARC contenant p=reject ?" {
+        - "d'accepter tous les messages et d'envoyer un rapport"
+        + "de rejeter les messages qui échouent aux contrôles SPF et DKIM alignés"
+        - "de chiffrer tous les messages du domaine"
+        - "de bloquer les messages entrants contenant des pièces jointes"
+        explanation: "p=reject est la politique la plus stricte : les messages usurpant le domaine sont rejetés. p=none observe seulement, p=quarantine les place en indésirables."
+      }
+      question "Où placer un serveur web accessible depuis Internet ?" {
+        - "dans le VLAN des postes, pour le gérer facilement"
+        - "dans le VLAN des serveurs internes"
+        + "dans une DMZ, séparée du réseau interne par le pare-feu"
+        - "directement derrière la box sans pare-feu"
+        explanation: "La mesure 23 cloisonne les services visibles depuis Internet. Si le serveur est compromis, la DMZ empêche l'accès direct aux zones internes."
+      }
+      question "Quel mode Wi-Fi permet une authentification centralisée de chaque utilisateur ou appareil ?" {
+        - "WPA2 Personnel (PSK)"
+        + "WPA2 ou WPA3 Entreprise avec 802.1X et un serveur RADIUS"
+        - "WEP 128 bits"
+        - "un réseau ouvert avec portail"
+        explanation: "Le mode Entreprise authentifie chaque utilisateur ou appareil auprès d'un serveur RADIUS, éventuellement par certificat. Le mode Personnel repose sur une clé unique partagée par tous."
+      }
+      question "Quelle fonction Wi-Fi faut-il désactiver sur les bornes en raison de faiblesses connues ?" {
+        - "le WPA3"
+        + "le WPS"
+        - "le 5 GHz"
+        - "la diffusion de l'heure"
+        explanation: "Le WPS permet l'appairage par code PIN ou bouton ; sa méthode par PIN a des faiblesses connues qui permettent de retrouver la clé."
+      }
+      question "Dans un enregistrement SPF, que signifie la fin « -all » ?" {
+        - "tous les serveurs du monde sont autorisés"
+        + "les serveurs non listés ne sont pas autorisés à envoyer pour le domaine"
+        - "le domaine n'envoie aucun courriel"
+        - "SPF est désactivé"
+        explanation: "-all est un échec strict pour tout serveur non listé ; ~all est un échec léger (le message est signalé). SPF est défini par la RFC 7208."
+      }
+      question "Avec quelle version de SNMP les échanges sont-ils authentifiés et chiffrés ?" {
+        - "SNMPv1"
+        - "SNMPv2c"
+        + "SNMPv3"
+        - "aucune, SNMP est toujours en clair"
+        explanation: "SNMPv1 et v2c transmettent la communauté en clair. SNMPv3 ajoute l'authentification des utilisateurs et le chiffrement."
+      }
+      question "Pourquoi la mesure 26 porte-t-elle sur les locaux techniques ?" {
+        - "pour respecter les normes incendie"
+        + "parce qu'un accès physique permet de brancher un appareil ou d'emporter du matériel, quelle que soit la sécurité logique"
+        - "pour réduire la consommation électrique"
+        - "parce que le Wi-Fi ne traverse pas les murs"
+        explanation: "Celui qui accède physiquement à la baie peut contourner le pare-feu, brancher un équipement espion ou voler un disque. L'accès est réservé à une liste nominative."
+      }
+    }
+  }
+
+  module "administration-nomadisme" {
+    title: "Chapitre 7 : administrer en sécurité et encadrer le nomadisme"
+    duration: "35min"
+    content: """
+### Les comptes d'administration sont la cible principale
+Un attaquant qui entre par un poste utilisateur cherche ensuite à obtenir un compte d'administration : avec lui, il désactive les protections, efface les sauvegardes et déploie son rançongiciel partout en une fois. Les mots de passe d'administration traînent souvent sur des postes exposés, et c'est ce que vise le chapitre VI du guide :
+• **mesure 27** : **interdire l'accès à Internet** depuis les postes et serveurs utilisés pour l'administration ;
+• **mesure 28** : utiliser un **réseau dédié et cloisonné** pour l'administration ;
+• **mesure 29** : limiter au strict besoin opérationnel les **droits d'administration** sur les postes de travail.
+
+L'ANSSI détaille ces principes dans ses « Recommandations relatives à l'administration sécurisée des systèmes d'information » (version 3.0, 2021).
+
+### Le poste d'administration
+Navigation web et messagerie sont les deux grandes portes d'entrée des logiciels malveillants. L'administrateur ne doit donc pas administrer depuis le poste où il lit ses courriels :
+• l'idéal : un **poste d'administration dédié**, sans accès à Internet ni messagerie, et un poste bureautique séparé ;
+• à défaut, un poste d'administration qui accède à un environnement bureautique distant (machine virtuelle ou bureau à distance), et **pas l'inverse** : administrer depuis le poste bureautique vers les serveurs reste la mauvaise direction ;
+• les comptes d'administration ne servent qu'à administrer, sont nominatifs (`adm-jmartin`), protégés par une authentification multifacteur quand c'est possible, et ne servent jamais à ouvrir une session sur un poste utilisateur ordinaire, où leur secret pourrait être volé.
+
+### Le réseau d'administration
+Les interfaces d'administration (SSH des serveurs, pages web des commutateurs, bornes Wi-Fi, hyperviseur, onduleur, contrôleur de sauvegarde) ne doivent être joignables **que depuis la zone d'administration** (VLAN 99 dans l'exemple du chapitre 6). Depuis le VLAN des postes, elles sont bloquées par le pare-feu.
+
+Une solution courante est un **bastion** (jump host) : une machine durcie, dans la zone d'administration, par laquelle passent toutes les connexions d'administration. Il centralise l'authentification et garde la trace de qui s'est connecté où. Avec OpenSSH, on rebondit sur le bastion avec l'option `-J` (ProxyJump) :
+
+```bash
+ssh -J adm-jmartin@bastion.lycee.internal adm-jmartin@192.168.20.10
+```
+
+ou, une fois pour toutes, dans `~/.ssh/config` :
+
+```text
+Host bastion
+    HostName 192.168.99.5
+    User adm-jmartin
+
+Host srv-*
+    ProxyJump bastion
+    User adm-jmartin
+```
+
+Une commande `ssh srv-fichiers` (avec une entrée DNS ou une ligne `HostName` correspondante) passe alors automatiquement par le bastion.
+
+### Les prestataires
+L'accès à distance d'un prestataire est un accès d'administration comme un autre :
+• un compte **nominatif** par intervenant, jamais un compte partagé ;
+• un accès **ouvert à la demande** et refermé après l'intervention, plutôt qu'un logiciel de prise en main à distance installé en permanence ;
+• des connexions **journalisées** et, si possible, enregistrées par le bastion.
+
+### Le nomadisme
+Portables, tablettes et téléphones sortent des locaux : ils se perdent, se volent et se connectent à des réseaux inconnus. Le chapitre VII du guide (mesures 30 à 33) demande :
+• **mesure 30** : des mesures de **sécurisation physique** : garder l'appareil à vue, filtre de confidentialité sur l'écran en déplacement, câble antivol si nécessaire, signalement immédiat d'une perte ;
+• **mesure 31** : le **chiffrement** des données, en particulier sur les matériels qui peuvent être perdus : BitLocker sous Windows, LUKS sous Linux (à choisir à l'installation de Debian), chiffrement natif des téléphones activé par un code de verrouillage ;
+• **mesure 32** : la **sécurisation de la connexion réseau** en mobilité : un **VPN** vers l'organisation pour tous les accès internes, idéalement activé automatiquement ; éviter les Wi-Fi publics ou les utiliser seulement à travers le VPN (le partage de connexion du téléphone est souvent préférable) ;
+• **mesure 33** : des **politiques de sécurité dédiées aux terminaux mobiles** : code de verrouillage, mises à jour, applications depuis les magasins officiels uniquement, séparation des données professionnelles et personnelles, et gestion centralisée (MDM, mobile device management) qui permet d'effacer à distance un appareil perdu.
+
+L'ANSSI publie aussi des « Recommandations sur le nomadisme numérique », qui détaillent ces points.
+
+Vérifier rapidement le chiffrement :
+
+```powershell
+manage-bde -status C:        # Windows : Protection Status: Protection On
+```
+
+```bash
+lsblk -f                     # Linux : une partition de type crypto_LUKS porte le système
+```
+
+### À toi de jouer
+Le technicien d'une PME administre aujourd'hui tout depuis son portable personnel, avec le compte « administrateur » du domaine, sur lequel il lit aussi ses courriels. Il part souvent en clientèle et se connecte depuis des Wi-Fi d'hôtel. Le serveur et le commutateur sont administrables depuis n'importe quel poste du réseau.
+1. Liste les problèmes, en citant la mesure du guide concernée.
+2. Propose une organisation cible réaliste pour une PME (budget limité).
+3. Écris le fichier `~/.ssh/config` qui permet au technicien de joindre `192.168.20.10` en passant par le bastion `192.168.99.5`, avec son compte `adm-tech`.
+
+### Correction
+1. Problèmes : matériel personnel non maîtrisé (mesure 7) ; compte d'administration partagé et non nominatif (mesure 8) ; administration depuis un poste qui a la messagerie et Internet (mesure 27) ; interfaces d'administration joignables depuis tout le réseau (mesure 28) ; connexions depuis des Wi-Fi publics sans VPN (mesure 32) ; chiffrement du portable inconnu (mesure 31).
+2. Cible : un portable professionnel chiffré avec BitLocker, pour la bureautique, avec VPN et authentification multifacteur ; un compte `tech` pour la bureautique et un compte `adm-tech` pour l'administration ; un petit poste ou une machine virtuelle d'administration dans le VLAN 99, sans Internet, seul autorisé à joindre les interfaces d'administration, qui sert aussi de bastion ; le compte « administrateur » intégré du domaine n'est plus utilisé au quotidien, son mot de passe est long et rangé dans un coffre ; les interfaces d'administration sont filtrées depuis les autres VLAN.
+3. Fichier attendu :
+```text
+Host bastion
+    HostName 192.168.99.5
+    User adm-tech
+
+Host srv-fichiers
+    HostName 192.168.20.10
+    User adm-tech
+    ProxyJump bastion
+```
+La commande `ssh srv-fichiers` ouvre d'abord la connexion au bastion, puis au serveur à travers lui. Test équivalent sans fichier : `ssh -J adm-tech@192.168.99.5 adm-tech@192.168.20.10`.
+"""
+
+    quiz {
+      pick: 5
+      question "Que demande la mesure 27 du guide ?" {
+        - "chiffrer les postes d'administration"
+        + "interdire l'accès à Internet depuis les postes et serveurs d'administration"
+        - "changer le mot de passe administrateur chaque mois"
+        - "installer un antivirus sur les serveurs"
+        explanation: "La navigation et la messagerie sont les principales portes d'entrée des logiciels malveillants. Un poste qui sert à administrer ne doit pas y être exposé."
+      }
+      question "Quel est le rôle d’un bastion d’administration ?" {
+        - "héberger le site web de l'entreprise"
+        + "être le point de passage unique, durci et journalisé, des connexions d'administration"
+        - "remplacer le pare-feu"
+        - "stocker les sauvegardes hors ligne"
+        explanation: "Toutes les connexions d'administration passent par le bastion, qui contrôle l'authentification et garde la trace de qui s'est connecté où."
+      }
+      question "Quelle option d’OpenSSH permet de rebondir par un bastion ?" {
+        - "-L"
+        + "-J (ProxyJump)"
+        - "-X"
+        - "-D"
+        explanation: "-J hôte (ou ProxyJump dans ~/.ssh/config) fait passer la connexion par une machine intermédiaire. -L crée une redirection de port, -X le déport d'affichage, -D un proxy SOCKS."
+      }
+      question "Un administrateur dispose d’un poste bureautique et d’un environnement d’administration. Quelle organisation l’ANSSI déconseille-t-elle ?" {
+        - "un poste d'administration dédié et un poste bureautique séparé"
+        - "un poste d'administration qui accède à une bureautique distante"
+        + "un poste bureautique depuis lequel on se connecte aux serveurs à administrer"
+        - "un poste d'administration sans messagerie"
+        explanation: "Administrer depuis le poste qui lit les courriels expose les secrets d'administration. Si un seul poste existe, c'est la bureautique qui doit être distante, pas l'inverse."
+      }
+      question "Pourquoi un compte d’administration du domaine ne doit-il pas ouvrir de session sur un poste utilisateur ordinaire ?" {
+        - "parce que la session serait trop lente"
+        + "parce que ses secrets pourraient être récupérés sur ce poste, plus exposé"
+        - "parce que Windows l'interdit techniquement"
+        - "parce que le compte serait automatiquement verrouillé"
+        explanation: "Les éléments d'authentification d'une session restent en mémoire sur le poste. Si celui-ci est compromis, l'attaquant récupère les droits de l'administrateur."
+      }
+      question "Quelle mesure du guide concerne le chiffrement des données sur les matériels qui peuvent être perdus ?" {
+        - "la mesure 13"
+        - "la mesure 22"
+        + "la mesure 31"
+        - "la mesure 40"
+        explanation: "La mesure 31 demande de chiffrer les données sensibles, en particulier sur les portables, tablettes et supports qui peuvent être perdus ou volés."
+      }
+      question "Un salarié en déplacement doit consulter les fichiers internes depuis le Wi-Fi d’un hôtel. Que faut-il ?" {
+        - "ouvrir le partage de fichiers sur Internet"
+        + "passer par le VPN de l'organisation"
+        - "utiliser le Wi-Fi de l'hôtel sans précaution, puisqu'il a un mot de passe"
+        - "copier tous les fichiers sur une clé USB avant de partir"
+        explanation: "La mesure 32 demande de sécuriser la connexion en mobilité : le VPN chiffre les échanges et donne accès aux ressources internes sans les exposer sur Internet."
+      }
+      question "Que permet une solution de MDM sur les téléphones professionnels ?" {
+        - "augmenter le débit de la 4G"
+        + "appliquer des règles de sécurité et effacer à distance un appareil perdu"
+        - "remplacer le code de verrouillage"
+        - "installer des applications hors des magasins officiels"
+        explanation: "La gestion des terminaux mobiles (MDM) impose code, mises à jour et séparation des données, et permet l'effacement à distance (mesure 33)."
+      }
+      question "Comment donner un accès à distance à un prestataire de maintenance ?" {
+        - "avec un compte partagé dont le mot de passe ne change jamais"
+        + "avec un compte nominatif, ouvert à la demande et journalisé"
+        - "avec un logiciel de prise en main installé en permanence sur tous les postes"
+        - "en lui donnant le mot de passe du compte administrateur du domaine"
+        explanation: "Un accès prestataire est un accès d'administration : nominatif, limité dans le temps et tracé. Un accès permanent et partagé est une porte d'entrée fréquente."
+      }
+      question "Sur Linux, quelle sortie de lsblk -f montre qu’une partition est chiffrée ?" {
+        - "FSTYPE ext4"
+        + "FSTYPE crypto_LUKS"
+        - "FSTYPE swap"
+        - "FSTYPE vfat"
+        explanation: "crypto_LUKS indique un conteneur chiffré LUKS. Le système de fichiers ext4 se trouve alors à l'intérieur, sur le volume déchiffré."
+      }
+      question "Depuis quelle zone les interfaces d’administration des équipements doivent-elles être joignables ?" {
+        - "depuis toutes les zones internes"
+        + "seulement depuis la zone d'administration"
+        - "depuis Internet, pour le support"
+        - "depuis le Wi-Fi invité"
+        explanation: "La mesure 28 demande un réseau d'administration dédié et cloisonné. Les autres zones ne doivent pas atteindre les interfaces d'administration."
+      }
+      question "Quelle mesure de sécurisation physique est adaptée à un portable utilisé dans le train ?" {
+        - "désactiver le pare-feu pour économiser la batterie"
+        + "un filtre de confidentialité sur l'écran et l'appareil gardé à vue"
+        - "laisser la session ouverte pour aller plus vite"
+        - "coller le mot de passe sous le clavier"
+        explanation: "La mesure 30 vise la perte, le vol et les regards indiscrets : filtre de confidentialité, appareil gardé à vue, verrouillage dès qu'on s'éloigne."
+      }
+    }
+  }
+
+  module "serveur-linux" {
+    title: "Chapitre 8 : durcir un serveur Debian"
+    duration: "45min"
+    content: """
+### L'objectif
+Un serveur fait moins de choses qu'un poste : il ne navigue pas, ne lit pas de courriels, n'a pas d'utilisateur assis devant. On peut donc le durcir fortement. Dans ce chapitre, tu appliques à un serveur Debian 12 du labo (`srv-fichiers`, `192.168.20.10`) les mesures vues jusqu'ici : comptes nominatifs (8), authentification forte (13), services inutiles retirés (14), pare-feu local (17), protocoles sécurisés (21), mises à jour (34) et journaux (36). L'ANSSI détaille le sujet dans ses « Recommandations de configuration d'un système GNU/Linux » (ANSSI-BP-028).
+
+Avant de commencer : prends un instantané de la machine virtuelle, et **garde toujours une session SSH ouverte** pendant que tu modifies SSH ou le pare-feu. Si une erreur te bloque, la session ouverte (ou la console de l'hyperviseur) te permet de corriger.
+
+### 1. Un compte d'administration nominatif et sudo
+```bash
+sudo adduser adm-jmartin
+sudo usermod -aG sudo adm-jmartin
+getent group sudo                 # vérifier qui est membre
+sudo -l -U adm-jmartin            # vérifier ce qu'il peut faire
+```
+
+Chaque administrateur a son compte ; `sudo` trace chaque commande lancée avec les droits de root dans le journal, sous le nom de la personne. On ne se connecte plus directement en `root`.
+
+### 2. SSH par clé, sans root ni mot de passe
+Sur ton poste d'administration, crée une paire de clés et copie la clé publique sur le serveur :
+
+```bash
+ssh-keygen -t ed25519 -C "adm-jmartin"
+ssh-copy-id adm-jmartin@192.168.20.10
+ssh adm-jmartin@192.168.20.10     # doit fonctionner sans mot de passe du compte
+```
+
+La clé privée reste sur ton poste, protégée par une phrase de passe. Ensuite, sur le serveur, crée un fichier de durcissement. Sur Debian 12, `/etc/ssh/sshd_config` inclut au début les fichiers de `/etc/ssh/sshd_config.d/`, et pour chaque option c'est **la première valeur lue qui s'applique** : un fichier placé là l'emporte donc sur la suite du fichier principal.
+
+```text
+# /etc/ssh/sshd_config.d/50-durcissement.conf
+PermitRootLogin no
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PubkeyAuthentication yes
+AllowGroups sudo
+MaxAuthTries 3
+LoginGraceTime 30
+X11Forwarding no
+```
+
+Vérifie la syntaxe avant de recharger, puis contrôle la configuration réellement appliquée :
+
+```bash
+sudo sshd -t && sudo systemctl reload ssh
+sudo sshd -T | grep -Ei '^(permitrootlogin|passwordauthentication|allowgroups)'
+```
+
+Sur Debian, le service s'appelle `ssh` (et non `sshd`). Depuis une **autre** fenêtre, teste une nouvelle connexion avant de fermer la session de secours.
+
+### 3. Retirer ce qui ne sert pas
+```bash
+sudo ss -tulpn
+systemctl list-units --type=service --state=running
+sudo systemctl disable --now vsftpd
+sudo apt purge vsftpd
+```
+
+Chaque port en écoute doit correspondre à un besoin de l'inventaire. Ici, le FTP en clair est retiré : les transferts passent par SFTP, fourni par SSH.
+
+### 4. Pare-feu local avec nftables
+Le pare-feu du serveur complète celui du réseau : il n'accepte que les flux prévus par la matrice du chapitre 6. Fichier `/etc/nftables.conf` :
+
+```text
+#!/usr/sbin/nft -f
+flush ruleset
+
+table inet filter {
+    chain input {
+        type filter hook input priority filter; policy drop;
+        ct state established,related accept
+        ct state invalid drop
+        iif "lo" accept
+        meta l4proto { icmp, ipv6-icmp } accept
+        ip saddr 192.168.99.0/24 tcp dport 22 accept
+        ip saddr 192.168.10.0/24 tcp dport 445 accept
+        limit rate 5/minute log prefix "nft-refus: "
+    }
+    chain forward {
+        type filter hook forward priority filter; policy drop;
+    }
+    chain output {
+        type filter hook output priority filter; policy accept;
+    }
+}
+```
+
+La politique par défaut de l'entrée est `drop` : seuls SSH depuis la zone d'administration et SMB depuis les postes passent, plus les réponses aux connexions déjà établies. Les refus sont journalisés, avec une limite pour ne pas saturer les journaux.
+
+Attention : appliquer un pare-feu à distance peut te couper l'accès. Programme d'abord un retour arrière automatique, qui vide les règles dans 5 minutes si tu ne l'annules pas :
+
+```bash
+sudo nft -c -f /etc/nftables.conf                         # vérifie la syntaxe sans appliquer
+sudo systemd-run --on-active=300 --unit=secours-nft /usr/sbin/nft flush ruleset
+sudo nft -f /etc/nftables.conf                            # applique
+# nouvelle connexion SSH depuis la zone d'administration : si elle marche
+sudo systemctl stop secours-nft.timer                     # annule le retour arrière
+sudo systemctl enable --now nftables                      # règles chargées au démarrage
+sudo nft list ruleset
+```
+
+### 5. Bloquer les essais répétés avec fail2ban
+`fail2ban` lit les journaux et bannit temporairement les adresses qui accumulent les échecs. Sur Debian 12, les journaux sont dans le journal systemd et le fichier `/var/log/auth.log` n'existe plus par défaut : il faut dire à fail2ban de lire le journal.
+
+```bash
+sudo apt install fail2ban python3-systemd
+sudo tee /etc/fail2ban/jail.d/sshd.local > /dev/null <<'FIN'
+[sshd]
+enabled  = true
+backend  = systemd
+maxretry = 5
+findtime = 10m
+bantime  = 1h
+FIN
+sudo systemctl restart fail2ban
+sudo fail2ban-client status sshd
+```
+
+Avec l'authentification par clé seule, fail2ban sert surtout à réduire le bruit dans les journaux ; il reste utile pour d'autres services exposés.
+
+### 6. Mises à jour automatiques et journaux
+• Active `unattended-upgrades` comme au chapitre 4.
+• Vérifie que l'horloge est synchronisée (indispensable pour corréler les journaux) : `timedatectl` doit afficher `System clock synchronized: yes`.
+• Le journal systemd se consulte avec `journalctl` : `journalctl -u ssh --since today` montre les connexions SSH du jour.
+• Pour surveiller les modifications de fichiers sensibles, installe `auditd` et ajoute des règles :
+
+```bash
+sudo apt install auditd
+sudo tee /etc/audit/rules.d/hygiene.rules > /dev/null <<'FIN'
+-w /etc/passwd -p wa -k identite
+-w /etc/group -p wa -k identite
+-w /etc/sudoers -p wa -k sudoers
+-w /etc/sudoers.d/ -p wa -k sudoers
+-w /etc/ssh/sshd_config -p wa -k ssh
+FIN
+sudo augenrules --load
+sudo ausearch -k identite -i
+```
+
+`-w` surveille un fichier, `-p wa` les écritures et changements d'attributs, `-k` pose une étiquette pour la recherche.
+
+### 7. Mesurer le résultat
+L'outil libre **Lynis** fait un audit de configuration et propose des améliorations :
+
+```bash
+sudo apt install lynis
+sudo lynis audit system
+```
+
+Il affiche un indice de durcissement (hardening index) et une liste de suggestions. Ne les applique pas aveuglément : chacune doit être comprise et testée.
+
+### À toi de jouer
+Sur ta machine Debian du labo :
+1. Crée `adm-<ton-prénom>`, mets en place l'authentification par clé, puis applique le fichier de durcissement SSH. Prouve que `ssh root@192.168.20.10` et la connexion par mot de passe sont refusées.
+2. Écris et applique le pare-feu nftables avec retour arrière automatique. Le serveur doit accepter SSH depuis `192.168.99.0/24` seulement.
+3. Active fail2ban pour SSH et montre son état.
+4. Ajoute la règle auditd sur `/etc/passwd`, crée un utilisateur de test, puis retrouve l'événement.
+
+### Correction
+1. `ssh root@192.168.20.10` renvoie `Permission denied (publickey).` (root refusé, et seule la méthode par clé est proposée). `ssh -o PubkeyAuthentication=no adm-jmartin@192.168.20.10` renvoie aussi `Permission denied (publickey).` : la connexion par mot de passe n'est plus proposée. `sudo sshd -T` affiche `permitrootlogin no` et `passwordauthentication no`.
+2. `sudo nft list ruleset` affiche la table `inet filter` avec `policy drop` sur `input`. Depuis une machine de `192.168.10.0/24`, `ssh` reste sans réponse (délai d'attente dépassé), et `journalctl -k | grep nft-refus` montre la tentative refusée ; depuis `192.168.99.0/24`, la connexion fonctionne. N'oublie pas d'annuler le retour arrière (`systemctl stop secours-nft.timer`) puis d'activer le service `nftables`.
+3. `sudo fail2ban-client status sshd` affiche `Currently failed`, `Total failed`, `Currently banned` et la liste des adresses bannies. Si fail2ban ne démarre pas avec une erreur sur le fichier de journal, c'est que `backend = systemd` manque.
+4. Après `sudo adduser test1`, `sudo ausearch -k identite -i` montre les écritures sur `/etc/passwd` avec l'heure et le programme (`useradd` lancé par `adduser`), et l'identité de l'administrateur à l'origine (champ `auid`). Supprime ensuite le compte : `sudo deluser test1`.
+"""
+
+    quiz {
+      pick: 5
+      question "Sur Debian 12, pourquoi un fichier placé dans /etc/ssh/sshd_config.d/ l’emporte-t-il sur le reste de sshd_config ?" {
+        - "parce que sshd lit les fichiers par ordre alphabétique inverse"
+        + "parce qu'il est inclus au début et que sshd garde la première valeur lue pour chaque option"
+        - "parce que les fichiers .conf ont une priorité absolue"
+        - "parce que sshd_config est ignoré dès qu'un fichier .conf existe"
+        explanation: "La ligne Include est en tête du fichier principal. Pour la plupart des options, sshd retient la première valeur rencontrée : celle du fichier inclus gagne."
+      }
+      question "Quelle commande vérifie la syntaxe de la configuration SSH avant de recharger le service ?" {
+        + "sudo sshd -t"
+        - "sudo systemctl status ssh"
+        - "ssh -V"
+        - "sudo sshd -D"
+        explanation: "sshd -t teste la configuration et les clés, puis s'arrête. sshd -T affiche la configuration effective. -D lance le démon au premier plan."
+      }
+      question "Après le durcissement, « ssh root@serveur » renvoie « Permission denied (publickey). ». Que signifie la mention publickey ?" {
+        - "la clé publique du serveur a changé"
+        + "seule la méthode par clé publique est proposée par le serveur"
+        - "le pare-feu a bloqué la connexion"
+        - "le compte root n'existe pas"
+        explanation: "La liste entre parenthèses donne les méthodes encore acceptées par le serveur. Avec PasswordAuthentication no, seule publickey reste proposée."
+      }
+      question "Dans la règle nftables « ip saddr 192.168.99.0/24 tcp dport 22 accept », que vérifie ip saddr ?" {
+        - "l'adresse de destination"
+        + "l'adresse source du paquet"
+        - "l'adresse du serveur DNS"
+        - "la passerelle par défaut"
+        explanation: "saddr est l'adresse source, daddr l'adresse de destination. La règle n'accepte SSH que depuis la zone d'administration."
+      }
+      question "Pourquoi programmer « systemd-run --on-active=300 ... nft flush ruleset » avant d’appliquer un pare-feu à distance ?" {
+        - "pour accélérer le chargement des règles"
+        + "pour vider automatiquement les règles dans 5 minutes si une erreur te coupe l'accès"
+        - "pour sauvegarder les règles toutes les 5 minutes"
+        - "pour journaliser les paquets refusés"
+        explanation: "Si les nouvelles règles te bloquent, le retour arrière programmé les vide et rend l'accès. Si tout va bien, tu annules le minuteur."
+      }
+      question "Sur Debian 12, pourquoi faut-il souvent indiquer backend = systemd pour la prison sshd de fail2ban ?" {
+        - "parce que fail2ban ne sait pas lire les fichiers texte"
+        + "parce que /var/log/auth.log n'existe plus par défaut et que les journaux sont dans le journal systemd"
+        - "parce que systemd remplace fail2ban"
+        - "parce que SSH ne journalise plus les échecs"
+        explanation: "rsyslog n'est plus installé par défaut sur Debian 12 : il n'y a plus de auth.log. fail2ban doit lire le journal systemd, ce qui demande aussi le paquet python3-systemd."
+      }
+      question "Que signifie l’option -p wa dans une règle auditd « -w /etc/passwd -p wa -k identite » ?" {
+        - "lecture et exécution"
+        + "écriture et changement d'attributs"
+        - "avertissement et alerte"
+        - "écriture et archivage"
+        explanation: "Les permissions surveillées sont r (lecture), w (écriture), x (exécution) et a (changement d'attributs). -k pose l'étiquette utilisée par ausearch -k."
+      }
+      question "Quelle est la politique par défaut la plus sûre pour la chaîne input d’un serveur ?" {
+        - "accept, puis des règles drop pour les ports dangereux"
+        + "drop, puis des règles accept pour les seuls flux nécessaires"
+        - "reject pour tout, y compris les connexions établies"
+        - "aucune chaîne input"
+        explanation: "Avec policy drop, tout ce qui n'est pas explicitement autorisé est refusé. Il faut accepter les connexions établies, sinon les réponses aux requêtes du serveur sont bloquées."
+      }
+      question "Comment s’appelle le service SSH sur Debian, à utiliser avec systemctl ?" {
+        - "sshd"
+        + "ssh"
+        - "openssh-server"
+        - "sshd-keygen"
+        explanation: "Sur Debian et Ubuntu, l'unité systemd est ssh.service (un alias sshd peut exister selon les versions). Le paquet s'appelle openssh-server."
+      }
+      question "Quel type de clé est recommandé aujourd’hui pour SSH avec ssh-keygen ?" {
+        - "dsa"
+        + "ed25519"
+        - "rsa 1024 bits"
+        - "aucune, le mot de passe suffit"
+        explanation: "ed25519 est rapide, compact et sûr. DSA est désactivé dans OpenSSH récent, et RSA 1024 bits est trop court."
+      }
+      question "Quelle commande affiche l’état de la synchronisation de l’horloge sur Debian ?" {
+        - "date -u"
+        + "timedatectl"
+        - "hwclock --show"
+        - "ntpq -h"
+        explanation: "timedatectl affiche « System clock synchronized: yes » quand l'heure est synchronisée. Une heure juste est indispensable pour corréler des journaux de plusieurs machines."
+      }
+      question "Que fait la commande « sudo lynis audit system » ?" {
+        - "elle corrige automatiquement toutes les failles"
+        + "elle audite la configuration et propose des suggestions avec un indice de durcissement"
+        - "elle scanne les ports des autres machines du réseau"
+        - "elle met à jour tous les paquets"
+        explanation: "Lynis observe la configuration locale et liste des suggestions ; il ne modifie rien. Chaque suggestion doit être comprise avant d'être appliquée."
+      }
+      question "Pourquoi garder une session SSH ouverte pendant la modification de la configuration SSH ?" {
+        - "parce que sshd refuse de recharger sans session ouverte"
+        + "parce qu'une erreur peut empêcher toute nouvelle connexion, et la session ouverte permet de corriger"
+        - "parce que la session ouverte chiffre la configuration"
+        - "pour que fail2ban ne bannisse pas l'administrateur"
+        explanation: "Le rechargement ne coupe pas les sessions existantes. Si la nouvelle configuration bloque les connexions, la session déjà ouverte sert de secours."
+      }
+    }
+  }
+
+  module "sauvegarde-journaux-incidents" {
+    title: "Chapitre 9 : sauvegarder, journaliser et réagir aux incidents"
+    duration: "40min"
+    content: """
+### Superviser, auditer, réagir
+Le chapitre IX du guide (mesures 36 à 40) prépare le jour où quelque chose tourne mal :
+• **mesure 36** : activer et configurer les **journaux** des composants les plus importants ;
+• **mesure 37** : définir et appliquer une **politique de sauvegarde** des composants critiques ;
+• **mesure 38** : procéder à des **contrôles et audits** de sécurité réguliers, puis appliquer les corrections ;
+• **mesure 39** : désigner un **référent** en sécurité des systèmes d'information et le faire connaître du personnel ;
+• **mesure 40** : définir une **procédure de gestion des incidents** de sécurité.
+
+### Les sauvegardes : la règle 3-2-1
+Dans son guide « Sauvegarde des systèmes d'information : les fondamentaux » (ANSSI-BP-100, version 1.0 d’octobre 2023, puis version 1.1), l'ANSSI recommande la règle **3-2-1** :
+• **3** copies distinctes des données : les données de production et 2 sauvegardes ;
+• sur **2** supports différents ;
+• dont **1** hors ligne, c'est-à-dire sur un support déconnecté de tout système d'information.
+
+La copie **hors ligne** est jugée indispensable, même si elle est moins fréquente que les sauvegardes en ligne : c'est la seule qu'un rançongiciel ou un attaquant devenu administrateur ne peut pas effacer. Exemples : disques externes en rotation, dont un est toujours débranché et rangé ailleurs ; bandes stockées hors site.
+
+Autres recommandations importantes du même guide :
+• les sauvegardes sont **contrôlées** à chaque passage (volume anormal, erreurs) et **testées régulièrement** par des restaurations réelles ; une procédure de restauration est **écrite** ;
+• un **ordre de restauration** est défini à l'avance (d'abord les services dont tout dépend : DNS, annuaire, puis les applications métier) ;
+• les serveurs de sauvegarde sont **cloisonnés**, ne font pas partie du domaine Active Directory de production et ont leurs propres comptes d'administration nominatifs ;
+• en cas d'incident, la priorité est d'**isoler l'infrastructure de sauvegarde** du reste du système ;
+• on sauvegarde aussi les **configurations** (équipements réseau, applications) et les supports d'installation, pour pouvoir reconstruire.
+
+Deux valeurs guident le choix de la fréquence et des moyens :
+• la **PDMA** (perte de données maximale admissible, en anglais RPO) : si on sauvegarde chaque nuit, on peut perdre jusqu'à une journée de travail ;
+• la **DMIA** (durée maximale d'interruption admissible, en anglais RTO) : combien de temps l'activité peut s'arrêter pendant la restauration.
+
+Une sauvegarde qui n'a jamais été restaurée n'est qu'une hypothèse. Le test de restauration est la partie de la politique la plus souvent oubliée.
+
+### Les journaux (mesure 36)
+Le guide demande de journaliser au minimum, sur les composants critiques :
+• pour le **pare-feu** : les paquets bloqués ;
+• pour les **systèmes et applications** : les authentifications réussies et échouées, les arrêts imprévus ;
+• pour les **services** : les erreurs de protocole et la traçabilité des flux (adresses web consultées par le proxy, en-têtes des messages sur le relais de messagerie).
+
+Les événements de sécurité sont **conservés au moins un an** (ou davantage si une réglementation l'impose), et toutes les machines utilisent la **même source de temps** (NTP), sinon les événements de deux machines ne peuvent pas être mis en ordre. Idéalement, les journaux sont **centralisés** sur un serveur dédié : un attaquant qui efface les traces locales ne touche pas à la copie centrale.
+
+Événements Windows à connaître (journal Sécurité, sauf mention) :
+
+| ID | Signification |
+|---|---|
+| 4624 | ouverture de session réussie |
+| 4625 | échec d'ouverture de session |
+| 4740 | compte verrouillé |
+| 4720 | compte utilisateur créé |
+| 4732 | membre ajouté à un groupe local de sécurité (par exemple Administrateurs) |
+| 1102 | journal de sécurité effacé |
+| 7045 | nouveau service installé (journal Système) |
+
+```powershell
+Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4625} -MaxEvents 20
+Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4732} -MaxEvents 10 | Format-List TimeCreated, Message
+wevtutil gl Security          # taille maximale du journal (maxSize)
+auditpol /get /category:*     # quelles catégories sont auditées
+```
+
+La lecture du journal Sécurité demande un PowerShell lancé en administrateur. Sur un parc, la stratégie d'audit et la taille des journaux se règlent par GPO.
+
+Sous Linux, l'envoi vers un serveur central se fait avec rsyslog : une ligne `*.* @@192.168.99.20:514` dans `/etc/rsyslog.d/90-central.conf` envoie tout en TCP (`@@`) au collecteur (un seul `@` signifie UDP).
+
+### Audits, référent et incidents (mesures 38 à 40)
+• Un **audit** régulier (au moins annuel, et après chaque changement important) reprend l'outil de suivi du guide et vérifie sur les machines : c'est l'objet du chapitre 10.
+• Un **référent** sécurité est désigné et connu de tous : c'est à lui qu'on signale un message suspect ou une perte d'ordinateur.
+• La **procédure d'incident** est écrite **avant** l'incident, imprimée, avec les numéros utiles.
+
+Les bons réflexes en cas de comportement suspect d'un poste ou d'un serveur (activité inhabituelle, fichiers chiffrés, alertes antivirus répétées) selon le guide :
+1. **déconnecter la machine du réseau** (débrancher le câble, couper le Wi-Fi) pour arrêter l'attaque ;
+2. **ne pas l'éteindre ni la redémarrer** : la mémoire contient des informations utiles à l'analyse ;
+3. **alerter** la direction et le référent sécurité ;
+4. faire appel si besoin à un prestataire de réponse aux incidents (PRIS) ;
+5. noter tout ce qui est observé et fait, avec l'heure.
+
+Ensuite :
+• **signaler et se faire aider** : la plateforme **17Cyber** (17cyber.gouv.fr), mise en place en décembre 2024 par Cybermalveillance.gouv.fr, la police et la gendarmerie, oriente particuliers, entreprises, associations et collectivités et peut les mettre en relation avec un prestataire ;
+• **porter plainte** ;
+• si des données personnelles sont touchées et que la violation présente un risque pour les personnes, **notifier la CNIL dans les 72 heures** après en avoir pris connaissance (article 33 du RGPD), et informer les personnes concernées si le risque est élevé (article 34) ;
+• **ne pas payer la rançon** : c'est la position des autorités françaises ; le paiement ne garantit ni la récupération des données ni l'absence de nouvelle attaque ;
+• reconstruire à partir de sauvegardes saines, en vérifiant qu'elles ne contiennent pas la porte dérobée de l'attaquant, et changer tous les mots de passe.
+
+### À toi de jouer
+1. Une PME de 20 postes a un serveur de fichiers de 400 Go. Aujourd'hui : copie chaque nuit sur un NAS dans la même baie, accessible avec le compte administrateur du domaine. Propose une politique de sauvegarde conforme à la règle 3-2-1 et au guide de l'ANSSI, avec fréquence, supports et tests.
+2. Sur ta machine Windows, provoque trois échecs de connexion avec un compte de test, puis retrouve-les avec `Get-WinEvent`. Quel ID cherches-tu ?
+3. Un lundi matin, l'accueil appelle : les fichiers du partage portent l'extension `.locked` et un fichier `LISEZ-MOI.txt` réclame une rançon. Écris les cinq premières actions, dans l'ordre.
+
+### Correction
+1. Exemple : sauvegarde incrémentale chaque nuit sur le NAS (copie 1, en ligne, restauration rapide), avec un compte de sauvegarde dédié et non membre du domaine, NAS dans la zone d'administration ; sauvegarde complète chaque semaine sur l'un de deux disques externes en rotation, débranché après la copie et rangé dans un autre bâtiment ou un coffre (copie 2, hors ligne, autre support). Cela fait 3 copies (production + NAS + disque), 2 supports (NAS, disque externe), 1 hors ligne. PDMA : une journée pour le NAS, une semaine au pire pour le hors ligne. Test de restauration d'un dossier chaque mois et restauration complète du serveur une fois par an, avec compte rendu. Procédure écrite et ordre de restauration définis.
+2. L'ID est 4625. `Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4625} -MaxEvents 5` affiche les trois échecs ; le message contient le nom du compte, le type d'ouverture de session et l'adresse source. Si le seuil de verrouillage est atteint, un événement 4740 apparaît aussi.
+3. Ordre : (1) débrancher du réseau le serveur de fichiers et les postes qui montrent des fichiers chiffrés, sans les éteindre ; (2) isoler l'infrastructure de sauvegarde (débrancher le NAS, ne surtout pas brancher le disque hors ligne) ; (3) alerter la direction et le référent, et noter l'heure et les observations ; (4) demander de l'aide (17Cyber, prestataire PRIS ou référencé) et porter plainte ; (5) évaluer s'il y a des données personnelles touchées pour notifier la CNIL sous 72 heures. Ne pas payer la rançon ; la restauration ne commence qu'une fois la porte d'entrée de l'attaquant identifiée et fermée.
+"""
+
+    quiz {
+      pick: 5
+      question "Que signifie la règle de sauvegarde 3-2-1 recommandée par l’ANSSI ?" {
+        - "3 sauvegardes par jour, 2 par semaine, 1 par mois"
+        + "3 copies des données, sur 2 supports différents, dont 1 hors ligne"
+        - "3 serveurs, 2 sites, 1 cloud"
+        - "3 administrateurs, 2 mots de passe, 1 coffre"
+        explanation: "3 copies (la production et 2 sauvegardes), 2 supports différents, 1 copie déconnectée de tout système. La copie hors ligne est celle qu'un attaquant ne peut pas atteindre."
+      }
+      question "Pourquoi une sauvegarde hors ligne est-elle indispensable face aux rançongiciels ?" {
+        - "parce qu'elle est plus rapide à restaurer"
+        + "parce qu'un attaquant ou un rançongiciel ne peut pas chiffrer ni effacer un support déconnecté"
+        - "parce qu'elle est chiffrée automatiquement"
+        - "parce qu'elle ne nécessite aucun test"
+        explanation: "Les attaquants cherchent et détruisent les sauvegardes accessibles avant de chiffrer. Seul un support déconnecté échappe à coup sûr à cette destruction."
+      }
+      question "Quel identifiant d’événement Windows correspond à un échec d’ouverture de session ?" {
+        - "4624"
+        + "4625"
+        - "4720"
+        - "1102"
+        explanation: "4625 est un échec d'ouverture de session, 4624 un succès, 4720 la création d'un compte et 1102 l'effacement du journal de sécurité."
+      }
+      question "Un poste montre une activité suspecte et des fichiers chiffrés. Quelle est la première action recommandée par le guide ?" {
+        - "l'éteindre immédiatement"
+        - "le redémarrer en mode sans échec"
+        + "le déconnecter du réseau sans l'éteindre"
+        - "lancer une défragmentation"
+        explanation: "Débrancher le réseau arrête la propagation. Garder la machine allumée préserve la mémoire, utile à l'analyse. L'éteindre ferait perdre ces informations."
+      }
+      question "Combien de temps le guide recommande-t-il de conserver les journaux des événements critiques pour la sécurité ?" {
+        - "une semaine"
+        - "un mois"
+        + "au moins un an"
+        - "dix ans dans tous les cas"
+        explanation: "Le guide demande au moins un an, ou plus si la réglementation du secteur l'impose. Les intrusions sont souvent découvertes des mois après leur début."
+      }
+      question "Pourquoi toutes les machines doivent-elles utiliser la même source de temps ?" {
+        - "pour que les mises à jour s'installent à la même heure"
+        + "pour pouvoir mettre en ordre et corréler les événements de plusieurs machines"
+        - "parce que Kerberos ne fonctionne qu'en UTC"
+        - "pour réduire la taille des journaux"
+        explanation: "Si les horloges dérivent, il est impossible de reconstituer l'enchaînement d'une attaque entre le pare-feu, le serveur et le poste. NTP fournit une source commune."
+      }
+      question "Une violation de données personnelles présente un risque pour les personnes. Dans quel délai faut-il la notifier à la CNIL ?" {
+        - "24 heures"
+        + "72 heures après en avoir pris connaissance"
+        - "15 jours"
+        - "un mois"
+        explanation: "L'article 33 du RGPD fixe 72 heures après la prise de connaissance. Si le risque est élevé, les personnes concernées doivent aussi être informées (article 34)."
+      }
+      question "Que mesure la PDMA (RPO) ?" {
+        - "la durée maximale d'arrêt acceptable"
+        + "la quantité maximale de données qu'on accepte de perdre, exprimée en temps"
+        - "la taille maximale d'une sauvegarde"
+        - "le nombre de copies hors ligne"
+        explanation: "Avec une sauvegarde chaque nuit, la PDMA est d'environ une journée. La durée d'arrêt acceptable est la DMIA (RTO)."
+      }
+      question "Dans une ligne rsyslog « *.* @@192.168.99.20:514 », que signifie le double @ ?" {
+        - "un envoi chiffré en TLS"
+        + "un envoi en TCP"
+        - "un envoi en UDP"
+        - "un envoi vers deux serveurs"
+        explanation: "@@ envoie en TCP, un seul @ en UDP. Le chiffrement TLS demande une configuration supplémentaire de rsyslog."
+      }
+      question "Quel événement Windows doit alerter immédiatement, car il peut signaler un attaquant qui efface ses traces ?" {
+        - "4624"
+        - "4740"
+        + "1102"
+        - "4672"
+        explanation: "1102 indique que le journal de sécurité a été effacé. Hors opération planifiée, c'est un signal fort. 4740 signale un compte verrouillé."
+      }
+      question "Pourquoi les serveurs de sauvegarde ne doivent-ils pas appartenir au domaine Active Directory de production ?" {
+        - "parce qu'Active Directory ralentit les sauvegardes"
+        + "parce qu'un attaquant qui compromet le domaine obtiendrait aussi l'accès aux sauvegardes"
+        - "parce que la loi l'interdit"
+        - "parce que les sauvegardes doivent être anonymes"
+        explanation: "Si l'annuaire tombe, tous les serveurs qui en dépendent tombent avec lui. Une authentification indépendante protège la sauvegarde, dernier recours."
+      }
+      question "Que dit la position des autorités françaises sur le paiement d’une rançon ?" {
+        - "payer est recommandé si la rançon est faible"
+        + "il ne faut pas payer : cela ne garantit ni la récupération des données ni l'absence de nouvelle attaque"
+        - "payer est obligatoire pour les collectivités"
+        - "il faut payer puis porter plainte"
+        explanation: "Les autorités déconseillent de payer. Le paiement finance les attaquants, ne garantit pas la clé de déchiffrement et désigne la victime comme payeuse."
+      }
+      question "Vers quelle plateforme publique une PME victime d’une cyberattaque peut-elle se tourner pour être orientée et assistée ?" {
+        - "le site de l'Afnic"
+        + "17Cyber (17cyber.gouv.fr)"
+        - "le registre du commerce"
+        - "le site de son fournisseur d'accès uniquement"
+        explanation: "17Cyber, lancée en décembre 2024 par Cybermalveillance.gouv.fr, la police et la gendarmerie, oriente particuliers, entreprises, associations et collectivités et les met en relation avec des prestataires."
+      }
+    }
+  }
+
+  module "synthese-audit" {
+    title: "Chapitre 10 : synthèse, auditer l'hygiène d'une petite structure"
+    duration: "45min"
+    content: """
+### Le but de l'audit
+Un audit d'hygiène répond à trois questions : **où en est-on** par rapport aux 42 mesures, **qu'est-ce qui est le plus dangereux**, et **dans quel ordre corriger**. Ce n'est pas un test d'intrusion : on ne cherche pas à attaquer, on vérifie que les protections de base sont en place, preuves à l'appui. C'est la mesure 38 du guide (contrôles et audits réguliers, puis actions correctives).
+
+Règle de départ, déjà vue au chapitre 2 : tu n'audites que ce que la direction t'a **autorisé par écrit** à auditer (périmètre, dates, machines, scans autorisés ou non). Les comptes rendus contiennent des faiblesses : ils sont confidentiels.
+
+### La méthode en cinq étapes
+1. **Cadrer** : périmètre (sites, postes, serveurs, Wi-Fi, services en ligne), interlocuteurs, autorisation écrite.
+2. **Interroger** : un entretien d'une heure avec la personne qui gère l'informatique et la direction (sauvegardes, prestataires, procédure de départ, incidents passés).
+3. **Vérifier sur les machines** : chaque réponse « oui » de l'entretien est prouvée par une commande, une capture ou un document. Un échantillon suffit sur les postes (par exemple 3 postes sur 20, dont un portable), mais tous les serveurs et équipements réseau sont vus.
+4. **Noter** chaque mesure : **fait**, **partiel**, **non fait** ou **non applicable**, avec la preuve.
+5. **Restituer** : un plan d'action priorisé, compréhensible par la direction.
+
+### La checklist d'une petite structure
+Voici une grille réduite, tirée des mesures du guide, adaptée à une structure de 5 à 50 postes. Chaque ligne a sa preuve attendue.
+
+| Domaine | Point de contrôle | Mesures | Preuve attendue |
+|---|---|---|---|
+| Personnes | charte signée, sensibilisation dans l'année, référent connu | 1, 2, 39 | charte, liste d'émargement |
+| Prestataires | contrat avec clauses de sécurité, accès à distance nominatif et tracé | 3 | contrat, liste des accès |
+| Inventaire | liste à jour des postes, serveurs, logiciels et schéma réseau | 4 | export GLPI ou tableau daté |
+| Comptes privilégiés | liste nominative, pas de compte orphelin | 5 | `Get-LocalGroupMember`, `getent group sudo`, membres « Admins du domaine » |
+| Arrivées et départs | procédure écrite, comptes désactivés le jour du départ | 6 | procédure, comptes des derniers partis |
+| Mots de passe et MFA | politique conforme CNIL, MFA sur la messagerie et les accès distants | 10, 13 | `net accounts`, console de la messagerie |
+| Mots de passe par défaut | changés sur box, imprimantes, commutateurs, caméras | 12 | essai de connexion avec l'identifiant constructeur |
+| Postes | pare-feu, antivirus, chiffrement des portables, pas d'admin au quotidien | 14, 17, 29, 31 | script de contrôle du chapitre 5 |
+| Mises à jour | systèmes supportés, correctifs de moins d'un mois | 34, 35 | `Get-HotFix`, `apt list --upgradable` |
+| Réseau | VLAN séparés, Wi-Fi invité isolé, aucun protocole en clair | 19, 20, 21 | configuration du commutateur, test depuis le Wi-Fi invité |
+| Exposition Internet | aucun RDP ni partage de fichiers ouvert, services exposés isolés | 22, 23 | redirections de la box ou du pare-feu |
+| Administration | comptes d'administration séparés, pas de navigation avec | 27, 28, 29 | liste des comptes, entretien |
+| Sauvegardes | 3-2-1 avec copie hors ligne, restauration testée | 37 | dernier test de restauration daté |
+| Journaux | journaux activés, horloges synchronisées, conservation | 36 | `auditpol`, `timedatectl`, taille des journaux |
+| Incidents | procédure écrite et affichée, numéros utiles | 40 | document |
+
+### Vérifier un poste Windows en une passe
+Le script suivant ne modifie rien. Lance-le dans un PowerShell en administrateur (BitLocker et l'état de Defender le demandent).
+
+```powershell
+"--- Pare-feu";      Get-NetFirewallProfile | Format-Table Name, Enabled
+"--- Defender";      Get-MpComputerStatus | Format-List RealTimeProtectionEnabled, AntivirusSignatureLastUpdated
+"--- BitLocker";     Get-BitLockerVolume -MountPoint C: | Format-List ProtectionStatus
+"--- SMBv1";         (Get-WindowsOptionalFeature -Online -FeatureName SMB1Protocol).State
+"--- Admins";        Get-LocalGroupMember -SID S-1-5-32-544 | Select-Object Name
+"--- Comptes";       net accounts
+"--- Correctifs";    Get-HotFix | Sort-Object InstalledOn -Descending | Select-Object -First 3 HotFixID, InstalledOn
+"--- Système";       Get-CimInstance Win32_OperatingSystem | Select-Object Caption, BuildNumber
+```
+
+`net accounts` affiche la longueur minimale du mot de passe, sa durée de vie et le seuil de verrouillage du compte : c'est la preuve rapide de la politique locale (sur un domaine, la stratégie se lit dans la console de gestion des stratégies de groupe).
+
+### Vérifier un serveur Debian en une passe
+```bash
+cat /etc/os-release | grep PRETTY_NAME
+sudo apt update -qq && apt list --upgradable 2>/dev/null | tail -n +2 | wc -l   # paquets en retard
+sudo sshd -T | grep -Ei '^(permitrootlogin|passwordauthentication)'
+systemctl is-active nftables fail2ban auditd unattended-upgrades
+getent group sudo
+awk -F: '$3 == 0 {print $1}' /etc/passwd
+sudo ss -tulpn
+timedatectl | grep -i synchronized
+sudo find / -xdev -perm -4000 -type f 2>/dev/null     # programmes SUID, à comparer à la liste habituelle
+```
+
+Le dernier test liste les programmes qui s'exécutent avec les droits de leur propriétaire (souvent root). Sur une Debian propre, on y trouve `passwd`, `sudo`, `su`, `mount`… Un fichier inconnu dans cette liste, surtout dans `/tmp` ou un dossier personnel, est suspect. Pour un audit plus complet, `sudo lynis audit system` (vu au chapitre 8) produit un indice de durcissement et des suggestions.
+
+### Vérifier le réseau
+• **Depuis le Wi-Fi invité** : tente de joindre le serveur de fichiers et l'interface d'administration de la box (`ping`, `Test-NetConnection 192.168.10.10 -Port 445`). Le résultat attendu est un échec.
+• **Depuis Internet** (connexion 4G du téléphone partagée au portable de test) : vérifie qu'aucun port d'administration ne répond sur l'adresse publique de la structure. Un scan de ports de l'adresse publique n'est fait qu'avec l'autorisation écrite et seulement sur l'adresse de la structure auditée.
+• **Sur le réseau interne** : `nmap -sn` pour comparer avec l'inventaire ; tout équipement inconnu est identifié.
+
+### Prioriser : gravité et facilité
+Toutes les faiblesses ne se valent pas. On classe chacune selon sa **gravité** (que peut faire un attaquant, quelle conséquence pour l'activité) et la **difficulté** de correction. On obtient trois horizons :
+• **immédiat (dans la semaine)** : ce qui est grave et facile. Fermer un RDP exposé, désactiver un compte d'ancien salarié, débrancher un disque de sauvegarde, changer un mot de passe par défaut, activer la MFA sur la messagerie ;
+• **court terme (1 à 3 mois)** : ce qui est grave mais demande du travail. Sauvegarde hors ligne testée, retrait des droits d'administration, migration des postes en fin de support, VLAN et Wi-Fi invité ;
+• **moyen terme (3 à 12 mois)** : ce qui structure. GLPI, journaux centralisés, comptes d'administration séparés, procédure d'incident testée, sensibilisation régulière.
+
+Le rapport tient en deux parties : une page pour la direction (les cinq risques principaux en phrases simples, le coût et le délai), puis le détail technique par mesure. Un audit sans plan d'action daté et sans responsable par action reste sans effet : on fixe la date du prochain contrôle.
+
+### Où trouver de l'aide
+• **Cybermalveillance.gouv.fr** : fiches pratiques, prestataires labellisés « ExpertCyber », et la plateforme **17Cyber** en cas d'attaque ;
+• **MonAideCyber** (ANSSI) : un diagnostic gratuit réalisé par un « aidant cyber » bénévole pour les petites entités (collectivités, associations, PME) ;
+• le guide ANSSI et CPME « La cybersécurité pour les TPE/PME en treize questions », court et lisible par une direction.
+
+### À toi de jouer : mini-projet d'audit
+Une association d'aide à domicile, 15 salariés, te confie l'audit de son informatique. Voici ce que donnent l'entretien et tes vérifications :
+
+```text
+Entretien
+- Pas de charte. Aucune sensibilisation depuis 3 ans. Pas de référent désigné.
+- Un prestataire intervient à distance avec un outil de prise en main, compte partagé "maintenance".
+- Sauvegarde : NAS dans le bureau, copie chaque nuit, jamais testée. Pas d'autre copie.
+- Une salariée partie il y a 6 mois : "je crois que son compte existe encore".
+Box internet
+- Redirection 3389 -> 192.168.1.20 (serveur Windows Server 2016, logiciel de planning)
+- Wi-Fi unique "ASSO", mot de passe affiché dans la salle d'attente, utilisé par les visiteurs
+Poste PC-03 (portable de l'infirmière coordinatrice)
+- Windows 11 Pro 24H2, Defender actif, BitLocker : ProtectionStatus Off
+- Administrateurs : Administrateur (désactivé), infirmiere
+- net accounts : Longueur minimale du mot de passe 0 ; Seuil de verrouillage Jamais
+Serveur SRV-PLANNING (Windows Server 2016)
+- Dernier correctif installé il y a 14 mois
+- Compte "mdupont" (salariée partie) : actif, membre de "Administrateurs"
+Messagerie hébergée
+- Pas de MFA
+```
+
+1. Remplis la checklist pour chacun des domaines concernés (fait, partiel ou non fait) avec la mesure du guide.
+2. Classe les constats en trois horizons (immédiat, court terme, moyen terme), avec au moins quatre actions immédiates.
+3. Rédige les cinq lignes de la page « direction », sans jargon.
+4. Quelles données de cette association rendent les fuites particulièrement graves, et quelle obligation s'appliquerait en cas de violation ?
+
+### Correction
+1. Personnes (mesures 1, 2, 39) : non fait. Prestataires (3) : non fait, compte partagé sans traçabilité. Comptes privilégiés et départs (5, 6) : non fait, `mdupont` est administratrice du serveur six mois après son départ. Mots de passe et MFA (10, 13) : non fait, aucune longueur minimale, aucun verrouillage, pas de MFA. Postes (14, 29, 31) : partiel, Defender actif mais portable non chiffré et utilisatrice administratrice. Mises à jour (34) : non fait, 14 mois de retard ; (35) : Windows Server 2016 est encore sous support étendu jusqu'au 12 janvier 2027, sa migration doit être planifiée dès maintenant. Réseau et Wi-Fi (19, 20) : non fait. Exposition Internet (22, 23) : non fait, RDP ouvert. Sauvegardes (37) : partiel, une seule copie en ligne, jamais testée. Incidents (40) : non fait.
+2. **Immédiat** : fermer la redirection 3389 et prévoir un accès par VPN avec MFA ; désactiver `mdupont` et vérifier les connexions récentes de ce compte (événements 4624) ; installer les correctifs du serveur ; activer la MFA sur la messagerie ; faire une première copie de sauvegarde sur un disque externe débranché ensuite ; remplacer le compte « maintenance » par un compte nominatif pour le prestataire. **Court terme** : BitLocker sur le portable avec clé de récupération stockée hors de la machine ; politique de mots de passe (12 caractères minimum, verrouillage après quelques échecs) ; retrait des droits d'administration de l'utilisatrice ; Wi-Fi invité séparé (SSID et VLAN distincts, isolé du réseau interne) ; règle 3-2-1 avec test de restauration ; plan de migration du serveur avant janvier 2027. **Moyen terme** : charte, sensibilisation et référent ; inventaire ; procédure d'arrivée et de départ ; procédure d'incident ; clauses de sécurité dans le contrat du prestataire.
+3. Exemple : (1) le serveur du planning est accessible depuis Internet sans protection et n'est plus mis à jour : il peut être pris par un rançongiciel à tout moment ; (2) une ancienne salariée a encore tous les droits sur ce serveur ; (3) les données ne sont copiées qu'à un seul endroit, dans le même bureau, et la restauration n'a jamais été essayée ; (4) les visiteurs utilisent le même Wi-Fi que les ordinateurs de l'association ; (5) le portable de la coordinatrice, s'il est perdu, donne accès à toutes ses données. Coût : surtout du temps, un disque externe et la configuration de la box ; délai : une semaine pour les urgences.
+4. L'association traite des **données de santé** de personnes aidées, une catégorie particulière de données personnelles au sens de l'article 9 du RGPD. En cas de violation présentant un risque pour les personnes, elle doit notifier la CNIL dans les 72 heures (article 33) et, si le risque est élevé, informer les personnes concernées (article 34). C'est un argument de plus pour chiffrer le portable et fermer le RDP.
+
+### Pour aller plus loin
+• Guide d'hygiène informatique, renforcer la sécurité de son système d'information en 42 mesures, ANSSI : https://cyber.gouv.fr
+• Sauvegarde des systèmes d'information : les fondamentaux (ANSSI-BP-100), ANSSI : https://cyber.gouv.fr
+• Recommandations de configuration d'un système GNU/Linux (ANSSI-BP-028) et Recommandations relatives à l'administration sécurisée des systèmes d'information (ANSSI-PA-022), ANSSI : https://cyber.gouv.fr
+• Recommandation relative aux mots de passe et autres secrets partagés (délibération n° 2022-100) et Guide de la sécurité des données personnelles, CNIL : https://www.cnil.fr
+• Windows security baselines et Windows LAPS, Microsoft Learn : https://learn.microsoft.com/windows/security/
+• Cybermalveillance.gouv.fr et 17Cyber : https://www.cybermalveillance.gouv.fr
+"""
+
+    codeblock "bash" {
+      title: "Contrôle rapide d'un serveur Debian (lecture seule)"
+      code: """
+grep PRETTY_NAME /etc/os-release
+apt list --upgradable 2>/dev/null | tail -n +2 | wc -l
+sudo sshd -T | grep -Ei '^(permitrootlogin|passwordauthentication)'
+systemctl is-active nftables fail2ban auditd unattended-upgrades
+getent group sudo
+awk -F: '$3 == 0 {print $1}' /etc/passwd
+sudo ss -tulpn
+timedatectl | grep -i synchronized
+"""
+    }
+
+    quiz {
+      pick: 10
+      question "Quelle est la différence principale entre un audit d’hygiène et un test d’intrusion ?" {
+        - "l'audit d'hygiène exploite les failles pour prouver qu'elles existent"
+        + "l'audit d'hygiène vérifie, preuves à l'appui, que les protections de base sont en place"
+        - "le test d'intrusion ne demande aucune autorisation écrite"
+        - "l'audit d'hygiène ne porte que sur les postes de travail"
+        explanation: "L'audit d'hygiène compare la situation aux mesures du guide et demande une preuve pour chacune. Le test d'intrusion tente réellement d'attaquer. Les deux exigent une autorisation écrite."
+      }
+      question "Avant de lancer un scan nmap sur le réseau d’un client, que te faut-il ?" {
+        - "un compte administrateur du domaine"
+        - "l'accord oral du technicien présent"
+        + "une autorisation écrite de la direction précisant le périmètre"
+        - "rien, un scan de découverte est toujours légal"
+        explanation: "Un scan sans autorisation peut constituer une tentative d'accès frauduleux à un système. L'autorisation écrite fixe le périmètre, les dates et ce qui est permis. L'accord oral d'un technicien ne suffit pas."
+      }
+      question "Une copie chaque nuit sur un NAS dans le même bureau, jamais testée. Que manque-t-il pour respecter la règle 3-2-1 ?" {
+        - "rien, deux copies suffisent"
+        - "un deuxième NAS branché au même réseau"
+        + "une copie supplémentaire sur un autre support, dont une hors ligne, et des tests de restauration"
+        - "une sauvegarde toutes les heures sur le même NAS"
+        explanation: "La règle 3-2-1 demande 3 copies (production et 2 sauvegardes), 2 supports différents et 1 copie hors ligne. Un deuxième NAS en ligne serait chiffré par un rançongiciel comme le premier. Et une sauvegarde jamais restaurée n'est pas fiable."
+      }
+      question "Parmi ces constats, lequel est à corriger dans la semaine ?" {
+        - "l'absence d'outil d'inventaire automatique"
+        + "une redirection du port 3389 de la box vers un serveur"
+        - "l'absence de journaux centralisés"
+        - "la charte informatique non signée"
+        explanation: "Un bureau à distance exposé sur Internet est l'une des premières portes d'entrée des rançongiciels, et sa fermeture prend quelques minutes : grave et facile, donc immédiat. Les trois autres sont utiles mais relèvent du moyen terme."
+      }
+      question "Que montre la commande Windows « net accounts » ?" {
+        - "la liste des comptes du groupe Administrateurs"
+        - "les comptes connectés en ce moment"
+        + "la politique locale : longueur minimale, durée de vie du mot de passe, seuil de verrouillage"
+        - "les comptes de messagerie configurés"
+        explanation: "net accounts affiche les paramètres de la politique de mots de passe et de verrouillage. Les membres du groupe Administrateurs se lisent avec Get-LocalGroupMember -SID S-1-5-32-544."
+      }
+      question "Un audit relève « Seuil de verrouillage : Jamais ». Quel risque ?" {
+        - "les utilisateurs ne peuvent plus changer leur mot de passe"
+        + "un attaquant peut essayer un nombre illimité de mots de passe"
+        - "la session ne se verrouille jamais quand l'utilisateur s'absente"
+        - "le compte Administrateur intégré reste activé"
+        explanation: "Le seuil de verrouillage limite les essais successifs. Sans lui, une attaque par force brute ou par dictionnaire n'est freinée par rien. Le verrouillage de session après inactivité est un autre réglage."
+      }
+      question "Quelle commande Debian liste les programmes SUID du système de fichiers racine ?" {
+        - "ls -l /usr/bin | grep root"
+        - "sudo ss -tulpn"
+        + "sudo find / -xdev -perm -4000 -type f"
+        - "getent group sudo"
+        explanation: "-perm -4000 sélectionne les fichiers dont le bit SUID est positionné, -xdev reste sur le même système de fichiers, -type f garde les fichiers ordinaires. ss liste les ports en écoute, getent les membres d'un groupe."
+      }
+      question "Dans « systemctl is-active nftables fail2ban auditd », que signifie une ligne « inactive » ?" {
+        - "le paquet n'est pas installé"
+        + "le service correspondant ne tourne pas en ce moment"
+        - "le service démarrera au prochain redémarrage"
+        - "le service fonctionne mais sans journal"
+        explanation: "is-active donne l'état actuel de chaque unité, dans l'ordre. inactive veut dire arrêtée. Pour savoir si elle démarre au boot, il faut systemctl is-enabled. Un paquet absent donne aussi inactive, ce qui ne permet pas de distinguer les deux cas."
+      }
+      question "Pourquoi vérifier « System clock synchronized: yes » pendant un audit ?" {
+        - "pour que les mises à jour s'installent à l'heure prévue"
+        - "parce que SSH refuse les connexions si l'horloge dérive d'une seconde"
+        + "pour pouvoir mettre en ordre les événements de plusieurs machines dans les journaux"
+        - "pour que BitLocker puisse déverrouiller le disque"
+        explanation: "Sans source de temps commune, les journaux de deux machines ne peuvent pas être corrélés lors d'une enquête. Le guide demande une synchronisation de toutes les machines sur la même référence."
+      }
+      question "Un poste a « BitLocker : ProtectionStatus Off ». Quelle mesure du guide est en défaut ?" {
+        - "mesure 17, pare-feu local"
+        + "mesure 31, chiffrer les données sensibles sur le matériel perdable"
+        - "mesure 21, protocoles sécurisés"
+        - "mesure 36, journalisation"
+        explanation: "Un portable non chiffré perdu ou volé livre ses données à qui démonte le disque. La mesure 31 (chapitre VII, nomadisme) demande le chiffrement des données sensibles sur ce matériel."
+      }
+      question "Depuis le Wi-Fi invité, « Test-NetConnection 192.168.10.10 -Port 445 » renvoie TcpTestSucceeded : True. Que conclure ?" {
+        + "le Wi-Fi invité n'est pas isolé : il atteint le partage de fichiers interne"
+        - "le serveur de fichiers est bien protégé par son pare-feu"
+        - "le Wi-Fi invité fonctionne normalement"
+        - "le port 445 est fermé sur le serveur"
+        explanation: "TcpTestSucceeded True signifie que la connexion TCP au port 445 (SMB) a abouti. Un visiteur peut donc atteindre le serveur de fichiers, ce qui contredit la mesure 20 (séparation des usages)."
+      }
+      question "Un compte d’une salariée partie il y a six mois est encore administrateur du serveur. Quelle procédure a échoué ?" {
+        - "la procédure de sauvegarde"
+        - "la politique de mise à jour"
+        + "la procédure de départ et la revue des comptes privilégiés"
+        - "la procédure de gestion des incidents"
+        explanation: "La mesure 6 demande de désactiver les comptes le jour du départ, et la mesure 5 de revoir régulièrement l'inventaire des comptes privilégiés. Ici, aucune des deux n'a fonctionné."
+      }
+      question "Comment classer « installer GLPI et son agent sur tous les postes » dans le plan d’action ?" {
+        - "immédiat, car c'est la première mesure du guide"
+        - "inutile dans une structure de moins de 50 postes"
+        + "moyen terme, car c'est utile et structurant mais demande du travail"
+        - "à déléguer obligatoirement au prestataire"
+        explanation: "L'inventaire est important mais long à mettre en place et ne ferme pas à lui seul une porte d'entrée. On le planifie après les actions graves et rapides."
+      }
+      question "Que doit contenir la partie du rapport destinée à la direction ?" {
+        - "la sortie complète de chaque commande lancée"
+        - "la liste des 42 mesures avec leur numéro"
+        + "les principaux risques en phrases simples, avec coût et délai des corrections"
+        - "les mots de passe découverts pendant l'audit"
+        explanation: "La direction décide et finance : elle a besoin de comprendre les risques et ce qu'il faut faire. Le détail technique va dans la seconde partie. Un rapport ne contient jamais de mot de passe en clair."
+      }
+      question "Quel service de l’ANSSI propose un diagnostic gratuit par un aidant bénévole aux petites entités ?" {
+        - "PASSI"
+        + "MonAideCyber"
+        - "SecNumCloud"
+        - "CERT-FR"
+        explanation: "MonAideCyber met en relation les petites structures avec des aidants formés qui font un premier diagnostic. PASSI est une qualification de prestataires d'audit, SecNumCloud une qualification d'offres cloud, et le CERT-FR publie avis et alertes."
+      }
+      question "Une association traite des données de santé et subit une fuite risquée pour les personnes. Quel délai pour notifier la CNIL ?" {
+        - "24 heures"
+        + "72 heures après en avoir pris connaissance"
+        - "15 jours"
+        - "aucune notification, seulement les personnes concernées"
+        explanation: "L'article 33 du RGPD impose 72 heures après la prise de connaissance de la violation. Si le risque est élevé, l'article 34 demande aussi d'informer les personnes concernées."
+      }
+      question "Pourquoi faut-il prouver chaque réponse « oui » de l’entretien sur les machines ?" {
+        - "parce que l'entretien n'a aucune valeur"
+        + "parce que la situation réelle diffère souvent de ce que les gens croient"
+        - "parce que la loi l'impose pour tout audit"
+        - "pour pouvoir facturer plus de temps"
+        explanation: "On entend souvent « la sauvegarde marche » ou « les mises à jour sont automatiques » alors que la vérification montre l'inverse. L'entretien oriente, la preuve tranche."
+      }
+      question "Pour des postes de travail, quelle méthode d’échantillonnage est raisonnable dans une PME de 20 postes ?" {
+        - "ne vérifier aucun poste, seulement les serveurs"
+        - "vérifier un seul poste au hasard"
+        + "vérifier quelques postes de profils différents, dont un portable, et tous les serveurs"
+        - "réinstaller tous les postes avant de les auditer"
+        explanation: "Un échantillon de profils variés (accueil, comptabilité, portable nomade) révèle les écarts de configuration. Les serveurs et équipements réseau, moins nombreux et plus critiques, sont tous vérifiés."
+      }
+      question "Windows Server 2016 est sous support étendu jusqu’au 12 janvier 2027. Que recommander en novembre 2026 ?" {
+        - "rien, il reste couvert"
+        + "appliquer les correctifs maintenant et planifier la migration avant la fin du support"
+        - "désactiver Windows Update pour éviter les incidents"
+        - "le passer en Windows 10 pour prolonger le support"
+        explanation: "La mesure 35 demande d'anticiper les fins de maintenance. Une migration de serveur prend du temps (tests, logiciels métier) : il faut l'engager plusieurs mois avant la date."
+      }
+      question "Quel indice permet de juger qu’un plan d’action a des chances d’être appliqué ?" {
+        - "il contient plus de cinquante actions"
+        - "il est rédigé uniquement en termes techniques"
+        + "chaque action a un responsable, une échéance et une date de contrôle"
+        - "il est envoyé par e-mail à tous les salariés"
+        explanation: "Sans responsable ni date, les actions restent des souhaits. La mesure 38 prévoit des contrôles réguliers suivis des corrections : on fixe dès la restitution la date du prochain contrôle."
+      }
+    }
+  }
+}

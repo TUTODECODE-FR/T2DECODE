@@ -1,0 +1,2456 @@
+tdc-version: 2
+type: course
+
+course "python-basics" {
+  title: "Python : les bases de la programmation"
+  description: """
+Ce cours t'apprend à programmer en Python à partir de zéro, avec des exemples tirés du quotidien d'un technicien : convertir des débits, vérifier une saisie, calculer un masque de sous-réseau, compter les échecs de connexion dans un journal. Il s'adresse aux élèves de bac pro CIEL, BTS SIO (SISR et SLAM), BTS CIEL, BUT informatique et réseaux, et à toute personne qui veut écrire ses premiers scripts utiles.
+
+À la fin, tu sauras :
+• installer Python sous Linux et Windows, utiliser l'interpréteur interactif et lancer un script ;
+• manipuler les variables, les types (int, float, str, bool, None) et les conversions sans te faire piéger ;
+• lire une saisie au clavier, afficher un résultat bien formaté avec les f-strings et travailler sur les chaînes ;
+• écrire des conditions et des boucles for et while correctes ;
+• ranger des données dans des listes et des dictionnaires, puis les parcourir, trier et compter ;
+• découper un programme en fonctions réutilisables ;
+• lire et écrire des fichiers texte et gérer les erreurs avec try / except ;
+• utiliser les modules standard (ipaddress, collections, pathlib, datetime, secrets, sys) ;
+• écrire un code lisible qui respecte les conventions de la PEP 8.
+
+Le cours se termine par deux petits programmes complets : un calculateur d'adresses IPv4 et un analyseur de journal de connexions SSH. Chaque chapitre contient un exercice pratique avec sa correction, et une banque de questions tirées au hasard.
+
+Prérequis : savoir ouvrir un terminal (Linux) ou PowerShell (Windows) et taper une commande. Pour les exemples réseau, savoir ce qu'est une adresse IPv4 et un masque aide, mais tout est réexpliqué.
+"""
+  category: "python"
+  level: "beginner"
+  duration: "7h"
+  icon: "Code"
+  keywords: ["python", "python3", "programmation", "script", "variables", "types", "boucles", "listes", "dictionnaires", "fonctions", "fichiers", "exceptions", "try except", "f-string", "ipaddress", "pep 8", "débutant"]
+
+  module "installer-lancer" {
+    title: "Chapitre 1 : installer Python et lancer un premier script"
+    duration: "25min"
+    content: """
+### Ce qu'est Python
+Python est un langage de programmation **interprété** : tu écris un fichier texte (un script `.py`) et un programme appelé l'**interpréteur** le lit et l'exécute ligne par ligne, sans étape de compilation visible. Il est très utilisé pour automatiser l'administration système et réseau, analyser des données, écrire des outils de sécurité ou des sites web.
+
+On parle aujourd'hui uniquement de **Python 3**. Python 2 n'est plus maintenu depuis le 1er janvier 2020 : si un tutoriel écrit `print "bonjour"` sans parenthèses, il date de Python 2 et ne fonctionnera pas.
+
+### Installer Python sous Linux (Debian, Ubuntu)
+Python 3 est presque toujours déjà installé, car beaucoup d'outils du système en dépendent. Vérifie :
+
+```bash
+python3 --version
+```
+
+Tu dois obtenir une ligne du type `Python 3.11.2` (Debian 12), `Python 3.12.3` (Ubuntu 24.04) ou `Python 3.13.5` (Debian 13). S'il manque : `sudo apt install python3`.
+
+Attention au nom de la commande : sur Debian et Ubuntu, la commande s'appelle **`python3`**. La commande `python` seule n'existe pas par défaut (le paquet `python-is-python3` la crée si tu y tiens).
+
+### Installer Python sous Windows
+Depuis Python 3.14, la méthode recommandée est le **gestionnaire d'installation Python** (Python install manager), disponible sur python.org ou dans le Microsoft Store. Il fournit trois commandes : `python`, `py` et `pymanager`.
+
+```powershell
+py list              # versions installées (la version par défaut est marquée)
+py install 3.14      # installer une version précise
+python --version     # lancer la version par défaut
+```
+
+Piège classique : sur un Windows neuf, taper `python` peut ouvrir la page du Microsoft Store au lieu de lancer Python. C'est un « alias d'exécution d'application » ; il disparaît une fois Python installé, ou se désactive dans Paramètres > Applications > Paramètres avancés des applications > Alias d'exécution d'application.
+
+### L'interpréteur interactif (REPL)
+Tape `python3` (Linux) ou `py` (Windows) sans argument : tu obtiens l'invite `>>>`. Chaque ligne tapée est exécutée tout de suite et son résultat affiché. C'est parfait pour tester une idée.
+
+```text
+>>> 2 + 3
+5
+>>> "réseau".upper()
+'RÉSEAU'
+>>> exit()
+```
+
+Pour sortir : `exit()`, ou Ctrl+D sous Linux, Ctrl+Z puis Entrée sous Windows.
+
+### Écrire et lancer un script
+Un script est un simple fichier texte enregistré en UTF-8 avec l'extension `.py`. N'importe quel éditeur convient : VS Code avec l'extension Python, IDLE (livré avec Python sous Windows), nano ou vim. Pas de traitement de texte (Word, LibreOffice Writer) : il ajoute une mise en forme que l'interpréteur ne comprend pas.
+
+Fichier `bonjour.py` :
+
+```python
+# Mon premier script : une ligne qui commence par # est un commentaire
+print("Bonjour, le réseau du lycée est prêt.")
+print("2 + 2 =", 2 + 2)
+```
+
+On le lance depuis le dossier qui le contient :
+
+```bash
+python3 bonjour.py      # Linux
+py bonjour.py           # Windows
+```
+
+### Le shebang (Linux)
+Pour lancer un script directement avec `./bonjour.py`, ajoute en toute première ligne un **shebang** qui indique quel interpréteur utiliser, puis rends le fichier exécutable :
+
+```bash
+#!/usr/bin/env python3
+```
+
+```bash
+chmod +x bonjour.py
+./bonjour.py
+```
+
+`/usr/bin/env python3` cherche `python3` dans le PATH, ce qui marche aussi quand Python n'est pas dans `/usr/bin`. Sous Windows, le shebang est ignoré par l'explorateur mais lu par `py`.
+
+### Lire un message d'erreur
+Quand le programme plante, Python affiche une **trace** (traceback). Lis-la **de bas en haut** : la dernière ligne donne le type d'erreur et le message, les lignes au-dessus disent où elle s'est produite.
+
+```text
+Traceback (most recent call last):
+  File "/home/eleve/bonjour.py", line 3, in <module>
+    print("Total :" + 5)
+          ~~~~~~~~~~^~~
+TypeError: can only concatenate str (not "int") to str
+```
+
+Ici : ligne 3, on essaie de coller (concaténer) un texte et un nombre. On verra au chapitre 2 comment corriger.
+
+### L'indentation fait partie du langage
+En Python, les blocs (le contenu d'un `if`, d'une boucle, d'une fonction) sont délimités par le **décalage** des lignes, pas par des accolades. La convention est de **4 espaces** par niveau. Mélanger tabulations et espaces provoque des erreurs `IndentationError` ou `TabError` : règle ton éditeur pour insérer 4 espaces quand tu appuies sur Tab.
+
+### À toi de jouer
+1. Vérifie la version de Python installée sur ta machine. Note la commande utilisée et le résultat.
+2. Dans l'interpréteur interactif, calcule le nombre de secondes dans une journée, puis sors proprement.
+3. Écris un script `infos.py` qui affiche la version de Python, le système d'exploitation et le nom de la machine. Indice : les modules `sys` et `platform` contiennent `sys.version`, `platform.system()` et `platform.node()`.
+4. Un camarade lance `python bonjour.py` sur un Debian 12 et obtient `bash: python: command not found`. Explique la cause et donne deux solutions.
+
+### Correction
+1. Linux : `python3 --version` donne par exemple `Python 3.11.2`. Windows : `python --version` ou `py list`.
+2. Tape `24 * 60 * 60`, le résultat est `86400`. Sortie avec `exit()`.
+3. Script attendu (voir le bloc de code ci-dessous). Résultat sur Debian : `Linux` pour le système, le nom d'hôte de la machine pour `platform.node()`. Sous Windows, `platform.system()` renvoie `Windows`.
+4. Sur Debian et Ubuntu, la commande s'appelle `python3`, pas `python`. Solution 1 : lancer `python3 bonjour.py`. Solution 2 : installer le paquet `python-is-python3`, qui crée la commande `python`. Une troisième solution est d'ajouter le shebang `#!/usr/bin/env python3`, de faire `chmod +x bonjour.py` puis `./bonjour.py`.
+"""
+
+    codeblock "python" {
+      title: "infos.py : afficher la version de Python et le système"
+      code: """
+#!/usr/bin/env python3
+# Affiche quelques informations sur la machine
+import platform
+import sys
+
+print("Version de Python :", sys.version)
+print("Système :", platform.system())
+print("Nom de la machine :", platform.node())
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle commande affiche la version de Python sur une Debian 12 fraîchement installée ?" {
+        - "python --version"
+        + "python3 --version"
+        - "py --version"
+        - "pip --version"
+        explanation: "Sur Debian et Ubuntu, l'interpréteur s'appelle python3. La commande python n'existe pas sans le paquet python-is-python3, et py est la commande du gestionnaire d'installation sous Windows. pip affiche la version de pip, pas celle de Python."
+      }
+      question "Que signifie l’invite >>> dans un terminal ?" {
+        - "le terminal attend une commande bash avec les droits root"
+        + "tu es dans l'interpréteur interactif de Python"
+        - "le script est en cours de compilation"
+        - "une erreur de syntaxe vient d'être détectée"
+        explanation: "L'invite >>> est celle du REPL de Python : chaque ligne tapée est exécutée immédiatement. L'invite root de bash est #, et Python ne présente pas de phase de compilation visible."
+      }
+      question "Quelle est la bonne façon de lire une trace d’erreur (traceback) Python ?" {
+        - "de haut en bas, la première ligne donne l'erreur"
+        + "de bas en haut : la dernière ligne donne le type d'erreur et le message"
+        - "seulement la ligne qui contient le mot File"
+        - "il faut l'ignorer et relancer le script"
+        explanation: "Python affiche les appels du plus ancien au plus récent ; la dernière ligne contient le type d'erreur (TypeError, NameError…) et son message. Les lignes File juste au-dessus indiquent le fichier et le numéro de ligne fautif."
+      }
+      question "À quoi sert la ligne « #!/usr/bin/env python3 » au début d’un script ?" {
+        - "c'est un commentaire décoratif sans effet"
+        - "elle importe le module env"
+        + "elle indique au système quel interpréteur utiliser quand on lance ./script.py"
+        - "elle active le mode administrateur de Python"
+        explanation: "C'est le shebang. Quand le fichier est exécutable (chmod +x) et lancé avec ./script.py, le noyau Linux lit cette ligne et lance python3 trouvé dans le PATH. Pour Python lui-même, elle commence par # donc c'est un commentaire."
+      }
+      question "Comment Python délimite-t-il les blocs de code (contenu d’un if, d’une boucle) ?" {
+        - "avec des accolades { }"
+        - "avec les mots begin et end"
+        + "avec l'indentation (décalage des lignes, 4 espaces par convention)"
+        - "avec un point-virgule en fin de bloc"
+        explanation: "En Python, l'indentation est obligatoire et fait partie de la syntaxe. La PEP 8 recommande 4 espaces par niveau. Les accolades délimitent les blocs en C, Java ou JavaScript, pas en Python."
+      }
+      question "Pourquoi un script copié d’un tutoriel avec « print bonjour » (sans parenthèses) provoque-t-il une erreur ?" {
+        - "parce que les guillemets doubles sont interdits"
+        + "parce que c'est de la syntaxe Python 2 : en Python 3, print est une fonction qui exige des parenthèses"
+        - "parce que bonjour n'est pas déclaré"
+        - "parce que print n'existe que sous Windows"
+        explanation: "En Python 3, on écrit print(\"bonjour\"). La forme sans parenthèses vient de Python 2, qui n'est plus maintenu depuis le 1er janvier 2020. Les guillemets simples et doubles sont tous deux acceptés."
+      }
+      question "Sous Windows, taper python ouvre le Microsoft Store au lieu de lancer Python. Quelle est la cause ?" {
+        - "Python ne fonctionne pas sous Windows 11"
+        + "un alias d'exécution d'application redirige vers le Store tant que Python n'est pas installé"
+        - "le PATH contient trop de dossiers"
+        - "il faut taper python.exe en majuscules"
+        explanation: "Windows installe des alias python.exe et python3.exe qui ouvrent le Store. Ils disparaissent quand Python est installé et peuvent se désactiver dans les paramètres avancés des applications."
+      }
+      question "Quel logiciel ne convient pas pour écrire un script Python ?" {
+        - "VS Code"
+        - "nano"
+        + "Microsoft Word"
+        - "IDLE"
+        explanation: "Un script doit être un fichier texte brut. Un traitement de texte enregistre une mise en forme (et remplace parfois les guillemets droits par des guillemets typographiques), ce que l'interpréteur ne comprend pas."
+      }
+      question "Quelle commande rend le script sauvegarde.py exécutable sous Linux ?" {
+        - "python3 +x sauvegarde.py"
+        + "chmod +x sauvegarde.py"
+        - "sudo sauvegarde.py"
+        - "exec sauvegarde.py"
+        explanation: "chmod +x ajoute le droit d'exécution. Ensuite ./sauvegarde.py fonctionne si le fichier commence par un shebang. sudo lance une commande avec d'autres droits mais ne rend pas un fichier exécutable."
+      }
+      question "Un script affiche « IndentationError: unexpected indent ». Que vérifies-tu ?" {
+        - "la version de Python"
+        - "les guillemets des chaînes"
+        + "le décalage des lignes : une ligne est décalée alors qu'elle ne devrait pas l'être"
+        - "les droits du fichier"
+        explanation: "Cette erreur signale une ligne indentée sans raison, souvent après un copier-coller ou un mélange tabulations / espaces. Réaligne la ligne au bon niveau, avec des espaces uniquement."
+      }
+      question "Quelle commande, sous Windows avec le gestionnaire d’installation, liste les versions de Python installées ?" {
+        - "python list"
+        + "py list"
+        - "pip list"
+        - "winget python"
+        explanation: "py list affiche les versions installées et marque celle par défaut ; py install 3.14 en ajoute une. pip list liste les paquets installés dans Python, pas les versions de Python."
+      }
+      question "Comment quitter proprement l’interpréteur interactif sous Linux ?" {
+        - "Ctrl+C"
+        + "exit() ou Ctrl+D"
+        - "Échap"
+        - "quit sans parenthèses dans bash"
+        explanation: "exit() ou Ctrl+D (fin de fichier) ferment le REPL sous Linux ; sous Windows c'est Ctrl+Z puis Entrée. Ctrl+C interrompt seulement la commande en cours et laisse l'interpréteur ouvert."
+      }
+    }
+  }
+
+  module "variables-types" {
+    title: "Chapitre 2 : variables, types et calculs"
+    duration: "35min"
+    content: """
+### Une variable est une étiquette
+Une **variable** est un nom qui désigne une valeur. On la crée avec `=` (l'**affectation**) :
+
+```python
+salle = "B204"
+nb_postes = 18
+debit_mbits = 100.0
+```
+
+Il n'y a rien à déclarer : Python devine le type à partir de la valeur. Une même variable peut ensuite désigner une valeur d'un autre type (on dit que le typage est **dynamique**), mais c'est rarement une bonne idée.
+
+Règles pour les noms :
+• lettres, chiffres et `_`, sans commencer par un chiffre (`poste2` oui, `2poste` non) ;
+• la casse compte : `Salle` et `salle` sont deux variables différentes ;
+• les mots réservés (`if`, `for`, `class`, `def`, `True`, `None`…) sont interdits ;
+• par convention (PEP 8), on écrit en minuscules avec des tirets bas : `nombre_de_postes` (snake_case).
+
+### Les types de base
+
+| Type | Sert à | Exemples |
+|---|---|---|
+| `int` | nombres entiers, sans limite de taille | `18`, `-3`, `65535` |
+| `float` | nombres à virgule (point en Python) | `3.5`, `0.1`, `1e6` |
+| `str` | texte (chaîne de caractères) | `"B204"`, `'eth0'` |
+| `bool` | vrai ou faux | `True`, `False` |
+| `NoneType` | absence de valeur | `None` |
+
+La fonction `type()` donne le type d'une valeur : `type(18)` renvoie `<class 'int'>`.
+
+### Les opérateurs de calcul
+
+| Opérateur | Rôle | Exemple | Résultat |
+|---|---|---|---|
+| `+ - *` | addition, soustraction, multiplication | `7 * 2` | `14` |
+| `/` | division, toujours un float | `10 / 2` | `5.0` |
+| `//` | division entière (arrondie vers le bas) | `7 // 2` | `3` |
+| `%` | reste (modulo) | `7 % 2` | `1` |
+| `**` | puissance | `2 ** 10` | `1024` |
+
+Deux pièges à connaître :
+• `//` arrondit vers le bas, même pour les négatifs : `-7 // 2` vaut `-4` ;
+• les float sont stockés en binaire avec une précision limitée : `0.1 + 0.2` donne `0.30000000000000004`. Pour comparer deux float, on teste un écart (`abs(a - b) < 1e-9`) ou on utilise `math.isclose(a, b)`.
+
+`round()` arrondit au plus proche, et **à l'entier pair** en cas d'égalité : `round(2.5)` vaut `2`, `round(3.5)` vaut `4`. C'est la règle de l'arrondi bancaire, voulue par la documentation.
+
+### Convertir d'un type à l'autre
+Les fonctions `int()`, `float()`, `str()` et `bool()` convertissent :
+
+```python
+int("42")       # 42
+int(" 42 ")     # 42 : les espaces autour sont tolérés
+float("3.5")    # 3.5
+str(18)         # '18'
+int(3.9)        # 3 : la partie décimale est coupée, pas arrondie
+int("3.5")      # ValueError : ce texte n'est pas un entier
+```
+
+Python ne mélange pas les types sans qu'on le lui demande : `"Total : " + 5` provoque une `TypeError`. On écrit `"Total : " + str(5)`, ou mieux une f-string (chapitre 3). À l'inverse, `"5" * 3` est permis et donne `'555'` : multiplier un texte le répète.
+
+`int()` sait aussi lire d'autres bases, très utile en réseau : `int("11000000", 2)` vaut `192`, `int("ff", 16)` vaut `255`. Dans l'autre sens, `bin(192)` donne `'0b11000000'` et `format(192, "08b")` donne `'11000000'` sur 8 chiffres.
+
+### Affectations pratiques
+
+```python
+total = 0
+total += 5          # même chose que total = total + 5
+a, b = 1, 2         # deux affectations d'un coup
+a, b = b, a         # échange : a vaut 2, b vaut 1
+OCTETS_PAR_KIO = 1024   # constante : en majuscules par convention
+```
+
+### À toi de jouer
+1. Un fichier ISO fait 700 Mo (1 Mo = 10⁶ octets). Écris les calculs Python qui donnent son temps de transfert en secondes sur une liaison à 100 Mbit/s, sans compter les en-têtes.
+2. Prédis puis vérifie dans le REPL le résultat de : `17 // 5`, `17 % 5`, `2 ** 8`, `10 / 4`, `round(0.5)`, `int("0x1F", 16)`.
+3. Ce code plante. Pourquoi ? Corrige-le.
+```python
+age = "17"
+print(age + 1)
+```
+4. Convertis en Python l'octet `172` en binaire sur 8 chiffres, puis reconvertis `"10101100"` en décimal.
+
+### Correction
+1. `taille_bits = 700 * 10**6 * 8` (5 600 000 000 bits) ; `debit = 100 * 10**6` ; `taille_bits / debit` donne `56.0` secondes. Il faut multiplier par 8 car le débit est en bits et la taille en octets.
+2. `17 // 5` vaut `3`, `17 % 5` vaut `2` (17 = 3 × 5 + 2), `2 ** 8` vaut `256`, `10 / 4` vaut `2.5`, `round(0.5)` vaut `0` (égalité, on va vers le pair), `int("0x1F", 16)` vaut `31` (le préfixe `0x` est accepté en base 16).
+3. `age` est une chaîne : on ne peut pas lui ajouter l'entier 1 (`TypeError`). Correction : `print(int(age) + 1)` affiche `18`.
+4. `format(172, "08b")` donne `'10101100'` ; `int("10101100", 2)` donne `172`.
+"""
+
+    codeblock "python" {
+      title: "Conversions de débit et de taille"
+      code: """
+taille_mo = 700                  # taille annoncée en mégaoctets (10**6 octets)
+debit_mbits = 100                # débit de la liaison en mégabits par seconde
+
+taille_bits = taille_mo * 10**6 * 8
+duree_s = taille_bits / (debit_mbits * 10**6)
+
+print("Durée en secondes :", duree_s)               # 56.0
+print("Minutes entières :", int(duree_s) // 60)     # 0
+print("Secondes restantes :", int(duree_s) % 60)    # 56
+
+# Mo (10**6) et Mio (2**20) ne sont pas la même unité
+taille_mio = taille_mo * 10**6 / 2**20
+print("Taille en Mio :", round(taille_mio, 1))      # 667.6
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quel est le résultat de 10 / 2 en Python 3 ?" {
+        - "5"
+        + "5.0"
+        - "2"
+        - "une erreur de type"
+        explanation: "L'opérateur / renvoie toujours un float en Python 3, même si la division tombe juste. Pour obtenir un entier, on utilise la division entière //, qui donne 5."
+      }
+      question "Que vaut -7 // 2 ?" {
+        - "-3"
+        + "-4"
+        - "-3.5"
+        - "3"
+        explanation: "// arrondit vers le bas (vers moins l'infini), pas vers zéro. -3,5 arrondi vers le bas donne -4. C'est une erreur fréquente de croire que le résultat est -3."
+      }
+      question "Que vaut 17 % 5 ?" {
+        - "3"
+        - "3.4"
+        + "2"
+        - "85"
+        explanation: "% donne le reste de la division entière : 17 = 3 × 5 + 2, donc le reste vaut 2. Le quotient entier (3) s'obtient avec 17 // 5."
+      }
+      question "Quel nom de variable est refusé par Python ?" {
+        - "nb_postes"
+        - "_temp"
+        + "2eme_poste"
+        - "posteB204"
+        explanation: "Un nom ne peut pas commencer par un chiffre. Les lettres, les chiffres (après la première position) et le tiret bas sont permis. _temp est valide ; le tiret bas initial signale juste un usage interne par convention."
+      }
+      question "Que donne int() appliqué à la chaîne 3.5 ?" {
+        - "3"
+        - "4"
+        - "3.5"
+        + "une erreur ValueError"
+        explanation: "int() sur une chaîne n'accepte que l'écriture d'un entier. \"3.5\" provoque ValueError: invalid literal for int(). Pour l'obtenir, il faut passer par float : int(float(\"3.5\")) donne 3."
+      }
+      question "Que donne int(3.9) ?" {
+        + "3"
+        - "4"
+        - "3.9"
+        - "une erreur ValueError"
+        explanation: "Appliqué à un float, int() coupe la partie décimale (troncature vers zéro), il n'arrondit pas. Pour arrondir au plus proche, on utilise round(3.9), qui vaut 4."
+      }
+      question "Pourquoi 0.1 + 0.2 == 0.3 renvoie-t-il False ?" {
+        - "parce que == ne fonctionne pas sur les nombres"
+        + "parce que les float sont stockés en binaire avec une précision limitée et la somme vaut 0.30000000000000004"
+        - "parce que 0.1 et 0.2 sont des chaînes"
+        - "parce qu'il faut écrire 0,1 + 0,2"
+        explanation: "0,1 n'a pas d'écriture binaire exacte, d'où une petite erreur d'arrondi. On compare les float avec un écart toléré ou math.isclose. En Python, la virgule des décimaux s'écrit avec un point."
+      }
+      question "Que vaut round(2.5) ?" {
+        - "3"
+        + "2"
+        - "2.5"
+        - "une erreur"
+        explanation: "En cas d'égalité exacte, round() arrondit vers l'entier pair (arrondi bancaire). round(2.5) vaut 2 et round(3.5) vaut 4. C'est documenté et voulu, pas un bug."
+      }
+      question "La variable age contient la chaîne 17. Quelle erreur produit print(age + 1) ?" {
+        - "NameError"
+        - "ValueError"
+        + "TypeError"
+        - "SyntaxError"
+        explanation: "On additionne une chaîne et un entier, deux types incompatibles pour + : c'est une TypeError (can only concatenate str (not \"int\") to str). La correction est int(age) + 1."
+      }
+      question "Quelle expression donne 192 ?" {
+        - "int(\"192\", 2)"
+        + "int(\"11000000\", 2)"
+        - "bin(\"11000000\")"
+        - "int(\"C0\")"
+        explanation: "int(texte, 2) lit un nombre écrit en binaire : 11000000 vaut 128 + 64 = 192. int(\"192\", 2) échoue car 9 n'est pas un chiffre binaire ; int(\"C0\") échoue sans la base 16."
+      }
+      question "Que donne la chaîne 5 (un texte) multipliée par l’entier 3 ?" {
+        - "15"
+        + "'555'"
+        - "une erreur TypeError"
+        - "'5 5 5'"
+        explanation: "Multiplier une chaîne par un entier la répète. Le résultat est le texte '555'. Pour obtenir 15, il faut d'abord convertir : int(\"5\") * 3."
+      }
+      question "Après a, b = 1, 2 puis a, b = b, a, que valent a et b ?" {
+        - "a = 1, b = 2"
+        + "a = 2, b = 1"
+        - "a = 2, b = 2"
+        - "une erreur, il faut une variable temporaire"
+        explanation: "Python évalue d'abord tout le côté droit (2, 1), puis affecte. On échange ainsi deux variables sans variable temporaire."
+      }
+      question "Que renvoie type(None) ?" {
+        - "<class 'str'>"
+        - "<class 'bool'>"
+        + "<class 'NoneType'>"
+        - "une erreur, None n'a pas de type"
+        explanation: "None est l'unique valeur du type NoneType ; il représente l'absence de valeur. Ce n'est ni la chaîne vide, ni False, ni 0."
+      }
+    }
+  }
+
+  module "entrees-sorties-chaines" {
+    title: "Chapitre 3 : entrées, sorties et chaînes de caractères"
+    duration: "35min"
+    content: """
+### Afficher avec print
+`print()` affiche ses arguments séparés par un espace et termine par un retour à la ligne. Deux paramètres changent ce comportement :
+
+```python
+print("192", "168", "10", "1", sep=".")    # 192.168.10.1
+print("Chargement", end="... ")
+print("terminé")                           # Chargement... terminé
+```
+
+### Lire au clavier avec input
+`input("message")` affiche le message, attend que l'utilisateur tape une ligne et appuie sur Entrée, et renvoie ce qui a été tapé **toujours sous forme de chaîne** :
+
+```python
+nom = input("Ton prénom : ")
+age = int(input("Ton âge : "))    # conversion obligatoire pour calculer
+print("Dans 10 ans, tu auras", age + 10, "ans.")
+```
+
+Si l'utilisateur tape `dix`, `int()` lève une `ValueError`. On verra au chapitre 8 comment l'intercepter.
+
+### Les f-strings : le formatage moderne
+Une **f-string** est une chaîne précédée de `f` dans laquelle on insère des expressions entre accolades. Après `:` on peut préciser un format :
+
+```python
+poste = "PC-12"
+cpu = 37.4567
+print(f"{poste} : CPU à {cpu:.1f} %")   # PC-12 : CPU à 37.5 %
+print(f"|{poste:<8}|{42:>5}|{7:03d}|")   # |PC-12   |   42|007|
+print(f"{cpu=}")                         # cpu=37.4567 (pratique pour déboguer)
+```
+
+| Format | Effet |
+|---|---|
+| `:.2f` | 2 chiffres après la virgule |
+| `:<8` `:>8` `:^8` | aligné à gauche, à droite, centré sur 8 caractères |
+| `:03d` | entier sur 3 chiffres complété par des zéros |
+| `:08b` `:x` | binaire sur 8 chiffres, hexadécimal |
+
+### Les chaînes : indices et tranches
+Une chaîne est une suite de caractères numérotés à partir de **0**. Les indices négatifs partent de la fin.
+
+```python
+mot = "routeur"
+mot[0]      # 'r'
+mot[-1]     # 'r' (dernier caractère)
+mot[1:4]    # 'out' : de l'indice 1 inclus à 4 exclu
+mot[:3]     # 'rou'
+mot[::-1]   # 'ruetuor' : à l'envers
+len(mot)    # 7
+```
+
+Une chaîne est **immuable** : `mot[0] = "R"` provoque une `TypeError`. Pour la modifier, on en crée une nouvelle : `mot = "R" + mot[1:]`.
+
+### Les méthodes utiles
+
+| Méthode | Effet | Exemple | Résultat |
+|---|---|---|---|
+| `strip()` | retire les espaces et retours à la ligne aux deux bouts | `"  eth0\n".strip()` | `'eth0'` |
+| `lower()` `upper()` | minuscules, majuscules | `"Admin".lower()` | `'admin'` |
+| `replace(a, b)` | remplace toutes les occurrences | `"a-b-c".replace("-", ":")` | `'a:b:c'` |
+| `split(sep)` | découpe en liste | `"10.0.0.1".split(".")` | `['10', '0', '0', '1']` |
+| `split()` | découpe sur les blancs, en ignorant les répétitions | `" a  b ".split()` | `['a', 'b']` |
+| `sep.join(liste)` | recolle une liste de chaînes | `".".join(["10", "0"])` | `'10.0'` |
+| `startswith()` `endswith()` | teste le début ou la fin | `"log.txt".endswith(".txt")` | `True` |
+| `find(x)` | position de x, ou -1 | `"eth0".find("h")` | `2` |
+| `isdigit()` | que des chiffres ? | `"42".isdigit()` | `True` |
+
+L'opérateur `in` teste la présence d'un morceau : `"Failed" in ligne`.
+
+Les méthodes **renvoient** une nouvelle chaîne, elles ne modifient pas l'originale : `nom.strip()` seul ne sert à rien, il faut écrire `nom = nom.strip()`.
+
+### Caractères spéciaux et chaînes brutes
+Dans une chaîne, `\n` est un retour à la ligne et `\t` une tabulation. Un chemin Windows comme `"C:\temp\notes.txt"` est donc piégé (`\t` et `\n` sont interprétés). Deux solutions : doubler les barres (`"C:\\temp\\notes.txt"`) ou utiliser une **chaîne brute** `r"C:\temp\notes.txt"`, où les barres obliques inverses sont gardées telles quelles.
+
+### À toi de jouer
+1. Écris un script qui demande un prénom et une année de naissance, puis affiche « Bonjour Léa, tu auras 18 ans en 2026. » (calcule l'âge atteint dans l'année en cours, que tu fixes dans une variable).
+2. Un technicien colle des adresses MAC sous la forme `AA-BB-cc-dd-EE-ff`. Écris l'expression qui la transforme en `aa:bb:cc:dd:ee:ff`.
+3. À partir de `ip = "192.168.10.37"`, récupère le dernier octet sous forme d'entier, puis affiche l'adresse du réseau en /24 (`192.168.10.0`) en utilisant `split` et `join`.
+4. Affiche un tableau aligné de trois postes et leur charge CPU (`PC-1` 5.2, `PC-12` 87.456, `SRV-WEB` 43.0), noms alignés à gauche sur 8 caractères, charges à droite sur 6 avec un chiffre après la virgule.
+
+### Correction
+1. Voir le premier bloc ci-dessous. `input` renvoie une chaîne, d'où `int(...)` avant la soustraction.
+2. `mac.lower().replace("-", ":")`. On enchaîne les méthodes : chacune renvoie une nouvelle chaîne sur laquelle on appelle la suivante.
+3. `octets = ip.split(".")` donne `['192', '168', '10', '37']` ; `int(octets[-1])` vaut `37` ; `".".join(octets[:3] + ["0"])` donne `'192.168.10.0'`.
+4. `print(f"{nom:<8}{charge:>6.1f}")` pour chaque poste. Résultat :
+```text
+PC-1       5.2
+PC-12     87.5
+SRV-WEB   43.0
+```
+"""
+
+    codeblock "python" {
+      title: "Saisie, calcul et affichage formaté"
+      code: """
+ANNEE_EN_COURS = 2026
+
+prenom = input("Ton prénom : ").strip()
+naissance = int(input("Ton année de naissance : "))
+age = ANNEE_EN_COURS - naissance
+print(f"Bonjour {prenom}, tu auras {age} ans en {ANNEE_EN_COURS}.")
+
+# Tableau aligné
+for nom, charge in [("PC-1", 5.2), ("PC-12", 87.456), ("SRV-WEB", 43.0)]:
+    print(f"{nom:<8}{charge:>6.1f}")
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quel est le type de la valeur renvoyée par input() quand l’utilisateur tape 42 ?" {
+        - "int"
+        - "float"
+        + "str"
+        - "cela dépend de ce qui est tapé"
+        explanation: "input() renvoie toujours une chaîne, ici '42'. Pour calculer, il faut convertir avec int() ou float(). Oublier cette conversion provoque une TypeError ou un résultat inattendu comme '4210'."
+      }
+      question "La variable mot contient la chaîne routeur. Que vaut mot[1:4] ?" {
+        - "'rout'"
+        + "'out'"
+        - "'oute'"
+        - "'ou'"
+        explanation: "La tranche [1:4] prend les indices 1, 2 et 3 (le 4 est exclu). Avec r à l'indice 0, on obtient o, u, t, soit 'out'."
+      }
+      question "La variable mot contient la chaîne routeur. Que vaut mot[-1] ?" {
+        + "'r'"
+        - "'u'"
+        - "'ruetuor'"
+        - "une IndexError"
+        explanation: "Les indices négatifs partent de la fin : -1 est le dernier caractère, ici r. Pour retourner une chaîne, on utilise la tranche [::-1]."
+      }
+      question "Quel résultat donne split() sans argument sur la chaîne « espace, a, deux espaces, b, espace » ?" {
+        - "['', 'a', '', 'b', '']"
+        + "['a', 'b']"
+        - "[' a', ' b ']"
+        - "['a  b']"
+        explanation: "Sans argument, split() découpe sur tous les blancs et ignore les répétitions et les blancs aux extrémités. Avec split(\" \"), on obtiendrait des chaînes vides pour chaque espace en trop."
+      }
+      question "Quelle f-string affiche 37.5 à partir de cpu = 37.4567 ?" {
+        - "f\"{cpu:.2f}\""
+        + "f\"{cpu:.1f}\""
+        - "f\"{cpu:1}\""
+        - "f\"{round(cpu)}\""
+        explanation: ":.1f formate le nombre avec un chiffre après la virgule, arrondi : 37.5. :.2f donnerait 37.46 et round(cpu) donnerait 37."
+      }
+      question "La variable nom contient « deux espaces, Léa, un espace ». Après l’instruction nom.strip() seule, que contient nom ?" {
+        + "'  Léa ' (inchangé)"
+        - "'Léa'"
+        - "'  Léa'"
+        - "une erreur, strip() exige un argument"
+        explanation: "Les chaînes sont immuables : strip() renvoie une nouvelle chaîne sans modifier l'originale. Il faut écrire nom = nom.strip() pour garder le résultat."
+      }
+      question "Que produit print avec les arguments 192, 168, 10, 1 (des chaînes) et sep égal à un point ?" {
+        - "192 168 10 1"
+        + "192.168.10.1"
+        - "192.168.10.1."
+        - "une erreur, sep n'existe pas"
+        explanation: "sep remplace l'espace placé par défaut entre les arguments. Le point n'est pas ajouté à la fin : la fin de ligne est réglée par end, qui vaut \\n par défaut."
+      }
+      question "Pourquoi le chemin C:\temp\notes.txt écrit dans une chaîne Python normale pose-t-il problème ?" {
+        - "Python refuse les chemins Windows"
+        + "\\t et \\n sont interprétés comme une tabulation et un retour à la ligne"
+        - "les deux-points sont interdits dans une chaîne"
+        - "il faut toujours écrire les chemins en majuscules"
+        explanation: "La barre oblique inverse introduit des caractères spéciaux. On écrit r\"C:\\temp\\notes.txt\" (chaîne brute) ou on double les barres. Le module pathlib évite aussi ce souci."
+      }
+      question "Quelle expression transforme la chaîne AA-BB-CC en aa:bb:cc ?" {
+        - "\"AA-BB-CC\".replace(\":\", \"-\").lower()"
+        + "\"AA-BB-CC\".lower().replace(\"-\", \":\")"
+        - "\"AA-BB-CC\".split(\":\").lower()"
+        - "lower(\"AA-BB-CC\", \"-\", \":\")"
+        explanation: "replace(ancien, nouveau) remplace les tirets par des deux-points et lower() passe en minuscules ; l'ordre des deux appels importe peu ici. La première proposition inverse les arguments de replace ; une liste n'a pas de méthode lower()."
+      }
+      question "Que fait la méthode join appelée sur la chaîne point, avec la liste des chaînes 10, 0, 0, 1 ?" {
+        - "elle renvoie ['10.0.0.1']"
+        + "elle renvoie '10.0.0.1'"
+        - "elle renvoie '.10.0.0.1.'"
+        - "elle lève une erreur car join attend des entiers"
+        explanation: "join recolle les éléments d'une liste de chaînes en plaçant le séparateur entre eux, ni au début ni à la fin. Les éléments doivent être des chaînes : join sur des entiers lève une TypeError."
+      }
+      question "La variable ligne contient « Nov 26 sshd: Failed password ». Que renvoie l’expression Failed in ligne, Failed étant une chaîne ?" {
+        + "True"
+        - "False"
+        - "14"
+        - "une erreur"
+        explanation: "L'opérateur in teste si une sous-chaîne est présente et renvoie un booléen. Pour connaître la position, on utilise find(), qui renvoie -1 si le texte est absent."
+      }
+      question "La variable mot contient la chaîne eth0. Que se passe-t-il avec mot[0] = E (la chaîne E) ?" {
+        - "mot devient 'Eth0'"
+        + "une TypeError, car une chaîne est immuable"
+        - "mot devient 'E'"
+        - "une IndexError"
+        explanation: "On ne peut pas modifier un caractère d'une chaîne existante. On construit une nouvelle chaîne : mot = \"E\" + mot[1:]."
+      }
+      question "Quelle f-string affiche 007 à partir de n = 7 ?" {
+        - "f\"{n:7}\""
+        - "f\"{n:.3f}\""
+        + "f\"{n:03d}\""
+        - "f\"00{n}\""
+        explanation: ":03d formate un entier sur 3 chiffres en complétant par des zéros. f\"00{n}\" marche pour 7 mais donnerait 0012 pour 12. :.3f donne 7.000."
+      }
+    }
+  }
+
+  module "conditions" {
+    title: "Chapitre 4 : prendre des décisions avec if, elif, else"
+    duration: "30min"
+    content: """
+### La structure if / elif / else
+Un programme utile réagit différemment selon la situation. La syntaxe :
+
+```python
+charge = 92
+if charge >= 90:
+    print("Alerte : charge critique")
+elif charge >= 70:
+    print("Attention : charge élevée")
+else:
+    print("Charge normale")
+```
+
+• la ligne `if` se termine par **deux-points** ;
+• le bloc qui suit est **indenté** de 4 espaces ;
+• `elif` (contraction de « else if ») ajoute un autre cas ; on peut en mettre autant qu'on veut ;
+• Python teste les conditions dans l'ordre et exécute **seulement le premier** bloc dont la condition est vraie ;
+• `else` est facultatif et s'exécute si aucune condition n'est vraie.
+
+### Les opérateurs de comparaison
+
+| Opérateur | Signification |
+|---|---|
+| `==` | égal (ne pas confondre avec `=`, l'affectation) |
+| `!=` | différent |
+| `<` `<=` `>` `>=` | inférieur, inférieur ou égal, etc. |
+| `in` / `not in` | présent / absent dans une chaîne ou une liste |
+| `is` / `is not` | même objet ; à réserver à `None` : `if x is None:` |
+
+Python permet d'enchaîner les comparaisons comme en mathématiques : `0 <= port <= 65535`.
+
+Attention en comparant des chaînes : la comparaison respecte la casse (`"Admin" == "admin"` est faux, d'où l'intérêt de `lower()`), et elle se fait caractère par caractère, donc `"10" < "9"` est **vrai**. Convertis en nombre avant de comparer des nombres.
+
+### Combiner : and, or, not
+• `a and b` est vrai si les deux sont vrais ;
+• `a or b` est vrai si au moins un est vrai ;
+• `not a` inverse.
+
+```python
+if utilisateur == "admin" and not depuis_reseau_interne:
+    print("Connexion admin depuis l'extérieur : refusée")
+```
+
+Python évalue au plus court : dans `a and b`, si `a` est faux, `b` n'est même pas évalué. C'est utile pour éviter une erreur : `if liste and liste[0] == "x":` ne plante pas sur une liste vide.
+
+### Vrai et faux implicites
+Dans un `if`, toute valeur est convertie en booléen. Sont considérés comme **faux** : `False`, `None`, `0`, `0.0`, la chaîne vide `""`, la liste vide `[]`, le dictionnaire vide `{}`. Tout le reste est vrai, y compris la chaîne `"0"` et la chaîne `"False"`.
+
+```python
+reponse = input("Nom du serveur : ").strip()
+if not reponse:
+    print("Tu n'as rien saisi.")
+```
+
+### match / case (Python 3.10 et plus)
+Pour comparer une valeur à une liste de cas fixes, `match` est plus lisible qu'une longue suite de `elif` :
+
+```python
+match commande:
+    case "start" | "demarrer":
+        print("Démarrage")
+    case "stop":
+        print("Arrêt")
+    case _:
+        print("Commande inconnue")
+```
+
+`_` attrape tout ce qui n'a pas été reconnu, comme un `else`.
+
+### Une situation réelle : classer un port
+L'IANA (RFC 6335) découpe les numéros de port TCP et UDP en trois plages : **0 à 1023** ports système (bien connus, comme 22 pour SSH ou 443 pour HTTPS), **1024 à 49151** ports enregistrés (3306 pour MySQL), **49152 à 65535** ports dynamiques ou privés, utilisés comme ports source temporaires. Un numéro en dehors de 0 à 65535 est invalide, car il est codé sur 16 bits.
+
+### À toi de jouer
+1. Écris une fonction de classement : le script demande un numéro de port, puis affiche « système », « enregistré », « dynamique ou privé » ou « invalide ».
+2. Écris une vérification de mot de passe : il doit faire au moins 12 caractères et ne pas être égal (sans tenir compte de la casse) à `motdepasse`, `azerty123456` ou au nom d'utilisateur. Affiche « accepté » ou la raison du refus.
+3. Trouve les deux erreurs de ce code :
+```python
+note = input("Note : ")
+if note = 20
+    print("Parfait")
+```
+4. Que vaut `bool("0")` ? Et `bool(0)` ? Explique.
+
+### Correction
+1. Voir le bloc ci-dessous. L'ordre des tests compte : on élimine d'abord les valeurs invalides, puis on compare aux bornes croissantes. Pour 22 : « système » ; 3306 : « enregistré » ; 50000 : « dynamique ou privé » ; 70000 : « invalide ».
+2. Une solution :
+```python
+utilisateur = "lea"
+mdp = input("Mot de passe : ")
+interdits = ["motdepasse", "azerty123456", utilisateur]
+if len(mdp) < 12:
+    print("refusé : moins de 12 caractères")
+elif mdp.lower() in interdits:
+    print("refusé : mot de passe trop prévisible")
+else:
+    print("accepté")
+```
+La longueur minimale de 12 caractères suit la recommandation de la CNIL pour un mot de passe seul, avec des types de caractères variés.
+3. Il manque les deux-points à la fin du `if`, et `=` est une affectation : il faut `==`. De plus, `input` renvoie une chaîne : on compare à `"20"` ou on convertit avec `int(note) == 20`.
+4. `bool("0")` vaut `True` : c'est une chaîne non vide. `bool(0)` vaut `False` : l'entier zéro est faux.
+"""
+
+    codeblock "python" {
+      title: "Classer un numéro de port (RFC 6335)"
+      code: """
+port = int(input("Numéro de port : "))
+
+if port < 0 or port > 65535:
+    categorie = "invalide"
+elif port <= 1023:
+    categorie = "système (bien connu)"
+elif port <= 49151:
+    categorie = "enregistré"
+else:
+    categorie = "dynamique ou privé"
+
+print(f"Port {port} : {categorie}")
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle ligne est une condition correcte ?" {
+        - "if x = 5:"
+        - "if x == 5"
+        + "if x == 5:"
+        - "if (x == 5) then:"
+        explanation: "Il faut l'opérateur de comparaison == (et non l'affectation =) et les deux-points en fin de ligne. Le mot then n'existe pas en Python."
+      }
+      question "Avec charge = 95, un premier test if charge >= 70 affiche A, puis un elif charge >= 90 affiche B. Qu’est-ce qui s’affiche ?" {
+        + "un seul : A"
+        - "un seul : B"
+        - "deux : A puis B"
+        - "aucun"
+        explanation: "Seul le premier bloc vrai est exécuté. 95 >= 70 est vrai, donc A s'affiche et le elif n'est pas testé. Il faut placer le seuil le plus élevé en premier pour obtenir B."
+      }
+      question "Que vaut la comparaison de chaînes 10 < 9, les deux nombres étant écrits entre guillemets ?" {
+        + "True"
+        - "False"
+        - "une TypeError"
+        - "None"
+        explanation: "Les chaînes se comparent caractère par caractère : '1' vient avant '9', donc \"10\" < \"9\" est vrai. Pour comparer des nombres saisis, on les convertit d'abord avec int()."
+      }
+      question "Quelle valeur est considérée comme vraie dans un if ?" {
+        - "0"
+        - "\"\""
+        - "[]"
+        + "\"0\""
+        explanation: "La chaîne \"0\" n'est pas vide, donc elle est vraie. 0, la chaîne vide et la liste vide sont faux. C'est un piège fréquent quand on teste une saisie au clavier."
+      }
+      question "Comment teste-t-on proprement qu’une variable vaut None ?" {
+        - "if x == \"None\":"
+        + "if x is None:"
+        - "if x = None:"
+        - "if None(x):"
+        explanation: "La PEP 8 recommande is None, car None est un objet unique. Comparer à la chaîne \"None\" teste un texte, pas l'absence de valeur."
+      }
+      question "Quelle expression vérifie qu’un port est entre 1 et 1023 inclus ?" {
+        - "1 < port < 1023"
+        + "1 <= port <= 1023"
+        - "port in 1..1023"
+        - "port >= 1 or port <= 1023"
+        explanation: "Python accepte les comparaisons enchaînées. <= inclut les bornes. Avec or, la condition serait vraie pour tous les nombres. La syntaxe 1..1023 n'existe pas en Python."
+      }
+      question "Que vaut la comparaison entre les chaînes Admin et admin avec == ?" {
+        - "True"
+        + "False"
+        - "une erreur"
+        - "None"
+        explanation: "La comparaison respecte la casse. Pour comparer sans en tenir compte, on écrit a.lower() == b.lower() (ou casefold() pour certaines langues)."
+      }
+      question "Pourquoi le test « if liste and liste[0] == x » (x étant une chaîne) ne plante-t-il pas sur une liste vide ?" {
+        - "parce que liste[0] renvoie None sur une liste vide"
+        + "parce que and s'arrête dès que la première partie est fausse"
+        - "parce qu'une liste vide contient toujours un élément"
+        - "parce que les erreurs sont ignorées dans un if"
+        explanation: "and est évalué au plus court : la liste vide est fausse, donc liste[0] n'est pas évalué. Sans ce test, liste[0] lèverait une IndexError."
+      }
+      question "Dans un match, à quoi sert case _: ?" {
+        - "à ignorer la valeur"
+        + "à attraper tous les cas non reconnus, comme un else"
+        - "à tester si la valeur est vide"
+        - "à arrêter le programme"
+        explanation: "_ est un motif joker qui correspond à n'importe quelle valeur. On le place en dernier. match existe depuis Python 3.10."
+      }
+      question "Dans quelle plage l’IANA place-t-elle le port 3306 de MySQL ?" {
+        - "ports système (0 à 1023)"
+        + "ports enregistrés (1024 à 49151)"
+        - "ports dynamiques (49152 à 65535)"
+        - "aucune, il est invalide"
+        explanation: "La RFC 6335 définit trois plages : système 0-1023, enregistrés 1024-49151, dynamiques ou privés 49152-65535. 3306 est donc enregistré."
+      }
+      question "Que vaut not (5 > 3 and 2 > 4) ?" {
+        + "True"
+        - "False"
+        - "une erreur"
+        - "5"
+        explanation: "5 > 3 est vrai, 2 > 4 est faux, donc le and est faux. not inverse : le résultat est True."
+      }
+      question "Un script affiche toujours « refusé » alors que l’utilisateur tape « Oui ». Le test compare reponse à la chaîne oui avec ==. Quelle correction est la plus robuste ?" {
+        - "if reponse == \"Oui\":"
+        + "if reponse.strip().lower() == \"oui\":"
+        - "if reponse is \"oui\":"
+        - "if \"oui\":"
+        explanation: "strip() retire les espaces tapés par erreur et lower() rend la comparaison insensible à la casse. is compare l'identité des objets, pas le texte ; if \"oui\": est toujours vrai."
+      }
+    }
+  }
+
+  module "boucles" {
+    title: "Chapitre 5 : répéter avec for et while"
+    duration: "35min"
+    content: """
+### La boucle for : parcourir une suite
+`for` prend un à un les éléments d'une suite (chaîne, liste, plage de nombres, lignes d'un fichier) :
+
+```python
+for poste in ["PC-1", "PC-2", "PC-3"]:
+    print(f"Sauvegarde de {poste}")
+```
+
+La variable `poste` prend successivement chaque valeur ; le bloc indenté est exécuté une fois par élément.
+
+### range : compter
+`range` produit une suite d'entiers, **la borne de fin étant exclue** :
+
+| Appel | Valeurs |
+|---|---|
+| `range(5)` | 0, 1, 2, 3, 4 |
+| `range(2, 6)` | 2, 3, 4, 5 |
+| `range(2, 10, 3)` | 2, 5, 8 |
+| `range(5, 0, -1)` | 5, 4, 3, 2, 1 |
+
+```python
+for i in range(1, 6):
+    print(f"192.168.10.{i}")     # de .1 à .5
+```
+
+### enumerate : l'élément et son numéro
+Quand tu as besoin du numéro de tour, n'écris pas `for i in range(len(liste))` : utilise `enumerate`.
+
+```python
+for numero, poste in enumerate(["PC-1", "PC-2"], start=1):
+    print(numero, poste)     # 1 PC-1 puis 2 PC-2
+```
+
+### Accumulateurs et compteurs
+Beaucoup de boucles calculent un total ou comptent quelque chose. On initialise **avant** la boucle et on met à jour **dans** la boucle :
+
+```python
+charges = [12, 87, 45, 93, 30]
+total = 0
+nb_alertes = 0
+for c in charges:
+    total += c
+    if c > 80:
+        nb_alertes += 1
+print("moyenne :", total / len(charges), "alertes :", nb_alertes)
+```
+
+Pour ces cas simples, les fonctions intégrées `sum()`, `max()`, `min()` et `len()` font le travail en une ligne : `sum(charges) / len(charges)`.
+
+### La boucle while : répéter tant que
+`while` répète son bloc tant que la condition est vraie. On l'utilise quand on ne sait pas à l'avance combien de tours il faudra :
+
+```python
+prefixe = int(input("Préfixe (0 à 32) : "))
+while prefixe < 0 or prefixe > 32:
+    print("Valeur hors limites.")
+    prefixe = int(input("Préfixe (0 à 32) : "))
+```
+
+Si la condition ne devient jamais fausse, la boucle est **infinie**. Dans le terminal, Ctrl+C l'interrompt (Python lève `KeyboardInterrupt`).
+
+### break et continue
+• `break` sort immédiatement de la boucle ;
+• `continue` passe directement au tour suivant.
+
+```python
+for ligne in ["# commentaire", "", "192.168.10.1", "FIN", "10.0.0.1"]:
+    if ligne == "FIN":
+        break                       # on s'arrête, 10.0.0.1 n'est jamais lu
+    if not ligne or ligne.startswith("#"):
+        continue                    # ligne vide ou commentaire : on saute
+    print("adresse :", ligne)
+```
+
+Le schéma `while True:` avec un `break` à l'intérieur est courant pour redemander une saisie jusqu'à ce qu'elle soit valide.
+
+### Boucles imbriquées
+Une boucle peut en contenir une autre. Exemple : toutes les adresses de deux petits réseaux.
+
+```python
+for reseau in (10, 20):
+    for hote in range(1, 4):
+        print(f"192.168.{reseau}.{hote}")
+```
+
+### À toi de jouer
+1. Affiche la table de multiplication de 7, de 7 × 1 à 7 × 10, sous la forme `7 x 3 = 21`.
+2. Affiche les puissances de 2 de 2⁰ à 2⁸ et leur somme. Que remarques-tu sur la somme ?
+3. Écris une boucle qui demande un préfixe CIDR jusqu'à obtenir un entier entre 0 et 32. Si l'utilisateur tape autre chose que des chiffres, affiche « nombre attendu » sans planter (utilise `isdigit()`).
+4. Dans la liste `["PC-1", "SRV-DNS", "PC-2", "SRV-WEB", "IMP-1"]`, compte et affiche les serveurs (noms qui commencent par `SRV-`).
+
+### Correction
+1. `for i in range(1, 11): print(f"7 x {i} = {7 * i}")`. `range(1, 11)` va de 1 à 10, la borne 11 est exclue.
+2. Avec un accumulateur :
+```python
+total = 0
+for n in range(9):
+    print(f"2^{n} = {2 ** n}")
+    total += 2 ** n
+print("somme :", total)    # 511
+```
+La somme vaut 511, soit 2⁹ − 1. C'est la valeur d'un nombre de 9 bits tous à 1 ; de même, 8 bits à 1 valent 255, la plus grande valeur d'un octet.
+3. Voir le bloc ci-dessous. `isdigit()` refuse aussi le signe moins, donc une saisie négative est rejetée comme « nombre attendu ».
+4.
+```python
+nb = 0
+for nom in ["PC-1", "SRV-DNS", "PC-2", "SRV-WEB", "IMP-1"]:
+    if nom.startswith("SRV-"):
+        nb += 1
+print("serveurs :", nb)    # 2
+```
+"""
+
+    codeblock "python" {
+      title: "Redemander une saisie jusqu'à ce qu'elle soit valide"
+      code: """
+while True:
+    texte = input("Préfixe CIDR (0 à 32) : ").strip()
+    if not texte.isdigit():
+        print("nombre attendu")
+        continue
+    prefixe = int(texte)
+    if prefixe <= 32:
+        break
+    print("le préfixe doit être compris entre 0 et 32")
+
+print(f"Préfixe retenu : /{prefixe}")
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelles valeurs produit range(2, 6) ?" {
+        - "2, 3, 4, 5, 6"
+        + "2, 3, 4, 5"
+        - "3, 4, 5, 6"
+        - "2 et 6"
+        explanation: "range(début, fin) commence à début inclus et s'arrête avant fin, qui est exclue. range(2, 6) donne donc 2, 3, 4, 5."
+      }
+      question "Quelles valeurs produit range(2, 10, 3) ?" {
+        - "2, 3, 10"
+        - "2, 5, 8, 11"
+        + "2, 5, 8"
+        - "3, 6, 9"
+        explanation: "Le troisième argument est le pas : on part de 2 et on ajoute 3 tant qu'on reste sous 10. 11 dépasse la borne, il n'est pas produit."
+      }
+      question "Combien de fois s’exécute le bloc de « for i in range(5): » ?" {
+        - "4"
+        + "5"
+        - "6"
+        - "cela dépend de i"
+        explanation: "range(5) produit 0, 1, 2, 3, 4, soit 5 valeurs. Le compte commence à 0 et la borne 5 est exclue."
+      }
+      question "Que fait l’instruction continue dans une boucle ?" {
+        - "elle sort définitivement de la boucle"
+        + "elle passe directement au tour suivant"
+        - "elle relance la boucle depuis le premier élément"
+        - "elle met le programme en pause"
+        explanation: "continue saute le reste du bloc pour ce tour et passe à l'élément suivant. Pour sortir de la boucle, c'est break."
+      }
+      question "Un script tourne sans fin dans « while compteur < 10: print(compteur) ». Quelle est la cause ?" {
+        - "print ralentit la boucle"
+        + "compteur n'est jamais modifié dans la boucle, la condition reste vraie"
+        - "while ne fonctionne qu'avec des booléens"
+        - "il faut écrire while (compteur < 10)"
+        explanation: "Si rien ne fait évoluer la condition, la boucle est infinie. Il manque compteur += 1 dans le bloc. Ctrl+C permet de l'interrompre (KeyboardInterrupt)."
+      }
+      question "Que produit enumerate sur la liste des chaînes a et b, avec start=1 ?" {
+        - "(0, 'a') puis (1, 'b')"
+        + "(1, 'a') puis (2, 'b')"
+        - "('a', 1) puis ('b', 2)"
+        - "1 puis 2"
+        explanation: "enumerate renvoie des paires (numéro, élément). start=1 fait commencer la numérotation à 1 au lieu de 0."
+      }
+      question "Quelle valeur affiche ce code : total = 0 ; for n in [3, 5, 2]: total += n ; print(total) ?" {
+        - "2"
+        - "352"
+        + "10"
+        - "0"
+        explanation: "C'est un accumulateur : 0 + 3 = 3, 3 + 5 = 8, 8 + 2 = 10. sum([3, 5, 2]) donne le même résultat en une ligne."
+      }
+      question "Pourquoi placer total = 0 à l’intérieur de la boucle est-il une erreur ?" {
+        - "parce que Python interdit d'affecter dans une boucle"
+        + "parce que le total est remis à zéro à chaque tour et ne garde que le dernier élément"
+        - "parce que la boucle devient infinie"
+        - "parce que total devient une chaîne"
+        explanation: "L'initialisation d'un accumulateur se fait une seule fois, avant la boucle. Dans la boucle, elle efface le travail des tours précédents."
+      }
+      question "Quelle boucle affiche 5, 4, 3, 2, 1 ?" {
+        - "for i in range(5, 1):"
+        + "for i in range(5, 0, -1):"
+        - "for i in range(1, 5, -1):"
+        - "for i in range(-5):"
+        explanation: "Avec un pas négatif, on part de 5 et on descend jusqu'avant 0. range(5, 1) est vide car le pas par défaut est +1."
+      }
+      question "Combien de lignes affiche une boucle for sur range(3) qui contient une boucle for sur range(4) avec un print ?" {
+        - "3"
+        - "4"
+        - "7"
+        + "12"
+        explanation: "La boucle intérieure fait 4 tours pour chacun des 3 tours de la boucle extérieure : 3 × 4 = 12 affichages."
+      }
+      question "Que renvoie la méthode isdigit() sur la chaîne -5 ?" {
+        - "True"
+        + "False"
+        - "-5"
+        - "une erreur"
+        explanation: "isdigit() n'accepte que des chiffres ; le signe moins n'en est pas un. C'est pratique pour refuser des saisies négatives, mais il faut le savoir si les nombres négatifs sont permis."
+      }
+      question "Quelle écriture est la plus lisible pour obtenir l’indice et l’élément d’une liste ?" {
+        - "for i in range(len(liste)): print(i, liste[i])"
+        + "for i, element in enumerate(liste): print(i, element)"
+        - "for i in liste: print(liste.index(i), i)"
+        - "while i < liste: print(i)"
+        explanation: "enumerate est la manière idiomatique. range(len(...)) fonctionne mais alourdit le code ; index() est lent et renvoie la première occurrence si la liste contient des doublons."
+      }
+    }
+  }
+
+  module "listes-dictionnaires" {
+    title: "Chapitre 6 : listes, tuples et dictionnaires"
+    duration: "40min"
+    content: """
+### Les listes
+Une **liste** range plusieurs valeurs dans un ordre précis. Elle s'écrit entre crochets et peut changer (on dit qu'elle est **mutable**) :
+
+```python
+postes = ["PC-1", "PC-2", "SRV-WEB"]
+postes[0]           # 'PC-1' (indices et tranches comme pour les chaînes)
+len(postes)         # 3
+postes.append("IMP-1")      # ajoute à la fin
+postes.insert(0, "ROUTEUR") # insère en position 0
+postes.remove("PC-2")       # retire la première occurrence (ValueError si absente)
+dernier = postes.pop()      # retire et renvoie le dernier élément
+"PC-1" in postes            # True
+```
+
+### Trier : sort ou sorted
+• `liste.sort()` trie **la liste elle-même** et renvoie `None` ;
+• `sorted(liste)` renvoie une **nouvelle liste** triée et laisse l'originale intacte.
+
+Piège classique : `postes = postes.sort()` met `None` dans `postes`.
+
+```python
+charges = [45, 12, 93]
+sorted(charges)                 # [12, 45, 93]
+sorted(charges, reverse=True)   # [93, 45, 12]
+```
+
+Un tri de chaînes suit l'ordre des caractères : `sorted(["pc10", "pc2", "pc1"])` donne `['pc1', 'pc10', 'pc2']`.
+
+### Une liste n'est pas copiée par =
+```python
+a = [1, 2]
+b = a           # b et a désignent la MÊME liste
+b.append(3)
+print(a)        # [1, 2, 3]
+```
+Pour une copie indépendante : `b = a.copy()` ou `b = list(a)`.
+
+### Construire une liste en une ligne : la compréhension
+```python
+carres = [n * n for n in range(5)]                      # [0, 1, 4, 9, 16]
+serveurs = [p for p in postes if p.startswith("SRV-")]  # filtre
+```
+C'est l'équivalent d'une boucle `for` avec `append`, en plus compact. Garde-la pour les cas simples.
+
+### Les tuples
+Un **tuple** s'écrit entre parenthèses et ne peut plus être modifié après sa création :
+
+```python
+passerelle = ("192.168.10.254", 24)
+ip, prefixe = passerelle      # déballage
+```
+On l'utilise pour des valeurs qui vont ensemble et ne doivent pas bouger, ou pour renvoyer plusieurs valeurs d'une fonction.
+
+### Les dictionnaires
+Un **dictionnaire** associe des **clés** à des **valeurs**. C'est l'outil idéal pour un inventaire ou une table de correspondance :
+
+```python
+inventaire = {
+    "PC-1": "192.168.10.11",
+    "PC-2": "192.168.10.12",
+    "SRV-WEB": "192.168.10.80",
+}
+inventaire["PC-1"]                   # '192.168.10.11'
+inventaire["IMP-1"] = "192.168.10.50"  # ajoute (ou remplace) une entrée
+del inventaire["PC-2"]               # supprime
+"SRV-WEB" in inventaire              # True : in teste les clés
+```
+
+Les clés sont uniques et doivent être immuables (chaînes, nombres, tuples). Depuis Python 3.7, un dictionnaire garde l'ordre d'insertion.
+
+Lire une clé absente avec `[]` lève une `KeyError`. La méthode `get` renvoie `None`, ou une valeur par défaut :
+
+```python
+inventaire.get("PC-9")            # None
+inventaire.get("PC-9", "inconnu") # 'inconnu'
+```
+
+### Parcourir un dictionnaire
+```python
+for nom, ip in inventaire.items():
+    print(f"{nom:<8} {ip}")
+```
+`keys()` donne les clés, `values()` les valeurs, `items()` les paires (clé, valeur).
+
+### Compter avec un dictionnaire
+C'est un schéma que tu réutiliseras souvent, par exemple pour compter les adresses qui apparaissent dans un journal :
+
+```python
+adresses = ["10.0.0.5", "10.0.0.7", "10.0.0.5", "10.0.0.5"]
+compte = {}
+for ip in adresses:
+    compte[ip] = compte.get(ip, 0) + 1
+print(compte)    # {'10.0.0.5': 3, '10.0.0.7': 1}
+```
+
+### Les ensembles (set)
+Un **set** contient des éléments sans doublon et sans ordre. `set(adresses)` donne les adresses distinctes ; `len(set(adresses))` les compte.
+
+### À toi de jouer
+1. Crée la liste des charges `[45, 12, 93, 67, 88]`. Affiche la plus forte, la plus faible, la moyenne et la liste triée du plus grand au plus petit, sans modifier la liste d'origine.
+2. Construis un dictionnaire `inventaire` de quatre machines (nom → adresse IP). Écris une boucle qui demande un nom et affiche son adresse, ou « machine inconnue », jusqu'à ce que l'utilisateur tape une ligne vide.
+3. À partir de la liste `["ssh", "http", "ssh", "dns", "ssh", "http"]`, construis le dictionnaire du nombre d'apparitions de chaque service, puis affiche-les du plus fréquent au moins fréquent.
+4. Que contient `a` à la fin ? `a = ["x"]` ; `b = a` ; `b.append("y")`. Comment l'éviter ?
+
+### Correction
+1. `max(charges)` → 93, `min(charges)` → 12, `sum(charges) / len(charges)` → 61.0, `sorted(charges, reverse=True)` → `[93, 88, 67, 45, 12]`. `sorted` ne touche pas à `charges`.
+2. Voir le premier bloc ci-dessous. `get` évite la `KeyError` ; la boucle `while True` s'arrête sur une ligne vide.
+3. Comptage avec `get`, puis tri des paires sur la valeur :
+```python
+compte = {}
+for s in ["ssh", "http", "ssh", "dns", "ssh", "http"]:
+    compte[s] = compte.get(s, 0) + 1
+for service, nb in sorted(compte.items(), key=lambda paire: paire[1], reverse=True):
+    print(service, nb)
+```
+Affichage : `ssh 3`, `http 2`, `dns 1`. Le paramètre `key` indique sur quoi trier : ici le deuxième élément de chaque paire. Le module `collections.Counter` (chapitre 9) fait la même chose plus simplement.
+4. `a` vaut `['x', 'y']` : `b = a` ne copie pas, les deux noms désignent la même liste. On écrit `b = a.copy()` pour travailler sur une copie.
+"""
+
+    codeblock "python" {
+      title: "Interroger un petit inventaire"
+      code: """
+inventaire = {
+    "PC-1": "192.168.10.11",
+    "PC-2": "192.168.10.12",
+    "SRV-WEB": "192.168.10.80",
+    "IMP-1": "192.168.10.50",
+}
+
+while True:
+    nom = input("Nom de machine (Entrée pour quitter) : ").strip().upper()
+    if not nom:
+        break
+    print(inventaire.get(nom, "machine inconnue"))
+
+print(f"{len(inventaire)} machines dans l'inventaire :")
+for nom, ip in sorted(inventaire.items()):
+    print(f"  {nom:<8} {ip}")
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "La liste postes contient les chaînes b puis a. Que contient postes après postes = postes.sort() ?" {
+        - "['a', 'b']"
+        - "['b', 'a']"
+        + "None"
+        - "une erreur"
+        explanation: "sort() trie la liste sur place et renvoie None ; en réaffectant, on perd la liste. Il faut écrire postes.sort() seul, ou postes = sorted(postes)."
+      }
+      question "Quelle méthode ajoute un élément à la fin d’une liste ?" {
+        - "add()"
+        + "append()"
+        - "push()"
+        - "insert()"
+        explanation: "append(x) ajoute x à la fin. insert(i, x) insère à une position donnée ; add() existe pour les ensembles (set), push() n'existe pas en Python."
+      }
+      question "Que renvoie inventaire.get avec la clé PC-9 et la valeur par défaut inconnu, si la clé n’existe pas ?" {
+        - "None"
+        - "une KeyError"
+        + "'inconnu'"
+        - "False"
+        explanation: "get renvoie la valeur par défaut fournie quand la clé est absente, ici 'inconnu'. Sans deuxième argument, elle renverrait None. C'est inventaire[\"PC-9\"] qui lèverait une KeyError."
+      }
+      question "Quelle erreur provoque inventaire[cle] si cle désigne une clé absente du dictionnaire ?" {
+        - "IndexError"
+        + "KeyError"
+        - "ValueError"
+        - "NameError"
+        explanation: "Accéder à une clé absente d'un dictionnaire lève KeyError. IndexError concerne les indices hors limites d'une liste ou d'une chaîne."
+      }
+      question "Après a = [1, 2] ; b = a ; b.append(3), que vaut a ?" {
+        - "[1, 2]"
+        + "[1, 2, 3]"
+        - "[3]"
+        - "une erreur"
+        explanation: "b = a ne copie pas la liste : les deux noms désignent le même objet. Pour une copie indépendante, on utilise a.copy() ou list(a)."
+      }
+      question "Que teste l’expression nom in inventaire quand inventaire est un dictionnaire ?" {
+        + "la présence de la clé SRV-WEB"
+        - "la présence de la valeur SRV-WEB"
+        - "la présence dans les clés et les valeurs"
+        - "rien, in ne fonctionne pas sur un dictionnaire"
+        explanation: "Sur un dictionnaire, in teste les clés. Pour chercher dans les valeurs, on écrit \"x\" in inventaire.values()."
+      }
+      question "Quelle méthode parcourt à la fois les clés et les valeurs d’un dictionnaire ?" {
+        - "keys()"
+        - "values()"
+        + "items()"
+        - "pairs()"
+        explanation: "items() fournit des paires (clé, valeur) qu'on déballe dans for cle, valeur in d.items(). pairs() n'existe pas."
+      }
+      question "Que vaut [n * 2 for n in range(4)] ?" {
+        - "[2, 4, 6, 8]"
+        + "[0, 2, 4, 6]"
+        - "[0, 1, 2, 3, 0, 1, 2, 3]"
+        - "8"
+        explanation: "range(4) donne 0, 1, 2, 3 ; chaque valeur est multipliée par 2. C'est une compréhension de liste, équivalente à une boucle avec append."
+      }
+      question "Que donne sorted() sur la liste des chaînes pc10, pc2, pc1 ?" {
+        - "['pc1', 'pc2', 'pc10']"
+        + "['pc1', 'pc10', 'pc2']"
+        - "['pc10', 'pc2', 'pc1']"
+        - "une erreur"
+        explanation: "Les chaînes sont triées caractère par caractère : 'pc1' < 'pc10' < 'pc2', car '1' vient avant '2'. Pour un tri naturel, il faut trier sur le nombre extrait du nom."
+      }
+      question "Pourquoi un tuple est-il adapté pour stocker l’adresse de passerelle 192.168.10.254 et son préfixe 24 ?" {
+        - "parce qu'il est plus rapide à modifier qu'une liste"
+        + "parce que ce sont des valeurs liées qui ne doivent pas être modifiées"
+        - "parce qu'une liste ne peut pas mélanger texte et nombre"
+        - "parce que les tuples se trient automatiquement"
+        explanation: "Un tuple est immuable, ce qui protège un ensemble de valeurs qui vont ensemble. Une liste peut aussi mélanger les types ; un tuple ne se trie pas tout seul."
+      }
+      question "Comment obtient-on le nombre d’adresses distinctes dans la liste adresses ?" {
+        - "len(adresses)"
+        + "len(set(adresses))"
+        - "adresses.count()"
+        - "max(adresses)"
+        explanation: "set() supprime les doublons, len() compte ensuite les éléments restants. len(adresses) compte aussi les répétitions."
+      }
+      question "Que fait compte[ip] = compte.get(ip, 0) + 1 ?" {
+        - "il remet le compteur de ip à zéro"
+        + "il ajoute 1 au compteur de ip, en partant de 0 si ip n'est pas encore une clé"
+        - "il lève une KeyError la première fois"
+        - "il ajoute ip à une liste"
+        explanation: "get(ip, 0) lit le compteur ou 0 s'il n'existe pas, on ajoute 1 puis on enregistre. C'est le schéma classique de comptage sans KeyError."
+      }
+      question "La liste postes contient PC-1, PC-2 et SRV. Que renvoie postes.pop() ?" {
+        - "'PC-1'"
+        + "'SRV', qui est retiré de la liste"
+        - "None"
+        - "la liste sans son dernier élément"
+        explanation: "pop() sans argument retire le dernier élément et le renvoie. pop(0) retirerait le premier. La liste est modifiée sur place."
+      }
+    }
+  }
+
+  module "fonctions" {
+    title: "Chapitre 7 : découper le programme en fonctions"
+    duration: "40min"
+    content: """
+### Pourquoi des fonctions
+Dès qu'un calcul sert plusieurs fois, ou qu'un script dépasse une trentaine de lignes, on le découpe en **fonctions** : des blocs nommés qui reçoivent des données, font un travail précis et renvoient un résultat. On gagne en lisibilité, on teste chaque morceau séparément et on corrige une erreur à un seul endroit.
+
+### Définir et appeler
+```python
+def nombre_hotes(prefixe):
+    '''Nombre d'adresses utilisables pour des hôtes dans un réseau IPv4.'''
+    return 2 ** (32 - prefixe) - 2
+
+print(nombre_hotes(24))    # 254
+print(nombre_hotes(26))    # 62
+```
+
+• `def` + nom + parenthèses avec les **paramètres** + deux-points ;
+• le corps est indenté ;
+• `return` renvoie le résultat et **termine** la fonction ;
+• la chaîne juste sous `def` est la **docstring** : elle documente la fonction et s'affiche avec `help(nombre_hotes)`. On l'écrit souvent avec trois guillemets doubles ; trois apostrophes fonctionnent aussi.
+
+Une fonction sans `return` renvoie `None`. Erreur fréquente : une fonction qui fait `print(resultat)` au lieu de `return resultat`. Elle affiche bien la valeur, mais le programme appelant ne peut pas la réutiliser.
+
+### Paramètres par défaut et arguments nommés
+```python
+def ping_texte(hote, nombre=4, delai=1.0):
+    return f"ping -c {nombre} -W {delai} {hote}"
+
+ping_texte("10.0.0.1")                  # nombre=4, delai=1.0
+ping_texte("10.0.0.1", 2)               # nombre=2
+ping_texte("10.0.0.1", delai=0.5)       # argument nommé
+```
+
+Les paramètres avec valeur par défaut se placent après ceux qui n'en ont pas.
+
+**Piège** : ne mets jamais une liste ou un dictionnaire comme valeur par défaut. La valeur par défaut est créée une seule fois, à la définition, et partagée entre les appels :
+
+```python
+def ajouter(x, liste=[]):      # à éviter
+    liste.append(x)
+    return liste
+
+ajouter(1)    # [1]
+ajouter(2)    # [1, 2] : la liste a gardé le 1 !
+```
+La forme correcte : `def ajouter(x, liste=None):` puis `if liste is None: liste = []`.
+
+### Renvoyer plusieurs valeurs
+Une fonction peut renvoyer un tuple, que l'on déballe :
+
+```python
+def stats(valeurs):
+    return min(valeurs), max(valeurs), sum(valeurs) / len(valeurs)
+
+mini, maxi, moyenne = stats([12, 45, 93])
+```
+
+### Portée des variables
+Une variable créée dans une fonction est **locale** : elle n'existe que pendant l'appel et n'est pas visible au dehors. Une fonction peut **lire** une variable définie au niveau du script, mais pour la modifier il faudrait le mot-clé `global`, à éviter : passe plutôt la valeur en paramètre et récupère le résultat avec `return`.
+
+### Le point d'entrée : if __name__ == "__main__"
+Un script bien rangé définit ses fonctions, puis les appelle depuis un bloc final :
+
+```python
+def main():
+    ...
+
+if __name__ == "__main__":
+    main()
+```
+
+Quand le fichier est lancé directement, `__name__` vaut `"__main__"` et `main()` s'exécute. Quand un autre script fait `import` de ce fichier pour réutiliser ses fonctions, `__name__` vaut le nom du module et `main()` ne s'exécute pas. Ce schéma est décrit dans la documentation officielle (module `__main__`).
+
+### Une fonction, une tâche
+Une bonne fonction :
+• a un nom qui dit ce qu'elle fait, avec un verbe (`calculer_masque`, `lire_inventaire`) ;
+• fait une seule chose ;
+• reçoit ses données en paramètres plutôt que de lire des variables globales ;
+• renvoie un résultat plutôt que de l'afficher, sauf si c'est son rôle.
+
+### À toi de jouer
+1. Écris `prefixe_vers_masque(prefixe)` qui renvoie le masque en notation décimale pointée (`26` → `"255.255.255.192"`). Méthode : construis une chaîne de 32 caractères avec `prefixe` fois « 1 » puis des « 0 », découpe-la en 4 morceaux de 8 et convertis chaque morceau avec `int(morceau, 2)`. Si le préfixe n'est pas entre 0 et 32, lève une erreur avec `raise ValueError("…")`.
+2. Corrige `nombre_hotes` pour qu'elle traite aussi /31 (2 adresses, liaison point à point, RFC 3021) et /32 (1 adresse, hôte seul), au lieu de renvoyer 0 et -1.
+3. Écris un `main()` qui affiche pour les préfixes 8, 20, 24, 26, 30 une ligne alignée : préfixe, masque, nombre d'hôtes.
+4. Qu'affiche ce code, et pourquoi ?
+```python
+def double(x):
+    print(x * 2)
+
+resultat = double(5)
+print(resultat)
+```
+
+### Correction
+1, 2 et 3 : voir le bloc ci-dessous. Résultat attendu :
+```text
+/8  255.0.0.0       16777214 hôtes
+/20 255.255.240.0   4094 hôtes
+/24 255.255.255.0   254 hôtes
+/26 255.255.255.192 62 hôtes
+/30 255.255.255.252 2 hôtes
+```
+Pour /26 : `"1" * 26 + "0" * 6` donne 32 caractères ; le dernier octet `11000000` vaut 192.
+4. Le code affiche `10` puis `None`. `double` affiche le résultat mais ne le renvoie pas : sans `return`, une fonction renvoie `None`. Correction : `return x * 2`.
+"""
+
+    codeblock "python" {
+      title: "masque.py : préfixe CIDR, masque et nombre d'hôtes"
+      code: """
+def prefixe_vers_masque(prefixe):
+    '''Renvoie le masque décimal pointé d'un préfixe CIDR (0 à 32).'''
+    if not 0 <= prefixe <= 32:
+        raise ValueError("le préfixe doit être entre 0 et 32")
+    bits = "1" * prefixe + "0" * (32 - prefixe)
+    octets = [str(int(bits[i:i + 8], 2)) for i in range(0, 32, 8)]
+    return ".".join(octets)
+
+
+def nombre_hotes(prefixe):
+    '''Adresses utilisables : /31 point à point (RFC 3021), /32 hôte seul.'''
+    if prefixe == 32:
+        return 1
+    if prefixe == 31:
+        return 2
+    return 2 ** (32 - prefixe) - 2
+
+
+def main():
+    for p in (8, 20, 24, 26, 30):
+        print(f"/{p:<2} {prefixe_vers_masque(p):<15} {nombre_hotes(p)} hôtes")
+
+
+if __name__ == "__main__":
+    main()
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Que renvoie une fonction qui ne contient aucune instruction return ?" {
+        - "0"
+        - "la valeur de la dernière ligne"
+        + "None"
+        - "une erreur à l'appel"
+        explanation: "Sans return, une fonction renvoie None. Contrairement à certains langages, la valeur de la dernière expression n'est pas renvoyée automatiquement."
+      }
+      question "Quelle ligne définit correctement une fonction ?" {
+        - "function calcul(x):"
+        - "def calcul x:"
+        + "def calcul(x):"
+        - "def calcul(x)"
+        explanation: "On écrit def, le nom, les paramètres entre parenthèses, puis les deux-points. function est le mot-clé de JavaScript, pas de Python."
+      }
+      question "Que vaut nombre_hotes(26) si la fonction renvoie 2 ** (32 - prefixe) - 2 ?" {
+        - "64"
+        + "62"
+        - "30"
+        - "254"
+        explanation: "32 - 26 = 6 bits d'hôte, 2⁶ = 64 adresses, moins l'adresse de réseau et celle de diffusion : 62 hôtes."
+      }
+      question "Pourquoi éviter def ajouter(x, liste=[]) ?" {
+        - "parce qu'une liste ne peut pas être un paramètre"
+        + "parce que la liste par défaut est créée une seule fois et partagée entre les appels"
+        - "parce que les crochets sont interdits dans def"
+        - "parce que la liste est copiée à chaque appel et ralentit le programme"
+        explanation: "La valeur par défaut est évaluée une seule fois, à la définition. Chaque appel sans argument modifie la même liste. On écrit liste=None puis on crée la liste dans la fonction."
+      }
+      question "Avec def ping_texte(hote, nombre=4, delai=1.0), quel appel fixe seulement le délai à 0.5 ?" {
+        - "ping_texte(\"10.0.0.1\", 0.5)"
+        + "ping_texte(\"10.0.0.1\", delai=0.5)"
+        - "ping_texte(delai=0.5)"
+        - "ping_texte(\"10.0.0.1\", , 0.5)"
+        explanation: "L'argument nommé delai=0.5 vise le bon paramètre. Passé en position, 0.5 irait dans nombre. hote est obligatoire, donc ping_texte(delai=0.5) lève une TypeError."
+      }
+      question "À quoi sert le bloc final qui teste si __name__ vaut __main__ ?" {
+        - "à rendre le script exécutable sous Linux"
+        + "à n'exécuter le code principal que si le fichier est lancé directement, pas quand il est importé"
+        - "à déclarer la fonction main comme obligatoire"
+        - "à lancer le script avec les droits administrateur"
+        explanation: "__name__ vaut \"__main__\" seulement pour le fichier lancé. Un autre script peut ainsi importer les fonctions sans déclencher main()."
+      }
+      question "Une variable compteur créée à l’intérieur d’une fonction est-elle visible après l’appel ?" {
+        - "oui, toutes les variables sont globales en Python"
+        + "non, elle est locale à la fonction"
+        - "oui, si elle a été affichée avec print"
+        - "seulement si la fonction a un return"
+        explanation: "Les variables créées dans une fonction sont locales et disparaissent à la fin de l'appel. Pour récupérer une valeur, la fonction la renvoie avec return."
+      }
+      question "Ce code affiche quoi : def f(x): print(x * 2) puis r = f(5) puis print(r) ?" {
+        - "10 puis 10"
+        + "10 puis None"
+        - "None puis 10"
+        - "seulement 10"
+        explanation: "f affiche 10 mais ne renvoie rien, donc r vaut None, que le second print affiche. Pour réutiliser le résultat, il faut return x * 2."
+      }
+      question "Comment récupère-t-on trois valeurs renvoyées par return a, b, c ?" {
+        - "r = f() puis r.a, r.b, r.c"
+        + "x, y, z = f()"
+        - "x = f(1), y = f(2), z = f(3)"
+        - "c'est impossible, une fonction ne renvoie qu'une valeur"
+        explanation: "return a, b, c renvoie un tuple que l'on déballe dans autant de variables. Le nombre de variables doit correspondre, sinon ValueError."
+      }
+      question "Où se place la docstring d’une fonction ?" {
+        - "dans un commentaire # au-dessus de def"
+        + "dans une chaîne, première ligne du corps de la fonction"
+        - "après le return"
+        - "dans un fichier séparé"
+        explanation: "La docstring est la première instruction du corps : une chaîne littérale. help() et les éditeurs l'affichent. Un commentaire # n'est pas une docstring."
+      }
+      question "Quel nom de fonction respecte le mieux les conventions ?" {
+        - "Calcul"
+        - "fct1"
+        + "calculer_masque"
+        - "CalculerMasque"
+        explanation: "La PEP 8 recommande des noms de fonctions en minuscules avec tirets bas, et un nom qui décrit l'action. CamelCase est réservé aux classes ; fct1 ne dit rien."
+      }
+      question "Que vaut int() appliqué à la chaîne 11111111 en base 2, pour un octet de masque ?" {
+        - "8"
+        - "11111111"
+        + "255"
+        - "256"
+        explanation: "Huit bits à 1 valent 128 + 64 + 32 + 16 + 8 + 4 + 2 + 1 = 255. 256 est le nombre de valeurs possibles d'un octet (0 à 255)."
+      }
+      question "Que fait l’instruction raise ValueError(message) dans une fonction ?" {
+        - "il affiche le message et continue"
+        + "il interrompt la fonction en signalant une erreur que l'appelant peut intercepter"
+        - "il renvoie la chaîne \"préfixe invalide\""
+        - "il ferme le terminal"
+        explanation: "raise lève une exception. Si personne ne l'intercepte avec try / except, le programme s'arrête avec une trace. C'est la bonne façon de refuser une donnée invalide."
+      }
+    }
+  }
+
+  module "fichiers-erreurs" {
+    title: "Chapitre 8 : lire et écrire des fichiers, gérer les erreurs"
+    duration: "40min"
+    content: """
+### Ouvrir un fichier avec with
+La fonction `open(chemin, mode, encoding=...)` ouvre un fichier. On l'utilise presque toujours avec `with`, qui **ferme le fichier automatiquement** à la sortie du bloc, même en cas d'erreur :
+
+```python
+with open("postes.txt", "r", encoding="utf-8") as f:
+    contenu = f.read()          # tout le fichier dans une chaîne
+```
+
+| Mode | Effet |
+|---|---|
+| `"r"` | lecture (par défaut) ; erreur si le fichier n'existe pas |
+| `"w"` | écriture : crée le fichier ou **efface son contenu** s'il existe |
+| `"a"` | ajout à la fin (append), crée le fichier si besoin |
+| `"x"` | création seulement ; erreur si le fichier existe déjà |
+
+**Attention** : ouvrir en `"w"` un fichier existant le vide immédiatement, avant même d'écrire. Pour un journal ou un rapport cumulatif, utilise `"a"`. En cas de doute, `"x"` protège contre l'écrasement.
+
+Précise toujours `encoding="utf-8"`. Jusqu'à Python 3.14, l'encodage par défaut dépendait du système (souvent cp1252 sous Windows), ce qui cassait les accents d'un fichier écrit sous Linux. Depuis Python 3.15, le mode UTF-8 est activé par défaut (PEP 686), mais l'écrire explicitement reste la bonne pratique et rend le script correct sur toutes les versions.
+
+### Lire ligne par ligne
+Pour un fichier qui peut être gros (un journal système), on le parcourt ligne par ligne sans tout charger en mémoire :
+
+```python
+with open("postes.txt", encoding="utf-8") as f:
+    for ligne in f:
+        ligne = ligne.strip()       # retire le \n final et les espaces
+        if not ligne or ligne.startswith("#"):
+            continue
+        print("poste :", ligne)
+```
+
+Chaque ligne lue se termine par `\n` (sauf parfois la dernière) ; d'où le `strip()`.
+
+### Écrire
+`write()` écrit une chaîne **sans ajouter de retour à la ligne** : c'est à toi de mettre `\n`.
+
+```python
+with open("rapport.txt", "w", encoding="utf-8") as f:
+    f.write("Rapport du 26/11\n")
+    for nom, ip in [("PC-1", "192.168.10.11"), ("PC-2", "192.168.10.12")]:
+        f.write(f"{nom};{ip}\n")
+```
+
+### pathlib : manipuler des chemins
+Le module standard `pathlib` représente les chemins de façon portable (Linux et Windows) :
+
+```python
+from pathlib import Path
+
+dossier = Path("journaux")
+fichier = dossier / "acces.log"       # l'opérateur / assemble les chemins
+fichier.exists()                      # True ou False
+texte = fichier.read_text(encoding="utf-8")
+for p in dossier.glob("*.log"):       # tous les .log du dossier
+    print(p.name, p.stat().st_size, "octets")
+```
+
+### Les exceptions
+Quand une opération échoue, Python lève une **exception**. Si personne ne l'intercepte, le programme s'arrête avec une trace. Les plus courantes :
+
+| Exception | Cause typique |
+|---|---|
+| `ValueError` | `int("abc")`, valeur de bon type mais incorrecte |
+| `TypeError` | `"a" + 1`, types incompatibles |
+| `FileNotFoundError` | ouverture en lecture d'un fichier absent |
+| `PermissionError` | lecture de `/var/log/auth.log` sans les droits |
+| `KeyError` | clé absente d'un dictionnaire |
+| `IndexError` | indice hors limites d'une liste |
+| `ZeroDivisionError` | division par zéro |
+
+### try / except / else / finally
+```python
+try:
+    prefixe = int(input("Préfixe : "))
+except ValueError:
+    print("Ce n'est pas un nombre entier.")
+else:
+    print("Préfixe lu :", prefixe)      # seulement s'il n'y a pas eu d'erreur
+finally:
+    print("Fin de la saisie.")          # dans tous les cas
+```
+
+Règles de bon usage :
+• intercepte des exceptions **précises** (`except ValueError`), jamais un `except:` nu qui avale tout, y compris Ctrl+C et tes propres fautes de frappe ;
+• garde le bloc `try` court : seulement les lignes qui peuvent échouer ;
+• `except ValueError as erreur:` donne accès au message (`print(erreur)`) ;
+• plusieurs `except` peuvent se suivre, pour traiter différemment chaque cas ;
+• n'intercepte une erreur que si tu sais quoi en faire ; sinon, laisse-la remonter.
+
+### Lever ses propres erreurs
+`raise ValueError("message")` signale une donnée invalide (on l'a vu au chapitre 7). Le code qui appelle peut l'intercepter avec `try / except ValueError`.
+
+### À toi de jouer
+1. Crée à la main un fichier `adresses.txt` contenant :
+```text
+# serveurs du lycée
+192.168.10.1
+192.168.10.80
+
+10.0.0.300
+abc
+172.16.0.5
+```
+Écris un script qui lit ce fichier, ignore les lignes vides et les commentaires, et classe chaque ligne en « valide » ou « invalide ». Une adresse est valide si elle a 4 morceaux séparés par des points, chacun étant un entier entre 0 et 255. Utilise `try / except ValueError` pour la conversion.
+2. Le script doit afficher un message clair, sans trace, si `adresses.txt` n'existe pas.
+3. Écris les adresses valides dans `valides.txt` (une par ligne) et affiche le nombre de lignes invalides.
+4. Un camarade écrit `with open("journal.txt", "w") as f:` pour ajouter une ligne à son journal quotidien. Quel problème va-t-il découvrir le lendemain ?
+
+### Correction
+1, 2 et 3 : voir le bloc ci-dessous. Avec le fichier de l'énoncé, l'affichage est :
+```text
+valide   192.168.10.1
+valide   192.168.10.80
+invalide 10.0.0.300
+invalide abc
+valide   172.16.0.5
+3 valides, 2 invalides
+```
+`10.0.0.300` est rejetée car 300 > 255 ; `abc` est rejetée car elle n'a pas 4 morceaux. Sans `try`, une ligne comme `10.a.0.1` ferait planter le script sur `int("a")`.
+4. Le mode `"w"` efface le fichier à chaque ouverture : le journal ne contient jamais que la dernière ligne. Il faut le mode `"a"` (ajout), et préciser `encoding="utf-8"`.
+"""
+
+    codeblock "python" {
+      title: "Trier des adresses valides et invalides"
+      code: """
+import sys
+
+
+def est_ipv4_valide(texte):
+    morceaux = texte.split(".")
+    if len(morceaux) != 4:
+        return False
+    for m in morceaux:
+        try:
+            valeur = int(m)
+        except ValueError:
+            return False
+        if not 0 <= valeur <= 255:
+            return False
+    return True
+
+
+valides = []
+nb_invalides = 0
+try:
+    with open("adresses.txt", encoding="utf-8") as f:
+        for ligne in f:
+            ligne = ligne.strip()
+            if not ligne or ligne.startswith("#"):
+                continue
+            if est_ipv4_valide(ligne):
+                valides.append(ligne)
+                print(f"valide   {ligne}")
+            else:
+                nb_invalides += 1
+                print(f"invalide {ligne}")
+except FileNotFoundError:
+    print("Fichier adresses.txt introuvable.", file=sys.stderr)
+    sys.exit(1)
+
+with open("valides.txt", "w", encoding="utf-8") as f:
+    for ip in valides:
+        f.write(ip + "\n")
+
+print(f"{len(valides)} valides, {nb_invalides} invalides")
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Que se passe-t-il si on ouvre en mode w un fichier qui existe déjà ?" {
+        - "le texte écrit est ajouté à la fin"
+        + "son contenu est effacé dès l'ouverture"
+        - "Python lève FileExistsError"
+        - "le fichier est ouvert en lecture seule"
+        explanation: "\"w\" tronque le fichier à l'ouverture. Pour ajouter à la fin, on utilise \"a\". C'est le mode \"x\" qui lève FileExistsError si le fichier existe."
+      }
+      question "Quel est l’avantage principal de with open(...) as f: ?" {
+        - "le fichier est lu plus vite"
+        + "le fichier est fermé automatiquement à la fin du bloc, même en cas d'erreur"
+        - "le fichier est chiffré"
+        - "le mode d'ouverture est deviné automatiquement"
+        explanation: "with garantit la fermeture du fichier. Sans lui, une erreur entre open et close laisserait le fichier ouvert, et des données écrites pourraient ne jamais être enregistrées sur le disque."
+      }
+      question "Quelle exception lève open() en lecture sur un fichier qui n’existe pas ?" {
+        - "KeyError"
+        - "IOError: no such file"
+        + "FileNotFoundError"
+        - "ValueError"
+        explanation: "Ouvrir en lecture un fichier inexistant lève FileNotFoundError. Lire un fichier sans les droits lève PermissionError."
+      }
+      question "Que fait f.write() appelé avec la chaîne PC-1 ?" {
+        - "il écrit PC-1 suivi d'un retour à la ligne"
+        + "il écrit PC-1 sans retour à la ligne"
+        - "il remplace tout le fichier par PC-1"
+        - "il écrit PC-1 seulement si le fichier est vide"
+        explanation: "write() écrit exactement la chaîne fournie. Pour passer à la ligne, il faut ajouter \\n. Contrairement à print, rien n'est ajouté automatiquement."
+      }
+      question "Pourquoi appelle-t-on strip() sur chaque ligne lue dans un fichier ?" {
+        - "pour convertir la ligne en nombre"
+        + "pour retirer le retour à la ligne final et les espaces parasites"
+        - "pour mettre la ligne en minuscules"
+        - "parce que for ligne in f lit les lignes à l'envers"
+        explanation: "Chaque ligne lue garde son \\n final. Sans strip(), une comparaison comme ligne == \"192.168.10.1\" échoue, et les print affichent des lignes vides en plus."
+      }
+      question "Pourquoi éviter un except: nu (sans type d’exception) ?" {
+        - "parce que la syntaxe est invalide en Python 3"
+        + "parce qu'il intercepte tout, y compris Ctrl+C et les fautes de programmation, et cache les vrais problèmes"
+        - "parce qu'il ralentit fortement le programme"
+        - "parce qu'il n'intercepte que les erreurs de fichier"
+        explanation: "Un except nu attrape même KeyboardInterrupt et les NameError dues à une faute de frappe. On intercepte des exceptions précises, comme ValueError ou FileNotFoundError."
+      }
+      question "Dans try / except / else / finally, quand le bloc else s’exécute-t-il ?" {
+        - "toujours"
+        - "seulement si une exception a été levée"
+        + "seulement si aucune exception n'a été levée dans le try"
+        - "jamais si finally est présent"
+        explanation: "else s'exécute quand le try s'est terminé sans erreur ; finally s'exécute dans tous les cas, avec ou sans erreur."
+      }
+      question "Quelle exception lève int() appliqué à la chaîne abc ?" {
+        - "TypeError"
+        + "ValueError"
+        - "NameError"
+        - "SyntaxError"
+        explanation: "Le type (une chaîne) est accepté par int(), mais son contenu ne représente pas un entier : c'est une ValueError. TypeError concerne des types incompatibles, comme \"a\" + 1."
+      }
+      question "Un script qui lit /var/log/auth.log s’arrête sur PermissionError. Quelle est la cause ?" {
+        - "le fichier n'existe pas"
+        + "l'utilisateur n'a pas le droit de lire ce fichier"
+        - "l'encodage n'est pas précisé"
+        - "le fichier est trop gros"
+        explanation: "auth.log n'est lisible que par root et par le groupe adm sur Debian et Ubuntu. On lance le script avec sudo, ou on ajoute l'utilisateur au groupe adm. Un fichier absent donnerait FileNotFoundError."
+      }
+      question "Pourquoi préciser encoding=utf-8 dans open() ?" {
+        - "parce que sinon le fichier est ouvert en binaire"
+        + "pour que les accents soient lus de la même façon sur tous les systèmes et toutes les versions de Python"
+        - "parce que Python refuse d'ouvrir un fichier sans encodage"
+        - "pour compresser le fichier"
+        explanation: "Avant Python 3.15, l'encodage par défaut dépendait du système (cp1252 sous Windows). L'indiquer explicitement évite les caractères abîmés et les UnicodeDecodeError."
+      }
+      question "Avec pathlib, que représente Path(journaux) / acces.log, les deux noms étant des chaînes ?" {
+        - "une division, donc une erreur"
+        + "le chemin journaux/acces.log, construit de façon portable"
+        - "la taille du fichier divisée par celle du dossier"
+        - "le contenu du fichier"
+        explanation: "pathlib redéfinit l'opérateur / pour assembler des chemins, avec le bon séparateur selon le système (/ sous Linux, \\ sous Windows)."
+      }
+      question "Quel mode d’ouverture refuse d’écraser un fichier existant ?" {
+        - "\"w\""
+        - "\"a\""
+        - "\"r+\""
+        + "\"x\""
+        explanation: "Le mode \"x\" (création exclusive) lève FileExistsError si le fichier existe déjà. C'est une protection simple contre l'écrasement d'un rapport."
+      }
+      question "Que vaut une ligne lue par for ligne in f pour la première ligne d’un fichier contenant « PC-1 » puis « PC-2 » ?" {
+        - "'PC-1'"
+        + "'PC-1\\n'"
+        - "['PC-1']"
+        - "1"
+        explanation: "La ligne garde son caractère de fin de ligne \\n. On le retire avec strip() ou rstrip(\"\\n\") avant de comparer ou d'afficher."
+      }
+    }
+  }
+
+  module "modules-lisibilite" {
+    title: "Chapitre 9 : modules standard, paquets et code lisible"
+    duration: "40min"
+    content: """
+### Importer un module
+Python est livré avec une grande **bibliothèque standard** : des centaines de modules prêts à l'emploi, sans rien installer. On les charge avec `import` en haut du script :
+
+```python
+import math                       # on écrit ensuite math.sqrt(16)
+from pathlib import Path          # on écrit directement Path(...)
+import datetime as dt             # alias : dt.date.today()
+```
+
+Évite `from module import *` : on ne sait plus d'où vient chaque nom et un nom peut en écraser un autre.
+
+Ne nomme jamais ton script comme un module standard (`random.py`, `math.py`, `ipaddress.py`) : `import random` chargerait ton fichier au lieu du vrai module, avec des erreurs incompréhensibles.
+
+### Les modules à connaître pour commencer
+
+| Module | Pour quoi faire | Exemple |
+|---|---|---|
+| `math` | fonctions mathématiques | `math.ceil(2.1)` → 3, `math.log2(64)` → 6.0 |
+| `random` | hasard pour simulations et jeux | `random.randint(1, 6)` |
+| `secrets` | hasard sûr pour mots de passe et jetons | `secrets.token_hex(16)` |
+| `datetime` | dates et heures | `date.today().strftime("%d/%m/%Y")` |
+| `pathlib` | chemins et fichiers | `Path.home()` |
+| `sys` | arguments, sortie du programme | `sys.argv`, `sys.exit(1)` |
+| `os` | variables d'environnement, système | `os.environ.get("HOME")` |
+| `csv` / `json` | lire et écrire ces formats | `json.load(f)` |
+| `collections` | `Counter` pour compter | `Counter(liste).most_common(3)` |
+| `ipaddress` | adresses et réseaux IPv4 et IPv6 | `ip_network("10.0.0.0/8")` |
+
+### random ou secrets ?
+La documentation officielle est claire : le générateur de `random` est prévisible et **ne doit pas servir pour la sécurité**. Pour un mot de passe, un jeton ou un code de réinitialisation, utilise `secrets` :
+
+```python
+import secrets
+import string
+
+alphabet = string.ascii_letters + string.digits
+mot_de_passe = "".join(secrets.choice(alphabet) for _ in range(16))
+```
+
+### Les arguments de la ligne de commande
+`sys.argv` est la liste des mots tapés après `python3` : `sys.argv[0]` est le nom du script, puis viennent les arguments.
+
+```python
+import sys
+
+if len(sys.argv) != 2:
+    print("usage : python3 scan.py RÉSEAU", file=sys.stderr)
+    sys.exit(2)
+reseau = sys.argv[1]
+```
+
+`sys.exit(0)` signale un succès, un autre code un échec ; un script shell ou une tâche planifiée peut tester ce code. Pour des options plus riches (`-v`, `--sortie`), le module `argparse` génère même l'aide automatiquement.
+
+### Le module ipaddress
+Il fait les calculs de sous-réseaux sans erreur et valide les saisies :
+
+```python
+import ipaddress
+
+reseau = ipaddress.ip_network("192.168.10.0/26")
+reseau.netmask             # 255.255.255.192
+reseau.broadcast_address   # 192.168.10.63
+reseau.num_addresses       # 64
+interface = ipaddress.ip_interface("192.168.10.37/26")
+interface.network          # 192.168.10.0/26
+ipaddress.ip_address("10.1.2.3").is_private   # True
+```
+
+`ip_network("192.168.10.37/26")` lève une `ValueError` (« has host bits set ») : une adresse de réseau ne doit pas avoir de bits d'hôte. Utilise `ip_interface`, ou `ip_network(..., strict=False)`.
+
+### Installer des paquets externes : pip et venv
+Hors de la bibliothèque standard, des paquets se trouvent sur PyPI (requests, flask…). Sur Debian 12 et Ubuntu 23.04 et plus, `pip install` dans le Python du système est **refusé** avec l'erreur `externally-managed-environment` (PEP 668), pour protéger les outils du système. Deux bonnes solutions :
+• le paquet de la distribution, s'il existe : `sudo apt install python3-requests` ;
+• un **environnement virtuel** propre au projet :
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate        # Windows : .venv\Scripts\activate
+python -m pip install requests
+```
+
+N'utilise pas `--break-system-packages` sauf si tu sais exactement pourquoi : tu risques de casser des outils du système. Installe uniquement des paquets connus, en vérifiant leur nom : des paquets piégés aux noms proches de paquets populaires existent sur PyPI.
+
+### Écrire un code lisible : la PEP 8
+Un code est lu bien plus souvent qu'il n'est écrit. La **PEP 8** est le guide de style officiel de Python. L'essentiel :
+• 4 espaces par niveau d'indentation, jamais de tabulations ;
+• lignes de 79 caractères au plus ;
+• `snake_case` pour les variables et les fonctions, `CamelCase` pour les classes, `MAJUSCULES` pour les constantes ;
+• une ligne vide entre les blocs logiques, deux lignes vides entre les fonctions de premier niveau ;
+• les `import` en haut du fichier, un par ligne ;
+• des espaces autour de `=` et des opérateurs (`x = a + b`), mais pas pour un argument nommé (`f(x, sep=";")`).
+
+Au-delà de la forme :
+• des **noms parlants** : `nb_echecs` plutôt que `n`, `adresse_ip` plutôt que `a` ;
+• des **commentaires qui expliquent pourquoi**, pas ce que fait la ligne (le code le dit déjà) ;
+• des constantes nommées plutôt que des nombres magiques : `SEUIL_ALERTE = 90` ;
+• des fonctions courtes avec une docstring ;
+• un seul niveau de détail par fonction, et le bloc `if __name__ == "__main__":` en bas.
+
+Des outils vérifient le style automatiquement, comme `flake8` ou `ruff` (paquets à installer dans un environnement virtuel). Un contrôle de base est déjà fourni : `python3 -m py_compile script.py` signale les erreurs de syntaxe sans exécuter le script.
+
+### À toi de jouer
+1. Écris `motdepasse.py` qui génère un mot de passe de la longueur passée en argument (`python3 motdepasse.py 20`), 16 par défaut, avec lettres, chiffres et ponctuation, en utilisant `secrets`. Refuse une longueur inférieure à 12.
+2. Avec `ipaddress`, affiche les 4 sous-réseaux /26 de `192.168.10.0/24`. Indice : la méthode `subnets(new_prefix=26)`.
+3. Réécris ce code pour qu'il soit lisible, sans changer ce qu'il fait :
+```python
+import sys
+def F(l):
+  r=0
+  for x in l:
+    if x>90:r=r+1
+  return r
+print(F([95,40,91,12]))
+```
+4. Explique pourquoi `random.choice` ne convient pas pour générer le mot de passe d'un compte administrateur.
+
+### Correction
+1. Voir le bloc ci-dessous. `string.punctuation` contient la ponctuation ASCII.
+2.
+```python
+import ipaddress
+for sous_reseau in ipaddress.ip_network("192.168.10.0/24").subnets(new_prefix=26):
+    print(sous_reseau)
+```
+Résultat : `192.168.10.0/26`, `192.168.10.64/26`, `192.168.10.128/26`, `192.168.10.192/26`.
+3. Version lisible :
+```python
+SEUIL_ALERTE = 90
+
+
+def compter_alertes(charges):
+    '''Compte les charges CPU strictement supérieures au seuil d'alerte.'''
+    nb_alertes = 0
+    for charge in charges:
+        if charge > SEUIL_ALERTE:
+            nb_alertes += 1
+    return nb_alertes
+
+
+print(compter_alertes([95, 40, 91, 12]))    # 2
+```
+L'`import sys` inutile disparaît, la fonction a un nom et une docstring, le seuil est une constante nommée, l'indentation passe à 4 espaces.
+4. Le générateur de `random` est conçu pour la simulation : ses sorties sont prévisibles pour qui observe assez de valeurs. La documentation de Python demande d'utiliser `secrets` pour tout usage de sécurité.
+"""
+
+    codeblock "python" {
+      title: "motdepasse.py : générer un mot de passe avec secrets"
+      code: """
+import secrets
+import string
+import sys
+
+LONGUEUR_PAR_DEFAUT = 16
+LONGUEUR_MINIMALE = 12
+
+
+def generer(longueur):
+    '''Renvoie un mot de passe aléatoire sûr de la longueur demandée.'''
+    alphabet = string.ascii_letters + string.digits + string.punctuation
+    return "".join(secrets.choice(alphabet) for _ in range(longueur))
+
+
+def main():
+    longueur = LONGUEUR_PAR_DEFAUT
+    if len(sys.argv) > 1:
+        try:
+            longueur = int(sys.argv[1])
+        except ValueError:
+            print("la longueur doit être un entier", file=sys.stderr)
+            sys.exit(2)
+    if longueur < LONGUEUR_MINIMALE:
+        print(f"longueur minimale : {LONGUEUR_MINIMALE}", file=sys.stderr)
+        sys.exit(2)
+    print(generer(longueur))
+
+
+if __name__ == "__main__":
+    main()
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quel module utiliser pour générer un jeton de réinitialisation de mot de passe ?" {
+        - "random"
+        + "secrets"
+        - "math"
+        - "hashlib"
+        explanation: "secrets fournit un hasard adapté à la cryptographie. La documentation précise que random ne doit pas servir pour la sécurité. hashlib calcule des empreintes, il ne génère pas de hasard."
+      }
+      question "Avec la commande python3 scan.py 10.0.0.0/24, que contient sys.argv[1] ?" {
+        - "'python3'"
+        - "'scan.py'"
+        + "'10.0.0.0/24'"
+        - "le nombre d'arguments"
+        explanation: "sys.argv[0] est le nom du script et sys.argv[1] le premier argument. python3 n'apparaît pas dans sys.argv. Le nombre d'arguments s'obtient avec len(sys.argv)."
+      }
+      question "Que se passe-t-il avec ipaddress.ip_network appliqué à la chaîne 192.168.10.37/26 ?" {
+        - "rien, il renvoie 192.168.10.37/26"
+        + "une ValueError, car l'adresse a des bits d'hôte"
+        - "une TypeError"
+        - "rien, il renvoie 192.168.10.0/26"
+        explanation: "Par défaut (strict=True), une adresse de réseau ne doit pas avoir de bits d'hôte. ip_interface(\"192.168.10.37/26\").network ou strict=False donne 192.168.10.0/26."
+      }
+      question "Sur Debian 12, pip install requests échoue avec externally-managed-environment. Quelle est la bonne réponse ?" {
+        - "relancer avec sudo pip install requests"
+        - "ajouter --break-system-packages systématiquement"
+        + "installer python3-requests avec apt, ou créer un environnement virtuel avec python3 -m venv"
+        - "désinstaller Python et le réinstaller"
+        explanation: "La PEP 668 protège le Python du système. Le paquet de la distribution ou un venv propre au projet évitent de casser les outils du système. sudo pip est justement ce que cette protection veut empêcher."
+      }
+      question "Selon la PEP 8, comment nomme-t-on une constante ?" {
+        - "seuilAlerte"
+        - "seuil_alerte"
+        + "SEUIL_ALERTE"
+        - "SeuilAlerte"
+        explanation: "Les constantes s'écrivent en majuscules avec tirets bas. snake_case est pour les variables et les fonctions, CamelCase pour les classes."
+      }
+      question "Pourquoi un script nommé random.py casse-t-il import random ?" {
+        - "parce que random est un mot réservé"
+        + "parce que Python importe ton fichier au lieu du module standard, car il le trouve d'abord"
+        - "parce qu'un fichier ne peut pas porter le nom d'un module"
+        - "parce que random.py est supprimé à l'import"
+        explanation: "Le dossier du script est en tête du chemin de recherche des modules. Ton random.py masque le module standard ; random.randint devient introuvable (AttributeError)."
+      }
+      question "Quelle est la longueur de ligne maximale recommandée par la PEP 8 ?" {
+        - "60 caractères"
+        + "79 caractères"
+        - "100 caractères"
+        - "120 caractères"
+        explanation: "La PEP 8 recommande 79 caractères pour le code (72 pour les docstrings et commentaires longs). Certaines équipes s'accordent sur une limite plus large, mais 79 reste la recommandation officielle."
+      }
+      question "Que renvoie most_common(1) sur un Counter construit avec la liste ssh, dns, ssh ?" {
+        - "'ssh'"
+        + "[('ssh', 2)]"
+        - "{'ssh': 2}"
+        - "2"
+        explanation: "most_common(n) renvoie une liste des n éléments les plus fréquents sous forme de paires (élément, nombre)."
+      }
+      question "Pourquoi éviter from math import * ?" {
+        - "parce que cela importe le module deux fois"
+        + "parce qu'on ne sait plus d'où viennent les noms et qu'ils peuvent en écraser d'autres"
+        - "parce que la syntaxe n'existe plus en Python 3"
+        - "parce que cela rend math plus lent"
+        explanation: "L'import étoile déverse tous les noms publics du module dans ton script : un nom existant peut être remplacé sans prévenir et le lecteur ne sait plus d'où vient une fonction."
+      }
+      question "Quel commentaire est le plus utile ?" {
+        - "# ajoute 1 à compteur"
+        - "# boucle for"
+        + "# le journal de la veille est compressé en .gz, on ne lit que le fichier du jour"
+        - "# variable"
+        explanation: "Un bon commentaire explique une raison ou un choix que le code ne montre pas. Paraphraser la ligne (ajoute 1) n'apporte rien au lecteur."
+      }
+      question "Que fait python3 -m py_compile script.py ?" {
+        - "il exécute le script plus vite"
+        + "il vérifie la syntaxe du script sans l'exécuter"
+        - "il crée un exécutable Windows"
+        - "il reformate le code selon la PEP 8"
+        explanation: "py_compile compile le fichier en bytecode et signale les erreurs de syntaxe sans exécuter le programme. Il ne vérifie pas le style ; ce sont des outils comme flake8 ou ruff."
+      }
+      question "Quel code de sortie un script doit-il renvoyer avec sys.exit() en cas de succès ?" {
+        + "0"
+        - "1"
+        - "True"
+        - "-1"
+        explanation: "Par convention, 0 signifie succès et toute autre valeur un échec. Les scripts shell et les tâches planifiées testent ce code pour savoir si la commande a réussi."
+      }
+      question "Que vaut num_addresses pour ipaddress.ip_network du réseau 192.168.10.0/26 ?" {
+        - "62"
+        + "64"
+        - "26"
+        - "256"
+        explanation: "Un /26 laisse 6 bits d'hôte : 2⁶ = 64 adresses au total. num_addresses compte aussi le réseau et la diffusion ; les hôtes utilisables sont 62."
+      }
+    }
+  }
+
+  module "synthese" {
+    title: "Chapitre 10 : synthèse, deux programmes utiles de bout en bout"
+    duration: "45min"
+    content: """
+### Objectif
+Ce chapitre assemble tout le cours dans deux petits outils que tu peux réellement utiliser en TP ou en stage :
+• un **calculateur d'adresses IPv4** : à partir de `172.16.45.200/20`, il affiche le réseau, le masque, la diffusion, la plage des hôtes et le caractère privé ou public ;
+• un **analyseur de journal SSH** : il lit `/var/log/auth.log`, compte les échecs de connexion par adresse source et affiche les plus insistantes.
+
+Méthode recommandée pour chaque projet :
+1. écrire en une phrase ce que le programme reçoit et ce qu'il produit ;
+2. découper en fonctions (lire, traiter, afficher) ;
+3. tester chaque fonction dans le REPL avec des exemples dont tu connais le résultat ;
+4. traiter les erreurs prévisibles (saisie invalide, fichier absent, droits) ;
+5. relire pour la lisibilité.
+
+### Projet 1 : le calculateur d'adresses
+Entrée : une adresse avec son préfixe, passée en argument ou tapée au clavier. Sortie : six lignes alignées.
+
+Les fonctions utiles du module `ipaddress` :
+• `ip_interface(texte)` lit « adresse/préfixe » et accepte des bits d'hôte ;
+• `.network` donne le réseau, avec `.netmask`, `.broadcast_address` et `.hosts()` ;
+• `.ip.is_private` dit si l'adresse appartient aux plages privées (dont celles de la RFC 1918 : 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) ;
+• toute saisie incorrecte (`300.1.1.1/24`, `10.0.0.1/33`) lève une `ValueError`.
+
+Le programme complet est dans le premier bloc de code. Pour `172.16.45.200/20`, il affiche :
+
+```text
+Adresse     : 172.16.45.200
+Réseau      : 172.16.32.0/20
+Masque      : 255.255.240.0
+Diffusion   : 172.16.47.255
+Hôtes       : 172.16.32.1 à 172.16.47.254 (4094)
+Privée      : oui
+```
+
+Vérification à la main : /20, donc le troisième octet est découpé par blocs de 16 (256 − 240). 45 tombe dans le bloc 32 à 47 : réseau 172.16.32.0, diffusion 172.16.47.255, 2¹² − 2 = 4094 hôtes.
+
+Limite à connaître : `list(reseau.hosts())` construit toute la liste en mémoire. Sur un /8 (16 777 214 hôtes), c'est lent. Une version plus solide calcule la première et la dernière adresse directement : `reseau.network_address + 1` et `reseau.broadcast_address - 1`, et le nombre d'hôtes avec `reseau.num_addresses - 2`.
+
+### Projet 2 : l'analyseur de journal SSH
+Sur Debian et Ubuntu, le service SSH écrit ses événements dans `/var/log/auth.log` (si rsyslog est installé ; sinon ils sont dans le journal systemd, lisible avec `journalctl -u ssh`). Une tentative ratée ressemble à :
+
+```text
+Nov 26 08:03:02 srv sshd[1215]: Failed password for invalid user admin from 198.51.100.7 port 41000 ssh2
+```
+
+Le programme :
+• reçoit le chemin du fichier en argument ;
+• lit le fichier ligne par ligne (il peut être gros) ;
+• pour chaque ligne contenant `Failed password`, extrait le mot qui suit `from` et compte avec `collections.Counter` ;
+• compte aussi les connexions réussies (`Accepted`) ;
+• affiche le total et les 5 adresses les plus fréquentes ;
+• renvoie un code de sortie 2 en cas de mauvais usage, 1 si le fichier est absent ou illisible.
+
+Le programme complet est dans le second bloc de code. Sur un fichier d'essai de sept lignes, il affiche :
+
+```text
+Connexions réussies : 1
+Échecs : 6, depuis 3 adresses
+  198.51.100.7       3
+  203.0.113.5        2
+  192.168.10.23      1
+```
+
+Lancement sur un vrai serveur : `sudo python3 analyse.py /var/log/auth.log`, car ce fichier n'est lisible que par root et le groupe adm. N'utilise ce programme que sur des machines que tu administres : un journal de connexions contient des données personnelles (identifiants, adresses IP), à traiter avec la même prudence que le reste des données du système.
+
+### À toi de jouer
+1. Recopie les deux programmes, puis teste le calculateur avec `192.168.1.130/25`, `10.20.30.40/8`, `8.8.8.8/32` et `192.168.1.1/40`. Note les résultats.
+2. Pour l'analyseur, crée un fichier `auth-test.log` avec au moins six lignes (échecs et réussites, trois adresses différentes) en copiant le format de l'exemple. Vérifie que le classement affiché correspond à ton comptage à la main.
+3. Améliore l'analyseur : ajoute un seuil (constante `SEUIL = 5`) et affiche « à bloquer » à côté des adresses qui dépassent ce seuil.
+4. Améliore le calculateur : sans utiliser `hosts()`, affiche la première et la dernière adresse d'hôte, pour qu'il reste rapide sur un /8. Pense au cas /31 et /32.
+
+### Correction
+1. `192.168.1.130/25` : réseau `192.168.1.128/25`, masque `255.255.255.128`, diffusion `192.168.1.255`, hôtes `192.168.1.129` à `192.168.1.254` (126), privée. `10.20.30.40/8` : réseau `10.0.0.0/8`, masque `255.0.0.0`, diffusion `10.255.255.255`, 16 777 214 hôtes (l'affichage prend quelques secondes à cause de `list(hosts())`), privée. `8.8.8.8/32` : réseau `8.8.8.8/32`, un seul hôte `8.8.8.8`, publique (`Privée : non`). `192.168.1.1/40` : « Entrée invalide », car un préfixe IPv4 va de 0 à 32.
+2. Compte à la main les lignes `Failed password` par adresse et compare : l'ordre affiché par `most_common` va du plus grand nombre au plus petit.
+3. Dans la boucle d'affichage :
+```python
+SEUIL = 5
+for ip, nombre in echecs.most_common(5):
+    mention = "à bloquer" if nombre > SEUIL else ""
+    print(f"  {ip:<15} {nombre:>4}  {mention}")
+```
+L'expression `a if condition else b` choisit une valeur en une ligne. Pour bloquer réellement, on utilise un outil prévu pour cela, comme fail2ban, plutôt qu'un script maison.
+4.
+```python
+reseau = interface.network
+if reseau.prefixlen >= 31:
+    premiere, derniere = reseau.network_address, reseau.broadcast_address
+    nb = reseau.num_addresses
+else:
+    premiere = reseau.network_address + 1
+    derniere = reseau.broadcast_address - 1
+    nb = reseau.num_addresses - 2
+print(f"Hôtes       : {premiere} à {derniere} ({nb})")
+```
+En /31 et /32, toutes les adresses sont utilisables (RFC 3021 pour /31), c'est aussi ce que renvoie `hosts()`. Ajouter ou retirer un entier à une adresse `ipaddress` donne l'adresse voisine.
+
+### Pour aller plus loin
+• Le tutoriel Python (version française), Python Software Foundation : https://docs.python.org/fr/3/tutorial/
+• La bibliothèque standard, en particulier ipaddress, pathlib, collections et secrets, Python Software Foundation : https://docs.python.org/fr/3/library/
+• PEP 8, guide de style pour le code Python, Python Software Foundation : https://peps.python.org/pep-0008/
+• Utiliser Python sous Windows (gestionnaire d'installation), Python Software Foundation : https://docs.python.org/3/using/windows.html
+• PEP 668, environnements gérés par la distribution, Python Software Foundation : https://peps.python.org/pep-0668/
+• Recommandations relatives à l'authentification et aux mots de passe, CNIL : https://www.cnil.fr
+"""
+
+    codeblock "python" {
+      title: "calcul_ip.py : calculateur d'adresses IPv4"
+      code: """
+import ipaddress
+import sys
+
+
+def decrire(texte):
+    '''Affiche les caractéristiques d'une adresse écrite adresse/préfixe.'''
+    interface = ipaddress.ip_interface(texte)
+    reseau = interface.network
+    hotes = list(reseau.hosts())
+    print(f"Adresse     : {interface.ip}")
+    print(f"Réseau      : {reseau}")
+    print(f"Masque      : {reseau.netmask}")
+    print(f"Diffusion   : {reseau.broadcast_address}")
+    print(f"Hôtes       : {hotes[0]} à {hotes[-1]} ({len(hotes)})")
+    print(f"Privée      : {'oui' if interface.ip.is_private else 'non'}")
+
+
+def main():
+    if len(sys.argv) > 1:
+        texte = sys.argv[1]
+    else:
+        texte = input("Adresse/préfixe : ")
+    try:
+        decrire(texte.strip())
+    except ValueError as erreur:
+        print(f"Entrée invalide : {erreur}", file=sys.stderr)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
+"""
+    }
+
+    codeblock "python" {
+      title: "analyse.py : compter les échecs de connexion SSH"
+      code: """
+import sys
+from collections import Counter
+
+
+def ip_de_la_ligne(ligne):
+    '''Renvoie le mot qui suit « from », ou None s'il n'y en a pas.'''
+    mots = ligne.split()
+    if "from" in mots:
+        position = mots.index("from")
+        if position + 1 < len(mots):
+            return mots[position + 1]
+    return None
+
+
+def analyser(chemin):
+    '''Renvoie (Counter des échecs par adresse, nombre de réussites).'''
+    echecs = Counter()
+    reussites = 0
+    with open(chemin, encoding="utf-8", errors="replace") as f:
+        for ligne in f:
+            if "Failed password" in ligne:
+                ip = ip_de_la_ligne(ligne)
+                if ip is not None:
+                    echecs[ip] += 1
+            elif "Accepted" in ligne:
+                reussites += 1
+    return echecs, reussites
+
+
+def main():
+    if len(sys.argv) != 2:
+        print("usage : python3 analyse.py FICHIER", file=sys.stderr)
+        sys.exit(2)
+    try:
+        echecs, reussites = analyser(sys.argv[1])
+    except FileNotFoundError:
+        print(f"fichier introuvable : {sys.argv[1]}", file=sys.stderr)
+        sys.exit(1)
+    except PermissionError:
+        print("lecture refusée : relance avec sudo", file=sys.stderr)
+        sys.exit(1)
+    print(f"Connexions réussies : {reussites}")
+    print(f"Échecs : {sum(echecs.values())}, depuis {len(echecs)} adresses")
+    for ip, nombre in echecs.most_common(5):
+        print(f"  {ip:<15} {nombre:>4}")
+
+
+if __name__ == "__main__":
+    main()
+"""
+    }
+
+    quiz {
+      pick: 10
+      question "Quel est le type de la valeur renvoyée par input() ?" {
+        - "int"
+        + "str"
+        - "le type de ce qui a été tapé"
+        - "bytes"
+        explanation: "input() renvoie toujours une chaîne. On convertit avec int() ou float() avant de calculer, en interceptant ValueError si la saisie peut être incorrecte."
+      }
+      question "Que vaut 7 // 2 + 7 % 2 ?" {
+        - "3"
+        + "4"
+        - "3.5"
+        - "4.5"
+        explanation: "7 // 2 vaut 3 (division entière) et 7 % 2 vaut 1 (reste). 3 + 1 = 4."
+      }
+      question "Pour 172.16.45.200/20, quelle est l’adresse du réseau ?" {
+        - "172.16.0.0"
+        + "172.16.32.0"
+        - "172.16.45.0"
+        - "172.16.40.0"
+        explanation: "Un /20 découpe le troisième octet en blocs de 16 (256 − 240). 45 tombe dans le bloc 32 à 47, donc le réseau est 172.16.32.0/20 et la diffusion 172.16.47.255."
+      }
+      question "Combien d’hôtes utilisables contient un /20 ?" {
+        - "4096"
+        + "4094"
+        - "2046"
+        - "1022"
+        explanation: "32 − 20 = 12 bits d'hôte : 2¹² = 4096 adresses, moins le réseau et la diffusion, soit 4094 hôtes."
+      }
+      question "Quelle fonction de ipaddress accepte « 192.168.10.37/26 » sans erreur et donne le réseau ?" {
+        - "ip_network(\"192.168.10.37/26\")"
+        + "ip_interface(\"192.168.10.37/26\").network"
+        - "ip_address(\"192.168.10.37/26\")"
+        - "ip_mask(\"192.168.10.37/26\")"
+        explanation: "ip_interface accepte une adresse avec ses bits d'hôte et son attribut network donne 192.168.10.0/26. ip_network refuse les bits d'hôte par défaut, ip_address refuse le préfixe et ip_mask n'existe pas."
+      }
+      question "Dans l’analyseur, pourquoi lire le journal avec for ligne in f plutôt qu’avec f.read() ?" {
+        - "parce que read() ne fonctionne pas sur les fichiers .log"
+        + "parce qu'un journal peut être très gros et la lecture ligne par ligne ne le charge pas entièrement en mémoire"
+        - "parce que read() efface le fichier"
+        - "parce que for est plus lisible que read()"
+        explanation: "Itérer sur le fichier lit une ligne à la fois : la mémoire utilisée reste faible même pour un journal de plusieurs centaines de mégaoctets. read() charge tout d'un coup."
+      }
+      question "Le script lancé sans sudo sur /var/log/auth.log s’arrête. Quelle exception faut-il intercepter pour afficher un message clair ?" {
+        - "FileNotFoundError"
+        + "PermissionError"
+        - "KeyError"
+        - "ValueError"
+        explanation: "Le fichier existe mais n'est lisible que par root et le groupe adm : open() lève PermissionError. FileNotFoundError correspond à un chemin inexistant."
+      }
+      question "Que renvoie Counter.most_common(5) ?" {
+        - "les 5 premières clés ajoutées"
+        + "une liste des 5 paires (élément, nombre) les plus fréquentes, de la plus grande à la plus petite"
+        - "le nombre total d'éléments"
+        - "un dictionnaire de 5 éléments triés par clé"
+        explanation: "most_common(n) trie par nombre décroissant et renvoie au plus n paires. Sans argument, il renvoie toutes les paires."
+      }
+      question "Quel module utiliser pour générer un mot de passe d’administrateur ?" {
+        - "random"
+        - "math"
+        + "secrets"
+        - "string seul"
+        explanation: "secrets fournit un hasard adapté à la sécurité ; random est prévisible. string fournit seulement des alphabets (ascii_letters, digits, punctuation)."
+      }
+      question "Quelle erreur provoque le code if port = 22: ?" {
+        - "NameError"
+        - "TypeError"
+        + "SyntaxError"
+        - "aucune, la condition est vraie"
+        explanation: "= est une affectation, interdite dans une condition if : Python refuse le code avant de l'exécuter (SyntaxError). La comparaison s'écrit ==."
+      }
+      question "La liste a contient PC-1. Après b = a puis b.append avec PC-2, que contient a ?" {
+        - "['PC-1']"
+        + "['PC-1', 'PC-2']"
+        - "['PC-2']"
+        - "une erreur"
+        explanation: "b = a ne crée pas de copie : a et b désignent la même liste. Une copie s'obtient avec a.copy() ou list(a)."
+      }
+      question "Quelles valeurs produit range(1, 255) ?" {
+        - "de 0 à 255"
+        - "de 1 à 255"
+        + "de 1 à 254"
+        - "de 0 à 254"
+        explanation: "La borne de fin est exclue : on obtient 1 à 254, exactement les hôtes d'un /24. Pratique pour parcourir 192.168.10.1 à 192.168.10.254."
+      }
+      question "Que fait le bloc final qui appelle main() si __name__ vaut __main__ ?" {
+        - "elle définit la fonction main"
+        + "elle lance main() seulement quand le fichier est exécuté directement"
+        - "elle importe le module __main__"
+        - "elle empêche l'import du fichier"
+        explanation: "Quand le fichier est importé par un autre script, __name__ vaut le nom du module et main() n'est pas appelée. Les fonctions restent réutilisables."
+      }
+      question "Pourquoi le mode w est-il dangereux pour un journal quotidien ?" {
+        - "parce qu'il n'accepte pas les accents"
+        + "parce qu'il efface le contenu existant à chaque ouverture"
+        - "parce qu'il ouvre le fichier en lecture seule"
+        - "parce qu'il crée un nouveau fichier par ligne"
+        explanation: "\"w\" vide le fichier dès l'ouverture. Pour ajouter des lignes à un journal, on utilise \"a\"."
+      }
+      question "Quelle ligne respecte la PEP 8 ?" {
+        - "def CompterEchecs(L):"
+        - "def compterechecs( l ):"
+        + "def compter_echecs(lignes):"
+        - "def compter-echecs(lignes):"
+        explanation: "Les fonctions s'écrivent en snake_case avec un nom explicite, sans espaces à l'intérieur des parenthèses. Le tiret est interdit dans un nom (il serait lu comme une soustraction)."
+      }
+      question "On découpe avec split() la ligne « Nov 26 sshd: Failed password for root from 203.0.113.5 port 22 ». Quel mot suit from ?" {
+        - "'from'"
+        + "'203.0.113.5'"
+        - "'port'"
+        - "'root'"
+        explanation: "split() découpe sur les espaces. mots.index(\"from\") donne la position du mot from ; le mot suivant est l'adresse source. C'est la méthode utilisée dans ip_de_la_ligne."
+      }
+      question "Une fonction affiche son résultat avec print mais ne fait pas de return. Que vaut x = fonction() ?" {
+        - "le résultat affiché"
+        - "0"
+        + "None"
+        - "une chaîne vide"
+        explanation: "Sans return, une fonction renvoie None. L'affichage n'est pas une valeur de retour : pour réutiliser le résultat, il faut return."
+      }
+      question "Que donne sys.exit(2) à la fin d’un script lancé depuis bash, quand on tape ensuite echo $? ?" {
+        - "0"
+        - "1"
+        + "2"
+        - "rien, sys.exit n'a pas d'effet dans bash"
+        explanation: "Le code passé à sys.exit devient le code de retour du processus, que bash place dans $?. Par convention, 2 signale souvent une mauvaise utilisation (arguments incorrects)."
+      }
+      question "Pourquoi ne pas écrire try: ... except: pass autour de tout le programme ?" {
+        - "parce que pass est interdit après except"
+        + "parce que toutes les erreurs sont avalées en silence, y compris les bugs, et le programme semble marcher alors qu'il est faux"
+        - "parce que le programme devient plus lent"
+        - "parce que try ne peut contenir qu'une seule ligne"
+        explanation: "Masquer toutes les erreurs empêche de voir les vrais problèmes. On intercepte des exceptions précises, là où on sait quoi faire, avec un message utile."
+      }
+      question "L’adresse 8.8.8.8 est-elle privée selon ipaddress ?" {
+        - "oui, toutes les adresses commençant par 8 sont privées"
+        + "non, is_private renvoie False : c'est une adresse publique"
+        - "oui, car un /32 est toujours privé"
+        - "on ne peut pas le savoir sans réseau"
+        explanation: "Les plages privées IPv4 de la RFC 1918 sont 10.0.0.0/8, 172.16.0.0/12 et 192.168.0.0/16. 8.8.8.8 n'en fait pas partie ; ipaddress le calcule sans accès au réseau."
+      }
+    }
+  }
+}

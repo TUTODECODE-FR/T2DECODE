@@ -1,0 +1,2258 @@
+tdc-version: 2
+type: course
+
+course "javascript-modern" {
+  title: "JavaScript moderne"
+  description: """
+Ce cours t'apprend à écrire du JavaScript actuel (ES2015 et suivants), dans le navigateur comme avec Node.js, en partant de bases saines : variables, types, fonctions, tableaux et objets, modules, DOM, code asynchrone, erreurs et JSON. Il s'adresse aux élèves de BTS SIO (surtout SLAM), BTS CIEL, BUT informatique et aux autodidactes qui ont déjà écrit quelques lignes de code dans un autre langage.
+
+À la fin, tu sauras :
+• exécuter du JavaScript dans la console d'un navigateur, dans une page HTML et avec Node.js ;
+• choisir entre let et const, prévoir le résultat d'une comparaison et éviter les pièges des types ;
+• écrire des fonctions fléchées, utiliser map, filter, reduce et la déstructuration ;
+• découper un programme en modules ES et gérer un projet avec npm ;
+• lire et modifier une page (DOM), réagir aux événements et afficher des données sans faille XSS ;
+• appeler une API avec fetch, async et await, et traiter les erreurs réseau et HTTP ;
+• lire, valider et produire du JSON, et appliquer les règles de sécurité de base du code côté client.
+
+Le cours s'appuie sur un petit labo : un navigateur récent (Firefox, Chrome, Edge), un éditeur de texte et Node.js en version LTS. Chaque chapitre contient au moins un exercice pratique avec sa correction, et une banque de questions tirées au hasard. Le dernier chapitre est un mini-projet : une page d'inventaire du parc informatique d'un lycée.
+
+Prérequis : bases de HTML (balises, attributs, formulaire), notions de programmation (variable, condition, boucle, fonction) dans n'importe quel langage, utilisation courante d'un terminal.
+"""
+  category: "javascript"
+  level: "intermediate"
+  duration: "6h"
+  icon: "Code"
+  keywords: ["javascript", "ecmascript", "es6", "node.js", "npm", "let", "const", "fonction fléchée", "map", "filter", "reduce", "déstructuration", "modules", "dom", "événements", "promesse", "async", "await", "fetch", "json", "xss", "textContent"]
+
+  module "js-environnements" {
+    title: "Chapitre 1 : où s'exécute JavaScript"
+    duration: "25min"
+    content: """
+### Un langage, plusieurs environnements
+JavaScript est le seul langage de programmation que tous les navigateurs exécutent directement. Sa norme s'appelle **ECMAScript** (publiée par Ecma International sous la référence ECMA-262). Depuis 2015, une nouvelle édition sort chaque année : ES2015 (souvent appelée **ES6**, la grande refonte), ES2016, ES2017… Dans ce cours, « JavaScript moderne » désigne tout ce qui est arrivé depuis ES2015 : `let`, `const`, fonctions fléchées, classes, modules, promesses, `async`/`await`, etc.
+
+Le langage lui-même est petit. Ce qui change d'un endroit à l'autre, ce sont les **API** fournies par l'environnement :
+
+| Environnement | Moteur | API disponibles (exemples) | Usage |
+|---|---|---|---|
+| Navigateur | SpiderMonkey (Firefox), V8 (Chrome, Edge), JavaScriptCore (Safari) | `document`, `window`, `fetch`, `localStorage` | pages web interactives |
+| Node.js | V8 | `fs`, `path`, `process`, `http`, `fetch` | serveurs, scripts, outils en ligne de commande |
+
+Conséquence directe : `document.querySelector()` n'existe pas dans Node.js, et `require("fs")` ou `import fs from "node:fs"` n'existe pas dans le navigateur. Les bases du langage (variables, fonctions, tableaux, promesses, JSON) sont identiques des deux côtés.
+
+### La console du navigateur
+Chaque navigateur a des outils de développement : touche **F12** (ou Ctrl+Maj+I ; Cmd+Option+I sur Mac), onglet **Console**. Tu peux y taper une expression et voir son résultat tout de suite :
+
+```javascript
+2 + 3            // 5
+"Bonjour".length // 7
+console.log("message");          // affiche une ligne
+console.error("problème");       // affiche en rouge, niveau erreur
+console.table([{ nom: "PC-01" }, { nom: "PC-02" }]); // affiche un tableau
+```
+
+La console est aussi l'endroit où apparaissent les erreurs de ta page. Ouvre-la systématiquement quand quelque chose ne marche pas : une page « qui ne fait rien » cache presque toujours une erreur rouge dans la console.
+
+### JavaScript dans une page HTML
+On écrit le code dans un fichier `.js` séparé, chargé par une balise `<script>` :
+
+```html
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Labo JS</title>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <h1 id="titre">Labo</h1>
+</body>
+</html>
+```
+
+L'attribut **`defer`** demande au navigateur de télécharger le script sans bloquer l'affichage, puis de l'exécuter une fois le HTML entièrement analysé. Sans `defer` et placé dans `<head>`, le script s'exécute avant que `<h1>` existe : `document.querySelector("#titre")` renvoie alors `null`. Autre solution historique : placer `<script>` juste avant `</body>`.
+
+Avec `<script type="module" src="app.js">`, le fichier est chargé comme un **module ES** (chapitre 5) : il est différé automatiquement, comme avec `defer`, et s'exécute en **mode strict**.
+
+### Node.js
+Node.js exécute JavaScript hors du navigateur. Installe toujours une version **LTS** (Long Term Support) : ce sont les versions conseillées en production, maintenues environ 30 mois. Fin 2026, les branches LTS sont 22, 24 et 26 ; les versions impaires (25…) n'ont qu'une courte vie. Le projet passe à un rythme d'une seule version majeure par an à partir de Node.js 27.
+
+Installation : depuis nodejs.org (Windows, macOS), ou sous Debian/Ubuntu avec le gestionnaire de paquets (`sudo apt install nodejs npm`, version souvent plus ancienne mais LTS). Vérifie :
+
+```bash
+node --version     # par exemple v24.x.x
+npm --version
+node               # ouvre l'interpréteur interactif (REPL) ; .exit pour quitter
+node app.js        # exécute un fichier
+```
+
+### Le mode strict
+Le mode strict (`"use strict";` en tête de fichier) transforme des erreurs silencieuses en vraies erreurs. Exemple : affecter une variable jamais déclarée crée une variable globale en mode normal, mais lève une `ReferenceError` en mode strict. Les **modules** et les **classes** sont toujours en mode strict, sans rien écrire. C'est une raison de plus d'utiliser les modules.
+
+### À toi de jouer
+1. Ouvre la console de ton navigateur et calcule `0.1 + 0.2`, puis `typeof "42"` et `typeof 42`. Note les résultats.
+2. Crée un dossier `labo-js` avec `index.html` (le modèle ci-dessus) et `app.js` contenant `document.querySelector("#titre").textContent = "JS chargé";`. Ouvre la page. Retire ensuite l'attribut `defer` et recharge. Qu'observes-tu dans la page et dans la console ?
+3. Crée `bonjour.js` contenant `console.log("Bonjour depuis", process.platform);` et exécute-le avec Node.js. Que se passe-t-il si tu copies la ligne de la question 2 dans ce fichier ?
+
+### Correction
+1. `0.1 + 0.2` donne `0.30000000000000004` (les nombres sont des flottants binaires, voir chapitre 2). `typeof "42"` donne `"string"`, `typeof 42` donne `"number"`.
+2. Avec `defer`, le titre devient « JS chargé ». Sans `defer`, le script s'exécute avant l'analyse du `<body>` : le titre reste « Labo » et la console affiche une erreur du type `TypeError: Cannot read properties of null (reading 'textContent')` (Chrome) ou `TypeError: document.querySelector(...) is null` (Firefox). Le message diffère selon le moteur, la cause est la même : l'élément n'existe pas encore.
+3. Node.js affiche `Bonjour depuis linux` (ou `win32`, `darwin`). La ligne du DOM provoque `ReferenceError: document is not defined` : l'objet `document` est fourni par le navigateur, pas par le langage.
+"""
+
+    codeblock "javascript" {
+      title: "Premier script Node.js : informations sur le poste"
+      code: """
+// infos.js — exécuter avec : node infos.js
+import os from "node:os";
+
+console.log("Système    :", os.platform(), os.release());
+console.log("Processeurs:", os.cpus().length);
+console.log("Mémoire    :", Math.round(os.totalmem() / 1024 ** 3), "Gio");
+console.log("Node.js    :", process.version);
+// Avec un fichier .js, cet import demande "type": "module" dans package.json
+// (sinon renomme le fichier infos.mjs) : voir chapitre 5.
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Comment s’appelle la norme officielle qui définit le langage JavaScript ?" {
+        - "HTML5"
+        + "ECMAScript (ECMA-262)"
+        - "W3C DOM Level 3"
+        - "RFC 8259"
+        explanation: "Le langage est normalisé par Ecma International sous le nom ECMAScript (ECMA-262), avec une édition par an depuis 2015. Le DOM est une API du navigateur, pas le langage ; la RFC 8259 définit le format JSON."
+      }
+      question "Quel nom courant désigne l’édition ECMAScript 2015 ?" {
+        - "ES5"
+        + "ES6"
+        - "ES2020"
+        - "ESNext"
+        explanation: "ES2015 est la sixième édition, d'où le surnom ES6. Elle a apporté let, const, les fonctions fléchées, les classes, les modules et les promesses. ES5 date de 2009 ; ESNext désigne les fonctionnalités pas encore publiées."
+      }
+      question "Un script lance document.querySelector(« #titre ») dans Node.js. Que se passe-t-il ?" {
+        - "il renvoie null"
+        - "il lit le fichier index.html du dossier"
+        + "une ReferenceError : document n'est pas défini"
+        - "il fonctionne si le fichier s'appelle app.mjs"
+        explanation: "document est une API fournie par le navigateur. Node.js ne la fournit pas, d'où ReferenceError: document is not defined. Il renverrait null seulement dans un navigateur, si l'élément n'existait pas."
+      }
+      question "À quoi sert l’attribut defer sur une balise script externe ?" {
+        - "à ne charger le script que si l'utilisateur clique"
+        + "à exécuter le script après l'analyse complète du HTML, sans bloquer l'affichage"
+        - "à exécuter le script dans un processus séparé"
+        - "à désactiver le mode strict"
+        explanation: "defer télécharge le script en parallèle et l'exécute quand le document est analysé, dans l'ordre des balises. Le script peut donc trouver les éléments du body. Il ne crée pas de processus séparé (c'est le rôle des Web Workers)."
+      }
+      question "Pourquoi querySelector renvoie-t-il null dans un script placé dans head sans defer ?" {
+        - "parce que querySelector ne marche qu'avec des classes"
+        + "parce que le script s'exécute avant que le body soit analysé"
+        - "parce que l'identifiant doit être écrit sans #"
+        - "parce que le fichier doit être un module"
+        explanation: "Sans defer, le navigateur exécute le script dès qu'il le rencontre, donc avant d'avoir créé les éléments qui suivent. Solutions : defer, type=module ou script en bas du body."
+      }
+      question "Quelle propriété ont les scripts chargés avec type=« module » ?" {
+        - "ils s'exécutent avant le HTML"
+        - "ils peuvent utiliser require()"
+        + "ils sont différés par défaut et s'exécutent en mode strict"
+        - "ils ont accès au système de fichiers"
+        explanation: "Un module est différé comme avec defer et toujours en mode strict. require() appartient au système CommonJS de Node.js, pas au navigateur, et aucun script web n'accède librement au disque."
+      }
+      question "Quelle version de Node.js faut-il choisir pour un serveur en production ?" {
+        - "la version la plus récente, même impaire"
+        + "une version LTS"
+        - "une version alpha pour avoir les nouveautés"
+        - "n'importe laquelle, elles ont toutes la même durée de support"
+        explanation: "La documentation de Node.js recommande uniquement les versions LTS (Active ou Maintenance) en production. Les versions impaires étaient supportées six mois seulement ; les alphas ne sont pas faites pour la production."
+      }
+      question "Quel raccourci ouvre les outils de développement dans Firefox, Chrome ou Edge sous Windows ?" {
+        - "F5"
+        + "F12"
+        - "Ctrl+U"
+        - "Alt+F4"
+        explanation: "F12 (ou Ctrl+Maj+I) ouvre les outils de développement, dont la console. F5 recharge la page, Ctrl+U affiche le code source, Alt+F4 ferme la fenêtre."
+      }
+      question "En mode strict, que produit l’instruction total = 5 si total n’a jamais été déclaré ?" {
+        - "une variable globale total"
+        - "rien, l'instruction est ignorée"
+        + "une ReferenceError"
+        - "une SyntaxError au chargement du fichier"
+        explanation: "Sans mode strict, l'affectation crée silencieusement une variable globale, source de bugs. En mode strict, elle lève une ReferenceError à l'exécution. Ce n'est pas une erreur de syntaxe : le code est valide, c'est son exécution qui échoue."
+      }
+      question "Quel moteur JavaScript utilisent à la fois Chrome et Node.js ?" {
+        - "SpiderMonkey"
+        - "JavaScriptCore"
+        + "V8"
+        - "Chakra"
+        explanation: "Node.js est construit sur V8, le moteur de Chrome (et d'Edge aujourd'hui). SpiderMonkey est celui de Firefox, JavaScriptCore celui de Safari ; Chakra était l'ancien moteur d'Edge."
+      }
+      question "Quelle commande lance l’interpréteur interactif de Node.js ?" {
+        - "node --repl-only"
+        + "node"
+        - "npm start"
+        - "node -e"
+        explanation: "node sans argument ouvre le REPL, où chaque expression est évaluée immédiatement ; .exit ou Ctrl+D pour quitter. node -e exécute une seule expression passée en argument ; npm start lance le script start du package.json."
+      }
+      question "Une page « ne fait rien » quand tu cliques sur un bouton. Quel est le premier réflexe ?" {
+        - "réinstaller le navigateur"
+        + "ouvrir la console des outils de développement pour lire les erreurs"
+        - "ajouter des alert() partout"
+        - "vider le cache DNS"
+        explanation: "Une erreur JavaScript arrête l'exécution du script, et elle est affichée en rouge dans la console avec le fichier et la ligne. C'est la première source d'information, avant tout autre essai."
+      }
+    }
+  }
+
+  module "js-variables-types" {
+    title: "Chapitre 2 : variables, types et comparaisons"
+    duration: "35min"
+    content: """
+### let, const et var
+JavaScript moderne utilise deux mots-clés pour déclarer une variable :
+• **`const`** : la variable ne peut pas être réaffectée. C'est le choix par défaut.
+• **`let`** : la variable peut être réaffectée (compteur, accumulateur).
+
+```javascript
+const salle = "B204";
+let postes = 12;
+postes = postes + 1;   // autorisé
+salle = "B205";        // TypeError: Assignment to constant variable.
+```
+
+Attention : `const` interdit la **réaffectation**, pas la **modification** de l'objet. `const liste = []; liste.push("PC-01");` est autorisé, car `liste` désigne toujours le même tableau.
+
+L'ancien **`var`** est à éviter. Il a une portée de **fonction** (et non de bloc) et il est « remonté » (hoisting) : on peut le lire avant sa déclaration, il vaut alors `undefined`, ce qui masque des erreurs. `let` et `const` ont une portée de **bloc** (les accolades `{ }` d'un `if`, d'une boucle…) et les lire avant leur déclaration lève `ReferenceError: Cannot access 'x' before initialization` : cette zone s'appelle la zone morte temporelle (temporal dead zone).
+
+```javascript
+if (true) {
+  var a = 1;
+  let b = 2;
+}
+console.log(a); // 1 : var ignore le bloc
+console.log(b); // ReferenceError: b is not defined
+```
+
+### Les types
+JavaScript est **typé dynamiquement** : c'est la valeur qui a un type, pas la variable. Il existe 7 types **primitifs** et le type **objet** :
+
+| Type | Exemple | typeof |
+|---|---|---|
+| string | `"PC-01"`, `'abc'`, `` `abc` `` | `"string"` |
+| number | `42`, `3.14`, `NaN`, `Infinity` | `"number"` |
+| bigint | `9007199254740993n` | `"bigint"` |
+| boolean | `true`, `false` | `"boolean"` |
+| undefined | variable déclarée sans valeur | `"undefined"` |
+| null | absence volontaire de valeur | `"object"` (erreur historique) |
+| symbol | `Symbol("id")` | `"symbol"` |
+| objet | `{}`, `[]`, fonctions, dates | `"object"` (`"function"` pour une fonction) |
+
+Pièges à connaître :
+• `typeof null` vaut `"object"` : c'est un bug conservé depuis la première version. Pour tester null, écris `valeur === null`.
+• `typeof []` vaut `"object"` : pour savoir si c'est un tableau, utilise `Array.isArray(valeur)`.
+• `number` est un flottant double précision (IEEE 754) : `0.1 + 0.2` vaut `0.30000000000000004`. Pour de l'argent, calcule en centimes entiers. Les entiers sont exacts jusqu'à `Number.MAX_SAFE_INTEGER`, soit 2^53 - 1 = 9 007 199 254 740 991 ; au-delà, utilise `bigint`.
+• `NaN` (Not a Number) est le résultat d'un calcul impossible (`"abc" * 2`). Il n'est égal à rien, pas même à lui-même : teste-le avec `Number.isNaN(x)`.
+
+### Conversions et comparaisons
+L'opérateur `+` concatène dès qu'un des deux opérandes est une chaîne, alors que `-`, `*`, `/` convertissent en nombre :
+
+```javascript
+"5" + 3      // "53"
+"5" - 3      // 2
+"5" * "2"    // 10
+Number("42") // 42
+Number("4 2")// NaN
+parseInt("42px", 10) // 42 : lit jusqu'au premier caractère invalide
+```
+
+Les valeurs d'un formulaire HTML sont **toujours des chaînes**. Convertis-les explicitement avec `Number()` avant de calculer.
+
+Pour comparer, utilise toujours **`===`** (égalité stricte : même type et même valeur) et **`!==`**. L'égalité large `==` convertit les types avant de comparer et donne des résultats surprenants : `0 == ""` vaut `true`, `"1" == 1` vaut `true`, `null == undefined` vaut `true`. Avec `===`, ces trois comparaisons valent `false`.
+
+### Valeurs « fausses » et opérateurs modernes
+Dans un `if`, ces valeurs comptent comme fausses (falsy) : `false`, `0`, `-0`, `0n`, `""`, `null`, `undefined`, `NaN`. Tout le reste est vrai, y compris `"0"`, `[]` et `{}`.
+
+• `a || b` renvoie `b` si `a` est falsy. Piège : `0 || 10` donne `10`, même si 0 était une vraie valeur.
+• `a ?? b` (coalescence des nuls, ES2020) renvoie `b` seulement si `a` vaut `null` ou `undefined` : `0 ?? 10` donne `0`.
+• `a?.b` (chaînage optionnel, ES2020) renvoie `undefined` au lieu de lever une erreur si `a` vaut `null` ou `undefined` : `poste?.reseau?.ip`.
+
+### Les gabarits de chaînes
+Les gabarits (template literals) s'écrivent entre accents graves et insèrent des expressions avec `${…}` :
+
+```javascript
+const nom = "PC-07", ram = 8;
+console.log(`${nom} : ${ram} Go de RAM, ${ram * 1024} Mo`);
+// PC-07 : 8 Go de RAM, 8192 Mo
+```
+
+### À toi de jouer
+1. Prévois puis vérifie dans la console le résultat de : `"10" + 5`, `"10" - 5`, `"10" == 10`, `"10" === 10`, `typeof NaN`, `NaN === NaN`.
+2. Un formulaire contient un champ « nombre de postes ». Le code `const total = champ.value + 2;` affiche 102 quand l'utilisateur tape 10. Explique et corrige.
+3. Une fonction reçoit une option `delai` qui peut valoir 0 (pas d'attente). Le code `const d = options.delai || 5000;` attend toujours 5 secondes quand on passe 0. Corrige-le et rends-le robuste si `options` est `undefined`.
+4. Corrige ce code pour qu'il fonctionne : `const compteur = 0; compteur++;`
+
+### Correction
+1. `"10" + 5` donne `"105"` (concaténation) ; `"10" - 5` donne `5` ; `"10" == 10` donne `true` (conversion) ; `"10" === 10` donne `false` (types différents) ; `typeof NaN` donne `"number"` ; `NaN === NaN` donne `false`.
+2. `champ.value` est la chaîne `"10"`, donc `+` concatène : `"10" + 2` = `"102"`. Correction : `const total = Number(champ.value) + 2;` puis vérifier `Number.isNaN(total)` pour refuser une saisie invalide.
+3. `||` remplace 0 par 5000 car 0 est falsy. Correction : `const d = options?.delai ?? 5000;` : `?.` évite l'erreur si `options` est `undefined`, et `??` ne remplace que `null` ou `undefined`.
+4. `const` interdit la réaffectation, `compteur++` lève `TypeError: Assignment to constant variable.` Il faut `let compteur = 0;`.
+"""
+
+    quiz {
+      pick: 5
+      question "Que vaut typeof null ?" {
+        - "\"null\""
+        + "\"object\""
+        - "\"undefined\""
+        - "une erreur"
+        explanation: "typeof null renvoie \"object\", un bug historique conservé pour ne pas casser le web. Pour tester null, il faut écrire valeur === null."
+      }
+      question "Que vaut l’expression JavaScript « 5 » + 3, où « 5 » est une chaîne ?" {
+        + "\"53\""
+        - "8"
+        - "\"8\""
+        - "NaN"
+        explanation: "Dès qu'un opérande de + est une chaîne, l'autre est converti en chaîne et les deux sont concaténés. Avec -, * ou /, la chaîne serait convertie en nombre : \"5\" - 3 vaut 2."
+      }
+      question "Que se passe-t-il avec : const tags = []; tags.push(« wifi »); ?" {
+        - "TypeError : la constante ne peut pas changer"
+        + "le tableau contient \"wifi\", car const interdit seulement la réaffectation"
+        - "SyntaxError"
+        - "tags devient une nouvelle variable"
+        explanation: "const empêche d'écrire tags = autreChose, mais l'objet désigné reste modifiable. push modifie le tableau sans réaffecter la variable."
+      }
+      question "Quelle comparaison vaut false ?" {
+        - "0 == \"\""
+        - "null == undefined"
+        - "\"1\" == 1"
+        + "\"1\" === 1"
+        explanation: "=== compare sans conversion : une chaîne et un nombre ne sont jamais strictement égaux. Les trois autres utilisent == qui convertit les types et renvoie true, d'où la règle : toujours ===."
+      }
+      question "Que vaut 0 ?? 10 ?" {
+        + "0"
+        - "10"
+        - "null"
+        - "false"
+        explanation: "?? ne remplace que null et undefined. 0 est une valeur définie, il est donc conservé. Avec ||, 0 étant falsy, le résultat aurait été 10."
+      }
+      question "Quel est le résultat de console.log(x); let x = 3; ?" {
+        - "undefined"
+        - "3"
+        + "ReferenceError: Cannot access 'x' before initialization"
+        - "null"
+        explanation: "Une variable let ou const est dans la zone morte temporelle jusqu'à sa déclaration : la lire avant lève une ReferenceError. Avec var, le résultat aurait été undefined, ce qui cache l'erreur."
+      }
+      question "Comment tester de façon fiable qu’une valeur est NaN ?" {
+        - "valeur === NaN"
+        - "valeur == NaN"
+        + "Number.isNaN(valeur)"
+        - "typeof valeur === \"NaN\""
+        explanation: "NaN n'est égal à aucune valeur, pas même à lui-même, donc les comparaisons renvoient toujours false. typeof NaN vaut \"number\". Number.isNaN est la bonne méthode."
+      }
+      question "Quelle valeur est considérée comme vraie (truthy) dans un if ?" {
+        - "0"
+        - "\"\""
+        + "\"0\""
+        - "undefined"
+        explanation: "\"0\" est une chaîne non vide, donc vraie. Les valeurs fausses sont false, 0, -0, 0n, la chaîne vide, null, undefined et NaN."
+      }
+      question "Quelle est la portée d’une variable déclarée avec let ?" {
+        - "le fichier entier"
+        - "la fonction englobante"
+        + "le bloc entre accolades où elle est déclarée"
+        - "l'objet window"
+        explanation: "let et const ont une portée de bloc. var a une portée de fonction et ignore les blocs if ou for, ce qui provoque des fuites de variables."
+      }
+      question "Que vaut 0.1 + 0.2 === 0.3 ?" {
+        - "true"
+        + "false, car 0.1 + 0.2 vaut 0.30000000000000004"
+        - "une erreur de précision"
+        - "NaN"
+        explanation: "Les nombres sont des flottants binaires IEEE 754 : 0.1 et 0.2 n'ont pas de représentation exacte. Pour de l'argent, on calcule en centimes entiers."
+      }
+      question "Quel est le plus grand entier représenté exactement par le type number ?" {
+        - "2^31 - 1"
+        - "2^32"
+        + "2^53 - 1 (Number.MAX_SAFE_INTEGER)"
+        - "2^64 - 1"
+        explanation: "Number.MAX_SAFE_INTEGER vaut 2^53 - 1, soit 9 007 199 254 740 991. Au-delà, des entiers différents peuvent avoir la même représentation ; on utilise alors bigint (suffixe n)."
+      }
+      question "Que renvoie poste?.reseau?.ip si poste vaut undefined ?" {
+        - "une TypeError"
+        - "null"
+        + "undefined"
+        - "une chaîne vide"
+        explanation: "Le chaînage optionnel s'arrête dès qu'il rencontre null ou undefined et renvoie undefined. Sans ?., la lecture de reseau sur undefined lèverait une TypeError."
+      }
+      question "Comment savoir si une valeur est un tableau ?" {
+        - "typeof valeur === \"array\""
+        + "Array.isArray(valeur)"
+        - "valeur == []"
+        - "typeof valeur === \"object\""
+        explanation: "typeof renvoie \"object\" pour un tableau comme pour un objet ou null. Array.isArray est le test prévu. valeur == [] compare des références et ne fonctionne pas."
+      }
+    }
+  }
+
+  module "js-fonctions" {
+    title: "Chapitre 3 : fonctions, fonctions fléchées et portée"
+    duration: "35min"
+    content: """
+### Trois façons d'écrire une fonction
+```javascript
+// 1. Déclaration : utilisable avant sa ligne (elle est remontée)
+function surface(largeur, hauteur) {
+  return largeur * hauteur;
+}
+
+// 2. Expression de fonction rangée dans une constante
+const perimetre = function (largeur, hauteur) {
+  return 2 * (largeur + hauteur);
+};
+
+// 3. Fonction fléchée (arrow function, ES2015)
+const double = (n) => n * 2;          // corps court : return implicite
+const moyenne = (a, b) => {           // corps entre accolades : return obligatoire
+  const somme = a + b;
+  return somme / 2;
+};
+```
+
+Règles d'écriture des fonctions fléchées :
+• un seul paramètre : les parenthèses sont facultatives (`n => n * 2`) ; zéro ou plusieurs : obligatoires (`() => 42`) ;
+• sans accolades, la valeur de l'expression est renvoyée ; avec accolades, il faut `return`, sinon la fonction renvoie `undefined` ;
+• pour renvoyer un objet littéral sans `return`, entoure-le de parenthèses : `() => ({ nom: "PC-01" })`. Sans parenthèses, les accolades sont lues comme un bloc de code.
+
+### Ce que les fonctions fléchées n'ont pas
+Une fonction fléchée n'a pas son propre **`this`** : elle reprend celui de l'endroit où elle est écrite (this lexical). Elle n'a pas non plus d'objet `arguments` et ne peut pas servir de constructeur (`new` lève une `TypeError`). C'est parfait pour les fonctions courtes passées en paramètre (`map`, `addEventListener`, `then`). Pour une méthode d'objet qui utilise `this`, utilise la syntaxe de méthode :
+
+```javascript
+const poste = {
+  nom: "PC-07",
+  decrire() { return `Poste ${this.nom}`; },   // this = poste
+  mauvais: () => `Poste ${this?.nom}`,          // this n'est pas poste
+};
+poste.decrire();  // "Poste PC-07"
+```
+
+### Paramètres modernes
+```javascript
+// Valeur par défaut, utilisée si l'argument est absent ou undefined
+function ping(hote, essais = 4) { return `ping -c ${essais} ${hote}`; }
+ping("9.9.9.9");        // "ping -c 4 9.9.9.9"
+ping("9.9.9.9", 2);     // "ping -c 2 9.9.9.9"
+
+// Paramètre du reste (rest) : regroupe les arguments restants dans un vrai tableau
+function journal(niveau, ...messages) {
+  console.log(`[${niveau}]`, messages.join(" "));
+}
+journal("INFO", "sauvegarde", "terminée");  // [INFO] sauvegarde terminée
+
+// Décomposition (spread) : étale un tableau en arguments
+const mesures = [12, 48, 7];
+Math.max(...mesures);   // 48
+```
+
+### Portée et fermetures
+Une fonction voit les variables de l'endroit où elle a été **écrite** (portée lexicale). Si elle est renvoyée par une autre fonction, elle garde l'accès à ces variables même après la fin de la fonction englobante : c'est une **fermeture** (closure).
+
+```javascript
+function creerCompteur() {
+  let n = 0;                 // inaccessible de l'extérieur
+  return () => ++n;
+}
+const suivant = creerCompteur();
+suivant(); // 1
+suivant(); // 2
+```
+
+Les fermetures servent à garder un état privé, à configurer des fonctions (`creerFiltre("Windows")`) et sont partout dans les gestionnaires d'événements.
+
+Piège classique avec `var` dans une boucle :
+
+```javascript
+for (var i = 0; i < 3; i++) setTimeout(() => console.log(i), 0);  // 3 3 3
+for (let j = 0; j < 3; j++) setTimeout(() => console.log(j), 0);  // 0 1 2
+```
+
+Avec `var`, il n'existe qu'une seule variable `i`, qui vaut 3 quand les fonctions s'exécutent. Avec `let`, chaque tour de boucle a sa propre variable `j`.
+
+### Fonctions comme valeurs
+En JavaScript, une fonction est une valeur comme une autre : on peut la ranger dans une variable, la passer en paramètre (fonction de rappel, callback) ou la renvoyer. C'est la base des méthodes de tableaux du chapitre suivant et des événements du chapitre 6.
+
+```javascript
+const appliquer = (valeurs, transformation) => valeurs.map(transformation);
+appliquer([1, 2, 3], double);  // [2, 4, 6]
+```
+
+Attention à la différence entre `bouton.addEventListener("click", envoyer)` (on passe la fonction) et `bouton.addEventListener("click", envoyer())` (on l'exécute tout de suite et on passe son résultat, souvent `undefined`).
+
+### À toi de jouer
+1. Réécris en fonction fléchée la plus courte possible : `function carre(x) { return x * x; }`.
+2. Cette fonction renvoie `undefined`. Pourquoi ? `const creerPoste = (nom) => { nom: nom, actif: true };` Corrige-la.
+3. Écris `convertirGo(octets, decimales = 1)` qui convertit des octets en Gio (1 Gio = 1024^3 octets) et renvoie une chaîne comme `"7.5 Gio"`. Utilise `toFixed`.
+4. Écris `creerLimiteur(max)` qui renvoie une fonction ; chaque appel renvoie `true` tant qu'il a été appelé au plus `max` fois, puis `false`.
+
+### Correction
+1. `const carre = x => x * x;`
+2. Les accolades sont lues comme un bloc de code contenant une étiquette `nom:` ; il n'y a pas de `return`, donc la fonction renvoie `undefined`. Correction : `const creerPoste = (nom) => ({ nom, actif: true });` (la forme `{ nom }` est un raccourci pour `{ nom: nom }`).
+3. Une solution :
+```javascript
+const convertirGo = (octets, decimales = 1) =>
+  `${(octets / 1024 ** 3).toFixed(decimales)} Gio`;
+convertirGo(8053063680);    // "7.5 Gio"
+convertirGo(8053063680, 2); // "7.50 Gio"
+```
+4. Une solution avec une fermeture :
+```javascript
+function creerLimiteur(max) {
+  let appels = 0;
+  return () => {
+    appels++;
+    return appels <= max;
+  };
+}
+const essai = creerLimiteur(3);
+essai(); essai(); essai(); // true true true
+essai();                   // false
+```
+La variable `appels` est propre à chaque limiteur créé : `creerLimiteur(5)` en crée un nouveau, indépendant.
+"""
+
+    quiz {
+      pick: 5
+      question "Que renvoie const f = () => { 42 }; f(); ?" {
+        - "42"
+        + "undefined"
+        - "{ 42 }"
+        - "une SyntaxError"
+        explanation: "Avec des accolades, le corps est un bloc et il faut écrire return. Sans return, la fonction renvoie undefined. La forme courte () => 42 renverrait 42."
+      }
+      question "Comment une fonction fléchée renvoie-t-elle un objet littéral sans écrire return ?" {
+        - "() => { id: 1 }"
+        + "() => ({ id: 1 })"
+        - "() => [id: 1]"
+        - "() => return { id: 1 }"
+        explanation: "Les parenthèses forcent la lecture des accolades comme un objet. Sans elles, les accolades forment un bloc et id: devient une étiquette, la fonction renvoie undefined."
+      }
+      question "D’où vient this dans une fonction fléchée ?" {
+        - "de l'objet qui appelle la fonction"
+        + "du contexte où la fonction a été écrite"
+        - "toujours de l'objet window"
+        - "du premier argument"
+        explanation: "Une fonction fléchée n'a pas son propre this : elle reprend celui du code qui l'entoure (this lexical). C'est pourquoi on évite les fonctions fléchées comme méthodes d'objet qui utilisent this."
+      }
+      question "Que se passe-t-il avec new appliqué à une fonction fléchée ?" {
+        - "un objet vide est créé"
+        - "la fonction est appelée normalement"
+        + "une TypeError : ce n'est pas un constructeur"
+        - "this devient l'objet créé"
+        explanation: "Les fonctions fléchées ne peuvent pas servir de constructeur. Pour créer des objets, on utilise une classe ou une fonction classique."
+      }
+      question "Qu’affiche for (var i = 0; i < 3; i++) setTimeout(() => console.log(i), 0); ?" {
+        - "0 1 2"
+        + "3 3 3"
+        - "0 0 0"
+        - "undefined trois fois"
+        explanation: "Avec var, une seule variable i est partagée ; quand les fonctions s'exécutent, la boucle est finie et i vaut 3. Avec let, chaque tour a sa variable et on obtient 0 1 2."
+      }
+      question "Avec function ping(hote, essais = 4), que vaut essais lors de l’appel ping(« a », undefined) ?" {
+        - "undefined"
+        + "4"
+        - "null"
+        - "0"
+        explanation: "La valeur par défaut s'applique quand l'argument est absent ou vaut undefined. Avec null, elle ne s'appliquerait pas : essais vaudrait null."
+      }
+      question "Que contient messages dans function journal(niveau, ...messages) appelée par journal(« INFO », « a », « b ») ?" {
+        - "\"a b\""
+        + "[\"a\", \"b\"]"
+        - "[\"INFO\", \"a\", \"b\"]"
+        - "\"a\""
+        explanation: "Le paramètre du reste regroupe tous les arguments restants dans un vrai tableau. Le premier argument a déjà été affecté à niveau."
+      }
+      question "Que vaut Math.max(...[3, 9, 4]) ?" {
+        - "NaN"
+        - "[9]"
+        + "9"
+        - "une TypeError"
+        explanation: "La décomposition étale le tableau en arguments : l'appel devient Math.max(3, 9, 4). Sans les trois points, Math.max([3, 9, 4]) essaierait de convertir le tableau et donnerait NaN."
+      }
+      question "Qu’est-ce qu’une fermeture (closure) ?" {
+        - "une fonction qui ne renvoie rien"
+        - "une fonction qui termine le programme"
+        + "une fonction qui garde l'accès aux variables de la portée où elle a été créée"
+        - "une fonction exécutée une seule fois"
+        explanation: "Une fonction créée dans une autre garde l'accès aux variables de celle-ci même après son retour. C'est ce qui permet un compteur privé, comme dans creerCompteur."
+      }
+      question "Quel est le problème dans bouton.addEventListener(« click », envoyer()) ?" {
+        - "click doit être écrit onclick"
+        + "envoyer est exécutée immédiatement et c'est son résultat qui est passé"
+        - "il manque le mot-clé function"
+        - "addEventListener n'accepte que des fonctions fléchées"
+        explanation: "Les parenthèses appellent la fonction tout de suite. Il faut passer la fonction elle-même : addEventListener(\"click\", envoyer)."
+      }
+      question "Pourquoi une déclaration function peut-elle être appelée avant sa ligne dans le fichier ?" {
+        - "parce que le moteur lit le fichier à l'envers"
+        + "parce que les déclarations de fonctions sont remontées (hoisting) avec leur corps"
+        - "parce que toutes les fonctions sont globales"
+        - "ce n'est pas possible, cela lève une erreur"
+        explanation: "Une déclaration function est disponible dans toute sa portée dès le début. Une fonction rangée dans une const n'est utilisable qu'après sa ligne : avant, ReferenceError."
+      }
+      question "Que renvoie (x => x * 2)(5) ?" {
+        - "une fonction"
+        - "x * 2"
+        + "10"
+        - "undefined"
+        explanation: "La fonction fléchée est créée puis appelée immédiatement avec 5 ; le corps court renvoie 5 * 2. C'est une expression de fonction immédiatement invoquée."
+      }
+    }
+  }
+
+  module "js-tableaux-objets" {
+    title: "Chapitre 4 : tableaux et objets, map, filter, reduce, déstructuration"
+    duration: "40min"
+    content: """
+### Objets et tableaux
+Un **objet** associe des clés à des valeurs ; un **tableau** (array) est une liste ordonnée, indexée à partir de 0.
+
+```javascript
+const parc = [
+  { nom: "PC-01", os: "Windows 11", ram: 8,  salle: "B204", actif: true },
+  { nom: "PC-02", os: "Debian 12",  ram: 16, salle: "B204", actif: true },
+  { nom: "PC-03", os: "Windows 11", ram: 4,  salle: "B205", actif: false },
+  { nom: "PC-04", os: "Debian 12",  ram: 8,  salle: "B205", actif: true },
+];
+parc.length;        // 4
+parc[0].nom;        // "PC-01"
+parc.at(-1).nom;    // "PC-04" : at accepte un index négatif (ES2022)
+parc[0]["os"];      // "Windows 11" : notation crochets, utile si la clé est dans une variable
+```
+
+Raccourcis d'écriture : `{ nom, ram }` équivaut à `{ nom: nom, ram: ram }`, et `{ [cle]: valeur }` crée une clé calculée.
+
+### Les méthodes qui parcourent un tableau
+Plutôt qu'une boucle `for` avec un index, on décrit **ce qu'on veut** avec des méthodes qui prennent une fonction en paramètre :
+
+| Méthode | Renvoie | Exemple |
+|---|---|---|
+| `map(f)` | un nouveau tableau de même longueur, transformé | les noms des postes |
+| `filter(f)` | un nouveau tableau avec les éléments où `f` renvoie vrai | les postes actifs |
+| `find(f)` | le premier élément trouvé, ou `undefined` | le poste PC-03 |
+| `findIndex(f)` | son index, ou `-1` | |
+| `some(f)` / `every(f)` | `true` si au moins un / tous vérifient `f` | |
+| `includes(v)` | `true` si la valeur est présente | `["a","b"].includes("a")` |
+| `reduce(f, initial)` | une seule valeur calculée à partir de tous | la RAM totale |
+| `forEach(f)` | `undefined` (sert à agir, pas à calculer) | afficher chaque poste |
+
+```javascript
+const noms    = parc.map(p => p.nom);                 // ["PC-01","PC-02","PC-03","PC-04"]
+const actifs  = parc.filter(p => p.actif);            // 3 postes
+const pc3     = parc.find(p => p.nom === "PC-03");    // l'objet PC-03
+const ramTot  = parc.reduce((somme, p) => somme + p.ram, 0); // 36
+const ramActifs = parc
+  .filter(p => p.actif)
+  .map(p => p.ram)
+  .reduce((a, b) => a + b, 0);                        // 32
+```
+
+`map` et `filter` **ne modifient pas** le tableau d'origine. Pense toujours à la valeur initiale de `reduce` (`0`, `[]`, `{}`) : sans elle, sur un tableau vide, `reduce` lève `TypeError: Reduce of empty array with no initial value`.
+
+Compter par catégorie avec `reduce` :
+
+```javascript
+const parOs = parc.reduce((acc, p) => {
+  acc[p.os] = (acc[p.os] ?? 0) + 1;
+  return acc;
+}, {});
+// { "Windows 11": 2, "Debian 12": 2 }
+```
+
+### Le piège de sort
+`sort()` **modifie** le tableau d'origine et, sans fonction de comparaison, trie les éléments **comme des chaînes** :
+
+```javascript
+[10, 9, 100].sort();              // [10, 100, 9] : ordre alphabétique de "10", "100", "9"
+[10, 9, 100].sort((a, b) => a - b); // [9, 10, 100]
+parc.toSorted((a, b) => b.ram - a.ram); // copie triée, RAM décroissante (ES2023)
+parc.toSorted((a, b) => a.nom.localeCompare(b.nom, "fr")); // tri de texte en français
+```
+
+La fonction de comparaison renvoie un nombre négatif si `a` doit passer avant `b`, positif sinon, 0 si égaux.
+
+### La déstructuration
+Elle extrait des valeurs d'un objet ou d'un tableau en une ligne :
+
+```javascript
+const { nom, ram, salle = "inconnue" } = parc[0];   // valeur par défaut si absente
+const { os: systeme } = parc[0];                     // renommage : systeme = "Windows 11"
+const [premier, second, ...reste] = parc;            // reste = les 2 derniers
+let a = 1, b = 2;
+[a, b] = [b, a];                                     // échange de deux variables
+
+// Directement dans les paramètres d'une fonction :
+const etiquette = ({ nom, salle }) => `${nom} (${salle})`;
+parc.map(etiquette);  // ["PC-01 (B204)", ...]
+```
+
+### Copier sans modifier l'original
+Une variable objet contient une **référence** : `const copie = parc[0]; copie.ram = 32;` modifie aussi `parc[0]`. Pour copier :
+• `{ ...objet }` et `[...tableau]` : copie **superficielle** (shallow), les objets imbriqués restent partagés ;
+• `structuredClone(objet)` : copie **profonde** (disponible dans les navigateurs récents et Node.js 17 et plus).
+
+```javascript
+const maj = { ...parc[0], ram: 16 };   // nouvel objet, PC-01 avec 16 Go ; parc[0] intact
+const tous = [...parc, { nom: "PC-05", os: "Debian 12", ram: 8, salle: "B206", actif: true }];
+```
+
+Pour parcourir un objet : `Object.keys(o)`, `Object.values(o)`, `Object.entries(o)` (paires `[clé, valeur]`), avec `for (const [cle, val] of Object.entries(o))`.
+
+### À toi de jouer
+Avec le tableau `parc` ci-dessus :
+1. Obtiens la liste des noms des postes Windows 11 encore actifs.
+2. Calcule la RAM moyenne du parc (en Go, arrondie à une décimale).
+3. Vérifie s'il existe au moins un poste avec moins de 8 Go et si tous les postes ont un nom commençant par `PC-`.
+4. Construis un objet qui regroupe les noms par salle : `{ B204: ["PC-01","PC-02"], B205: [...] }`.
+5. Produis une copie de `parc` triée par RAM décroissante sans modifier `parc`, puis explique pourquoi `parc.sort(...)` aurait été un problème si `parc` est aussi affiché ailleurs.
+
+### Correction
+1. `parc.filter(p => p.os === "Windows 11" && p.actif).map(p => p.nom)` donne `["PC-01"]` (PC-03 est inactif).
+2. `(parc.reduce((s, p) => s + p.ram, 0) / parc.length).toFixed(1)` donne `"9.0"` (36 / 4). `toFixed` renvoie une chaîne ; utilise `Number(...)` si tu dois recalculer.
+3. `parc.some(p => p.ram < 8)` donne `true` (PC-03) ; `parc.every(p => p.nom.startsWith("PC-"))` donne `true`.
+4. Une solution :
+```javascript
+const parSalle = parc.reduce((acc, { nom, salle }) => {
+  (acc[salle] ??= []).push(nom);
+  return acc;
+}, {});
+// { B204: ["PC-01", "PC-02"], B205: ["PC-03", "PC-04"] }
+```
+`??=` (ES2021) affecte seulement si la valeur est `null` ou `undefined`. Les navigateurs récents ont aussi `Object.groupBy(parc, p => p.salle)` (ES2024), qui regroupe les objets entiers.
+5. `const tries = parc.toSorted((a, b) => b.ram - a.ram);` (ou `[...parc].sort(...)` sur un environnement plus ancien). `sort` modifie le tableau en place : toutes les parties du programme qui utilisent `parc` verraient l'ordre changer, ce qui crée des bugs difficiles à relier à leur cause.
+"""
+
+    quiz {
+      pick: 5
+      question "Que renvoie [1, 2, 3].map(n => n * 10) ?" {
+        + "[10, 20, 30]"
+        - "60"
+        - "undefined"
+        - "[1, 2, 3], modifié en place"
+        explanation: "map renvoie un nouveau tableau de même longueur où chaque élément est transformé. Le tableau d'origine n'est pas modifié. Une somme demanderait reduce."
+      }
+      question "Que vaut [10, 9, 100].sort() ?" {
+        - "[9, 10, 100]"
+        + "[10, 100, 9]"
+        - "[100, 10, 9]"
+        - "une erreur, sort attend une fonction"
+        explanation: "Sans fonction de comparaison, sort compare les éléments comme des chaînes : \"10\" < \"100\" < \"9\". Pour un tri numérique : sort((a, b) => a - b)."
+      }
+      question "Que renvoie find quand aucun élément ne correspond ?" {
+        - "-1"
+        - "null"
+        + "undefined"
+        - "un tableau vide"
+        explanation: "find renvoie undefined si rien ne correspond. findIndex renvoie -1, et filter renvoie un tableau vide."
+      }
+      question "Que se passe-t-il avec [].reduce((a, b) => a + b) ?" {
+        - "renvoie 0"
+        - "renvoie undefined"
+        + "TypeError : Reduce of empty array with no initial value"
+        - "renvoie un tableau vide"
+        explanation: "Sans valeur initiale, reduce prend le premier élément comme accumulateur ; sur un tableau vide, il n'y en a pas, d'où l'erreur. Avec reduce(f, 0), le résultat est 0."
+      }
+      question "Que vaut systeme après const { os: systeme } = { os: « Debian 12 » } ?" {
+        + "\"Debian 12\""
+        - "undefined"
+        - "{ os: \"Debian 12\" }"
+        - "une variable os est créée, pas systeme"
+        explanation: "La syntaxe clé: nouveauNom renomme pendant la déstructuration : la valeur de la propriété os est rangée dans la variable systeme. Aucune variable os n'est créée."
+      }
+      question "Quelle méthode renvoie une copie triée sans modifier le tableau d’origine ?" {
+        - "sort"
+        + "toSorted"
+        - "reverse"
+        - "splice"
+        explanation: "toSorted (ES2023) renvoie une nouvelle copie triée. sort, reverse et splice modifient le tableau en place."
+      }
+      question "Que renvoie forEach ?" {
+        - "un nouveau tableau"
+        - "le nombre d'éléments parcourus"
+        + "undefined"
+        - "le dernier élément"
+        explanation: "forEach sert à agir sur chaque élément (afficher, envoyer) et renvoie toujours undefined. Pour obtenir un tableau transformé, il faut map."
+      }
+      question "Après const b = { ...a }, que se passe-t-il si on modifie b.reseau.ip (reseau étant un objet) ?" {
+        - "seul b change"
+        + "a.reseau.ip change aussi, car la copie est superficielle"
+        - "une TypeError est levée"
+        - "b.reseau est undefined"
+        explanation: "La décomposition copie le premier niveau seulement ; b.reseau et a.reseau désignent le même objet. Pour une copie profonde : structuredClone(a)."
+      }
+      question "Quelle expression vérifie que tous les postes ont au moins 8 Go ?" {
+        - "parc.some(p => p.ram >= 8)"
+        + "parc.every(p => p.ram >= 8)"
+        - "parc.filter(p => p.ram >= 8)"
+        - "parc.includes(p => p.ram >= 8)"
+        explanation: "every renvoie true si la condition est vraie pour tous les éléments. some suffit d'un seul, filter renvoie un tableau, includes cherche une valeur précise, pas une condition."
+      }
+      question "Que contient reste après const [a, ...reste] = [1, 2, 3] ?" {
+        - "3"
+        + "[2, 3]"
+        - "[1, 2, 3]"
+        - "2"
+        explanation: "L'élément du reste regroupe tous les éléments qui suivent dans un nouveau tableau. a reçoit 1."
+      }
+      question "Que vaut [« a », « b », « c »].at(-1) ?" {
+        - "undefined"
+        - "\"a\""
+        + "\"c\""
+        - "une RangeError"
+        explanation: "at accepte un index négatif, compté depuis la fin : -1 est le dernier élément. La notation tableau[-1] renverrait undefined."
+      }
+      question "Que renvoie Object.entries({ a: 1, b: 2 }) ?" {
+        - "[\"a\", \"b\"]"
+        - "[1, 2]"
+        + "[[\"a\", 1], [\"b\", 2]]"
+        - "{ 0: \"a\", 1: \"b\" }"
+        explanation: "Object.entries renvoie les paires [clé, valeur]. Object.keys renvoie les clés et Object.values les valeurs."
+      }
+      question "Quelle fonction de comparaison trie des postes par RAM décroissante ?" {
+        - "(a, b) => a.ram - b.ram"
+        + "(a, b) => b.ram - a.ram"
+        - "(a, b) => a.ram > b.ram"
+        - "(a, b) => a.ram + b.ram"
+        explanation: "Un résultat négatif place a avant b. Avec b.ram - a.ram, le poste qui a le plus de RAM passe en premier. a.ram - b.ram trie par ordre croissant ; un booléen n'est pas une comparaison fiable."
+      }
+    }
+  }
+
+  module "js-modules-npm" {
+    title: "Chapitre 5 : modules ES et projets npm"
+    duration: "30min"
+    content: """
+### Pourquoi des modules
+Un programme réel se découpe en fichiers : un pour les calculs, un pour l'affichage, un pour l'accès au réseau. Un **module ES** (ECMAScript module, ESM) est un fichier qui choisit ce qu'il **exporte** et ce qu'il **importe**. Chaque module a sa propre portée : une variable non exportée reste invisible des autres fichiers, ce qui évite les collisions de noms globales.
+
+### export et import
+```javascript
+// outils.js
+export const OCTETS_PAR_GIO = 1024 ** 3;
+export function versGio(octets) {
+  return octets / OCTETS_PAR_GIO;
+}
+export default function formaterPoste(p) {    // un seul export par défaut au maximum
+  return `${p.nom} (${p.os})`;
+}
+```
+
+```javascript
+// app.js
+import formaterPoste, { versGio, OCTETS_PAR_GIO } from "./outils.js";
+import { versGio as enGio } from "./outils.js";   // renommage
+import * as outils from "./outils.js";            // tout, sous un espace de noms
+
+console.log(formaterPoste({ nom: "PC-01", os: "Debian 12" }));
+console.log(outils.versGio(8 * OCTETS_PAR_GIO)); // 8
+```
+
+À retenir :
+• un **export nommé** s'importe entre accolades, avec exactement le même nom (ou `as` pour renommer) ;
+• l'**export par défaut** s'importe sans accolades et peut recevoir n'importe quel nom ;
+• le chemin d'un import relatif commence par `./` ou `../` et comporte **l'extension** (`./outils.js`), dans le navigateur comme dans Node.js ;
+• les imports sont statiques et placés en haut du fichier ; pour charger un module à la demande, `await import("./lourd.js")` renvoie une promesse ;
+• un module est exécuté **une seule fois**, même s'il est importé par plusieurs fichiers ;
+• dans un module, `await` est autorisé directement au niveau du fichier (top-level await, ES2022).
+
+### Modules dans le navigateur
+```html
+<script type="module" src="app.js"></script>
+```
+
+Le navigateur refuse de charger des modules depuis une page ouverte en double-cliquant (adresse `file://`) : les modules suivent les règles d'origine (CORS). Lance un petit serveur web local dans le dossier du projet :
+
+```bash
+python3 -m http.server 8000     # puis ouvre http://localhost:8000
+# ou, avec Node.js :
+npx serve .
+```
+
+### Modules dans Node.js
+Node.js connaît deux systèmes :
+• **CommonJS** (l'ancien) : `const fs = require("fs");` et `module.exports = …` ;
+• **ESM** (le standard) : `import` / `export`.
+
+Node.js traite un fichier comme ESM s'il a l'extension `.mjs`, ou si le `package.json` le plus proche contient `"type": "module"` (pour les fichiers `.js`). Les modules internes s'importent de préférence avec le préfixe `node:` : `import { readFile } from "node:fs/promises";`.
+
+### npm et le fichier package.json
+**npm** est le gestionnaire de paquets installé avec Node.js. Il gère les dépendances d'un projet, décrites dans `package.json` :
+
+```bash
+mkdir inventaire && cd inventaire
+npm init -y                 # crée package.json avec des valeurs par défaut
+npm pkg set type=module     # ajoute "type": "module"
+npm install dayjs           # dépendance : ajoutée à "dependencies", installée dans node_modules/
+npm install --save-dev eslint   # outil de développement : "devDependencies"
+npm run test                # lance le script "test" défini dans package.json
+npx eslint .                # exécute un outil installé dans le projet
+```
+
+```json
+{
+  "name": "inventaire",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "node --test"
+  },
+  "dependencies": { "dayjs": "^1.11.13" },
+  "devDependencies": { "eslint": "^9.0.0" }
+}
+```
+
+• Le symbole `^1.11.13` autorise les mises à jour mineures et correctives (1.x.x, à partir de 1.11.13) mais pas la version 2.
+• **`package-lock.json`** enregistre les versions exactes réellement installées. Il se **commite** dans Git : c'est lui qui garantit que toute l'équipe et le serveur installent les mêmes versions.
+• **`node_modules/`** ne se commite **jamais** (ajoute-le à `.gitignore`) : il se recrée avec `npm install`.
+• **`npm ci`** installe exactement ce que dit le fichier de verrouillage et échoue s'il ne correspond pas à `package.json` : c'est la commande à utiliser sur un serveur ou en intégration continue.
+• **`npm audit`** liste les dépendances qui ont des vulnérabilités connues ; `npm audit fix` applique les mises à jour compatibles.
+
+Chaque dépendance est du code exécuté avec les droits de ton application. Avant d'en ajouter une, vérifie son nom exact (des paquets malveillants imitent des noms connus : c'est le typosquatting), son activité et son nombre d'utilisateurs. Une fonction de trois lignes ne justifie pas une dépendance.
+
+### À toi de jouer
+1. Crée un projet `inventaire` avec `npm init -y` et passe-le en ESM.
+2. Crée `src/calculs.js` qui exporte `ramTotale(parc)` (export nommé) et `src/app.js` qui l'importe et affiche la RAM totale d'un petit tableau de postes. Ajoute un script `start` et lance-le.
+3. Ton collègue obtient `SyntaxError: Cannot use import statement outside a module`. Donne deux corrections possibles.
+4. Dans le navigateur, la console affiche une erreur de chargement pour `import { ramTotale } from "./calculs";`. Quelle est l'erreur probable ?
+
+### Correction
+1. `npm init -y` puis `npm pkg set type=module` (ou ajouter `"type": "module"` à la main dans `package.json`).
+2. Fichiers :
+```javascript
+// src/calculs.js
+export const ramTotale = (parc) => parc.reduce((s, p) => s + p.ram, 0);
+
+// src/app.js
+import { ramTotale } from "./calculs.js";
+const parc = [{ nom: "PC-01", ram: 8 }, { nom: "PC-02", ram: 16 }];
+console.log(`RAM totale : ${ramTotale(parc)} Go`);
+```
+Dans `package.json` : `"scripts": { "start": "node src/app.js" }`, puis `npm start` affiche `RAM totale : 24 Go`.
+3. Node.js traite le fichier comme CommonJS. Corrections : ajouter `"type": "module"` dans `package.json`, ou renommer le fichier en `.mjs`.
+4. L'extension manque : le navigateur demande l'URL `./calculs` au serveur, qui répond 404. Il faut écrire `"./calculs.js"`. Aucun ajout automatique d'extension n'existe pour les modules ES.
+"""
+
+    quiz {
+      pick: 5
+      question "Comment importer la fonction versGio exportée par export function versGio() ?" {
+        - "import versGio from \"./outils.js\""
+        + "import { versGio } from \"./outils.js\""
+        - "import versGio() from \"./outils.js\""
+        - "require { versGio } from \"./outils.js\""
+        explanation: "Un export nommé s'importe entre accolades avec le même nom. Sans accolades, on importe l'export par défaut, qui ici n'est pas versGio."
+      }
+      question "Combien d’exports par défaut un module peut-il avoir ?" {
+        - "aucun, c'est réservé aux bibliothèques"
+        + "un au maximum"
+        - "deux"
+        - "autant que d'exports nommés"
+        explanation: "Un module a au plus un export par défaut, et autant d'exports nommés que nécessaire. Le défaut s'importe sans accolades sous le nom de son choix."
+      }
+      question "Comment Node.js sait-il qu’un fichier .js est un module ES ?" {
+        - "s’il commence par use module"
+        + "si le package.json le plus proche contient type: module"
+        - "si le fichier contient au moins un export"
+        - "il faut toujours l’option --esm"
+        explanation: "Un fichier .js est un module ES quand le package.json le plus proche indique \"type\": \"module\" ; l'extension .mjs force aussi ce mode. Sans cela, Node.js applique CommonJS par défaut."
+      }
+      question "Pourquoi une page avec script type=module ne fonctionne-t-elle pas ouverte en file:// ?" {
+        - "les modules exigent HTTPS avec certificat"
+        + "les modules sont chargés selon les règles d’origine (CORS), refusées pour file://"
+        - "les modules ne marchent que dans Node.js"
+        - "le navigateur exige un fichier package.json"
+        explanation: "Les modules sont chargés avec les règles CORS ; une origine file:// est refusée. Un serveur local (python3 -m http.server ou npx serve) règle le problème. HTTPS n'est pas exigé pour localhost."
+      }
+      question "Quel fichier doit être ajouté à Git dans un projet npm ?" {
+        - "node_modules/"
+        + "package-lock.json"
+        - "le cache de npm"
+        - "aucun, npm s’en charge"
+        explanation: "package-lock.json fixe les versions exactes installées et doit être commité. node_modules se recrée avec npm install et ne doit jamais être commité."
+      }
+      question "Quelle commande installe exactement les versions du fichier de verrouillage sur un serveur ?" {
+        - "npm install --latest"
+        - "npm update"
+        + "npm ci"
+        - "npm audit fix"
+        explanation: "npm ci installe ce que dit package-lock.json et échoue en cas d'incohérence, ce qui garantit une installation reproductible. npm update cherche au contraire des versions plus récentes."
+      }
+      question "Que permet la contrainte de version ^1.11.13 ?" {
+        - "uniquement la version 1.11.13"
+        + "les versions 1.x.x à partir de 1.11.13, mais pas 2.0.0"
+        - "toutes les versions supérieures, y compris 2.0.0"
+        - "seulement les correctifs 1.11.x"
+        explanation: "Le circonflexe autorise les mises à jour mineures et correctives qui ne changent pas le premier chiffre. Le tilde (~1.11.13) limiterait aux correctifs 1.11.x."
+      }
+      question "Quelle commande liste les dépendances ayant des vulnérabilités connues ?" {
+        - "npm doctor"
+        + "npm audit"
+        - "npm outdated"
+        - "npm ls --security"
+        explanation: "npm audit compare les dépendances installées à une base de vulnérabilités connues. npm outdated liste seulement les versions plus récentes disponibles."
+      }
+      question "Quelle erreur provoque import { x } from ./calculs sans extension dans le navigateur ?" {
+        - "aucune, le navigateur ajoute .js"
+        + "un échec de chargement : l’URL ./calculs n’existe pas sur le serveur"
+        - "une SyntaxError dans calculs.js"
+        - "x vaut undefined"
+        explanation: "Le navigateur demande exactement l'URL écrite. Sans .js, le serveur répond 404 et le module n'est pas chargé. Il faut écrire \"./calculs.js\"."
+      }
+      question "Que signifie SyntaxError: Cannot use import statement outside a module dans Node.js ?" {
+        - "le module importé est introuvable"
+        + "le fichier est traité comme CommonJS"
+        - "import doit être remplacé par include"
+        - "la version de Node.js est trop récente"
+        explanation: "Node.js lit le fichier comme CommonJS, où import n'existe pas. Il faut \"type\": \"module\" dans package.json ou l'extension .mjs."
+      }
+      question "Qu’est-ce que le typosquatting dans le monde npm ?" {
+        - "une faute de frappe dans package.json"
+        + "un paquet malveillant publié sous un nom proche d’un paquet connu"
+        - "une dépendance installée deux fois"
+        - "un conflit entre deux versions"
+        explanation: "Des attaquants publient des paquets aux noms presque identiques à des paquets populaires, en espérant une faute de frappe. Vérifier le nom exact avant npm install limite ce risque."
+      }
+      question "Combien de fois un module importé par trois fichiers est-il exécuté ?" {
+        + "une seule fois"
+        - "trois fois"
+        - "quatre fois"
+        - "à chaque appel d’une de ses fonctions"
+        explanation: "Un module est évalué une seule fois ; les importations suivantes reçoivent les mêmes exports. C'est pourquoi un module peut servir à partager une configuration."
+      }
+    }
+  }
+
+  module "js-dom-evenements" {
+    title: "Chapitre 6 : le DOM et les événements"
+    duration: "40min"
+    content: """
+### Le DOM
+Quand le navigateur lit une page HTML, il construit un arbre d'objets : le **DOM** (Document Object Model). Chaque balise devient un élément que JavaScript peut lire et modifier ; la page affichée suit immédiatement.
+
+### Trouver des éléments
+```javascript
+const titre   = document.querySelector("#titre");        // premier élément qui correspond, ou null
+const lignes  = document.querySelectorAll("tr.panne");   // liste statique (NodeList), peut être vide
+const form    = document.querySelector("form[name=ajout]");
+lignes.forEach(l => l.classList.add("alerte"));
+```
+
+`querySelector` accepte n'importe quel sélecteur CSS. Il renvoie **`null`** si rien ne correspond : l'erreur `Cannot read properties of null` vient presque toujours d'un sélecteur faux ou d'un script exécuté trop tôt (chapitre 1).
+
+### Modifier le contenu et l'apparence
+```javascript
+titre.textContent = "Inventaire B204";       // texte brut, jamais interprété comme HTML
+titre.classList.add("important");            // add, remove, toggle, contains
+titre.setAttribute("title", "Mis à jour");   // attribut HTML
+titre.dataset.salle = "B204";                // attribut data-salle="B204"
+titre.hidden = true;                         // masque l'élément
+
+const li = document.createElement("li");     // créer un élément
+li.textContent = "PC-01 : Debian 12";
+document.querySelector("#liste").append(li); // l'insérer
+li.remove();                                 // le supprimer
+```
+
+### textContent ou innerHTML : la règle de sécurité
+`innerHTML` **interprète** la chaîne comme du HTML. Si elle contient une donnée qui vient de l'extérieur (saisie, URL, réponse d'API, nom de fichier), un attaquant peut y glisser du code :
+
+```javascript
+const nom = '<img src=x onerror="alert(document.cookie)">';  // saisi par un utilisateur
+zone.innerHTML = `<li>${nom}</li>`;   // DANGEREUX : le gestionnaire onerror s'exécute
+li.textContent = nom;                 // SÛR : le texte s'affiche tel quel
+```
+
+C'est une faille **XSS** (Cross-Site Scripting) basée sur le DOM. Le guide de prévention de l'OWASP recommande `textContent` pour insérer une donnée non fiable. Règle du cours : **ne jamais insérer de HTML construit avec une donnée non échappée**. On construit les éléments avec `createElement` et `textContent`, et on ne réserve `innerHTML` qu'à du HTML entièrement écrit par le développeur, sans aucune variable. Les attributs sans risque (`class`, `title`, `alt`, `value`) peuvent recevoir une donnée par `setAttribute` ; les attributs d'événements (`onclick`…) et les URL (`href`, `src`) demandent plus de prudence (chapitre 9).
+
+### Réagir aux événements
+```javascript
+const bouton = document.querySelector("#actualiser");
+bouton.addEventListener("click", (event) => {
+  console.log("clic sur", event.currentTarget.id);
+});
+```
+
+Événements courants : `click`, `input` (à chaque frappe dans un champ), `change` (valeur validée), `submit` (envoi d'un formulaire), `keydown`, `DOMContentLoaded` (HTML analysé). Évite les attributs `onclick="…"` dans le HTML : ils mélangent code et structure et sont bloqués par une politique de sécurité du contenu (CSP) stricte.
+
+### Formulaires
+Par défaut, l'envoi d'un formulaire recharge la page. Pour le traiter en JavaScript :
+
+```javascript
+form.addEventListener("submit", (event) => {
+  event.preventDefault();                      // empêche le rechargement
+  const donnees = new FormData(form);
+  const nom = donnees.get("nom").trim();       // toujours une chaîne
+  const ram = Number(donnees.get("ram"));
+  if (!nom || !Number.isInteger(ram) || ram <= 0) {
+    form.querySelector(".erreur").textContent = "Nom et RAM (entier positif) obligatoires.";
+    return;
+  }
+  ajouterPoste({ nom, ram });
+  form.reset();
+});
+```
+
+La validation dans le navigateur améliore le confort, mais **ne protège rien** : un utilisateur peut la contourner avec les outils de développement. Le serveur doit toujours revalider.
+
+### La délégation d'événements
+Les événements **remontent** (bubbling) de l'élément cliqué vers ses parents. Au lieu d'ajouter un gestionnaire sur chaque bouton d'un tableau (y compris ceux créés plus tard), on en met un seul sur le parent et on regarde `event.target` (l'élément réellement cliqué) :
+
+```javascript
+document.querySelector("#tableau").addEventListener("click", (event) => {
+  const bouton = event.target.closest("button[data-action=supprimer]");
+  if (!bouton) return;                         // clic ailleurs
+  bouton.closest("tr").remove();
+});
+```
+
+`event.target` est l'élément d'origine du clic ; `event.currentTarget` est l'élément qui porte le gestionnaire. `closest` remonte vers le premier ancêtre qui correspond au sélecteur.
+
+### À toi de jouer
+Page de départ :
+```html
+<form id="ajout">
+  <input name="nom" placeholder="Nom du poste">
+  <button>Ajouter</button>
+  <p class="erreur"></p>
+</form>
+<ul id="liste"></ul>
+```
+1. Quand on envoie le formulaire, ajoute un `<li>` contenant le nom saisi et un bouton « Retirer », sans recharger la page. Refuse un nom vide.
+2. Le bouton « Retirer » doit supprimer sa ligne, y compris pour les lignes ajoutées après le chargement. Utilise un seul gestionnaire.
+3. Teste avec le nom `<b>test</b>`. Que doit-on voir ? Qu'aurait-on vu avec `innerHTML` ?
+
+### Correction
+```javascript
+const form = document.querySelector("#ajout");
+const liste = document.querySelector("#liste");
+
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const nom = new FormData(form).get("nom").trim();
+  const erreur = form.querySelector(".erreur");
+  if (!nom) {
+    erreur.textContent = "Le nom est obligatoire.";
+    return;
+  }
+  erreur.textContent = "";
+  const li = document.createElement("li");
+  const texte = document.createElement("span");
+  texte.textContent = nom;                       // donnée affichée comme du texte
+  const bouton = document.createElement("button");
+  bouton.type = "button";
+  bouton.dataset.action = "retirer";
+  bouton.textContent = "Retirer";
+  li.append(texte, " ", bouton);
+  liste.append(li);
+  form.reset();
+});
+
+liste.addEventListener("click", (event) => {
+  const bouton = event.target.closest("[data-action=retirer]");
+  if (bouton) bouton.closest("li").remove();
+});
+```
+1. `preventDefault` évite le rechargement ; `trim` refuse un nom fait d'espaces.
+2. Un seul gestionnaire sur `#liste` suffit grâce à la remontée des événements ; il marche pour les lignes futures. `type = "button"` évite qu'un bouton placé dans un formulaire l'envoie.
+3. Avec `textContent`, la ligne affiche littéralement `<b>test</b>`. Avec `innerHTML`, « test » serait en gras : la saisie aurait été interprétée comme du HTML, et un attaquant aurait pu injecter un `<img onerror=…>` exécutant du JavaScript.
+"""
+
+    quiz {
+      pick: 5
+      question "Que renvoie document.querySelector quand aucun élément ne correspond ?" {
+        - "undefined"
+        - "une liste vide"
+        + "null"
+        - "une exception"
+        explanation: "querySelector renvoie null. querySelectorAll renverrait une NodeList vide. Utiliser ensuite null.textContent provoque une TypeError."
+      }
+      question "Quelle propriété insère une donnée saisie par l’utilisateur sans risque de XSS ?" {
+        - "innerHTML"
+        - "outerHTML"
+        + "textContent"
+        - "insertAdjacentHTML"
+        explanation: "textContent traite la valeur comme du texte brut : les balises s'affichent sans être interprétées. innerHTML, outerHTML et insertAdjacentHTML analysent du HTML et peuvent exécuter du code injecté."
+      }
+      question "Un nom saisi vaut <img src=x onerror=alert(1)>. Que se passe-t-il avec zone.innerHTML = nom ?" {
+        - "le texte s’affiche tel quel"
+        + "l’image en erreur déclenche onerror et exécute le code"
+        - "le navigateur refuse toujours ce code"
+        - "une SyntaxError est levée"
+        explanation: "innerHTML crée un vrai élément img ; son chargement échoue et le gestionnaire onerror s'exécute. C'est l'exemple classique de XSS basé sur le DOM. Une balise script insérée par innerHTML ne s'exécute pas, mais les attributs d'événements oui."
+      }
+      question "À quoi sert event.preventDefault() dans un gestionnaire submit ?" {
+        - "à arrêter la remontée de l’événement"
+        + "à empêcher l’envoi classique du formulaire et le rechargement de la page"
+        - "à vider le formulaire"
+        - "à valider les champs required"
+        explanation: "preventDefault annule l'action par défaut du navigateur, ici l'envoi et le rechargement. Arrêter la remontée est le rôle de stopPropagation ; vider le formulaire, celui de form.reset()."
+      }
+      question "Quel type a la valeur lue dans un champ input type=number ?" {
+        - "number"
+        + "string"
+        - "bigint"
+        - "number ou string selon le navigateur"
+        explanation: "value est toujours une chaîne, même pour un champ numérique. Il faut la convertir avec Number() ; input.valueAsNumber existe aussi pour ce type de champ."
+      }
+      question "Dans un gestionnaire placé sur un tableau, que désigne event.target lors d’un clic sur un bouton d’une ligne ?" {
+        - "le tableau"
+        + "l’élément réellement cliqué, ici le bouton ou un élément qu’il contient"
+        - "la ligne entière"
+        - "le document"
+        explanation: "target est l'élément d'origine de l'événement ; currentTarget est l'élément qui porte le gestionnaire, ici le tableau. closest permet de remonter du target vers le bouton ou la ligne."
+      }
+      question "Quel est l’avantage de la délégation d’événements ?" {
+        - "les événements ne remontent plus"
+        + "un seul gestionnaire sur le parent fonctionne aussi pour les enfants ajoutés plus tard"
+        - "le clic est traité deux fois plus vite"
+        - "elle remplace preventDefault"
+        explanation: "Grâce à la remontée (bubbling), le parent reçoit les clics de tous ses enfants, y compris ceux créés après coup. On évite un gestionnaire par élément."
+      }
+      question "Quel événement se déclenche à chaque frappe dans un champ texte ?" {
+        - "change"
+        + "input"
+        - "submit"
+        - "load"
+        explanation: "input se déclenche à chaque modification de la valeur. change ne se déclenche qu'à la validation (perte du focus pour un champ texte), submit à l'envoi du formulaire."
+      }
+      question "Que fait element.classList.toggle(« alerte ») ?" {
+        - "supprime toutes les classes"
+        + "ajoute la classe si elle est absente, la retire si elle est présente"
+        - "remplace toutes les classes par alerte"
+        - "renvoie la liste des classes"
+        explanation: "toggle bascule une classe. add et remove ajoutent ou retirent toujours, contains teste la présence."
+      }
+      question "Pourquoi la validation d’un formulaire en JavaScript ne suffit-elle pas ?" {
+        - "parce qu’elle ralentit la page"
+        + "parce que l’utilisateur peut la contourner, le serveur doit revalider"
+        - "parce que JavaScript ne sait pas lire les champs"
+        - "parce qu’elle ne fonctionne pas sur mobile"
+        explanation: "Tout ce qui s'exécute dans le navigateur est sous le contrôle de l'utilisateur : il peut modifier le code ou envoyer la requête directement. La validation côté client sert le confort, la sécurité se fait côté serveur."
+      }
+      question "Pourquoi éviter les attributs onclick dans le HTML ?" {
+        - "ils ne fonctionnent pas dans Firefox"
+        + "ils mélangent code et structure et sont bloqués par une CSP stricte"
+        - "ils empêchent la remontée des événements"
+        - "ils sont réservés aux liens"
+        explanation: "Les gestionnaires dans le HTML sont du script en ligne : une politique de sécurité du contenu (CSP) sans unsafe-inline les bloque. addEventListener garde le code dans les fichiers .js."
+      }
+      question "Quel attribut HTML correspond à element.dataset.salle ?" {
+        - "salle"
+        - "data.salle"
+        + "data-salle"
+        - "dataset-salle"
+        explanation: "dataset donne accès aux attributs data-*. dataset.salle lit ou écrit data-salle ; un nom composé comme dataset.numeroSerie correspond à data-numero-serie."
+      }
+      question "Un bouton placé dans un formulaire recharge la page au clic. Pourquoi ?" {
+        - "il manque l’attribut onclick"
+        + "un bouton sans type est de type submit par défaut et envoie le formulaire"
+        - "les boutons rechargent toujours la page"
+        - "le formulaire n’a pas d’action"
+        explanation: "Dans un formulaire, un button sans attribut type est un bouton d'envoi. Il faut type=\"button\" pour un bouton qui ne doit pas envoyer, ou preventDefault dans le gestionnaire submit."
+      }
+    }
+  }
+
+  module "js-asynchrone" {
+    title: "Chapitre 7 : code asynchrone, promesses, async/await et fetch"
+    duration: "40min"
+    content: """
+### Pourquoi l'asynchrone
+JavaScript exécute ton code sur **un seul fil** (thread). Si un appel réseau bloquait ce fil pendant deux secondes, la page serait figée : plus de clic, plus de défilement. Les opérations longues (réseau, minuterie, fichier dans Node.js) sont donc **asynchrones** : on les lance, le programme continue, et une fonction est appelée quand le résultat arrive.
+
+### La boucle d'événements, version simple
+1. Le code synchrone s'exécute jusqu'au bout (la pile d'appels se vide).
+2. Puis le moteur traite **toutes les microtâches** : les suites de promesses (`then`, reprise après `await`).
+3. Puis il prend **une tâche** dans la file : un `setTimeout` arrivé à échéance, un clic, etc. Et on recommence.
+
+```javascript
+console.log("A");
+setTimeout(() => console.log("B"), 0);
+Promise.resolve().then(() => console.log("C"));
+console.log("D");
+// Affiche : A D C B
+```
+
+`setTimeout(f, 0)` ne veut pas dire « tout de suite » mais « dès que possible, après le code en cours et les microtâches ».
+
+### Les promesses
+Une **promesse** (Promise) représente un résultat futur. Elle est dans l'un de ces trois états : **en attente** (pending), **tenue** (fulfilled, avec une valeur) ou **rompue** (rejected, avec une erreur). Une fois tenue ou rompue, elle ne change plus.
+
+```javascript
+function attendre(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+attendre(1000)
+  .then(() => fetch("/api/postes"))
+  .then((reponse) => reponse.json())
+  .then((postes) => console.log(postes.length))
+  .catch((erreur) => console.error("Échec :", erreur.message))
+  .finally(() => console.log("terminé"));
+```
+
+### async et await
+`async`/`await` (ES2017) écrit la même chose comme du code séquentiel :
+• une fonction `async` renvoie **toujours une promesse** ;
+• `await promesse` suspend la fonction jusqu'à ce que la promesse soit tenue (il renvoie sa valeur) ou rompue (il lève l'erreur, qu'on attrape avec `try`/`catch`) ;
+• `await` s'utilise dans une fonction `async`, ou au niveau du fichier dans un module.
+
+```javascript
+async function chargerPostes() {
+  const reponse = await fetch("/api/postes");
+  if (!reponse.ok) {
+    throw new Error(`HTTP ${reponse.status}`);
+  }
+  return reponse.json();      // une promesse, déjà gérée par la fonction async
+}
+```
+
+### fetch : le piège du code HTTP
+`fetch(url, options)` lance une requête HTTP et renvoie une promesse de `Response`. Point capital, rappelé par la documentation MDN : la promesse **n'est pas rompue** pour une réponse 404 ou 500. Elle n'est rompue qu'en cas d'échec de la requête elle-même (pas de réseau, nom introuvable, URL invalide, requête bloquée par CORS). Il faut donc **toujours tester `reponse.ok`** (vrai pour un statut de 200 à 299) ou `reponse.status`.
+
+```javascript
+// Envoyer du JSON
+const reponse = await fetch("/api/postes", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ nom: "PC-05", ram: 8 }),
+  signal: AbortSignal.timeout(5000),    // abandon après 5 s (TimeoutError)
+});
+```
+
+`reponse.json()`, `reponse.text()` lisent le corps : ce sont aussi des promesses, il faut les attendre. `fetch` est disponible dans tous les navigateurs actuels et dans Node.js depuis la version 18.
+
+### Plusieurs opérations en parallèle
+```javascript
+const urls = ["/api/salles/B204", "/api/salles/B205", "/api/salles/B206"];
+
+// Séquentiel : 3 attentes l'une après l'autre (lent)
+for (const url of urls) { await fetch(url); }
+
+// Parallèle : les 3 requêtes partent ensemble
+const reponses = await Promise.all(urls.map((u) => fetch(u)));
+```
+
+| Méthode | Tenue quand | Rompue quand |
+|---|---|---|
+| `Promise.all` | toutes sont tenues (tableau des valeurs) | dès la première rompue |
+| `Promise.allSettled` | toutes sont terminées (tableau de `{status, value}` ou `{status, reason}`) | jamais |
+| `Promise.race` | la première terminée est tenue | la première terminée est rompue |
+| `Promise.any` | la première tenue | toutes rompues (AggregateError) |
+
+Pour sonder 30 postes où certains peuvent être éteints, `allSettled` est le bon choix : une panne ne fait pas perdre les autres résultats.
+
+Piège : `await` dans `forEach` n'attend rien. `forEach` ignore la promesse renvoyée par la fonction ; utilise `for…of` (séquentiel) ou `Promise.all` avec `map` (parallèle).
+
+### Erreurs non attrapées
+Une promesse rompue sans `catch` produit un avertissement `Uncaught (in promise)` dans le navigateur. Dans Node.js (depuis la version 15), une promesse rompue non gérée **arrête le processus** par défaut. Chaque chaîne de promesses doit donc se terminer par un `catch`, ou chaque `await` être dans un `try`/`catch` à un niveau ou un autre.
+
+### À toi de jouer
+1. Prévois l'ordre d'affichage :
+```javascript
+console.log(1);
+setTimeout(() => console.log(2), 0);
+(async () => { console.log(3); await null; console.log(4); })();
+console.log(5);
+```
+2. Écris `async function chargerJSON(url)` qui renvoie les données JSON, lève une erreur claire si le statut HTTP n'est pas bon, et abandonne après 5 secondes.
+3. Tu dois interroger `/api/etat/PC-01` à `/api/etat/PC-30`. Écris le code qui lance les 30 requêtes en parallèle et affiche le nombre de postes qui ont répondu et le nombre d'échecs.
+4. Que reproches-tu à ce code ? `ids.forEach(async (id) => { await supprimer(id); }); console.log("tout est supprimé");`
+
+### Correction
+1. `1 3 5 4 2`. La fonction async s'exécute de façon synchrone jusqu'au premier `await` (affiche 3) ; la suite (4) est une microtâche, traitée après le code synchrone (5) mais avant la tâche `setTimeout` (2).
+2. Une solution :
+```javascript
+async function chargerJSON(url) {
+  const reponse = await fetch(url, { signal: AbortSignal.timeout(5000) });
+  if (!reponse.ok) {
+    throw new Error(`${url} : HTTP ${reponse.status}`);
+  }
+  return reponse.json();
+}
+```
+3. Une solution :
+```javascript
+const noms = Array.from({ length: 30 }, (_, i) => `PC-${String(i + 1).padStart(2, "0")}`);
+const resultats = await Promise.allSettled(noms.map((n) => chargerJSON(`/api/etat/${n}`)));
+const ok = resultats.filter((r) => r.status === "fulfilled").length;
+console.log(`${ok} postes ont répondu, ${resultats.length - ok} échecs`);
+```
+`Promise.all` aurait échoué entièrement au premier poste éteint.
+4. `forEach` n'attend pas les promesses : le message s'affiche avant la fin des suppressions et les erreurs éventuelles ne sont pas attrapées. Correction : `for (const id of ids) { await supprimer(id); }` ou `await Promise.all(ids.map(supprimer));`, puis le message.
+"""
+
+    quiz {
+      pick: 5
+      question "Que renvoie toujours une fonction déclarée async ?" {
+        - "la valeur de son return"
+        + "une promesse"
+        - "undefined"
+        - "un objet Response"
+        explanation: "Une fonction async renvoie toujours une promesse, tenue avec la valeur du return ou rompue avec l'erreur levée. Il faut donc await ou then pour lire le résultat."
+      }
+      question "fetch reçoit une réponse 404. Que fait la promesse ?" {
+        - "elle est rompue avec une erreur 404"
+        + "elle est tenue avec une Response dont ok vaut false"
+        - "elle reste en attente"
+        - "elle est tenue avec null"
+        explanation: "fetch n'échoue que si la requête n'aboutit pas (réseau, URL invalide, CORS). Un statut d'erreur HTTP donne une réponse normale ; il faut tester reponse.ok ou reponse.status."
+      }
+      question "Pour quels statuts HTTP Response.ok vaut-il true ?" {
+        - "de 100 à 399"
+        + "de 200 à 299"
+        - "uniquement 200"
+        - "de 200 à 399"
+        explanation: "ok est vrai pour les statuts de succès 200 à 299 (200, 201, 204…). Une redirection 3xx est suivie automatiquement par fetch par défaut."
+      }
+      question "Quel est l’ordre d’affichage de : log(A) ; setTimeout(log B, 0) ; Promise.resolve().then(log C) ; log(D) ?" {
+        - "A B C D"
+        - "A C D B"
+        + "A D C B"
+        - "A D B C"
+        explanation: "Le code synchrone passe d'abord (A, D), puis les microtâches des promesses (C), puis les tâches comme setTimeout (B)."
+      }
+      question "Quelle méthode attend toutes les promesses et donne le résultat de chacune, même en cas d’échec ?" {
+        - "Promise.all"
+        + "Promise.allSettled"
+        - "Promise.race"
+        - "Promise.any"
+        explanation: "allSettled renvoie un tableau d'objets {status, value} ou {status, reason} et n'est jamais rompue. Promise.all est rompue dès le premier échec."
+      }
+      question "Pourquoi await dans un forEach ne fonctionne-t-il pas comme prévu ?" {
+        - "await est interdit dans les fonctions fléchées"
+        + "forEach ignore les promesses renvoyées et n’attend pas"
+        - "forEach exécute les fonctions dans le désordre"
+        - "await bloque tout le navigateur"
+        explanation: "forEach appelle la fonction pour chaque élément sans tenir compte de la promesse qu'elle renvoie. Le code suivant s'exécute avant la fin. On utilise for...of ou Promise.all avec map."
+      }
+      question "Quels sont les trois états d’une promesse ?" {
+        - "créée, lancée, finie"
+        + "en attente, tenue, rompue"
+        - "synchrone, asynchrone, terminée"
+        - "ouverte, fermée, annulée"
+        explanation: "Une promesse est pending, puis fulfilled (avec une valeur) ou rejected (avec une raison). Une fois réglée, son état ne change plus."
+      }
+      question "Comment abandonner un fetch qui dure plus de 5 secondes ?" {
+        - "fetch(url, { timeout: 5000 })"
+        + "fetch(url, { signal: AbortSignal.timeout(5000) })"
+        - "setTimeout(fetch, 5000)"
+        - "fetch(url).wait(5000)"
+        explanation: "fetch n'a pas d'option timeout ; on lui passe un signal d'abandon. AbortSignal.timeout(5000) abandonne la requête après 5 s avec une erreur TimeoutError."
+      }
+      question "Que se passe-t-il par défaut dans Node.js récent quand une promesse rompue n’est jamais gérée ?" {
+        - "rien, l’erreur est ignorée"
+        - "un simple avertissement, le programme continue"
+        + "le processus s’arrête avec une erreur"
+        - "la promesse est relancée automatiquement"
+        explanation: "Depuis Node.js 15, le mode par défaut pour les rejets non gérés est throw : le processus se termine. D'où la règle : toujours un catch ou un try/catch autour des await."
+      }
+      question "Combien de temps prend await Promise.all de 3 requêtes de 1 s chacune, lancées avec map ?" {
+        - "environ 3 s"
+        + "environ 1 s"
+        - "0 s"
+        - "environ 6 s"
+        explanation: "map lance les trois requêtes immédiatement ; elles s'exécutent en parallèle et Promise.all attend la plus lente, soit environ 1 s. Une boucle for...of avec await prendrait environ 3 s."
+      }
+      question "Que lit reponse.json() ?" {
+        - "les en-têtes de la réponse"
+        + "le corps de la réponse, analysé comme du JSON, sous forme de promesse"
+        - "le statut HTTP"
+        - "le corps sous forme de texte brut, immédiatement"
+        explanation: "json() lit le corps et l'analyse ; c'est une promesse car le corps arrive en flux. Si le corps n'est pas du JSON valide, la promesse est rompue avec une SyntaxError."
+      }
+      question "Où peut-on écrire await en dehors d’une fonction async ?" {
+        - "nulle part"
+        + "au niveau du fichier dans un module ES"
+        - "dans n’importe quel script classique"
+        - "seulement dans une boucle for"
+        explanation: "Depuis ES2022, await est permis au premier niveau d'un module (top-level await). Dans un script classique, il faut une fonction async."
+      }
+    }
+  }
+
+  module "js-erreurs-json" {
+    title: "Chapitre 8 : gérer les erreurs et manipuler du JSON"
+    duration: "35min"
+    content: """
+### try, catch, finally
+```javascript
+try {
+  const config = JSON.parse(texte);       // peut lever une SyntaxError
+  demarrer(config);
+} catch (erreur) {
+  console.error(`Configuration invalide : ${erreur.message}`);
+} finally {
+  bouton.disabled = false;                // exécuté dans tous les cas
+}
+```
+
+• `finally` s'exécute toujours, qu'il y ait une erreur ou non, même après un `return` : idéal pour libérer une ressource ou réactiver un bouton.
+• `try`/`catch` n'attrape une erreur asynchrone que si on attend la promesse avec `await` à l'intérieur du `try`.
+• N'attrape pas une erreur pour la cacher. Un `catch {}` vide transforme une panne visible en comportement incompréhensible.
+
+### Les erreurs du langage
+| Erreur | Cause typique | Exemple |
+|---|---|---|
+| `SyntaxError` | code ou JSON mal écrit | `JSON.parse("{nom: 1}")` |
+| `ReferenceError` | variable inexistante | `totl + 1` au lieu de `total + 1` |
+| `TypeError` | opération impossible sur ce type | `null.length`, appeler ce qui n'est pas une fonction |
+| `RangeError` | valeur hors limites | `new Array(-1)`, `(1.5).toFixed(200)` |
+
+Chaque erreur a un `name`, un `message` et une `stack` (pile d'appels, avec fichiers et numéros de ligne). Lis toujours la première ligne de la pile : elle indique où l'erreur s'est produite.
+
+### Lever ses propres erreurs
+```javascript
+function verifierRam(ram) {
+  if (!Number.isInteger(ram) || ram <= 0) {
+    throw new RangeError(`RAM invalide : ${ram}`);
+  }
+  return ram;
+}
+
+class ErreurApi extends Error {
+  constructor(message, status, options) {
+    super(message, options);
+    this.name = "ErreurApi";
+    this.status = status;
+  }
+}
+
+try {
+  await chargerJSON("/api/postes");
+} catch (e) {
+  throw new ErreurApi("Inventaire indisponible", 503, { cause: e });  // garde l'erreur d'origine
+}
+```
+
+Lève toujours un objet `Error` (ou une classe dérivée), jamais une simple chaîne : une chaîne n'a pas de pile d'appels. L'option `{ cause }` (ES2022) conserve l'erreur d'origine pour le diagnostic.
+
+### Ce qu'on montre à l'utilisateur
+Affiche un message compréhensible (« Inventaire indisponible, réessaie dans quelques minutes ») et garde le détail technique pour la console ou le journal du serveur. N'affiche jamais une pile d'appels ou un message d'erreur de base de données à l'utilisateur : cela renseigne un attaquant sur ton application.
+
+### JSON
+**JSON** (JavaScript Object Notation, RFC 8259) est le format d'échange de données du web. Il ressemble aux objets JavaScript, avec des règles plus strictes :
+• clés **toujours entre guillemets doubles** ; chaînes aussi entre guillemets doubles ;
+• valeurs possibles : chaîne, nombre, `true`, `false`, `null`, objet, tableau. Pas de `undefined`, de fonction, de date ni de `NaN` ;
+• **pas de virgule finale**, **pas de commentaire** ;
+• encodé en UTF-8 quand il circule entre systèmes ; type MIME `application/json`.
+
+```json
+{
+  "salle": "B204",
+  "postes": [
+    { "nom": "PC-01", "ram": 8, "actif": true, "ip": null }
+  ]
+}
+```
+
+### JSON.parse et JSON.stringify
+```javascript
+const objet = JSON.parse('{"nom":"PC-01","ram":8}');   // texte vers objet
+JSON.parse("{'nom':'PC-01'}");    // SyntaxError : guillemets simples interdits
+JSON.parse('{"a":1,}');           // SyntaxError : virgule finale
+
+JSON.stringify({ nom: "PC-01", ram: 8 });           // '{"nom":"PC-01","ram":8}'
+JSON.stringify(parc, null, 2);                       // indenté de 2 espaces, lisible
+JSON.stringify({ a: undefined, f() {}, b: NaN });    // '{"b":null}'
+JSON.stringify([undefined]);                         // '[null]'
+JSON.stringify({ d: new Date(0) });                  // '{"d":"1970-01-01T00:00:00.000Z"}'
+```
+
+Ce que `stringify` fait en silence : il **omet** les propriétés `undefined` et les fonctions dans un objet (les remplace par `null` dans un tableau), transforme `NaN` et `Infinity` en `null`, et convertit les dates en chaînes ISO 8601. Au retour, `JSON.parse` te rend une **chaîne**, pas une date : reconvertis-la avec `new Date(texte)`.
+
+### Ne jamais faire confiance aux données reçues
+Une réponse JSON vient de l'extérieur, comme une saisie. Vérifie sa forme avant de l'utiliser :
+
+```javascript
+function lirePoste(donnee) {
+  if (typeof donnee?.nom !== "string" || !Number.isInteger(donnee.ram)) {
+    throw new TypeError("Poste mal formé");
+  }
+  return { nom: donnee.nom.slice(0, 50), ram: donnee.ram, actif: donnee.actif === true };
+}
+```
+
+N'utilise **jamais** `eval` pour lire du JSON : `eval` exécute n'importe quel code, `JSON.parse` ne fait qu'analyser des données.
+
+### À toi de jouer
+1. Trouve les trois erreurs de ce JSON : `{ nom: "PC-01", 'ram': 8, "os": "Debian 12", }`
+2. Que produit `JSON.stringify({ nom: "PC-02", achat: new Date("2024-09-02T00:00:00Z"), garantie: undefined, ram: 0 / 0 })` ?
+3. Écris `lireConfig(texte)` qui renvoie l'objet de configuration, ou un objet par défaut `{ delai: 5000 }` si le texte n'est pas du JSON valide, en affichant l'erreur dans la console.
+4. Un script plante avec `TypeError: Cannot read properties of undefined (reading 'map')` sur la ligne `donnees.postes.map(...)`. Propose un diagnostic et une correction.
+
+### Correction
+1. La clé `nom` n'est pas entre guillemets ; la clé `'ram'` utilise des guillemets simples ; il y a une virgule finale après `"Debian 12"`. Version correcte : `{ "nom": "PC-01", "ram": 8, "os": "Debian 12" }`.
+2. `'{"nom":"PC-02","achat":"2024-09-02T00:00:00.000Z","ram":null}'` : `garantie` (undefined) disparaît, la date devient une chaîne ISO, `0 / 0` (NaN) devient `null`.
+3. Une solution :
+```javascript
+function lireConfig(texte) {
+  try {
+    return JSON.parse(texte);
+  } catch (erreur) {
+    console.error("Configuration illisible, valeurs par défaut :", erreur.message);
+    return { delai: 5000 };
+  }
+}
+```
+4. `donnees` existe mais n'a pas de propriété `postes` : l'API a peut-être renvoyé une forme différente (un message d'erreur, `{ "items": [...] }`, une page vide). Affiche `console.log(donnees)` pour voir la vraie réponse, vérifie `reponse.ok` avant de lire le corps, puis protège-toi : `if (!Array.isArray(donnees?.postes)) throw new TypeError("Réponse inattendue");`. Masquer l'erreur avec `(donnees.postes ?? []).map(...)` n'est acceptable que si une liste vide est un résultat normal.
+"""
+
+    quiz {
+      pick: 5
+      question "Quel texte est un JSON valide ?" {
+        - "{nom: \"PC-01\"}"
+        - "{'nom': 'PC-01'}"
+        + "{\"nom\": \"PC-01\"}"
+        - "{\"nom\": \"PC-01\",}"
+        explanation: "En JSON, clés et chaînes sont obligatoirement entre guillemets doubles, et la virgule finale est interdite (RFC 8259)."
+      }
+      question "Que produit JSON.stringify sur l’objet { a: undefined, b: 1 } ?" {
+        - "{\"a\":undefined,\"b\":1}"
+        - "{\"a\":null,\"b\":1}"
+        + "{\"b\":1}"
+        - "une TypeError"
+        explanation: "undefined n'existe pas en JSON : la propriété est simplement omise dans un objet. Dans un tableau, elle deviendrait null."
+      }
+      question "Quelle erreur lève JSON.parse sur un texte mal formé ?" {
+        - "TypeError"
+        + "SyntaxError"
+        - "RangeError"
+        - "aucune, il renvoie null"
+        explanation: "JSON.parse lève une SyntaxError quand le texte n'est pas du JSON valide. Il faut donc l'entourer d'un try/catch quand le texte vient de l'extérieur."
+      }
+      question "Quand le bloc finally s’exécute-t-il ?" {
+        - "seulement s’il n’y a pas eu d’erreur"
+        - "seulement après une erreur"
+        + "dans tous les cas, après try et catch"
+        - "seulement si catch relance l’erreur"
+        explanation: "finally s'exécute toujours, même après un return dans try ou catch. On y place le nettoyage : fermer une ressource, réactiver un bouton."
+      }
+      question "Quelle erreur produit null.length ?" {
+        - "ReferenceError"
+        + "TypeError"
+        - "SyntaxError"
+        - "RangeError"
+        explanation: "Lire une propriété de null ou undefined est une opération impossible sur ce type : TypeError. ReferenceError signale une variable qui n'existe pas."
+      }
+      question "Que devient une date après JSON.stringify puis JSON.parse ?" {
+        - "un objet Date identique"
+        + "une chaîne au format ISO 8601"
+        - "un nombre de millisecondes"
+        - "null"
+        explanation: "stringify convertit la date en chaîne ISO (via toJSON) ; parse ne la reconvertit pas. Il faut appeler new Date(chaine) pour retrouver un objet Date."
+      }
+      question "Pourquoi lever new Error(« message ») plutôt que throw « message » ?" {
+        - "throw n’accepte que des objets"
+        + "un objet Error porte un nom, un message et la pile d’appels"
+        - "une chaîne levée n’est jamais attrapée"
+        - "c’est obligatoire en mode strict"
+        explanation: "throw accepte n'importe quelle valeur, mais une chaîne n'a pas de stack : impossible de savoir d'où vient l'erreur. Error et ses dérivées fournissent name, message et stack."
+      }
+      question "À quoi sert l’option cause dans new Error(message, { cause: e }) ?" {
+        - "à masquer l’erreur d’origine"
+        + "à conserver l’erreur d’origine attachée à la nouvelle erreur"
+        - "à choisir le type de l’erreur"
+        - "à relancer l’erreur automatiquement"
+        explanation: "cause (ES2022) relie la nouvelle erreur, plus parlante, à l'erreur technique d'origine. Le diagnostic garde toute la chaîne."
+      }
+      question "Pourquoi ne faut-il jamais utiliser eval pour lire du JSON ?" {
+        - "eval est plus lent mais le résultat est identique"
+        + "eval exécute n’importe quel code contenu dans le texte"
+        - "eval ne gère pas les tableaux"
+        - "eval n’existe plus en JavaScript moderne"
+        explanation: "eval exécute le texte comme du code : un JSON piégé deviendrait une exécution de code arbitraire. JSON.parse se contente d'analyser des données."
+      }
+      question "Quel message montrer à l’utilisateur quand l’API de l’inventaire renvoie une erreur 500 ?" {
+        - "la pile d’appels complète pour qu’il la transmette"
+        - "le message brut de la base de données"
+        + "un message simple, et le détail technique dans la console ou le journal"
+        - "rien, il vaut mieux masquer l’erreur"
+        explanation: "Un message clair aide l'utilisateur ; les détails techniques renseignent un attaquant et vont dans les journaux. Masquer l'erreur rend la panne incompréhensible."
+      }
+      question "Que vaut JSON.stringify({ x: NaN }) ?" {
+        - "{\"x\":NaN}"
+        + "{\"x\":null}"
+        - "{}"
+        - "une erreur"
+        explanation: "NaN et Infinity n'existent pas en JSON ; stringify les remplace par null. Une valeur numérique invalide peut donc devenir null sans avertissement."
+      }
+      question "Quel type MIME annonce une réponse JSON ?" {
+        - "text/json"
+        + "application/json"
+        - "application/javascript"
+        - "text/plain"
+        explanation: "Le type enregistré par la RFC 8259 est application/json. On l'indique dans l'en-tête Content-Type des requêtes et réponses."
+      }
+      question "Un try entoure fetchDonnees() sans await. La promesse est rompue. Le catch l’attrape-t-il ?" {
+        - "oui, toujours"
+        + "non, le try est déjà terminé quand la promesse est rompue"
+        - "oui, mais seulement dans Node.js"
+        - "non, car fetch ne rompt jamais sa promesse"
+        explanation: "Sans await, le try se termine dès que la promesse est créée ; le rejet arrive plus tard, hors du bloc. Avec await fetchDonnees() dans le try, le catch reçoit l'erreur."
+      }
+    }
+  }
+
+  module "js-securite-pratiques" {
+    title: "Chapitre 9 : sécurité et bonnes pratiques du code côté client"
+    duration: "35min"
+    content: """
+### Le principe de base : le navigateur appartient à l'utilisateur
+Tout ce que tu envoies au navigateur (HTML, JavaScript, JSON) peut être lu, modifié et rejoué par l'utilisateur avec les outils de développement. Trois conséquences :
+• **aucun secret dans le code client** : une clé d'API, un mot de passe de base de données ou un jeton d'administration placé dans un fichier `.js` est public, même « caché » ou minifié ;
+• **aucune décision de sécurité côté client** : masquer un bouton « Supprimer » ne protège rien, c'est le serveur qui doit refuser l'action à qui n'en a pas le droit ;
+• **toutes les validations sont refaites par le serveur** ; celles du navigateur servent au confort.
+
+### XSS : la faille principale du JavaScript
+Une faille XSS (Cross-Site Scripting) permet à un attaquant de faire exécuter son JavaScript dans la page d'une victime : il peut alors agir en son nom, lire ce que la page affiche, modifier le contenu. En JavaScript côté client, elle naît presque toujours d'une donnée non fiable qui arrive dans un **point d'injection dangereux** (sink) :
+
+| Dangereux avec une donnée non fiable | À utiliser à la place |
+|---|---|
+| `el.innerHTML = …`, `outerHTML`, `insertAdjacentHTML`, `document.write` | `el.textContent = …`, `createElement` + `append` |
+| `eval(texte)`, `new Function(texte)`, `setTimeout("code", 100)` | une vraie fonction : `setTimeout(() => …, 100)` ; `JSON.parse` pour des données |
+| `el.setAttribute("onclick", …)` | `addEventListener` |
+| `lien.href = urlSaisie` (risque de `javascript:`) | vérifier le protocole avec `new URL()` |
+
+Le guide OWASP de prévention des XSS basés sur le DOM recommande `textContent` pour toute donnée non fiable, et `setAttribute` seulement pour des attributs sans effet comme `class`, `title`, `alt` ou `value`. Il déconseille `eval` purement et simplement.
+
+Une donnée « non fiable », c'est tout ce qui ne vient pas de ton propre code : saisie de formulaire, paramètres d'URL (`location.search`, `location.hash`), réponses d'API (même la tienne : elle renvoie ce que d'autres utilisateurs ont saisi), contenu de `localStorage`, noms de fichiers.
+
+```javascript
+// Vérifier une URL fournie par un utilisateur avant d'en faire un lien
+function lienSur(texteUrl) {
+  try {
+    const url = new URL(texteUrl);
+    return ["http:", "https:"].includes(url.protocol) ? url.href : null;
+  } catch {
+    return null;                 // pas une URL valide
+  }
+}
+lienSur("javascript:alert(1)");  // null
+lienSur("https://www.cnil.fr");  // "https://www.cnil.fr/"
+```
+
+Si tu dois vraiment afficher du HTML venu de l'extérieur (un message mis en forme), il faut un assainisseur éprouvé, comme la bibliothèque DOMPurify recommandée par l'OWASP. La méthode `setHTML()`, qui assainit le HTML nativement, n'est pas encore disponible dans tous les navigateurs. N'écris jamais ton propre filtre à base de remplacements de chaînes : il sera contourné.
+
+### La politique de sécurité du contenu (CSP)
+La CSP est un en-tête HTTP envoyé par le serveur, qui dit au navigateur d'où le code peut venir. C'est une deuxième ligne de défense : même si une injection passe, le script de l'attaquant est bloqué.
+
+```text
+Content-Security-Policy: default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'
+```
+
+Avec `script-src 'self'`, seuls les fichiers `.js` du même site s'exécutent : les scripts en ligne, les attributs `onclick` et `eval` sont refusés (sauf ajout explicite de `'unsafe-inline'` ou `'unsafe-eval'`, à éviter). C'est une raison pratique de toujours placer le code dans des fichiers et d'utiliser `addEventListener`. Les violations apparaissent dans la console du navigateur.
+
+### Où stocker quoi
+• `localStorage` et `sessionStorage` sont lisibles par **tout script** de la page. Une faille XSS suffit pour les vider. L'OWASP déconseille d'y ranger des identifiants de session ou des jetons d'authentification.
+• Un cookie de session marqué **`HttpOnly`** n'est pas lisible par `document.cookie` ; avec **`Secure`** il ne circule qu'en HTTPS ; **`SameSite=Lax`** ou **`Strict`** limite son envoi depuis d'autres sites. Ces attributs sont posés par le serveur.
+• Côté réglementation, la CNIL considère cookies et stockage local comme des **traceurs** : ceux qui ne sont pas strictement nécessaires au service (publicité, la plupart des mesures d'audience) demandent le consentement préalable de l'utilisateur.
+
+### Les dépendances
+Chaque paquet npm est du code qui s'exécute avec tes droits, et ses propres dépendances aussi. Bonnes habitudes : peu de dépendances, noms vérifiés, `package-lock.json` commité, `npm ci` sur les serveurs, `npm audit` régulier, mises à jour suivies. Un script chargé depuis un CDN externe peut être vérifié avec l'attribut `integrity` (Subresource Integrity), qui bloque le fichier si son contenu change.
+
+### Les bonnes pratiques d'écriture
+• `const` par défaut, `let` si nécessaire, jamais `var` ;
+• `===` et `!==` toujours ;
+• des modules plutôt que des variables globales ;
+• des fonctions courtes qui font une seule chose, avec des noms explicites (`calculerRamTotale`, pas `f2`) ;
+• pas de `catch` vide : on traite l'erreur ou on la laisse remonter ;
+• un **linter** (ESLint, `npx eslint .`) pour détecter les variables inutilisées, les comparaisons `==`, les promesses oubliées ; un formateur (Prettier) pour une présentation homogène ;
+• des tests automatiques : Node.js intègre un lanceur de tests (`node --test`, module `node:test`).
+
+```javascript
+// calculs.test.js — lancer avec : node --test
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { ramTotale } from "./src/calculs.js";
+
+test("ramTotale additionne la RAM", () => {
+  assert.equal(ramTotale([{ ram: 8 }, { ram: 16 }]), 24);
+});
+test("ramTotale d'un parc vide vaut 0", () => {
+  assert.equal(ramTotale([]), 0);
+});
+```
+
+### À toi de jouer
+Relis ce code d'une page « annuaire du lycée » et liste les problèmes de sécurité, puis corrige-les.
+```javascript
+const API_KEY = "sk_live_51H...";                       // clé du service d'envoi de SMS
+const nom = new URLSearchParams(location.search).get("nom");
+document.querySelector("#bienvenue").innerHTML = "Bonjour " + nom;
+fetch("/api/fiche?nom=" + nom)
+  .then(r => r.json())
+  .then(f => {
+    document.querySelector("#site").innerHTML = `<a href="${f.site}">site perso</a>`;
+    localStorage.setItem("jeton", f.jetonAdmin);
+    if (f.role == "admin") document.querySelector("#suppr").hidden = false;
+  });
+```
+
+### Correction
+1. **Clé secrète dans le code client** : n'importe qui la lit avec F12. Elle doit rester sur le serveur ; le navigateur appelle une route du serveur, qui appelle le service de SMS.
+2. **XSS par paramètre d'URL** : `?nom=<img src=x onerror=...>` s'exécute via `innerHTML`. Correction : `textContent = "Bonjour " + nom`.
+3. **Paramètre non encodé dans l'URL** : un nom contenant `&` ou `#` casse la requête. Correction : `fetch("/api/fiche?nom=" + encodeURIComponent(nom))` ou `new URLSearchParams({ nom })`.
+4. **Pas de test de `r.ok`** : une erreur 404 ou 500 serait traitée comme une fiche.
+5. **XSS par la réponse d'API** : `f.site` peut contenir `javascript:...` ou des guillemets qui ferment l'attribut. Correction : créer le lien avec `createElement("a")`, `textContent = "site perso"`, et `href` seulement si `lienSur(f.site)` renvoie une URL `http:` ou `https:`.
+6. **Jeton d'administration dans `localStorage`** : lisible par toute faille XSS. Il ne devrait même pas être envoyé au navigateur ; la session doit reposer sur un cookie `HttpOnly`, `Secure`, `SameSite`.
+7. **Contrôle d'accès côté client** : afficher le bouton selon `f.role` ne protège rien ; le serveur doit refuser la suppression si l'utilisateur n'est pas administrateur. Et `==` doit devenir `===`.
+8. **Pas de `catch`** : une erreur réseau donne un rejet non géré.
+
+Code corrigé de la partie client :
+```javascript
+const nom = new URLSearchParams(location.search).get("nom") ?? "";
+document.querySelector("#bienvenue").textContent = `Bonjour ${nom}`;
+
+try {
+  const r = await fetch(`/api/fiche?${new URLSearchParams({ nom })}`);
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  const f = await r.json();
+  const url = lienSur(f.site);
+  if (url) {
+    const a = document.createElement("a");
+    a.href = url;
+    a.textContent = "site perso";
+    document.querySelector("#site").replaceChildren(a);
+  }
+} catch (e) {
+  console.error(e);
+  document.querySelector("#site").textContent = "Fiche indisponible.";
+}
+```
+"""
+
+    quiz {
+      pick: 5
+      question "Une clé d’API est rangée dans un fichier JavaScript minifié servi au navigateur. Est-elle protégée ?" {
+        - "oui, la minification la rend illisible"
+        - "oui, si le fichier est servi en HTTPS"
+        + "non, tout utilisateur peut la lire avec les outils de développement"
+        - "oui, si la variable est déclarée avec const"
+        explanation: "Tout ce qui est envoyé au navigateur est public. HTTPS protège le transport, pas le contenu une fois reçu. Un secret reste sur le serveur."
+      }
+      question "Quelle ligne est sûre pour afficher un paramètre lu dans l’URL ?" {
+        - "el.innerHTML = param"
+        + "el.textContent = param"
+        - "document.write(param)"
+        - "el.insertAdjacentHTML(« beforeend », param)"
+        explanation: "textContent affiche le texte sans l'interpréter. Les trois autres analysent du HTML : un paramètre piégé y exécuterait du code (XSS basé sur le DOM)."
+      }
+      question "Pourquoi un lien construit avec href = urlSaisie est-il dangereux ?" {
+        - "parce que href n’accepte que des chemins relatifs"
+        + "parce qu’une URL javascript: exécute du code au clic"
+        - "parce que les liens sont bloqués par CORS"
+        - "parce que l’URL est envoyée au serveur DNS"
+        explanation: "Une URL au protocole javascript: exécute son contenu quand on clique. On vérifie le protocole avec new URL() et on n'accepte que http: et https:."
+      }
+      question "Que bloque l’en-tête CSP script-src ’self’ ?" {
+        - "les fichiers JavaScript du site lui-même"
+        + "les scripts en ligne, les attributs onclick, eval et les scripts d’autres origines"
+        - "les images d’autres sites"
+        - "les requêtes fetch vers le même site"
+        explanation: "script-src 'self' n'autorise que les scripts servis par la même origine. Le code en ligne et eval sont refusés sauf ajout de 'unsafe-inline' ou 'unsafe-eval', à éviter. Les images relèvent de img-src."
+      }
+      question "Pourquoi l’OWASP déconseille-t-il de stocker un jeton de session dans localStorage ?" {
+        - "localStorage est limité à 100 octets"
+        + "tout script de la page peut le lire, donc une faille XSS suffit à le voler"
+        - "localStorage est effacé à chaque rechargement"
+        - "localStorage est envoyé à chaque requête"
+        explanation: "localStorage est accessible à tout JavaScript de l'origine. Un cookie HttpOnly n'est pas lisible par JavaScript, ce qui limite le vol par XSS. localStorage persiste et n'est pas envoyé automatiquement."
+      }
+      question "Quel attribut de cookie empêche sa lecture par document.cookie ?" {
+        - "Secure"
+        + "HttpOnly"
+        - "SameSite"
+        - "Path"
+        explanation: "HttpOnly réserve le cookie aux échanges HTTP. Secure impose HTTPS, SameSite limite l'envoi depuis d'autres sites, Path restreint les chemins concernés."
+      }
+      question "Un bouton Supprimer est masqué pour les non-administrateurs avec hidden. Est-ce suffisant ?" {
+        - "oui, l’utilisateur ne voit pas le bouton"
+        - "oui, si le code est en mode strict"
+        + "non, le serveur doit refuser l’action aux non-administrateurs"
+        - "non, il faut utiliser display: none"
+        explanation: "L'utilisateur peut réafficher le bouton ou envoyer la requête directement. Le contrôle d'accès se fait côté serveur ; le masquage n'est qu'un confort d'interface."
+      }
+      question "Comment insérer correctement un nom saisi dans une URL de requête ?" {
+        - "« /api?nom= » + nom"
+        + "« /api?nom= » + encodeURIComponent(nom)"
+        - "« /api?nom= » + escape(nom)"
+        - "« /api?nom= » + nom.trim()"
+        explanation: "encodeURIComponent (ou URLSearchParams) encode &, #, = et les espaces qui casseraient l'URL ou ajouteraient des paramètres. escape est obsolète et ne gère pas correctement l'UTF-8."
+      }
+      question "Que faire pour afficher un message en HTML enrichi venant d’utilisateurs ?" {
+        - "retirer les balises script avec une expression régulière"
+        + "passer le HTML dans un assainisseur éprouvé comme DOMPurify"
+        - "utiliser innerHTML dans un try/catch"
+        - "remplacer les chevrons par des espaces"
+        explanation: "Un filtre maison sera contourné (attributs d'événements, encodages). L'OWASP recommande un assainisseur éprouvé comme DOMPurify ; l'API native setHTML n'est pas encore disponible partout."
+      }
+      question "Pourquoi setTimeout(« verifier() », 1000) est-il déconseillé ?" {
+        - "le délai est ignoré"
+        + "la chaîne est évaluée comme du code, comme avec eval"
+        - "setTimeout n’accepte que des nombres"
+        - "la fonction est exécutée deux fois"
+        explanation: "Une chaîne passée à setTimeout est évaluée comme du code, avec les mêmes risques qu'eval, et est bloquée par une CSP stricte. On passe une fonction : setTimeout(verifier, 1000)."
+      }
+      question "Selon la CNIL, quand faut-il le consentement de l’utilisateur pour un traceur en localStorage ?" {
+        - "jamais, localStorage n’est pas un cookie"
+        + "quand il n’est pas strictement nécessaire au service demandé, par exemple pour la publicité"
+        - "toujours, même pour un panier d’achat"
+        - "seulement si le site est hébergé hors de France"
+        explanation: "La CNIL applique les règles des traceurs à tout stockage sur le terminal, cookies comme stockage local. Les traceurs strictement nécessaires (panier, authentification) sont exemptés de consentement, pas ceux de publicité."
+      }
+      question "Quelle commande lance le lanceur de tests intégré à Node.js ?" {
+        - "npm audit"
+        + "node --test"
+        - "node --check"
+        - "npx jest --builtin"
+        explanation: "node --test cherche et exécute les fichiers de test avec le module node:test. node --check vérifie seulement la syntaxe d'un fichier ; npm audit concerne les vulnérabilités."
+      }
+      question "Quel est le rôle de l’attribut integrity sur une balise script chargée depuis un CDN ?" {
+        - "chiffrer le script"
+        + "bloquer le script si son contenu ne correspond pas à l’empreinte attendue"
+        - "accélérer le téléchargement"
+        - "autoriser le script dans la CSP"
+        explanation: "Subresource Integrity compare l'empreinte (SHA-256, 384 ou 512) du fichier reçu à celle indiquée ; si le CDN est compromis et le fichier modifié, le navigateur refuse de l'exécuter."
+      }
+    }
+  }
+
+  module "synthese" {
+    title: "Chapitre 10 : synthèse, une page d'inventaire du parc"
+    duration: "40min"
+    content: """
+### Le projet
+Le lycée tient l'inventaire de ses postes dans un fichier JSON. Tu construis une page qui le charge, l'affiche dans un tableau, permet de filtrer par texte et par système, affiche des statistiques et réagit proprement aux erreurs. Le projet reprend chaque chapitre : modules, fetch et async/await, tableaux et déstructuration, DOM et événements, JSON, gestion des erreurs et affichage sans XSS.
+
+Arborescence :
+```text
+inventaire/
+├── index.html
+├── parc.json
+└── src/
+    ├── donnees.js     chargement et validation
+    ├── stats.js       calculs (fonctions pures, testables)
+    └── app.js         affichage et événements
+```
+
+### Étape 1 : les données
+```json
+[
+  { "nom": "PC-01", "os": "Windows 11", "ram": 8,  "salle": "B204", "actif": true },
+  { "nom": "PC-02", "os": "Debian 12",  "ram": 16, "salle": "B204", "actif": true },
+  { "nom": "PC-03", "os": "Windows 11", "ram": 4,  "salle": "B205", "actif": false },
+  { "nom": "PC-04", "os": "Debian 12",  "ram": 8,  "salle": "B205", "actif": true },
+  { "nom": "<img src=x onerror=alert(1)>", "os": "Debian 12", "ram": 8, "salle": "B206", "actif": true }
+]
+```
+La dernière ligne est volontairement piégée : à la fin, elle doit s'afficher comme du texte, sans exécuter d'alerte.
+
+### Étape 2 : la page
+```html
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Inventaire du parc</title>
+  <script type="module" src="src/app.js"></script>
+</head>
+<body>
+  <h1>Inventaire du parc</h1>
+  <input id="recherche" type="search" placeholder="Nom ou salle">
+  <select id="os"><option value="">Tous les systèmes</option></select>
+  <p id="stats"></p>
+  <p id="erreur" role="alert"></p>
+  <table>
+    <thead><tr><th>Nom</th><th>Système</th><th>RAM (Go)</th><th>Salle</th><th>État</th></tr></thead>
+    <tbody id="lignes"></tbody>
+  </table>
+</body>
+</html>
+```
+
+### Étape 3 : charger et valider (src/donnees.js)
+```javascript
+function lirePoste(p) {
+  if (typeof p?.nom !== "string" || typeof p.os !== "string" ||
+      !Number.isInteger(p.ram) || typeof p.salle !== "string") {
+    throw new TypeError(`Poste mal formé : ${JSON.stringify(p)}`);
+  }
+  return { nom: p.nom, os: p.os, ram: p.ram, salle: p.salle, actif: p.actif === true };
+}
+
+export async function chargerParc(url) {
+  const reponse = await fetch(url, { signal: AbortSignal.timeout(5000) });
+  if (!reponse.ok) throw new Error(`Chargement impossible (HTTP ${reponse.status})`);
+  const donnees = await reponse.json();
+  if (!Array.isArray(donnees)) throw new TypeError("Le fichier doit contenir un tableau");
+  return donnees.map(lirePoste);
+}
+```
+
+### Étape 4 : les calculs (src/stats.js)
+```javascript
+export const ramTotale = (parc) => parc.reduce((s, { ram }) => s + ram, 0);
+
+export const systemes = (parc) => [...new Set(parc.map((p) => p.os))].toSorted();
+
+export function filtrer(parc, texte, os) {
+  const t = texte.trim().toLowerCase();
+  return parc.filter((p) =>
+    (os === "" || p.os === os) &&
+    (t === "" || p.nom.toLowerCase().includes(t) || p.salle.toLowerCase().includes(t))
+  );
+}
+```
+`new Set(...)` élimine les doublons ; la décomposition `[...]` le retransforme en tableau.
+
+### Étape 5 : afficher et réagir (src/app.js)
+```javascript
+import { chargerParc } from "./donnees.js";
+import { ramTotale, systemes, filtrer } from "./stats.js";
+
+const recherche = document.querySelector("#recherche");
+const choixOs = document.querySelector("#os");
+const lignes = document.querySelector("#lignes");
+const stats = document.querySelector("#stats");
+const erreur = document.querySelector("#erreur");
+let parc = [];
+
+function cellule(texte) {
+  const td = document.createElement("td");
+  td.textContent = texte;                  // jamais innerHTML avec des données
+  return td;
+}
+
+function afficher() {
+  const visibles = filtrer(parc, recherche.value, choixOs.value);
+  lignes.replaceChildren(...visibles.map(({ nom, os, ram, salle, actif }) => {
+    const tr = document.createElement("tr");
+    tr.append(cellule(nom), cellule(os), cellule(String(ram)), cellule(salle),
+              cellule(actif ? "en service" : "hors service"));
+    return tr;
+  }));
+  stats.textContent = `${visibles.length} poste(s) sur ${parc.length}, ` +
+                      `${ramTotale(visibles)} Go de RAM au total`;
+}
+
+try {
+  parc = await chargerParc("parc.json");
+  for (const os of systemes(parc)) {
+    choixOs.append(new Option(os, os));    // new Option(texte, valeur) : sans HTML
+  }
+  recherche.addEventListener("input", afficher);
+  choixOs.addEventListener("change", afficher);
+  afficher();
+} catch (e) {
+  console.error(e);
+  erreur.textContent = "L'inventaire n'a pas pu être chargé. Vérifie le fichier parc.json.";
+}
+```
+
+### Étape 6 : lancer et tester
+```bash
+cd inventaire
+python3 -m http.server 8000     # puis http://localhost:8000
+```
+Vérifie :
+1. le tableau affiche 5 lignes, et la statistique « 5 poste(s) sur 5, 44 Go de RAM au total » ;
+2. la ligne piégée affiche le texte `<img src=x onerror=alert(1)>` sans aucune alerte ;
+3. taper `b205` ne garde que PC-03 et PC-04 ; choisir « Windows 11 » ne garde que PC-01 et PC-03 ;
+4. renomme `parc.json` : le message d'erreur s'affiche (HTTP 404) et la console donne le détail ;
+5. ajoute une virgule finale dans `parc.json` : `reponse.json()` lève une `SyntaxError`, le même message s'affiche ;
+6. remplace `"ram": 8` par `"ram": "8"` sur une ligne : la validation refuse le fichier avec « Poste mal formé ».
+
+### À toi de jouer
+1. Ajoute une case à cocher « actifs seulement » qui complète le filtre.
+2. Ajoute un tri : un clic sur l'en-tête « RAM (Go) » trie par RAM décroissante, sans modifier le tableau `parc`.
+3. Écris deux tests `node --test` pour `filtrer` (filtre par salle, filtre par système).
+4. Le serveur web du lycée envoie l'en-tête `Content-Security-Policy: default-src 'self'`. La page fonctionne-t-elle toujours ? Justifie.
+
+### Correction
+1. Dans le HTML : `<label><input id="actifs" type="checkbox"> actifs seulement</label>`. Dans `app.js`, filtre en plus avec `.filter((p) => !actifs.checked || p.actif)` sur le résultat de `filtrer`, et écoute `actifs.addEventListener("change", afficher)`. Mieux : ajoute un paramètre `actifsSeuls` à `filtrer` pour garder la logique dans `stats.js`, testable.
+2. Une variable `let triRam = false;`, un gestionnaire sur l'en-tête qui l'inverse et appelle `afficher()`, et dans `afficher` : `const liste = triRam ? visibles.toSorted((a, b) => b.ram - a.ram) : visibles;`. `toSorted` (ou `[...visibles].sort(...)`) laisse `parc` intact.
+3. Une solution :
+```javascript
+// filtrer.test.js
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { filtrer } from "./src/stats.js";
+
+const parc = [
+  { nom: "PC-01", os: "Windows 11", ram: 8, salle: "B204", actif: true },
+  { nom: "PC-03", os: "Debian 12",  ram: 4, salle: "B205", actif: false },
+];
+test("filtre par salle, sans tenir compte de la casse", () => {
+  assert.deepEqual(filtrer(parc, "b205", "").map((p) => p.nom), ["PC-03"]);
+});
+test("filtre par système", () => {
+  assert.deepEqual(filtrer(parc, "", "Windows 11").map((p) => p.nom), ["PC-01"]);
+});
+```
+Avec un `package.json` contenant `"type": "module"`, `node --test` affiche les deux tests réussis.
+4. Oui. Tout le JavaScript est dans des fichiers du même site (`src/*.js`), chargés par `<script type="module" src>` ; aucun script en ligne, aucun `onclick`, aucun `eval` ; `fetch("parc.json")` vise la même origine, autorisée par `default-src 'self'` (qui s'applique aussi à `connect-src`). C'est le bénéfice d'avoir suivi les règles des chapitres 6 et 9.
+
+### Pour aller plus loin
+• ECMAScript Language Specification (ECMA-262), Ecma International : https://tc39.es/ecma262/
+• Guide JavaScript et référence des API Web, MDN Web Docs (Mozilla) : https://developer.mozilla.org/fr/docs/Web/JavaScript
+• Documentation de Node.js (modules ESM, node:test, cycle des versions LTS), OpenJS Foundation : https://nodejs.org/docs/latest/api/
+• RFC 8259, The JavaScript Object Notation (JSON) Data Interchange Format, IETF : https://www.rfc-editor.org/rfc/rfc8259
+• DOM based XSS Prevention Cheat Sheet et HTML5 Security Cheat Sheet, OWASP : https://cheatsheetseries.owasp.org
+• Cookies et autres traceurs : les règles applicables, CNIL : https://www.cnil.fr
+"""
+
+    quiz {
+      pick: 10
+      question "Quelle déclaration choisir par défaut pour une variable en JavaScript moderne ?" {
+        + "const"
+        - "let"
+        - "var"
+        - "aucune, l’affectation directe suffit"
+        explanation: "const par défaut, let si la variable doit être réaffectée. var a une portée de fonction et un comportement de remontée source d'erreurs ; l'affectation sans déclaration crée une globale ou une erreur en mode strict."
+      }
+      question "Que vaut « 10 » === 10 ?" {
+        - "true"
+        + "false"
+        - "une TypeError"
+        - "undefined"
+        explanation: "=== compare type et valeur sans conversion : une chaîne n'est jamais strictement égale à un nombre. \"10\" == 10 vaudrait true, d'où la règle de toujours utiliser ===."
+      }
+      question "Quelle méthode renvoie un tableau contenant seulement les postes actifs ?" {
+        - "parc.map(p => p.actif)"
+        + "parc.filter(p => p.actif)"
+        - "parc.find(p => p.actif)"
+        - "parc.some(p => p.actif)"
+        explanation: "filter garde les éléments pour lesquels la fonction renvoie vrai. map renverrait un tableau de booléens, find un seul poste, some un booléen."
+      }
+      question "Que vaut parc.reduce((s, p) => s + p.ram, 0) pour des postes de 8, 16 et 4 Go ?" {
+        - "« 8164 »"
+        + "28"
+        - "[8, 16, 4]"
+        - "NaN"
+        explanation: "reduce part de 0 et ajoute la RAM de chaque poste : 0 + 8 + 16 + 4 = 28. Sans la valeur initiale 0, le premier accumulateur serait l'objet du premier poste."
+      }
+      question "Pourquoi le projet de synthèse utilise-t-il toSorted plutôt que sort pour trier l’affichage ?" {
+        - "toSorted est plus rapide"
+        + "toSorted renvoie une copie et laisse le tableau parc intact"
+        - "sort ne sait pas trier des nombres"
+        - "sort n’existe pas dans les modules"
+        explanation: "sort modifie le tableau en place, ce qui changerait l'ordre de parc pour tout le programme. toSorted (ES2023) renvoie une nouvelle copie triée."
+      }
+      question "Quelle balise charge src/app.js comme module ES ?" {
+        - "<script src=« src/app.js » module>"
+        + "<script type=« module » src=« src/app.js »>"
+        - "<module src=« src/app.js »>"
+        - "<script import=« src/app.js »>"
+        explanation: "type=\"module\" fait du fichier un module ES : imports autorisés, mode strict, chargement différé. Les autres écritures n'existent pas."
+      }
+      question "Pourquoi faut-il un serveur local (python3 -m http.server) pour la page de synthèse ?" {
+        - "parce que JavaScript ne marche pas en local"
+        + "parce que les modules et fetch ne fonctionnent pas depuis une page ouverte en file://"
+        - "parce que JSON exige HTTPS"
+        - "parce que le DOM n’existe qu’en ligne"
+        explanation: "Les modules ES et fetch suivent les règles d'origine ; une page file:// ne peut pas charger les modules ni parc.json. Un serveur local fournit une origine http://localhost."
+      }
+      question "Que fait fetch quand parc.json n’existe pas sur le serveur ?" {
+        - "la promesse est rompue avec une erreur réseau"
+        + "la promesse est tenue avec une réponse de statut 404 et ok à false"
+        - "il renvoie un tableau vide"
+        - "il renvoie null"
+        explanation: "Une erreur HTTP n'est pas une erreur réseau : fetch renvoie la réponse 404. C'est pour cela que chargerParc teste reponse.ok et lève une erreur."
+      }
+      question "Quel est l’ordre d’affichage de : log(1) ; setTimeout(log 2) ; Promise.resolve().then(log 3) ; log(4) ?" {
+        - "1 2 3 4"
+        - "1 3 2 4"
+        + "1 4 3 2"
+        - "1 4 2 3"
+        explanation: "Le code synchrone d'abord (1, 4), puis les microtâches des promesses (3), puis les tâches comme setTimeout (2)."
+      }
+      question "Un poste nommé <img src=x onerror=alert(1)> est affiché avec td.textContent = nom. Que voit-on ?" {
+        - "une image cassée et une alerte"
+        + "le texte de la balise, sans exécution"
+        - "une cellule vide"
+        - "une erreur dans la console"
+        explanation: "textContent traite la valeur comme du texte : les chevrons sont affichés tels quels. Avec innerHTML, l'élément img serait créé et onerror exécuterait le code."
+      }
+      question "Comment ajouter une option à un select sans construire de HTML ?" {
+        - "select.innerHTML += « <option> » + os"
+        + "select.append(new Option(os, os))"
+        - "select.value = os"
+        - "document.write(« <option> » + os)"
+        explanation: "new Option(texte, valeur) crée l'élément sans analyser de HTML, la donnée reste du texte. Les concaténations avec innerHTML ou document.write rouvrent la porte au XSS."
+      }
+      question "Que renvoie [...new Set([« Debian 12 », « Windows 11 », « Debian 12 »])] ?" {
+        - "un Set de 3 éléments"
+        + "un tableau de 2 éléments sans doublon"
+        - "un tableau de 3 éléments"
+        - "une TypeError"
+        explanation: "Un Set ne garde qu'un exemplaire de chaque valeur ; la décomposition le transforme en tableau. On obtient [\"Debian 12\", \"Windows 11\"]."
+      }
+      question "Une virgule finale dans parc.json fait échouer reponse.json(). Quelle erreur est levée ?" {
+        - "TypeError"
+        - "RangeError"
+        + "SyntaxError"
+        - "ReferenceError"
+        explanation: "Le JSON n'autorise pas de virgule finale : l'analyse lève une SyntaxError, qui rompt la promesse de reponse.json(). Le try/catch d'app.js l'attrape et affiche le message."
+      }
+      question "Pourquoi le projet valide-t-il chaque poste avec lirePoste après le chargement ?" {
+        - "pour accélérer l’affichage"
+        + "parce que des données externes peuvent avoir une forme inattendue"
+        - "parce que JSON.parse ne gère pas les booléens"
+        - "pour chiffrer les données"
+        explanation: "Un fichier ou une API peut changer de format ou être mal rempli (\"ram\": \"8\"). Valider à l'entrée transforme une panne confuse plus loin en une erreur claire à la source."
+      }
+      question "Quelle commande exécute les tests écrits avec node:test ?" {
+        - "npm audit"
+        - "node --check"
+        + "node --test"
+        - "npx serve"
+        explanation: "node --test trouve et lance les fichiers de test. node --check vérifie la syntaxe d'un fichier, npm audit les vulnérabilités des dépendances, npx serve lance un serveur web."
+      }
+      question "Une page fait innerHTML = `<a href=${f.site}>` avec une valeur venue d’une API. Quel est le bon correctif ?" {
+        - "entourer la ligne d’un try/catch"
+        + "créer l’élément a, vérifier le protocole http ou https avec new URL, et utiliser textContent"
+        - "remplacer innerHTML par outerHTML"
+        - "ajouter « use strict »"
+        explanation: "La valeur de l'API est non fiable : elle peut fermer l'attribut ou contenir javascript:. On construit l'élément avec le DOM et on n'accepte que les URL http: et https:."
+      }
+      question "Où doit se trouver le contrôle qui interdit à un élève de supprimer un poste de l’inventaire ?" {
+        - "dans le JavaScript de la page, avec hidden sur le bouton"
+        - "dans le fichier parc.json"
+        + "sur le serveur qui reçoit la demande de suppression"
+        - "dans le localStorage de l’élève"
+        explanation: "Le navigateur est sous le contrôle de l'utilisateur ; tout contrôle client est contournable. Le serveur vérifie les droits à chaque requête."
+      }
+      question "Que garantit npm ci par rapport à npm install ?" {
+        - "il met à jour toutes les dépendances"
+        + "il installe exactement les versions de package-lock.json et échoue en cas d’incohérence"
+        - "il supprime package-lock.json"
+        - "il ignore les devDependencies"
+        explanation: "npm ci est fait pour les serveurs et l'intégration continue : installation reproductible à partir du fichier de verrouillage. npm install peut modifier ce fichier."
+      }
+      question "La page de synthèse fonctionne-t-elle avec la CSP default-src ’self’ ?" {
+        - "non, fetch est toujours bloqué par la CSP"
+        + "oui, car tout le code est dans des fichiers du même site et fetch vise la même origine"
+        - "non, les modules exigent unsafe-inline"
+        - "oui, mais seulement si on ajoute unsafe-eval"
+        explanation: "default-src 'self' autorise les scripts et les requêtes vers la même origine. Le projet n'a ni script en ligne, ni onclick, ni eval, il n'a donc besoin d'aucune exception."
+      }
+      question "Dans Node.js, que se passe-t-il par défaut si chargerParc est rejetée sans aucun catch ?" {
+        - "rien, le rejet est ignoré"
+        + "le processus s’arrête sur un rejet non géré"
+        - "Node.js relance automatiquement la fonction"
+        - "le résultat vaut undefined"
+        explanation: "Depuis Node.js 15, un rejet de promesse non géré termine le processus. Dans le navigateur, il produit l'avertissement Uncaught (in promise). D'où le try/catch autour de l'await."
+      }
+    }
+  }
+}

@@ -1,0 +1,2436 @@
+tdc-version: 2
+type: course
+
+course "powershell" {
+  title: "Automatiser Windows avec PowerShell"
+  description: """
+Ce cours t'apprend à administrer et automatiser des postes et des serveurs Windows avec PowerShell : interroger le système, filtrer les résultats, écrire des scripts fiables et créer des comptes en série à partir d'un fichier CSV. Il s'adresse aux élèves de bac pro CIEL, BTS SIO (SISR surtout), BTS CIEL et BUT réseaux, et à toute personne qui gère un parc de quelques dizaines de postes Windows.
+
+À la fin, tu sauras :
+• choisir entre Windows PowerShell 5.1 et PowerShell 7, travailler dans la console et dans VS Code ;
+• trouver seul la bonne commande avec Get-Command, Get-Help et Get-Member ;
+• enchaîner des commandes dans le pipeline et filtrer, trier et sélectionner des objets ;
+• écrire des scripts .ps1 avec variables, conditions, boucles, fonctions et gestion des erreurs, et régler la politique d'exécution ;
+• lire et produire des fichiers texte et CSV ;
+• surveiller et piloter les services et les processus ;
+• gérer des comptes locaux et des comptes Active Directory ;
+• interroger les journaux d'événements pour diagnostiquer une panne ou repérer des tentatives de connexion ;
+• créer automatiquement des comptes depuis un CSV, avec simulation (-WhatIf), journal et rapport.
+
+Le cours suppose un labo personnel : un Windows 10 ou 11 (ou une machine virtuelle), et si possible un Windows Server 2022 contrôleur du domaine lycee.internal, comme dans le cours Windows Server et Active Directory. Chaque chapitre contient un exercice pratique corrigé et une banque de questions tirées au hasard.
+
+Prérequis : utiliser Windows au quotidien, savoir ce qu'est un compte utilisateur, un groupe et un service. Les notions d'Active Directory (domaine, unité d'organisation, groupe) aident pour le chapitre 8.
+"""
+  category: "programming"
+  level: "intermediate"
+  duration: "6h"
+  icon: "Terminal"
+  keywords: ["powershell", "pwsh", "cmdlet", "pipeline", "script", "ps1", "execution policy", "get-help", "where-object", "import-csv", "get-service", "get-process", "new-localuser", "new-aduser", "active directory", "get-winevent", "journaux", "automatisation", "windows server", "vs code"]
+
+  module "console-vscode" {
+    title: "Chapitre 1 : découvrir PowerShell, la console et VS Code"
+    duration: "25min"
+    content: """
+### Pourquoi PowerShell
+Cliquer dans les consoles graphiques va bien pour un poste. Pour vingt postes, cent comptes ou une vérification chaque matin, il faut **automatiser**. PowerShell est à la fois :
+• un **interpréteur de commandes** (shell) interactif, comme l'invite de commandes `cmd.exe` ;
+• un **langage de script** complet (variables, conditions, boucles, fonctions, gestion des erreurs) ;
+• une interface d'administration : presque tous les rôles de Windows Server (Active Directory, DNS, DHCP, Hyper-V…) s'administrent avec ses commandes.
+
+Sa grande différence avec `cmd` ou Bash : les commandes ne s'échangent pas du **texte**, mais des **objets** qui ont des propriétés (nom, état, taille, date…). Tu n'as donc presque jamais besoin de découper du texte : tu demandes directement la propriété qui t'intéresse. Ce point sera développé au chapitre 3.
+
+### Deux PowerShell sur la même machine
+| | Windows PowerShell 5.1 | PowerShell 7 |
+|---|---|---|
+| Programme | `powershell.exe` | `pwsh.exe` |
+| Installation | fourni avec Windows 10, 11 et Windows Server 2016 et suivants | à installer (winget, MSI, Microsoft Store) |
+| Base technique | .NET Framework 4.x | .NET moderne (.NET 10 pour la 7.6) |
+| Systèmes | Windows seulement | Windows, Linux, macOS |
+| Évolution | ne reçoit plus que des correctifs | versions régulières, la 7.6 est la version LTS (support long) actuelle |
+
+Les deux s'installent côte à côte et ne se gênent pas. Dans ce cours, toutes les commandes fonctionnent dans les deux versions, sauf mention contraire. Pour savoir laquelle tu utilises :
+
+```powershell
+$PSVersionTable.PSVersion
+```
+
+Pour installer PowerShell 7 sur Windows 10 ou 11 :
+
+```powershell
+winget install --id Microsoft.PowerShell --source winget
+```
+
+### Ouvrir une console, en utilisateur ou en administrateur
+• Menu Démarrer, tape « PowerShell » (ou « pwsh » pour la version 7). Sur Windows 11, le **Terminal Windows** ouvre PowerShell dans des onglets.
+• Beaucoup de commandes d'administration (arrêter un service, créer un compte local, lire le journal Sécurité) exigent une console **lancée en tant qu'administrateur** : clic droit, « Exécuter en tant qu'administrateur ». Le titre de la fenêtre commence alors par « Administrateur ».
+• Travaille en utilisateur normal par défaut, et n'ouvre une console administrateur que pour la tâche qui en a besoin. C'est une règle d'hygiène de base recommandée par l'ANSSI : limiter l'usage des droits d'administration.
+
+### Les gestes qui font gagner du temps
+| Geste | Effet |
+|---|---|
+| `Tab` | complète le nom d'une commande, d'un paramètre ou d'un chemin ; appuie plusieurs fois pour faire défiler les choix |
+| `Ctrl+Espace` | affiche toutes les complétions possibles (PSReadLine) |
+| flèches haut et bas | rappellent les commandes précédentes |
+| `Ctrl+R` | recherche dans l'historique |
+| `Ctrl+C` | interrompt la commande en cours |
+| `Get-History` | liste les commandes tapées dans la session |
+| `cls` ou `Clear-Host` | efface l'écran |
+
+### Écrire des scripts : VS Code
+La console sert à tester. Pour écrire un script de plusieurs lignes, utilise un éditeur :
+• **Visual Studio Code** avec l'extension **PowerShell** (éditeur Microsoft) : coloration, complétion, signalement des erreurs pendant la frappe, débogueur. C'est l'outil recommandé par Microsoft aujourd'hui.
+• **Windows PowerShell ISE**, installé avec Windows, fonctionne encore mais n'évolue plus et ne connaît que la version 5.1.
+
+Dans VS Code avec l'extension PowerShell :
+| Touche | Effet |
+|---|---|
+| `F5` | exécute tout le script (ou le débogue s'il y a des points d'arrêt) |
+| `F8` | exécute seulement la sélection, ou la ligne courante, dans la console intégrée |
+| `F9` | pose ou retire un point d'arrêt |
+
+L'extension affiche en bas à droite la version de PowerShell utilisée par la console intégrée ; un clic permet de passer de 5.1 à 7.
+
+### Premières commandes
+```powershell
+Get-Date                      # date et heure
+Get-ComputerInfo -Property OsName, OsVersion, CsName
+Get-Location                  # dossier courant (équivalent de pwd)
+Set-Location C:\Windows       # changer de dossier (équivalent de cd)
+Get-ChildItem                 # contenu du dossier (équivalent de dir ou ls)
+```
+
+Remarque : `cd`, `dir`, `ls` ou `cls` marchent aussi. Ce sont des **alias**, des raccourcis vers les vraies commandes `Set-Location`, `Get-ChildItem`, `Clear-Host`. Tu les verras au chapitre suivant.
+
+### À toi de jouer
+1. Ouvre Windows PowerShell 5.1 et affiche sa version. Installe PowerShell 7 si ce n'est pas fait, ouvre-le et affiche aussi sa version.
+2. Ouvre une console **non administrateur** et lance `Stop-Service -Name Spooler`. Note le message. Recommence dans une console administrateur, puis relance le service avec `Start-Service -Name Spooler`.
+3. Installe VS Code et l'extension PowerShell. Crée un fichier `C:\Scripts\essai.ps1` contenant les deux lignes `Get-Date` et `$PSVersionTable.PSVersion`. Exécute la première ligne seule avec `F8`, puis tout le fichier avec `F5`.
+
+### Correction
+1. `$PSVersionTable.PSVersion` affiche un tableau `Major Minor Build Revision`. Dans `powershell.exe`, Major vaut 5 et Minor 1. Dans `pwsh.exe`, Major vaut 7 et Minor indique la version (6 pour la 7.6). Les deux consoles coexistent.
+2. Dans la console non administrateur, `Stop-Service` échoue avec un message d'erreur rouge indiquant que le service ne peut pas être ouvert (accès refusé) : arrêter un service est une action d'administration. Dans la console administrateur, la commande ne renvoie rien (pas de message = succès). `Get-Service Spooler` montre alors `Stopped`, puis `Running` après `Start-Service`.
+3. `F8` exécute la ligne sous le curseur dans le terminal intégré (la date s'affiche). `F5` enregistre et exécute tout le fichier : la date puis la version apparaissent. Si `F5` affiche une erreur de politique d'exécution, c'est normal sur un Windows client neuf : la solution est au chapitre 5.
+"""
+
+    codeblock "powershell" {
+      title: "Faire le point sur ta machine"
+      code: """
+$PSVersionTable.PSVersion          # version de PowerShell
+$PSVersionTable.PSEdition          # Desktop (5.1) ou Core (7)
+$env:COMPUTERNAME                  # nom de la machine
+$env:USERNAME                      # utilisateur courant
+whoami /groups | Select-String 'S-1-16-12288'   # présent si la console est élevée (administrateur)
+Get-ComputerInfo -Property OsName, OsVersion
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quel programme lance PowerShell 7 sous Windows ?" {
+        - "powershell.exe"
+        + "pwsh.exe"
+        - "cmd.exe /ps7"
+        - "powershell_ise.exe"
+        explanation: "PowerShell 7 s'exécute avec pwsh.exe. powershell.exe lance Windows PowerShell 5.1, fourni avec Windows. powershell_ise.exe est l'ancien éditeur ISE, limité à la version 5.1."
+      }
+      question "Quelle commande affiche la version de PowerShell en cours d’utilisation ?" {
+        - "Get-Version"
+        - "powershell --version-info"
+        + "$PSVersionTable.PSVersion"
+        - "winver"
+        explanation: "La variable automatique $PSVersionTable contient la version du moteur dans sa propriété PSVersion. Get-Version n'existe pas, et winver affiche la version de Windows, pas celle de PowerShell."
+      }
+      question "Quelle est la différence fondamentale entre PowerShell et cmd.exe ?" {
+        - "PowerShell ne fonctionne que sur Windows Server"
+        + "les commandes PowerShell échangent des objets avec des propriétés, pas du texte brut"
+        - "PowerShell ne peut pas lancer les programmes classiques comme ipconfig"
+        - "cmd.exe accepte les scripts, PowerShell seulement les commandes interactives"
+        explanation: "PowerShell transmet des objets .NET dans le pipeline : on lit directement une propriété (Status, Name…) au lieu de découper du texte. Il lance aussi sans problème ipconfig ou ping, et il exécute des scripts .ps1."
+      }
+      question "Tu tapes Stop-Service -Name Spooler dans une console ouverte normalement et tu obtiens une erreur. Quelle est la cause la plus probable ?" {
+        - "le service Spooler n'existe pas sous Windows 11"
+        - "la politique d'exécution bloque la commande"
+        + "la console n'est pas lancée en tant qu'administrateur"
+        - "il faut écrire stop-service en minuscules"
+        explanation: "Arrêter un service demande des droits d'administration. La politique d'exécution concerne les scripts .ps1, pas une commande tapée dans la console. PowerShell ne tient pas compte de la casse des noms de commandes."
+      }
+      question "Dans VS Code avec l’extension PowerShell, que fait la touche F8 ?" {
+        - "elle exécute tout le fichier"
+        + "elle exécute la sélection ou la ligne courante"
+        - "elle pose un point d'arrêt"
+        - "elle formate le script"
+        explanation: "F8 exécute la sélection (ou la ligne courante) dans la console intégrée ; c'est pratique pour tester un morceau de script. F5 exécute tout le fichier, F9 pose un point d'arrêt."
+      }
+      question "Windows PowerShell 5.1 et PowerShell 7 peuvent-ils être installés sur le même poste ?" {
+        + "oui, ils coexistent et s'utilisent indépendamment"
+        - "non, PowerShell 7 remplace et supprime la version 5.1"
+        - "oui, mais seulement sur Windows Server"
+        - "non, il faut choisir à l'installation de Windows"
+        explanation: "PowerShell 7 s'installe à côté de Windows PowerShell 5.1, qui reste fourni avec Windows. On lance l'un avec powershell.exe et l'autre avec pwsh.exe."
+      }
+      question "Que permet la touche Tab dans la console PowerShell ?" {
+        - "elle exécute la commande sans confirmation"
+        - "elle ouvre l'aide de la commande"
+        + "elle complète le nom d'une commande, d'un paramètre ou d'un chemin"
+        - "elle passe la console en mode administrateur"
+        explanation: "Tab complète ce qui est en cours de frappe, et un nouvel appui fait défiler les choix. C'est le meilleur moyen d'éviter les fautes dans les noms longs comme Get-NetIPConfiguration."
+      }
+      question "Pourquoi recommande-t-on de ne pas travailler en permanence dans une console administrateur ?" {
+        - "parce que la console administrateur est plus lente"
+        - "parce que l'aide n'y est pas disponible"
+        + "pour limiter les dégâts d'une erreur de frappe ou d'un script malveillant"
+        - "parce que les alias n'y fonctionnent pas"
+        explanation: "Avec les droits d'administration, une erreur (suppression, arrêt de service) ou un script piégé touche tout le système. Limiter l'usage de ces droits est une règle d'hygiène de l'ANSSI."
+      }
+      question "Sur quels systèmes PowerShell 7 fonctionne-t-il ?" {
+        - "Windows seulement"
+        - "Windows Server seulement"
+        + "Windows, Linux et macOS"
+        - "Linux seulement, Windows ayant la version 5.1"
+        explanation: "PowerShell 7 repose sur .NET moderne, multiplateforme. Windows PowerShell 5.1, basé sur le .NET Framework, reste limité à Windows."
+      }
+      question "Dans la console, ls affiche le contenu du dossier. Qu’est-ce que ls sous Windows PowerShell ?" {
+        - "le programme ls de Linux, inclus dans Windows"
+        + "un alias de la commande Get-ChildItem"
+        - "une fonction qui appelle cmd.exe /c dir"
+        - "une commande réservée à PowerShell 7"
+        explanation: "Sous Windows, ls, dir et gci sont des alias de Get-ChildItem. Le résultat est donc un ensemble d'objets fichiers et dossiers, pas la sortie texte d'un programme externe."
+      }
+      question "Quel éditeur Microsoft recommande-t-il aujourd’hui pour écrire des scripts PowerShell ?" {
+        - "le Bloc-notes"
+        - "Windows PowerShell ISE"
+        + "Visual Studio Code avec l'extension PowerShell"
+        - "Microsoft Word avec les macros"
+        explanation: "VS Code et son extension PowerShell offrent complétion, analyse et débogage pour les versions 5.1 et 7. ISE fonctionne encore mais n'évolue plus et ne gère pas PowerShell 7."
+      }
+    }
+  }
+
+  module "cmdlets-aide" {
+    title: "Chapitre 2 : les cmdlets Verbe-Nom, l'aide et la découverte"
+    duration: "30min"
+    content: """
+### Le nom dit ce que fait la commande
+Les commandes natives de PowerShell s'appellent des **cmdlets** (prononcer « command-lettes »). Leur nom suit toujours la forme **Verbe-Nom** : un verbe d'action, un tiret, puis l'objet visé, au singulier.
+
+| Verbe | Sens | Exemples |
+|---|---|---|
+| `Get` | lire, obtenir | `Get-Service`, `Get-Process`, `Get-LocalUser` |
+| `Set` | modifier | `Set-Service`, `Set-Location`, `Set-ADUser` |
+| `New` | créer | `New-Item`, `New-LocalUser`, `New-ADUser` |
+| `Remove` | supprimer | `Remove-Item`, `Remove-LocalUser` |
+| `Start` / `Stop` / `Restart` | démarrer, arrêter, redémarrer | `Start-Service`, `Stop-Process` |
+| `Enable` / `Disable` | activer, désactiver | `Disable-LocalUser`, `Enable-ADAccount` |
+| `Import` / `Export` | lire depuis un fichier, écrire vers un fichier | `Import-Csv`, `Export-Csv` |
+| `Test` | vérifier, renvoie vrai ou faux | `Test-Path`, `Test-Connection` |
+
+Les verbes sont normalisés : `Get-Verb` affiche la liste officielle. Conséquence pratique : si tu connais `Get-Service`, tu devines `Start-Service`, `Stop-Service` et `Restart-Service`. Les noms de commandes et de paramètres **ne tiennent pas compte de la casse** : `get-service` marche aussi.
+
+### Paramètres
+Un paramètre commence par un tiret : `Get-Service -Name Spooler`.
+• **Paramètre positionnel** : certains paramètres peuvent être donnés sans leur nom, dans l'ordre prévu. `Get-Service Spooler` équivaut à `Get-Service -Name Spooler`.
+• **Paramètre commutateur** (switch) : il n'a pas de valeur, sa présence suffit. `Get-ChildItem -Recurse`.
+• **Abréviation** : on peut raccourcir un nom de paramètre tant qu'il n'y a pas d'ambiguïté (`-Recurse` en `-Rec`). Dans un script, écris toujours le nom complet pour rester lisible.
+• **Paramètres communs** : toutes les cmdlets acceptent `-Verbose`, `-ErrorAction`… et celles qui modifient le système acceptent souvent `-WhatIf` (montre ce qui serait fait, sans le faire) et `-Confirm` (demande confirmation).
+
+```powershell
+Remove-Item C:\Temp\*.log -WhatIf
+```
+```text
+WhatIf : Opération « Supprimer le fichier » en cours sur la cible « C:\Temp\ancien.log ».
+```
+
+`-WhatIf` est ton filet de sécurité avant toute commande destructrice.
+
+### Trouver une commande : Get-Command
+```powershell
+Get-Command -Noun Service          # toutes les commandes qui agissent sur des services
+Get-Command -Verb Get -Noun *User* # les commandes Get qui parlent d'utilisateurs
+Get-Command *-ADUser               # tout ce qui concerne les utilisateurs AD (si le module est présent)
+Get-Command -Module Microsoft.PowerShell.LocalAccounts
+```
+La colonne `CommandType` indique s'il s'agit d'une `Cmdlet`, d'une `Function`, d'un `Alias` ou d'une `Application` (programme externe comme `ipconfig.exe`).
+
+### Lire l'aide : Get-Help
+```powershell
+Get-Help Get-Service                # résumé et syntaxe
+Get-Help Get-Service -Examples      # seulement les exemples
+Get-Help Get-Service -Parameter Name
+Get-Help Get-Service -Full          # tout, y compris le détail de chaque paramètre
+Get-Help Get-Service -Online        # ouvre la page Microsoft Learn dans le navigateur
+Get-Help about_Comparison_Operators # les pages « about_ » expliquent les concepts
+```
+
+Sur une installation neuve, l'aide locale est réduite. `Update-Help` télécharge l'aide complète : sous Windows PowerShell 5.1, lance-le dans une console administrateur ; sous PowerShell 7, il s'installe par défaut pour l'utilisateur courant. Sans Internet, `-Online` ne marche pas, mais les exemples restent souvent disponibles.
+
+Lire une syntaxe :
+```text
+Get-Service [[-Name] <String[]>] [-DependentServices] [-Exclude <String[]>] ...
+```
+• Entre crochets `[ ]` : facultatif. `[-Name]` entre crochets à son tour : le nom du paramètre peut être omis (positionnel).
+• `<String[]>` : le paramètre attend une ou plusieurs chaînes, séparées par des virgules : `Get-Service Spooler, W32Time`.
+
+### Les alias
+Un **alias** est un autre nom pour une commande : `dir`, `ls` et `gci` pour `Get-ChildItem`, `cd` pour `Set-Location`, `ps` pour `Get-Process`, `?` et `where` pour `Where-Object`, `%` pour `ForEach-Object`.
+```powershell
+Get-Alias ls             # que cache ls ?
+Get-Alias -Definition Get-ChildItem   # quels alias pour cette cmdlet ?
+```
+Ils sont pratiques à la console, mais à éviter dans les scripts : un collègue doit pouvoir les lire, et certains alias n'existent pas partout (sous Linux, `ls` lance le vrai programme `ls`).
+
+### Découvrir ce que contient un résultat : Get-Member
+`Get-Member` (alias `gm`) affiche le **type** des objets reçus et leurs **membres** : propriétés (données) et méthodes (actions).
+```powershell
+Get-Service Spooler | Get-Member
+```
+```text
+   TypeName : System.ServiceProcess.ServiceController
+
+Name                MemberType    Definition
+----                ----------    ----------
+Stop                Method        void Stop()
+CanStop             Property      bool CanStop {get;}
+DisplayName         Property      string DisplayName {get;set;}
+Status              Property      ServiceControllerStatus Status {get;}
+StartType           Property      ServiceStartMode StartType {get;}
+...
+```
+L'affichage par défaut de `Get-Service` ne montre que trois colonnes (Status, Name, DisplayName), mais l'objet en contient beaucoup plus. `Get-Member` est la commande qui te dit ce que tu peux filtrer et afficher.
+
+### Méthode pour trouver seul
+1. `Get-Command` avec un nom approximatif (`*NetIP*`, `-Noun *Firewall*`).
+2. `Get-Help <commande> -Examples` pour voir l'usage.
+3. Exécuter la commande, puis `| Get-Member` pour voir les propriétés.
+4. Tester avec `-WhatIf` avant toute modification.
+
+### À toi de jouer
+1. Trouve la commande qui affiche la configuration IP des cartes réseau (pense à `Get-Command` avec `*NetIP*`), puis affiche un de ses exemples d'aide.
+2. Quelle cmdlet se cache derrière l'alias `gsv` ? Et derrière `%` ?
+3. Affiche les propriétés d'un objet fichier : prends `C:\Windows\notepad.exe`. Repère la propriété qui donne la taille et celle qui donne la date de dernière modification.
+4. Sans l'exécuter vraiment, montre ce que ferait `Stop-Process -Name notepad` (ouvre d'abord un Bloc-notes).
+
+### Correction
+1. `Get-Command *NetIP*` liste notamment `Get-NetIPAddress`, `Get-NetIPConfiguration`, `New-NetIPAddress`. `Get-Help Get-NetIPConfiguration -Examples` affiche les exemples (après `Update-Help` si l'aide est vide). `Get-NetIPConfiguration` montre adresse, passerelle et DNS de chaque carte.
+2. `Get-Alias gsv` renvoie `gsv -> Get-Service`. `Get-Alias %` renvoie `% -> ForEach-Object`.
+3. `Get-Item C:\Windows\notepad.exe | Get-Member -MemberType Property` : la taille est `Length` (en octets) et la date de modification `LastWriteTime`. Pour les voir : `Get-Item C:\Windows\notepad.exe | Select-Object Name, Length, LastWriteTime`.
+4. `Stop-Process -Name notepad -WhatIf` affiche une ligne « WhatIf : Opération « Stop-Process » en cours sur la cible « notepad (numéro) » » et le Bloc-notes reste ouvert.
+"""
+
+    codeblock "powershell" {
+      title: "Les quatre commandes de découverte"
+      code: """
+Get-Command -Noun Service                 # quelles commandes pour les services ?
+Get-Help Restart-Service -Examples        # comment s'en servir ?
+Get-Service -Name W32Time | Get-Member    # que contient l'objet renvoyé ?
+Restart-Service -Name W32Time -WhatIf     # que se passerait-il ? (rien n'est fait)
+Get-Verb | Where-Object Verb -like 'Re*'  # verbes officiels qui commencent par Re
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle est la forme du nom d’une cmdlet PowerShell ?" {
+        - "Nom_Verbe"
+        + "Verbe-Nom, avec un nom au singulier"
+        - "verbe.nom en minuscules"
+        - "Nom-Verbe, avec un nom au pluriel"
+        explanation: "Les cmdlets suivent la convention Verbe-Nom (Get-Service, New-LocalUser), avec un verbe tiré de la liste officielle (Get-Verb) et un nom au singulier."
+      }
+      question "Quelle commande liste toutes les commandes dont le nom porte sur les services ?" {
+        - "Get-Help Service"
+        + "Get-Command -Noun Service"
+        - "Get-Service -List"
+        - "Find-Command Service"
+        explanation: "Get-Command -Noun Service renvoie Get-Service, Start-Service, Stop-Service, Set-Service, etc. Get-Help cherche dans l'aide, Get-Service -List n'existe pas, et Find-Command cherche dans une galerie en ligne."
+      }
+      question "Quel paramètre de Get-Help affiche uniquement les exemples d’utilisation ?" {
+        - "-Full"
+        - "-Detailed"
+        + "-Examples"
+        - "-Sample"
+        explanation: "-Examples n'affiche que les exemples, souvent le plus utile. -Full affiche tout, -Detailed ajoute la description des paramètres, -Sample n'existe pas."
+      }
+      question "Que fait la commande Get-Service Spooler | Get-Member ?" {
+        - "elle affiche les membres du groupe qui gèrent le service"
+        + "elle affiche le type de l'objet et ses propriétés et méthodes"
+        - "elle redémarre le service puis affiche son état"
+        - "elle liste les services dont dépend Spooler"
+        explanation: "Get-Member montre le type (ServiceController) et les membres de l'objet : propriétés comme Status ou StartType, méthodes comme Stop(). C'est la base pour savoir ce que l'on peut filtrer."
+      }
+      question "Quel est l’effet du paramètre -WhatIf sur Remove-Item ?" {
+        - "il supprime sans demander de confirmation"
+        - "il demande une confirmation pour chaque fichier"
+        + "il affiche ce qui serait supprimé sans rien supprimer"
+        - "il place les fichiers dans la corbeille"
+        explanation: "-WhatIf simule l'action et décrit ce qui serait fait. -Confirm demande une confirmation. Remove-Item ne passe pas par la corbeille : une suppression réelle est définitive."
+      }
+      question "Dans la syntaxe Get-Service [[-Name] <String[]>], que signifient les crochets autour de -Name ?" {
+        - "le paramètre est obligatoire"
+        + "le nom du paramètre peut être omis : la valeur est positionnelle"
+        - "le paramètre accepte des caractères génériques"
+        - "le paramètre n'existe que dans PowerShell 7"
+        explanation: "Les crochets extérieurs indiquent que le paramètre est facultatif, et ceux qui entourent -Name que son nom peut être omis. Get-Service Spooler équivaut donc à Get-Service -Name Spooler."
+      }
+      question "Pourquoi éviter les alias comme gci ou % dans un script ?" {
+        - "ils sont plus lents que les noms complets"
+        - "ils ne fonctionnent qu'en mode administrateur"
+        + "ils rendent le script moins lisible et certains n'existent pas sur tous les systèmes"
+        - "ils désactivent le paramètre -WhatIf"
+        explanation: "Les alias sont pratiques à la console, mais un script doit être lisible par d'autres. De plus, sous Linux, ls ou ps lancent les programmes natifs, pas les cmdlets."
+      }
+      question "Tu veux connaître la cmdlet derrière l’alias gsv. Quelle commande utilises-tu ?" {
+        - "Get-Help gsv -Alias"
+        + "Get-Alias gsv"
+        - "Get-Command -Alias Get-Service"
+        - "Resolve-Path gsv"
+        explanation: "Get-Alias gsv affiche gsv -> Get-Service. Get-Alias -Definition Get-Service fait l'inverse et liste les alias d'une cmdlet."
+      }
+      question "Les noms de cmdlets et de paramètres sont-ils sensibles à la casse ?" {
+        - "oui, Get-Service et get-service sont deux commandes différentes"
+        + "non, PowerShell ne tient pas compte de la casse des noms de commandes et de paramètres"
+        - "seulement dans PowerShell 7"
+        - "seulement pour les paramètres, pas pour les commandes"
+        explanation: "PowerShell ignore la casse des noms : get-service -name spooler fonctionne. Par convention, on écrit tout de même Get-Service -Name pour la lisibilité."
+      }
+      question "Quelle commande télécharge l’aide complète des cmdlets installées ?" {
+        - "Get-Help -Download"
+        - "Install-Help"
+        + "Update-Help"
+        - "Save-Module Help"
+        explanation: "Update-Help télécharge l'aide à jour depuis Internet. Sous Windows PowerShell 5.1, il faut une console administrateur ; sous PowerShell 7, l'aide s'installe par défaut pour l'utilisateur courant."
+      }
+      question "Quelle valeur de CommandType Get-Command affiche-t-il pour ipconfig ?" {
+        - "Cmdlet"
+        - "Alias"
+        - "Function"
+        + "Application"
+        explanation: "ipconfig.exe est un programme externe : Get-Command le classe en Application. Les cmdlets sont compilées dans des modules, les fonctions sont écrites en PowerShell, les alias sont des noms de remplacement."
+      }
+      question "Quel verbe officiel faut-il utiliser pour une commande qui vérifie une condition et renvoie vrai ou faux ?" {
+        - "Check"
+        - "Verify"
+        + "Test"
+        - "Is"
+        explanation: "Test est le verbe officiel pour une vérification qui renvoie un booléen (Test-Path, Test-Connection). Check, Verify ou Is ne figurent pas dans la liste renvoyée par Get-Verb."
+      }
+    }
+  }
+
+  module "objets-pipeline" {
+    title: "Chapitre 3 : objets et pipeline, filtrer, trier, sélectionner"
+    duration: "40min"
+    content: """
+### Le pipeline transporte des objets
+Le caractère `|` (pipe) envoie le résultat d'une commande à la suivante. En PowerShell, ce ne sont pas des lignes de texte qui passent dans le tuyau, mais des **objets** complets, un par un.
+
+```powershell
+Get-Service -Name Spooler | Stop-Service -WhatIf
+```
+
+`Stop-Service` reçoit l'objet service lui-même : il n'a pas besoin qu'on lui redonne le nom. C'est la **liaison par le pipeline** : la cmdlet de droite récupère l'objet entier, ou la propriété qui porte le même nom qu'un de ses paramètres (par exemple `Name`).
+
+À chaque étape, l'objet en cours de traitement s'appelle **`$_`** (ou `$PSItem`, son nom long). Tu le retrouveras dans tous les blocs `{ }` de ce chapitre.
+
+### Filtrer : Where-Object
+`Where-Object` (alias `where` ou `?`) ne laisse passer que les objets qui vérifient une condition.
+
+```powershell
+# Forme complète : un bloc de script, $_ désigne l'objet courant
+Get-Service | Where-Object { $_.Status -eq 'Stopped' }
+
+# Forme simplifiée (une seule condition, pas de $_)
+Get-Service | Where-Object Status -eq 'Stopped'
+
+# Deux conditions : la forme complète est obligatoire
+Get-Service | Where-Object { $_.Status -eq 'Stopped' -and $_.StartType -eq 'Automatic' }
+```
+
+Les opérateurs de comparaison s'écrivent avec un tiret, jamais avec `=`, `<` ou `>` :
+
+| Opérateur | Sens | Exemple |
+|---|---|---|
+| `-eq` / `-ne` | égal, différent | `$_.Status -eq 'Running'` |
+| `-gt` / `-ge` | plus grand, plus grand ou égal | `$_.Length -gt 10MB` |
+| `-lt` / `-le` | plus petit, plus petit ou égal | `$_.CPU -lt 5` |
+| `-like` / `-notlike` | comparaison avec jokers `*` et `?` | `$_.Name -like 'Win*'` |
+| `-match` / `-notmatch` | expression régulière | `$_.Name -match '^PC-\d{3}$'` |
+| `-contains` / `-in` | appartenance à une liste | `'Spooler' -in $liste` |
+| `-and`, `-or`, `-not` | combiner des conditions | |
+
+Ces comparaisons **ignorent la casse** par défaut : `'ABC' -eq 'abc'` vaut `True`. Ajoute un `c` pour la respecter : `-ceq`, `-clike`, `-cmatch`.
+
+PowerShell comprend les suffixes `KB`, `MB`, `GB` et `TB` (multiples de 1024) : `10MB` vaut `10485760`.
+
+### Trier : Sort-Object
+```powershell
+Get-Process | Sort-Object -Property CPU -Descending
+Get-ChildItem C:\Windows\Logs -File | Sort-Object Length, Name
+Get-Process | Sort-Object ProcessName -Unique
+```
+Le tri est croissant par défaut ; `-Descending` l'inverse. Avec plusieurs propriétés, la deuxième départage les égalités de la première.
+
+### Sélectionner : Select-Object
+`Select-Object` (alias `select`) choisit les **propriétés** à garder, ou un **nombre** d'objets.
+
+```powershell
+Get-Process | Sort-Object WS -Descending | Select-Object -First 5 -Property Name, Id, WS
+Get-Service Spooler | Select-Object -Property *          # toutes les propriétés
+Get-Service | Select-Object -ExpandProperty Name         # seulement les valeurs (des chaînes)
+```
+
+Une **propriété calculée** crée une colonne à partir d'une expression. Exemple : la mémoire en mégaoctets plutôt qu'en octets.
+
+```powershell
+Get-Process | Sort-Object WS -Descending | Select-Object -First 5 Name,
+    @{ Name = 'Memoire(Mo)'; Expression = { [math]::Round($_.WS / 1MB, 1) } }
+```
+```text
+Name    Memoire(Mo)
+----    -----------
+msedge        412,3
+Code          298,7
+explorer      187,2
+...
+```
+
+### Compter et regrouper
+```powershell
+(Get-Service | Where-Object Status -eq 'Running').Count        # nombre de services démarrés
+Get-ChildItem C:\Windows\Logs -Recurse -File | Measure-Object -Property Length -Sum -Maximum
+Get-Service | Group-Object -Property Status                    # combien par état
+```
+```text
+Count Name     Group
+----- ----     -----
+  112 Stopped  {AJRouter, ALG, AppIDSvc, ...}
+  108 Running  {Appinfo, AudioEndpointBuilder, ...}
+```
+
+### Deux règles d'or
+1. **Filtrer à gauche** : si la première commande sait filtrer elle-même, utilise son paramètre plutôt que `Where-Object`. `Get-ChildItem C:\Temp -Filter *.log` est bien plus rapide que `Get-ChildItem C:\Temp | Where-Object Name -like '*.log'`, car le tri est fait à la source et moins d'objets circulent.
+2. **Mettre en forme à droite** : `Format-Table` et `Format-List` transforment les objets en instructions d'affichage. Place-les **en dernier**, uniquement pour l'écran. Après un `Format-Table`, `Export-Csv` ou `Sort-Object` ne reçoivent plus de vraies données.
+
+```powershell
+Get-Service | Where-Object Status -eq 'Running' | Format-Table Name, StartType -AutoSize   # correct
+Get-Service | Format-Table Name, Status | Export-Csv services.csv                         # faux : le CSV contient du charabia de mise en forme
+```
+
+Sur Windows, `Out-GridView` affiche le résultat dans une fenêtre où l'on peut trier et filtrer à la souris : pratique pour explorer.
+
+### À toi de jouer
+Sur ton poste Windows :
+1. Affiche les services dont le démarrage est automatique mais qui sont arrêtés, avec seulement les colonnes Name, DisplayName et Status.
+2. Affiche les 3 processus qui ont consommé le plus de temps processeur, avec leur nom, leur Id et leur temps CPU arrondi à l'entier.
+3. Dans `C:\Windows\System32`, compte les fichiers `.exe` et calcule leur taille totale en Mo.
+4. Repère l'erreur dans cette commande et corrige-la : `Get-Process | Where-Object { $_.CPU > 100 }`.
+
+### Correction
+1. ```powershell
+   Get-Service | Where-Object { $_.StartType -eq 'Automatic' -and $_.Status -eq 'Stopped' } |
+       Select-Object Name, DisplayName, Status
+   ```
+   Quelques services automatiques arrêtés sont normaux (certains démarrent puis s'arrêtent seuls quand ils n'ont plus rien à faire, comme `sppsvc`). Un service important arrêté (spouleur, DNS sur un serveur) est une piste de panne.
+2. ```powershell
+   Get-Process | Sort-Object CPU -Descending | Select-Object -First 3 Name, Id,
+       @{ Name = 'CPU(s)'; Expression = { [math]::Round($_.CPU) } }
+   ```
+   La propriété `CPU` donne le temps processeur cumulé en secondes. Elle est vide pour les processus d'un autre utilisateur si la console n'est pas administrateur.
+3. ```powershell
+   $exe = Get-ChildItem C:\Windows\System32 -Filter *.exe -File
+   $exe.Count
+   [math]::Round(($exe | Measure-Object Length -Sum).Sum / 1MB, 1)
+   ```
+   On filtre à gauche avec `-Filter`. `Measure-Object` renvoie un objet dont la propriété `Sum` contient le total en octets.
+4. `>` n'est pas un opérateur de comparaison : c'est la **redirection** vers un fichier. Le bloc crée un fichier nommé `100` dans le dossier courant et le filtre ne fonctionne pas. Correction : `Get-Process | Where-Object { $_.CPU -gt 100 }`.
+"""
+
+    codeblock "powershell" {
+      title: "Rapport rapide : ce qui occupe la mémoire"
+      code: """
+Get-Process |
+    Where-Object { $_.WS -gt 100MB } |
+    Sort-Object WS -Descending |
+    Select-Object -First 10 Name, Id,
+        @{ Name = 'Memoire(Mo)'; Expression = { [math]::Round($_.WS / 1MB) } } |
+    Format-Table -AutoSize
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Que circule-t-il dans le pipeline PowerShell entre deux cmdlets ?" {
+        - "des lignes de texte, comme dans Bash"
+        + "des objets complets, transmis un par un"
+        - "un fichier temporaire au format CSV"
+        - "uniquement le nom des éléments"
+        explanation: "PowerShell transmet des objets .NET avec toutes leurs propriétés. La cmdlet suivante peut donc lire Status, Name ou Length sans découper de texte."
+      }
+      question "Dans un bloc Where-Object { ... }, que désigne $_ ?" {
+        - "le résultat final de toute la commande"
+        - "la dernière erreur rencontrée"
+        + "l’objet en cours de traitement dans le pipeline"
+        - "le dossier courant"
+        explanation: "$_ (ou $PSItem) est l'objet courant. Where-Object évalue la condition pour chaque objet et ne garde que ceux pour lesquels elle est vraie. La dernière erreur se trouve dans $Error[0]."
+      }
+      question "Quelle commande affiche uniquement les services démarrés ?" {
+        - "Get-Service | Where-Object Status = 'Running'"
+        + "Get-Service | Where-Object Status -eq 'Running'"
+        - "Get-Service | Select-Object Status -eq 'Running'"
+        - "Get-Service | Sort-Object Running"
+        explanation: "L'égalité s'écrit -eq. Le signe = est réservé à l'affectation de variables. Select-Object choisit des colonnes, il ne filtre pas sur une condition."
+      }
+      question "Que vaut l’expression ’Serveur’ -eq ’SERVEUR’ en PowerShell ?" {
+        + "True, car -eq ignore la casse par défaut"
+        - "False, car les majuscules diffèrent"
+        - "une erreur de syntaxe"
+        - "True seulement dans PowerShell 7"
+        explanation: "Les opérateurs de comparaison ne tiennent pas compte de la casse. Pour une comparaison sensible à la casse, on utilise -ceq."
+      }
+      question "Pourquoi la commande Get-Process | Where-Object { $_.CPU > 100 } ne filtre-t-elle pas ?" {
+        - "parce que CPU n’est pas une propriété des processus"
+        - "parce que Where-Object n’accepte pas de bloc de script"
+        + "parce que > est une redirection : elle crée un fichier nommé 100"
+        - "parce que 100 doit être écrit entre guillemets"
+        explanation: "En PowerShell, > redirige la sortie vers un fichier. La comparaison s'écrit -gt. C'est une erreur fréquente chez ceux qui viennent d'autres langages."
+      }
+      question "Quelle commande garde les 5 fichiers les plus gros d’un dossier ?" {
+        - "Get-ChildItem | Select-Object -First 5 | Sort-Object Length -Descending"
+        + "Get-ChildItem -File | Sort-Object Length -Descending | Select-Object -First 5"
+        - "Get-ChildItem -File | Where-Object -First 5 Length"
+        - "Get-ChildItem -File | Measure-Object -Maximum 5"
+        explanation: "Il faut trier avant de couper. Dans la première proposition, on prend 5 fichiers au hasard de l'ordre alphabétique, puis on les trie : ce ne sont pas forcément les plus gros."
+      }
+      question "Que renvoie Get-Service | Select-Object -ExpandProperty Name ?" {
+        - "un tableau d’objets service avec une seule colonne"
+        + "les noms des services, sous forme de simples chaînes de caractères"
+        - "les services triés par nom"
+        - "le nom de la commande Get-Service"
+        explanation: "-ExpandProperty extrait la valeur de la propriété. On obtient des chaînes (String) et non des objets avec une propriété Name, ce qui est utile pour construire une liste."
+      }
+      question "Que signifie le principe « filtrer à gauche » ?" {
+        - "écrire Where-Object en tout premier dans la ligne"
+        + "filtrer le plus tôt possible, de préférence avec un paramètre de la première commande"
+        - "trier les résultats par ordre alphabétique"
+        - "afficher les résultats alignés à gauche"
+        explanation: "Get-ChildItem -Filter *.log filtre à la source : moins d'objets sont créés et transmis, la commande est bien plus rapide qu'un Where-Object placé après."
+      }
+      question "Pourquoi un fichier produit par Get-Service | Format-Table | Export-Csv est-il inutilisable ?" {
+        - "parce qu’Export-Csv n’accepte pas les services"
+        - "parce qu’il manque le paramètre -Delimiter"
+        + "parce que Format-Table remplace les objets par des instructions d’affichage"
+        - "parce que le fichier est écrit en UTF-16"
+        explanation: "Les cmdlets Format-* produisent des objets de mise en forme destinés à l'écran. Elles se placent toujours en dernier. Pour choisir des colonnes avant un export, on utilise Select-Object."
+      }
+      question "Quelle commande compte les services par état (Running, Stopped) ?" {
+        - "Get-Service | Measure-Object Status"
+        + "Get-Service | Group-Object -Property Status"
+        - "Get-Service | Sort-Object Status -Count"
+        - "Get-Service | Select-Object -Unique Status"
+        explanation: "Group-Object rassemble les objets qui ont la même valeur et affiche le nombre (Count) dans chaque groupe. Select-Object -Unique ne donne pas les effectifs."
+      }
+      question "Combien vaut 2MB dans une expression PowerShell ?" {
+        - "2 000 000"
+        + "2 097 152"
+        - "2 048"
+        - "la chaîne de caractères 2MB"
+        explanation: "Les suffixes KB, MB, GB et TB sont des multiples de 1024 : 2MB = 2 × 1024 × 1024 = 2 097 152 octets."
+      }
+      question "Tu veux les fichiers dont le nom commence par rapport et finit par .txt. Quel opérateur utilises-tu ?" {
+        - "-eq 'rapport*.txt'"
+        + "-like 'rapport*.txt'"
+        - "-contains 'rapport'"
+        - "-in 'rapport*.txt'"
+        explanation: "-like accepte les jokers * (n'importe quelle suite de caractères) et ? (un caractère). -eq compare exactement, et -contains teste si une liste contient une valeur."
+      }
+      question "Comment afficher la mémoire d’un processus en Mo dans une colonne appelée Memoire ?" {
+        - "Select-Object Name, WS / 1MB"
+        - "Select-Object Name, Memoire = WS / 1MB"
+        + "Select-Object Name, @{ Name = 'Memoire'; Expression = { $_.WS / 1MB } }"
+        - "Format-Table Name, WS -Unit MB"
+        explanation: "Une propriété calculée est une table de hachage avec Name (titre de la colonne) et Expression (bloc de script évalué pour chaque objet, avec $_)."
+      }
+      question "Quelle condition garde les services automatiques qui sont arrêtés ?" {
+        - "{ $_.StartType -eq 'Automatic' -or $_.Status -eq 'Stopped' }"
+        + "{ $_.StartType -eq 'Automatic' -and $_.Status -eq 'Stopped' }"
+        - "{ $_.StartType = 'Automatic' -and $_.Status = 'Stopped' }"
+        - "StartType -eq 'Automatic' Status -eq 'Stopped'"
+        explanation: "Les deux conditions doivent être vraies en même temps : -and. Avec -or, on obtiendrait aussi tous les services arrêtés manuels. La forme simplifiée sans bloc n'accepte qu'une condition."
+      }
+    }
+  }
+
+  module "variables-conditions-boucles" {
+    title: "Chapitre 4 : variables, conditions et boucles"
+    duration: "40min"
+    content: """
+### Les variables
+Une variable commence par `$`. On la crée simplement en lui donnant une valeur, avec `=` :
+
+```powershell
+$serveur = 'SRV-AD01'
+$seuil   = 80
+$services = Get-Service              # une variable peut contenir une liste d'objets
+$services.Count
+```
+
+Le type est deviné automatiquement, mais tu peux l'imposer entre crochets : `[int]$age = '17'` convertit la chaîne en nombre. Types courants : `[string]`, `[int]`, `[double]`, `[bool]`, `[datetime]`, `[array]`, `[hashtable]`. Pour connaître le type d'une valeur : `$seuil.GetType().Name`.
+
+Variables automatiques à connaître :
+| Variable | Contenu |
+|---|---|
+| `$true`, `$false` | les deux valeurs booléennes |
+| `$null` | « rien », absence de valeur |
+| `$_` ou `$PSItem` | l'objet courant dans le pipeline |
+| `$env:COMPUTERNAME`, `$env:USERNAME`, `$env:TEMP` | variables d'environnement |
+| `$HOME` | dossier personnel de l'utilisateur |
+| `$Error` | liste des dernières erreurs (`$Error[0]` = la plus récente) |
+
+### Guillemets simples ou doubles
+```powershell
+$nom = 'Sofia'
+"Bonjour $nom"        # Bonjour Sofia : les guillemets doubles remplacent les variables
+'Bonjour $nom'        # Bonjour $nom : les guillemets simples gardent le texte tel quel
+"Service : $($svc.Name) est $($svc.Status)"   # $( ) pour une propriété ou une expression
+"Chemin : C:\Users\$env:USERNAME\Documents"
+```
+Sans `$( )`, `"$svc.Name"` affiche l'objet entier suivi du texte `.Name`. Règle simple : guillemets simples par défaut, doubles quand tu veux insérer une variable.
+
+### Tableaux et tables de hachage
+```powershell
+$postes = @('PC-101', 'PC-102', 'PC-103')   # tableau (array)
+$postes[0]        # PC-101 (on compte à partir de 0)
+$postes[-1]       # PC-103 (le dernier)
+$postes.Count     # 3
+$postes += 'PC-104'                         # ajout
+
+$compte = @{ Login = 'sofia.martin'; Classe = 'SIO1'; Actif = $true }   # table de hachage
+$compte.Login            # sofia.martin
+$compte['Classe']        # SIO1
+
+# Un objet personnalisé : idéal pour construire une ligne de rapport
+$ligne = [PSCustomObject]@{ Poste = 'PC-101'; EnLigne = $true; Date = Get-Date }
+```
+
+### Conditions : if, elseif, else
+```powershell
+$disque = Get-PSDrive -Name C
+$libreGo = [math]::Round($disque.Free / 1GB, 1)
+
+if ($libreGo -lt 5) {
+    Write-Warning "Disque C presque plein : $libreGo Go libres"
+}
+elseif ($libreGo -lt 20) {
+    Write-Output "Attention, $libreGo Go libres"
+}
+else {
+    Write-Output "Espace suffisant : $libreGo Go"
+}
+```
+Pour tester l'absence de valeur, place `$null` **à gauche** : `if ($null -eq $resultat)`. Si `$resultat` est un tableau, `$resultat -eq $null` filtrerait le tableau au lieu de répondre vrai ou faux.
+
+Dans un `if`, une valeur vide vaut faux : `0`, `''`, `$null` et un tableau vide sont faux ; un objet ou une chaîne non vide sont vrais. `if (Get-LocalUser -Name invite -ErrorAction SilentlyContinue) { ... }` teste donc l'existence d'un compte.
+
+### Choisir parmi plusieurs cas : switch
+```powershell
+switch -Wildcard ($env:COMPUTERNAME) {
+    'SRV-*' { 'Serveur' }
+    'PC-*'  { 'Poste de travail' }
+    default { 'Type inconnu' }
+}
+```
+`-Wildcard` autorise les jokers, `-Regex` les expressions régulières. Sans option, la comparaison est une égalité (sans tenir compte de la casse).
+
+### Les boucles
+```powershell
+# foreach : pour chaque élément d'une collection déjà en mémoire
+foreach ($poste in $postes) {
+    $ok = Test-Connection -ComputerName $poste -Count 1 -Quiet
+    "$poste : $ok"
+}
+
+# ForEach-Object : dans le pipeline, objet par objet ($_)
+Get-ChildItem C:\Scripts -Filter *.ps1 | ForEach-Object { "$($_.Name) : $($_.Length) octets" }
+
+# for : quand tu as besoin d'un compteur
+for ($i = 1; $i -le 5; $i++) { "PC-10$i" }
+
+# while : tant que la condition est vraie
+$essais = 0
+while (-not (Test-Path C:\Partage\pret.txt) -and $essais -lt 10) {
+    Start-Sleep -Seconds 30
+    $essais++
+}
+```
+`break` sort de la boucle, `continue` passe directement à l'élément suivant.
+
+`foreach (...) { }` (le mot-clé) et `ForEach-Object` (la cmdlet, alias `%`) se ressemblent mais ne s'utilisent pas au même endroit : le mot-clé travaille sur une variable, la cmdlet se place après un `|`.
+
+### À toi de jouer
+1. Crée un tableau `$postes` contenant `127.0.0.1`, `localhost` et `PC-INEXISTANT`. Pour chacun, affiche « nom : joignable » ou « nom : injoignable » avec `Test-Connection -Count 1 -Quiet`.
+2. Écris un `switch` qui affiche « matin », « après-midi » ou « soir » selon l'heure courante (`(Get-Date).Hour`) : avant 12 h, avant 18 h, sinon.
+3. Construis une liste d'objets `[PSCustomObject]` avec les colonnes `Lecteur` et `LibreGo` pour chaque lecteur de type système de fichiers (`Get-PSDrive -PSProvider FileSystem`), puis affiche-la triée par espace libre croissant.
+4. Explique ce qu'affichent `'Total : $n'` et `"Total : $n"` si `$n = 3`.
+
+### Correction
+1. ```powershell
+   $postes = @('127.0.0.1', 'localhost', 'PC-INEXISTANT')
+   foreach ($poste in $postes) {
+       if (Test-Connection -ComputerName $poste -Count 1 -Quiet) { "$poste : joignable" }
+       else { "$poste : injoignable" }
+   }
+   ```
+   `-Quiet` renvoie seulement `True` ou `False`, parfait pour un `if`. Le nom inexistant donne « injoignable » (la résolution de nom échoue). Un pare-feu qui bloque l'ICMP donne aussi « injoignable » pour une machine pourtant allumée.
+2. ```powershell
+   $h = (Get-Date).Hour
+   switch ($h) {
+       { $_ -lt 12 } { 'matin'; break }
+       { $_ -lt 18 } { 'après-midi'; break }
+       default       { 'soir' }
+   }
+   ```
+   Une condition de `switch` peut être un bloc de script. Sans `break`, à 9 h les deux premiers cas seraient vrais et on afficherait « matin » puis « après-midi ».
+3. ```powershell
+   $rapport = foreach ($d in Get-PSDrive -PSProvider FileSystem) {
+       [PSCustomObject]@{ Lecteur = $d.Name; LibreGo = [math]::Round($d.Free / 1GB, 1) }
+   }
+   $rapport | Sort-Object LibreGo
+   ```
+   Tout ce que la boucle produit est récupéré dans `$rapport` : c'est plus simple et plus rapide que d'ajouter chaque ligne avec `+=`.
+4. `'Total : $n'` affiche exactement `Total : $n` (guillemets simples : pas de remplacement). `"Total : $n"` affiche `Total : 3`.
+"""
+
+    codeblock "powershell" {
+      title: "Vérifier une liste de postes et produire des objets"
+      code: """
+$postes = 'PC-101', 'PC-102', 'SRV-AD01'
+$resultat = foreach ($p in $postes) {
+    [PSCustomObject]@{
+        Poste   = $p
+        EnLigne = Test-Connection -ComputerName $p -Count 1 -Quiet
+        Heure   = Get-Date -Format 'HH:mm:ss'
+    }
+}
+$resultat | Where-Object { -not $_.EnLigne }   # seulement les postes injoignables
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quel symbole commence le nom d’une variable PowerShell ?" {
+        - "%"
+        - "@"
+        + "$"
+        - "#"
+        explanation: "Les variables commencent par $ ($seuil, $env:USERNAME). @ introduit un tableau @( ) ou une table de hachage @{ }, et # commence un commentaire."
+      }
+      question "Si $nom vaut Sofia, qu’affiche l’instruction ’Bonjour $nom’ écrite entre guillemets simples ?" {
+        - "Bonjour Sofia"
+        + "Bonjour $nom"
+        - "une erreur"
+        - "Bonjour"
+        explanation: "Les guillemets simples conservent le texte tel quel. Seuls les guillemets doubles remplacent les variables par leur valeur."
+      }
+      question "Comment insérer la propriété Status de $svc dans une chaîne entre guillemets doubles ?" {
+        - "en écrivant $svc.Status directement"
+        + "en écrivant $($svc.Status)"
+        - "en écrivant ${Status}"
+        - "en écrivant %svc.Status%"
+        explanation: "Dans une chaîne, seule la variable est remplacée ; .Status resterait du texte. La sous-expression $( ) évalue l'expression complète."
+      }
+      question "Avec $postes = @(’PC-1’,’PC-2’,’PC-3’), que vaut $postes[-1] ?" {
+        - "une erreur, car l’indice est négatif"
+        - "PC-1"
+        + "PC-3"
+        - "$null"
+        explanation: "Les indices négatifs comptent depuis la fin : -1 est le dernier élément. Le premier élément est $postes[0]."
+      }
+      question "Pourquoi écrire if ($null -eq $resultat) plutôt que if ($resultat -eq $null) ?" {
+        - "parce que la seconde forme est plus lente"
+        + "parce que si $resultat est un tableau, la seconde forme filtre le tableau au lieu de renvoyer vrai ou faux"
+        - "parce que $null doit toujours être écrit en premier dans toute comparaison"
+        - "parce que la seconde forme provoque une erreur de syntaxe"
+        explanation: "Quand le membre de gauche est une collection, -eq renvoie les éléments égaux à la valeur de droite. Placer $null à gauche garantit un résultat booléen."
+      }
+      question "Quelle boucle s’utilise directement après un | dans le pipeline ?" {
+        - "foreach ($x in $liste) { }"
+        + "ForEach-Object { }"
+        - "for ($i = 0; $i -lt 10; $i++) { }"
+        - "while ($true) { }"
+        explanation: "ForEach-Object est une cmdlet : elle reçoit les objets du pipeline et les désigne par $_. Le mot-clé foreach travaille sur une collection déjà stockée dans une variable."
+      }
+      question "Que fait l’instruction continue dans une boucle ?" {
+        - "elle arrête la boucle définitivement"
+        + "elle passe directement à l’élément suivant"
+        - "elle relance la boucle depuis le début"
+        - "elle met le script en pause"
+        explanation: "continue abandonne l'itération en cours et passe à la suivante. break, lui, sort complètement de la boucle."
+      }
+      question "Que renvoie Test-Connection -ComputerName PC-101 -Count 1 -Quiet ?" {
+        - "le temps de réponse en millisecondes"
+        + "True ou False selon que le poste répond"
+        - "l’adresse IP du poste"
+        - "rien, la commande est silencieuse"
+        explanation: "-Quiet réduit le résultat à un booléen, ce qui permet de l'utiliser directement dans un if. Sans -Quiet, on obtient des objets détaillés."
+      }
+      question "Dans une condition if, laquelle de ces valeurs est considérée comme fausse ?" {
+        - "la chaîne 'False'"
+        - "le nombre 1"
+        + "un tableau vide"
+        - "un objet service"
+        explanation: "0, $null, la chaîne vide et un tableau vide sont faux. Une chaîne non vide est vraie, même si elle contient le mot False."
+      }
+      question "Quelle syntaxe crée une table de hachage ?" {
+        - "@('Login', 'Classe')"
+        + "@{ Login = 'sofia'; Classe = 'SIO1' }"
+        - "[Login: 'sofia', Classe: 'SIO1']"
+        - "$( Login = 'sofia' )"
+        explanation: "@{ } crée une table de hachage, des paires clé = valeur séparées par ; ou des retours à la ligne. @( ) crée un tableau."
+      }
+      question "Quel est le rôle de l’option -Wildcard dans un switch ?" {
+        - "elle rend la comparaison sensible à la casse"
+        + "elle permet d’utiliser les jokers * et ? dans les cas"
+        - "elle exécute tous les cas en parallèle"
+        - "elle ajoute automatiquement un cas default"
+        explanation: "Avec -Wildcard, chaque cas est comparé comme avec -like. -Regex utilise des expressions régulières, -CaseSensitive respecte la casse."
+      }
+      question "Que contient la variable $env:COMPUTERNAME ?" {
+        - "le nom de l’utilisateur connecté"
+        + "le nom de l’ordinateur"
+        - "le nom du domaine Active Directory"
+        - "l’adresse IP de la machine"
+        explanation: "$env: donne accès aux variables d'environnement. COMPUTERNAME est le nom NetBIOS de la machine ; USERNAME est l'utilisateur."
+      }
+      question "Dans un switch sans break, à 9 h, que produisent les cas { $_ -lt 12 } puis { $_ -lt 18 } ?" {
+        - "seulement le premier cas"
+        + "les deux cas, car les deux conditions sont vraies"
+        - "seulement le cas default"
+        - "une erreur, car deux cas correspondent"
+        explanation: "switch teste tous les cas et exécute chaque cas vrai. Pour s'arrêter au premier cas trouvé, on ajoute break dans le bloc."
+      }
+    }
+  }
+
+  module "fonctions-scripts" {
+    title: "Chapitre 5 : fonctions, scripts .ps1, politique d'exécution et erreurs"
+    duration: "40min"
+    content: """
+### Écrire une fonction
+Une fonction regroupe des instructions sous un nom. Respecte la convention Verbe-Nom avec un verbe approuvé (`Get-Verb`).
+
+```powershell
+function Get-EspaceLibre {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Lecteur,
+
+        [int]$SeuilGo = 10
+    )
+    $d = Get-PSDrive -Name $Lecteur
+    $libre = [math]::Round($d.Free / 1GB, 1)
+    [PSCustomObject]@{ Lecteur = $Lecteur; LibreGo = $libre; Alerte = ($libre -lt $SeuilGo) }
+}
+
+Get-EspaceLibre -Lecteur C
+Get-EspaceLibre -Lecteur C -SeuilGo 50
+```
+
+• Le bloc `param()` déclare les paramètres. `[Parameter(Mandatory)]` rend le paramètre obligatoire : s'il manque, PowerShell le demande.
+• `= 10` donne une valeur par défaut.
+• Une fonction **renvoie tout ce qu'elle produit** et qui n'est pas capturé dans une variable. `return` est facultatif : il sert surtout à sortir plus tôt. Attention aux sorties parasites : une commande comme `$liste.Add($x)` affiche un nombre qui s'ajoute au résultat ; place `$null =` devant pour l'éviter.
+
+Ajoute `[CmdletBinding()]` juste avant `param()` pour obtenir les paramètres communs (`-Verbose`, `-ErrorAction`…). Avec `[CmdletBinding(SupportsShouldProcess)]`, ta fonction accepte aussi `-WhatIf` et `-Confirm` : tu entoures alors chaque action par `if ($PSCmdlet.ShouldProcess($cible, 'action')) { ... }`. Le mini-projet du chapitre 10 s'en sert.
+
+### Écrire dans la console
+| Commande | Usage |
+|---|---|
+| `Write-Output` | le résultat normal, qui part dans le pipeline (c'est ce qui se passe quand on écrit juste une valeur) |
+| `Write-Host` | un message pour l'écran seulement, qui ne part pas dans le pipeline |
+| `Write-Verbose` | un détail affiché seulement avec `-Verbose` |
+| `Write-Warning` | un avertissement en jaune |
+| `Write-Error` | une erreur (non bloquante) |
+
+### Un script .ps1
+Un script est un fichier texte d'extension `.ps1`. Il peut commencer par son propre bloc `param()` :
+
+```powershell
+# C:\Scripts\Test-Postes.ps1
+#Requires -Version 5.1
+param(
+    [string[]]$Postes = @('localhost')
+)
+foreach ($p in $Postes) {
+    [PSCustomObject]@{ Poste = $p; EnLigne = Test-Connection $p -Count 1 -Quiet }
+}
+```
+
+Pour le lancer, depuis le dossier du script :
+```powershell
+.\Test-Postes.ps1 -Postes PC-101, PC-102
+& 'C:\Mes scripts\Test-Postes.ps1'      # chemin avec espaces : opérateur d'appel &
+```
+Le préfixe `.\` est obligatoire : PowerShell ne cherche jamais un script dans le dossier courant sans chemin explicite. C'est une protection contre un script piégé qui porterait le nom d'une commande courante.
+
+Les lignes `#Requires` sont vérifiées avant l'exécution : `#Requires -RunAsAdministrator` refuse de démarrer sans droits d'administration, `#Requires -Modules ActiveDirectory` exige le module.
+
+### La politique d'exécution
+Sur un Windows neuf, double-cliquer ou lancer un script peut afficher :
+```text
+.\Test-Postes.ps1 : Impossible de charger le fichier C:\Scripts\Test-Postes.ps1, car l'exécution de scripts est désactivée sur ce système.
+```
+C'est la **politique d'exécution** (execution policy).
+
+| Politique | Effet |
+|---|---|
+| `Restricted` | commandes interactives autorisées, aucun script. Défaut de Windows PowerShell 5.1 sur Windows 10 et 11 |
+| `RemoteSigned` | scripts locaux autorisés ; les scripts **téléchargés** doivent être signés ou débloqués. Défaut sur Windows Server et pour PowerShell 7 |
+| `AllSigned` | tous les scripts doivent être signés par un éditeur de confiance, même les tiens |
+| `Unrestricted` | tout s'exécute, avec un avertissement pour les fichiers venant d'Internet |
+| `Bypass` | rien n'est bloqué, aucun avertissement |
+
+```powershell
+Get-ExecutionPolicy -List                                      # la politique de chaque portée
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser   # pour ton compte, sans droits admin
+```
+Les portées, de la plus forte à la plus faible : `MachinePolicy` et `UserPolicy` (fixées par stratégie de groupe, prioritaires sur tout), puis `Process` (la session en cours), `CurrentUser`, `LocalMachine`. Une stratégie de groupe « Activer l'exécution des scripts » l'emporte toujours sur `Set-ExecutionPolicy`.
+
+Un fichier téléchargé avec un navigateur ou reçu par messagerie porte une marque « vient d'Internet » (un flux de données caché nommé `Zone.Identifier`). Avec `RemoteSigned`, il est refusé tant qu'il n'est pas signé. Après l'avoir **lu et compris**, tu peux le débloquer :
+```powershell
+Get-Item .\script.ps1 -Stream Zone.Identifier    # la marque existe-t-elle ?
+Unblock-File -Path .\script.ps1
+```
+
+Point important : Microsoft précise que la politique d'exécution **n'est pas une barrière de sécurité**. Elle évite de lancer un script par mégarde, mais n'importe qui peut la contourner (copier le contenu dans la console, `-ExecutionPolicy Bypass`). La vraie protection, ce sont les droits limités, les mises à jour, et des outils comme AppLocker ou WDAC (Windows Defender Application Control). Ne règle donc jamais `Unrestricted` ou `Bypass` pour toute la machine « pour que ça marche ».
+
+### Gérer les erreurs
+Il existe deux sortes d'erreurs :
+• **non bloquante** (non-terminating) : la cmdlet signale l'erreur et continue avec l'élément suivant. C'est le cas de la plupart des cmdlets (`Get-Service -Name Inconnu` affiche une erreur, puis le script continue) ;
+• **bloquante** (terminating) : l'exécution s'arrête.
+
+`try / catch` n'attrape que les erreurs **bloquantes**. Il faut donc ajouter `-ErrorAction Stop` à la commande surveillée :
+
+```powershell
+try {
+    Get-Service -Name 'ServiceInconnu' -ErrorAction Stop
+    Write-Output 'Service trouvé'
+}
+catch {
+    Write-Warning "Échec : $($_.Exception.Message)"
+}
+finally {
+    Write-Verbose 'Fin de la vérification'     # s'exécute dans tous les cas
+}
+```
+Dans le `catch`, `$_` est l'erreur. Autres valeurs de `-ErrorAction` : `SilentlyContinue` (ignore et n'affiche rien), `Continue` (défaut : affiche et continue), `Inquire` (demande quoi faire). La variable `$ErrorActionPreference = 'Stop'` en tête de script rend toutes les erreurs bloquantes.
+
+`Start-Transcript -Path C:\Scripts\Journaux\execution.txt` enregistre tout ce qui s'affiche jusqu'à `Stop-Transcript` : utile pour garder une trace d'un script d'administration.
+
+### À toi de jouer
+1. Vérifie la politique d'exécution de ton poste avec `Get-ExecutionPolicy -List`. Règle `RemoteSigned` pour ton seul compte, puis vérifie de nouveau.
+2. Écris une fonction `Test-Service` qui prend un nom de service obligatoire et renvoie un objet avec `Nom`, `Existe` (vrai ou faux) et `Etat` (l'état, ou vide si le service n'existe pas). Utilise `try/catch`.
+3. Enregistre-la dans `C:\Scripts\Test-Service.ps1` avec, en bas, un appel pour `Spooler` puis pour `Inconnu`, et lance le script.
+4. Explique pourquoi ce code n'affiche jamais « introuvable » : `try { Get-Service Inconnu } catch { 'introuvable' }`.
+
+### Correction
+1. Sur un Windows 11 neuf avec Windows PowerShell 5.1, toutes les portées valent `Undefined` : la politique effective est `Restricted`. Après `Set-ExecutionPolicy RemoteSigned -Scope CurrentUser`, la ligne `CurrentUser` affiche `RemoteSigned` et `Get-ExecutionPolicy` renvoie `RemoteSigned`. Pas besoin de console administrateur pour la portée `CurrentUser`.
+2. ```powershell
+   function Test-Service {
+       [CmdletBinding()]
+       param([Parameter(Mandatory)][string]$Nom)
+       try {
+           $s = Get-Service -Name $Nom -ErrorAction Stop
+           [PSCustomObject]@{ Nom = $Nom; Existe = $true; Etat = $s.Status }
+       }
+       catch {
+           [PSCustomObject]@{ Nom = $Nom; Existe = $false; Etat = $null }
+       }
+   }
+   ```
+3. Le script affiche `Spooler True Running` puis `Inconnu False` (colonne Etat vide). Si le lancement échoue avec « l'exécution de scripts est désactivée », reviens au point 1.
+4. `Get-Service` produit une erreur **non bloquante** : l'erreur s'affiche en rouge, mais aucune exception n'est levée, donc le `catch` ne s'exécute pas. Il faut écrire `Get-Service Inconnu -ErrorAction Stop`.
+"""
+
+    codeblock "powershell" {
+      title: "Squelette de script d'administration"
+      code: """
+#Requires -Version 5.1
+[CmdletBinding(SupportsShouldProcess)]
+param(
+    [Parameter(Mandatory)]
+    [string]$Chemin
+)
+$ErrorActionPreference = 'Stop'
+Start-Transcript -Path "$env:TEMP\$(Get-Date -Format 'yyyyMMdd-HHmm')-script.txt"
+try {
+    if ($PSCmdlet.ShouldProcess($Chemin, 'Nettoyer les fichiers .tmp')) {
+        Get-ChildItem -Path $Chemin -Filter *.tmp -File | Remove-Item
+    }
+}
+catch {
+    Write-Warning "Erreur : $($_.Exception.Message)"
+}
+finally {
+    Stop-Transcript
+}
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Que renvoie une fonction PowerShell qui ne contient pas l’instruction return ?" {
+        - "rien, return est obligatoire"
+        + "tout ce qu’elle produit sans le capturer dans une variable"
+        - "uniquement la dernière ligne"
+        - "la valeur $true si elle s’est bien déroulée"
+        explanation: "Toute valeur non capturée part dans la sortie de la fonction. return sert seulement à sortir plus tôt. C'est pourquoi une méthode comme .Add() qui affiche un nombre pollue le résultat."
+      }
+      question "Comment rendre un paramètre de fonction obligatoire ?" {
+        - "en écrivant [Required] devant"
+        + "en écrivant [Parameter(Mandatory)] devant"
+        - "en lui donnant la valeur $null par défaut"
+        - "en le déclarant en premier dans param()"
+        explanation: "L'attribut [Parameter(Mandatory)] oblige à fournir la valeur ; si elle manque, PowerShell la demande à l'utilisateur."
+      }
+      question "Pourquoi faut-il taper .\\Test-Postes.ps1 et pas seulement Test-Postes.ps1 ?" {
+        - "parce que le point accélère le chargement"
+        + "parce que PowerShell ne lance pas un script du dossier courant sans chemin explicite"
+        - "parce que la politique d’exécution l’exige"
+        - "parce que le nom contient un tiret"
+        explanation: "Le dossier courant n'est pas dans le chemin de recherche. Cette règle empêche un script piégé portant le nom d'une commande courante d'être lancé par erreur."
+      }
+      question "Quelle est la politique d’exécution par défaut de Windows PowerShell 5.1 sur Windows 11 ?" {
+        - "RemoteSigned"
+        - "Unrestricted"
+        + "Restricted"
+        - "Bypass"
+        explanation: "Sur les postes clients, Windows PowerShell 5.1 applique Restricted : aucun script ne s'exécute. Windows Server et PowerShell 7 utilisent RemoteSigned par défaut."
+      }
+      question "Avec la politique RemoteSigned, quel script est refusé ?" {
+        - "un script écrit sur le poste et non signé"
+        + "un script téléchargé depuis Internet, non signé et non débloqué"
+        - "un script signé par un éditeur de confiance"
+        - "un script lancé depuis VS Code"
+        explanation: "RemoteSigned exige une signature uniquement pour les fichiers marqués comme venant d'Internet (flux Zone.Identifier). Un script local non signé s'exécute."
+      }
+      question "Quelle commande autorise les scripts locaux pour ton seul compte, sans droits d’administration ?" {
+        - "Set-ExecutionPolicy Unrestricted"
+        + "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser"
+        - "Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope LocalMachine"
+        - "Unblock-File -Scope CurrentUser"
+        explanation: "La portée CurrentUser ne touche que ton compte et ne demande pas de droits d'administration. LocalMachine concerne tous les utilisateurs et exige une console administrateur."
+      }
+      question "La politique d’exécution est-elle une protection de sécurité fiable contre un utilisateur malveillant ?" {
+        - "oui, elle bloque tout script non signé"
+        + "non, Microsoft précise qu’elle n’est pas une barrière de sécurité et qu’elle se contourne facilement"
+        - "oui, si elle vaut AllSigned"
+        - "non, car elle ne s’applique qu’à PowerShell 7"
+        explanation: "Elle protège contre l'exécution accidentelle. Un utilisateur peut coller le code dans la console ou lancer powershell.exe -ExecutionPolicy Bypass. AppLocker ou WDAC sont de vrais contrôles."
+      }
+      question "Qu’est-ce qui prime sur un Set-ExecutionPolicy exécuté par l’utilisateur ?" {
+        - "le profil PowerShell de l’utilisateur"
+        + "une politique fixée par stratégie de groupe (MachinePolicy ou UserPolicy)"
+        - "la politique de la portée LocalMachine"
+        - "le dernier script lancé"
+        explanation: "Les portées MachinePolicy et UserPolicy, définies par GPO, sont prioritaires sur toutes les autres. Ensuite viennent Process, CurrentUser puis LocalMachine."
+      }
+      question "Pourquoi try { Get-Service Inconnu } catch { ’introuvable’ } n’affiche-t-il jamais introuvable ?" {
+        - "parce que catch doit être écrit en majuscules"
+        - "parce que Get-Service ne produit jamais d’erreur"
+        + "parce que l’erreur est non bloquante : il faut ajouter -ErrorAction Stop"
+        - "parce qu’il manque un bloc finally"
+        explanation: "try/catch n'intercepte que les erreurs bloquantes. -ErrorAction Stop transforme l'erreur de la cmdlet en erreur bloquante, que catch peut alors traiter."
+      }
+      question "Dans un bloc catch, comment afficher le message de l’erreur interceptée ?" {
+        - "$Error.Text"
+        + "$_.Exception.Message"
+        - "$catch.Message"
+        - "$LastExitCode"
+        explanation: "Dans catch, $_ contient l'enregistrement d'erreur ; son exception porte le message lisible. $LastExitCode concerne le code de retour des programmes externes."
+      }
+      question "Quel paramètre permet de simuler une fonction écrite avec [CmdletBinding(SupportsShouldProcess)] ?" {
+        - "-Test"
+        - "-Simulate"
+        + "-WhatIf"
+        - "-DryRun"
+        explanation: "SupportsShouldProcess ajoute -WhatIf et -Confirm. Les actions placées dans if ($PSCmdlet.ShouldProcess(...)) sont alors seulement décrites avec -WhatIf."
+      }
+      question "Quelle est la différence entre Write-Host et Write-Output ?" {
+        - "aucune, ce sont des alias"
+        + "Write-Host écrit seulement à l’écran, Write-Output envoie la valeur dans le pipeline"
+        - "Write-Host écrit dans un fichier, Write-Output à l’écran"
+        - "Write-Output n’existe que dans PowerShell 7"
+        explanation: "Ce qu'affiche Write-Host ne peut pas être récupéré dans une variable ni envoyé à Export-Csv. Pour produire un résultat exploitable, on utilise Write-Output ou on écrit simplement la valeur."
+      }
+      question "À quoi sert la ligne #Requires -RunAsAdministrator en tête d’un script ?" {
+        - "elle élève automatiquement la console en administrateur"
+        + "elle empêche le script de démarrer si la session n’a pas les droits d’administration"
+        - "elle désactive l’UAC le temps du script"
+        - "c’est un commentaire sans effet"
+        explanation: "#Requires est vérifié avant l'exécution : sans droits d'administration, le script s'arrête avec un message clair au lieu d'échouer à mi-chemin. Il n'élève pas les droits."
+      }
+      question "Quelle commande enlève la marque « vient d’Internet » d’un script que tu as relu ?" {
+        - "Set-ExecutionPolicy Bypass"
+        + "Unblock-File"
+        - "Remove-Item -Stream"
+        - "Set-AuthenticodeSignature"
+        explanation: "Unblock-File supprime le flux Zone.Identifier. Le script peut ensuite s'exécuter avec RemoteSigned. Set-AuthenticodeSignature signe un script, ce qui demande un certificat de signature de code."
+      }
+    }
+  }
+
+  module "fichiers-csv" {
+    title: "Chapitre 6 : fichiers, dossiers et CSV"
+    duration: "35min"
+    content: """
+### Naviguer et lister
+```powershell
+Get-ChildItem C:\Partage                         # contenu d'un dossier
+Get-ChildItem C:\Partage -Recurse -File          # tous les fichiers, sous-dossiers compris
+Get-ChildItem C:\Partage -Directory              # seulement les dossiers
+Get-ChildItem C:\Partage -Filter *.docx -Recurse # filtre à la source (rapide)
+Get-ChildItem C:\Users -Recurse -File -ErrorAction SilentlyContinue   # ignore les dossiers interdits
+```
+Chaque fichier est un objet avec `Name`, `FullName` (chemin complet), `Extension`, `Length` (taille en octets), `CreationTime`, `LastWriteTime`.
+
+### Créer, copier, déplacer, supprimer
+```powershell
+Test-Path C:\Scripts\Journaux                          # True ou False
+New-Item -Path C:\Scripts\Journaux -ItemType Directory -Force   # -Force : pas d'erreur s'il existe
+New-Item -Path C:\Scripts\notes.txt -ItemType File
+Copy-Item C:\Scripts\*.ps1 -Destination D:\Sauvegarde\
+Move-Item C:\Temp\rapport.csv -Destination C:\Rapports\
+Rename-Item C:\Rapports\rapport.csv -NewName 'rapport-2026-11.csv'
+Remove-Item C:\Temp\*.tmp -WhatIf
+```
+Attention : `Remove-Item` **ne passe pas par la corbeille**. Avec `-Recurse` et un chemin mal écrit (une variable vide par exemple, qui transforme `"$dossier\*"` en `\*`), on peut effacer beaucoup plus que prévu. Teste toujours d'abord avec `-WhatIf`, et vérifie qu'une variable n'est pas vide avant de l'utiliser dans un chemin.
+
+Pour construire un chemin proprement : `Join-Path -Path $racine -ChildPath 'Journaux'`. `Split-Path` fait l'inverse (`-Leaf` pour le nom du fichier, `-Parent` pour le dossier).
+
+### Lire et écrire du texte
+```powershell
+Get-Content C:\Scripts\postes.txt                 # une ligne = un élément de tableau
+Get-Content C:\Windows\Logs\CBS\CBS.log -Tail 20  # les 20 dernières lignes
+Get-Content .\journal.txt -Wait                   # suit le fichier en direct (Ctrl+C pour arrêter)
+Set-Content .\etat.txt -Value 'OK'                # remplace le contenu
+Add-Content .\journal.txt -Value "$(Get-Date -Format s) Sauvegarde terminée"   # ajoute une ligne
+Get-Service | Out-File .\services.txt             # écrit l'affichage tel qu'à l'écran
+Select-String -Path C:\Logs\*.log -Pattern 'error|échec'   # cherche un motif (comme grep)
+```
+
+**Encodage** : c'est la source de nombreux caractères accentués abîmés.
+• Windows PowerShell 5.1 : `Out-File` et la redirection `>` écrivent en UTF-16 (« Unicode ») ; `Set-Content` et `Add-Content` utilisent la page de code ANSI du système ; `Export-Csv` écrit en ASCII par défaut, ce qui remplace les accents par `?`.
+• PowerShell 7 : tout est en UTF-8 sans BOM par défaut.
+Dans un script qui doit marcher partout, précise toujours `-Encoding UTF8`.
+
+### Les fichiers CSV
+Un fichier CSV est un tableau en texte : une ligne d'en-tête, puis une ligne par enregistrement. Excel en français enregistre les CSV avec un **point-virgule** comme séparateur, car la virgule sert aux nombres décimaux.
+
+```text
+Prenom;Nom;Classe
+Sofia;Martin;SIO1
+Lucas;Bernard;SIO1
+Inès;Petit;CIEL2
+```
+
+`Import-Csv` transforme chaque ligne en objet dont les propriétés portent les noms des colonnes :
+
+```powershell
+$eleves = Import-Csv -Path C:\Scripts\eleves.csv -Delimiter ';' -Encoding UTF8
+$eleves.Count                                   # 3
+$eleves[0].Prenom                               # Sofia
+$eleves | Where-Object Classe -eq 'SIO1'
+$eleves | Group-Object Classe | Select-Object Name, Count
+```
+
+`Export-Csv` fait l'inverse : il écrit des objets dans un fichier.
+
+```powershell
+Get-Service | Select-Object Name, DisplayName, Status, StartType |
+    Export-Csv -Path C:\Rapports\services.csv -Delimiter ';' -Encoding UTF8 -NoTypeInformation
+```
+• `-NoTypeInformation` supprime la ligne `#TYPE ...` que Windows PowerShell 5.1 ajoute en tête ; PowerShell 7 ne l'ajoute plus, le paramètre y est sans effet.
+• `-UseCulture` prend le séparateur de la langue du système (le point-virgule en français) à la place de `-Delimiter`.
+• `-Append` ajoute à la fin d'un fichier existant au lieu de le remplacer.
+• Choisis les colonnes avec `Select-Object` **avant** l'export. Jamais de `Format-Table` avant `Export-Csv`.
+
+Piège classique : toutes les valeurs lues par `Import-Csv` sont des **chaînes de caractères**. Trier une colonne `Age` donne alors `10, 9, 17` dans l'ordre alphabétique (`'10'` avant `'9'`). Convertis : `Sort-Object { [int]$_.Age }`.
+
+Si le séparateur indiqué ne correspond pas au fichier, `Import-Csv` ne découpe rien : chaque objet n'a qu'une seule propriété dont le nom est toute la ligne d'en-tête (`Prenom;Nom;Classe`). C'est le signe qu'il faut ajouter `-Delimiter ';'`.
+
+### À toi de jouer
+1. Crée `C:\Scripts\eleves.csv` avec le contenu ci-dessus (enregistré en UTF-8). Importe-le et affiche le nombre d'élèves par classe.
+2. Ajoute à chaque élève une propriété `Login` de la forme `prenom.nom` en minuscules, et exporte le résultat dans `C:\Scripts\logins.csv` avec le séparateur `;`.
+3. Produis un rapport `C:\Rapports\gros-fichiers.csv` des fichiers de plus de 50 Mo de ton dossier personnel, avec le chemin complet, la taille en Mo et la date de modification, du plus gros au plus petit.
+4. Un collègue a lancé `Import-Csv .\eleves.csv` et obtient une seule colonne nommée `Prenom;Nom;Classe`. Que se passe-t-il ?
+
+### Correction
+1. ```powershell
+   $eleves = Import-Csv C:\Scripts\eleves.csv -Delimiter ';' -Encoding UTF8
+   $eleves | Group-Object Classe | Select-Object Name, Count
+   ```
+   Résultat attendu : `SIO1 2` et `CIEL2 1`. Si `Inès` s'affiche mal, le fichier n'est pas en UTF-8 : réenregistre-le avec ce codage (dans Excel : « CSV UTF-8 »).
+2. ```powershell
+   $eleves | Select-Object Prenom, Nom, Classe,
+       @{ Name = 'Login'; Expression = { "$($_.Prenom).$($_.Nom)".ToLower() } } |
+       Export-Csv C:\Scripts\logins.csv -Delimiter ';' -Encoding UTF8 -NoTypeInformation
+   ```
+   Le login d'Inès contient encore un accent (`inès.petit`) : le chapitre 10 montre comment le retirer.
+3. ```powershell
+   New-Item C:\Rapports -ItemType Directory -Force | Out-Null
+   Get-ChildItem $HOME -Recurse -File -ErrorAction SilentlyContinue |
+       Where-Object Length -gt 50MB |
+       Sort-Object Length -Descending |
+       Select-Object FullName, @{ n = 'Mo'; e = { [math]::Round($_.Length / 1MB, 1) } }, LastWriteTime |
+       Export-Csv C:\Rapports\gros-fichiers.csv -Delimiter ';' -Encoding UTF8 -NoTypeInformation
+   ```
+   `n` et `e` sont des abréviations acceptées pour `Name` et `Expression`. `Out-Null` masque l'objet dossier renvoyé par `New-Item`.
+4. Le fichier utilise `;` alors qu'`Import-Csv` attend une virgule par défaut : il ne trouve aucun séparateur et met toute la ligne dans une seule propriété. Il faut ajouter `-Delimiter ';'` (ou `-UseCulture` sur un Windows en français).
+"""
+
+    codeblock "powershell" {
+      title: "Lire un CSV, enrichir, réécrire"
+      code: """
+$source = 'C:\Scripts\eleves.csv'
+$sortie = 'C:\Scripts\eleves-enrichis.csv'
+
+Import-Csv -Path $source -Delimiter ';' -Encoding UTF8 |
+    ForEach-Object {
+        [PSCustomObject]@{
+            Prenom = $_.Prenom
+            Nom    = $_.Nom.ToUpper()
+            Classe = $_.Classe
+            Login  = ("$($_.Prenom).$($_.Nom)").ToLower()
+        }
+    } |
+    Export-Csv -Path $sortie -Delimiter ';' -Encoding UTF8 -NoTypeInformation
+
+Get-Content $sortie -Encoding UTF8
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle commande crée le dossier C:\\Scripts\\Journaux sans erreur s’il existe déjà ?" {
+        - "mkdir C:\\Scripts\\Journaux -IfNotExists"
+        + "New-Item -Path C:\\Scripts\\Journaux -ItemType Directory -Force"
+        - "Set-Location C:\\Scripts\\Journaux -Create"
+        - "New-Item C:\\Scripts\\Journaux -Type Folder"
+        explanation: "New-Item -ItemType Directory crée un dossier ; -Force évite l'erreur si le dossier existe déjà. Folder n'est pas une valeur acceptée par -ItemType."
+      }
+      question "Quelle propriété d’un objet fichier donne sa taille en octets ?" {
+        - "Size"
+        + "Length"
+        - "Bytes"
+        - "FileSize"
+        explanation: "Les objets FileInfo exposent la taille dans Length, en octets. Get-Member le confirme. Size et FileSize n'existent pas sur ces objets."
+      }
+      question "Comment afficher les 20 dernières lignes d’un fichier journal ?" {
+        - "Get-Content journal.log -Last 20"
+        + "Get-Content journal.log -Tail 20"
+        - "Get-Content journal.log | Select-Object -Bottom 20"
+        - "Read-File journal.log -End 20"
+        explanation: "-Tail lit directement la fin du fichier, sans tout charger. Select-Object -Last 20 marcherait aussi, mais après avoir lu le fichier entier ; -Bottom n'existe pas."
+      }
+      question "Remove-Item C:\\Temp\\*.tmp envoie-t-il les fichiers dans la corbeille ?" {
+        - "oui, toujours"
+        - "oui, sauf avec -Force"
+        + "non, la suppression est définitive"
+        - "seulement dans PowerShell 7"
+        explanation: "Remove-Item supprime définitivement. D'où l'intérêt de tester avec -WhatIf et de vérifier les variables utilisées dans les chemins."
+      }
+      question "Quel séparateur Excel en français utilise-t-il pour enregistrer un CSV ?" {
+        - "la virgule"
+        + "le point-virgule"
+        - "la tabulation"
+        - "la barre verticale"
+        explanation: "En français, la virgule est le séparateur décimal, donc Excel utilise le point-virgule. Il faut l'indiquer à Import-Csv avec -Delimiter ';' ou -UseCulture."
+      }
+      question "Import-Csv renvoie des objets qui n’ont qu’une propriété nommée Prenom;Nom;Classe. Quelle est la cause ?" {
+        - "le fichier est vide"
+        + "le séparateur du fichier ne correspond pas à celui attendu par Import-Csv"
+        - "le fichier n’a pas d’extension .csv"
+        - "il manque -NoTypeInformation"
+        explanation: "Sans -Delimiter, Import-Csv attend une virgule. Ne trouvant aucune virgule, il considère chaque ligne comme une seule valeur. -NoTypeInformation concerne Export-Csv."
+      }
+      question "De quel type sont les valeurs lues par Import-Csv ?" {
+        - "du type deviné pour chaque colonne (nombre, date, texte)"
+        + "des chaînes de caractères"
+        - "des nombres entiers quand c’est possible"
+        - "des objets du type d’origine"
+        explanation: "Un CSV ne contient que du texte : chaque valeur est une String. Pour trier ou comparer des nombres, il faut convertir, par exemple [int]$_.Age."
+      }
+      question "Que fait -NoTypeInformation avec Export-Csv sous Windows PowerShell 5.1 ?" {
+        - "il exporte les valeurs sans les en-têtes de colonnes"
+        + "il supprime la première ligne #TYPE qui indique le type d’objet"
+        - "il convertit toutes les valeurs en texte"
+        - "il ignore les propriétés vides"
+        explanation: "Windows PowerShell 5.1 ajoute par défaut une ligne #TYPE en tête du fichier. -NoTypeInformation l'enlève ; c'est le comportement par défaut depuis PowerShell 6."
+      }
+      question "Tu exportes des noms accentués avec Export-Csv sous Windows PowerShell 5.1 sans préciser l’encodage. Que risques-tu ?" {
+        - "rien, l’UTF-8 est utilisé par défaut"
+        + "les accents remplacés par des points d’interrogation, car l’encodage par défaut est ASCII"
+        - "une erreur qui bloque l’export"
+        - "un fichier compressé"
+        explanation: "Dans Windows PowerShell 5.1, Export-Csv écrit en ASCII par défaut. Ajoute -Encoding UTF8. PowerShell 7, lui, écrit en UTF-8 par défaut."
+      }
+      question "Quelle commande ajoute une ligne à la fin d’un fichier texte sans effacer le contenu ?" {
+        - "Set-Content"
+        + "Add-Content"
+        - "New-Item -Append"
+        - "Out-File -Replace"
+        explanation: "Add-Content ajoute à la fin. Set-Content remplace tout le contenu. Out-File accepte aussi -Append, mais -Replace n'existe pas."
+      }
+      question "Quelle commande cherche le mot erreur dans tous les fichiers .log d’un dossier ?" {
+        - "Get-Content C:\\Logs\\*.log -Find erreur"
+        + "Select-String -Path C:\\Logs\\*.log -Pattern 'erreur'"
+        - "Find-Item C:\\Logs -Text erreur"
+        - "Get-ChildItem C:\\Logs -Filter erreur"
+        explanation: "Select-String est l'équivalent de grep : il renvoie le fichier, le numéro de ligne et la ligne trouvée. -Filter de Get-ChildItem filtre sur les noms de fichiers, pas sur leur contenu."
+      }
+      question "Pourquoi le tri de la colonne Age importée d’un CSV donne-t-il 10, 17, 9 ?" {
+        - "parce que Sort-Object trie à l’envers par défaut"
+        + "parce que les valeurs sont des chaînes triées dans l’ordre alphabétique"
+        - "parce que le fichier contient des espaces"
+        - "parce qu’il manque -Descending"
+        explanation: "En texte, '10' vient avant '9' car le caractère 1 précède 9. Sort-Object { [int]$_.Age } trie numériquement."
+      }
+      question "Quelle option remplace -Delimiter pour utiliser le séparateur de la langue du système ?" {
+        - "-Culture fr-FR"
+        + "-UseCulture"
+        - "-Localized"
+        - "-SystemSeparator"
+        explanation: "-UseCulture prend le séparateur de liste de la langue courante, visible avec (Get-Culture).TextInfo.ListSeparator : le point-virgule pour le français."
+      }
+    }
+  }
+
+  module "services-processus" {
+    title: "Chapitre 7 : services et processus"
+    duration: "35min"
+    content: """
+### Services : lire l'état
+Un **service** est un programme qui tourne en arrière-plan, sans fenêtre, souvent démarré avec Windows : spouleur d'impression (`Spooler`), mises à jour (`wuauserv`), temps (`W32Time`), serveur DNS (`DNS`) sur un contrôleur de domaine…
+
+```powershell
+Get-Service                                    # tous les services
+Get-Service -Name Spooler, W32Time             # par nom court
+Get-Service -DisplayName '*impression*'        # par nom affiché, avec jokers
+Get-Service Spooler | Select-Object Name, Status, StartType
+Get-Service LanmanWorkstation -DependentServices   # qui dépend de ce service ?
+Get-Service LanmanWorkstation -RequiredServices    # de quoi dépend-il ?
+```
+
+Deux propriétés à ne pas confondre :
+• `Status` : l'état **actuel** (`Running`, `Stopped`, `Paused`, `StartPending`…) ;
+• `StartType` : le **mode de démarrage** (`Automatic`, `Manual`, `Disabled`).
+
+Pour des informations plus complètes (compte d'exécution, chemin de l'exécutable), interroge la classe CIM `Win32_Service` :
+```powershell
+Get-CimInstance -ClassName Win32_Service -Filter "Name='Spooler'" |
+    Select-Object Name, State, StartMode, StartName, PathName
+```
+`StartName` indique le compte qui fait tourner le service (`LocalSystem`, `NT AUTHORITY\LocalService`…). Un service lancé avec un compte d'utilisateur ordinaire, ou dont le chemin pointe vers un dossier inscriptible par tous, mérite une vérification de sécurité.
+
+### Services : agir
+Ces commandes demandent une console **administrateur** :
+```powershell
+Stop-Service -Name Spooler
+Start-Service -Name Spooler
+Restart-Service -Name Spooler
+Set-Service -Name Spooler -StartupType Manual      # Automatic, Manual, Disabled
+Stop-Service -Name LanmanServer -Force -WhatIf     # -Force : arrête aussi les services qui en dépendent
+```
+Sans `-Force`, arrêter un service dont d'autres dépendent échoue avec un message qui les cite. Avant d'utiliser `-Force`, regarde la liste avec `-DependentServices` : sur un serveur, arrêter `LanmanServer` coupe tous les partages de fichiers.
+
+PowerShell 7 ajoute la valeur `AutomaticDelayedStart` (démarrage automatique différé) à `Set-Service -StartupType`.
+
+### Processus : observer
+Un **processus** est un programme en cours d'exécution. Chaque processus a un numéro unique, le **PID** (propriété `Id`).
+
+```powershell
+Get-Process                                     # tous les processus
+Get-Process -Name msedge                        # sans l'extension .exe
+Get-Process -Id 4120
+Get-Process | Sort-Object CPU -Descending | Select-Object -First 5 Name, Id, CPU
+Get-Process msedge | Measure-Object WS -Sum     # mémoire totale de tous les onglets
+Get-Process -Name notepad | Select-Object Name, Id, StartTime, Path
+```
+| Propriété | Sens |
+|---|---|
+| `Id` | numéro du processus (PID) |
+| `ProcessName` (ou `Name`) | nom sans `.exe` |
+| `CPU` | temps processeur cumulé, en secondes |
+| `WS` (WorkingSet) | mémoire physique utilisée, en octets |
+| `StartTime` | heure de démarrage |
+| `Path` | chemin de l'exécutable |
+
+`Get-Process -IncludeUserName` ajoute le propriétaire de chaque processus (console administrateur nécessaire).
+
+### Processus : agir
+```powershell
+Start-Process notepad.exe
+Start-Process powershell.exe -Verb RunAs              # demande l'élévation (fenêtre UAC)
+Start-Process msiexec.exe -ArgumentList '/i C:\Logiciels\app.msi /qn' -Wait   # attend la fin
+Stop-Process -Name notepad -WhatIf
+Stop-Process -Id 4120 -Force                          # sans demander, même si le processus ne répond pas
+```
+`Stop-Process` ferme brutalement : le travail non enregistré est perdu. Sur un serveur, préfère arrêter proprement le **service** (`Stop-Service`) plutôt que de tuer son processus.
+
+### Qui écoute sur ce port ?
+Diagnostic classique : un service ne démarre pas car son port est déjà pris.
+```powershell
+Get-NetTCPConnection -LocalPort 80 -State Listen |
+    Select-Object LocalAddress, LocalPort, OwningProcess
+Get-Process -Id (Get-NetTCPConnection -LocalPort 80 -State Listen).OwningProcess
+```
+`OwningProcess` est le PID du processus qui écoute : `Get-Process -Id` donne son nom.
+
+### Sur une autre machine
+Dans PowerShell 7, `Get-Service` et `Get-Process` n'ont plus de paramètre `-ComputerName`. La méthode recommandée pour agir à distance est la **communication à distance PowerShell** (WinRM, activée par défaut sur Windows Server) :
+```powershell
+Invoke-Command -ComputerName SRV-AD01 -ScriptBlock { Get-Service DNS, NTDS }
+```
+
+### À toi de jouer
+1. Liste les services dont le démarrage est automatique et qui ne tournent pas, avec `Get-CimInstance Win32_Service`. Compare avec la méthode `Get-Service` du chapitre 3.
+2. Le service d'impression est bloqué (les documents restent en file). Écris la suite de commandes qui l'arrête, vide le dossier `C:\Windows\System32\spool\PRINTERS` puis le redémarre. Teste d'abord la suppression avec `-WhatIf`.
+3. Ouvre trois Bloc-notes. Affiche leurs PID et leur heure de démarrage, puis ferme seulement le plus ancien.
+4. Trouve quel processus écoute sur le port 135 de ta machine.
+
+### Correction
+1. ```powershell
+   Get-CimInstance Win32_Service -Filter "StartMode='Auto' AND State<>'Running'" |
+       Select-Object Name, DisplayName, State
+   ```
+   Le filtre WQL est appliqué à la source (filtrer à gauche). Les valeurs de `StartMode` sont `Auto`, `Manual` et `Disabled`, alors que `Get-Service` dit `Automatic` : ce sont deux interfaces différentes.
+2. Dans une console administrateur :
+   ```powershell
+   Stop-Service -Name Spooler
+   Remove-Item -Path C:\Windows\System32\spool\PRINTERS\* -WhatIf
+   Remove-Item -Path C:\Windows\System32\spool\PRINTERS\*
+   Start-Service -Name Spooler
+   Get-Service Spooler
+   ```
+   Le service doit être arrêté avant la suppression, sinon les fichiers sont verrouillés. Le dernier `Get-Service` doit afficher `Running`. Attention au chemin : un `\*` mal placé sur le mauvais dossier serait désastreux, d'où le `-WhatIf`.
+3. ```powershell
+   1..3 | ForEach-Object { Start-Process notepad.exe }
+   Get-Process notepad | Sort-Object StartTime | Select-Object Id, StartTime
+   Get-Process notepad | Sort-Object StartTime | Select-Object -First 1 | Stop-Process
+   ```
+   `1..3` crée la suite 1, 2, 3. Le processus trié en premier est le plus ancien ; `Stop-Process` le reçoit par le pipeline. Sur Windows 11, le Bloc-notes moderne peut regrouper les fenêtres en onglets d'un seul processus : dans ce cas, lance `notepad.exe` depuis trois consoles ou utilise un autre programme.
+4. ```powershell
+   $pid135 = (Get-NetTCPConnection -LocalPort 135 -State Listen | Select-Object -First 1).OwningProcess
+   Get-Process -Id $pid135
+   ```
+   C'est un processus `svchost` qui héberge le service RPC (`RpcSs`). `Get-CimInstance Win32_Service -Filter "ProcessId=$pid135"` donne le nom du service.
+"""
+
+    codeblock "powershell" {
+      title: "Surveiller des services essentiels et les relancer"
+      code: """
+#Requires -RunAsAdministrator
+$essentiels = 'Spooler', 'W32Time', 'Dnscache'
+foreach ($nom in $essentiels) {
+    $s = Get-Service -Name $nom -ErrorAction SilentlyContinue
+    if ($null -eq $s) {
+        Write-Warning "$nom : service absent"
+    }
+    elseif ($s.Status -ne 'Running') {
+        Write-Warning "$nom arrêté, tentative de démarrage"
+        Start-Service -Name $nom
+        (Get-Service -Name $nom).Status
+    }
+}
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle propriété de Get-Service indique si le service démarre avec Windows ?" {
+        - "Status"
+        + "StartType"
+        - "CanStop"
+        - "ServiceType"
+        explanation: "StartType vaut Automatic, Manual ou Disabled. Status donne l'état actuel (Running, Stopped), qui peut être différent : un service automatique peut être arrêté."
+      }
+      question "Quelle commande passe le spouleur en démarrage manuel ?" {
+        - "Stop-Service Spooler -Manual"
+        + "Set-Service -Name Spooler -StartupType Manual"
+        - "Set-Service -Name Spooler -Status Manual"
+        - "Get-Service Spooler -StartType Manual"
+        explanation: "Set-Service -StartupType change le mode de démarrage. -Status sert à changer l'état courant. Get-Service ne modifie rien."
+      }
+      question "Stop-Service LanmanWorkstation échoue en citant d’autres services. Pourquoi ?" {
+        - "le service n’existe pas"
+        + "d’autres services en dépendent : il faut -Force ou les arrêter d’abord"
+        - "la politique d’exécution l’interdit"
+        - "il faut utiliser Stop-Process"
+        explanation: "Un service dont d'autres dépendent ne s'arrête pas sans -Force. Avant de forcer, -DependentServices montre ce qui sera arrêté avec lui."
+      }
+      question "Quelle classe CIM permet de voir le compte qui fait tourner un service ?" {
+        - "Win32_Process"
+        + "Win32_Service"
+        - "Win32_UserAccount"
+        - "Win32_StartupCommand"
+        explanation: "Win32_Service expose StartName (compte d'exécution) et PathName (exécutable). Get-Service, sous Windows PowerShell 5.1, ne donne pas ces informations."
+      }
+      question "Comment désigne-t-on le processus de msedge.exe avec Get-Process -Name ?" {
+        - "msedge.exe"
+        + "msedge"
+        - "*msedge.exe*"
+        - "C:\\Program Files\\msedge"
+        explanation: "Get-Process -Name attend le nom sans l'extension .exe. Avec msedge.exe, la commande ne trouve aucun processus."
+      }
+      question "En quelle unité est exprimée la propriété WS d’un processus ?" {
+        - "en mégaoctets"
+        - "en pourcentage de la mémoire"
+        + "en octets"
+        - "en secondes"
+        explanation: "WS (working set) est la mémoire physique en octets. On divise par 1MB pour l'avoir en Mo. La propriété CPU, elle, est en secondes."
+      }
+      question "Que fait Stop-Process -Id 4120 -Force ?" {
+        - "il demande à l’application de se fermer proprement et attend l’enregistrement"
+        + "il termine le processus 4120 sans confirmation, le travail non enregistré est perdu"
+        - "il redémarre le processus 4120"
+        - "il arrête le service qui porte le numéro 4120"
+        explanation: "Stop-Process termine brutalement le processus. Pour un service, Stop-Service est préférable : il laisse le service s'arrêter proprement."
+      }
+      question "Quelle commande indique quel processus écoute sur le port 80 ?" {
+        - "Get-Process -Port 80"
+        + "Get-NetTCPConnection -LocalPort 80 -State Listen puis Get-Process -Id sur OwningProcess"
+        - "Get-Service -Port 80"
+        - "Test-Connection -Port 80"
+        explanation: "Get-NetTCPConnection donne OwningProcess, le PID du processus en écoute ; Get-Process -Id donne son nom. Get-Process et Get-Service n'ont pas de paramètre -Port."
+      }
+      question "Comment lancer une installation silencieuse et attendre qu’elle se termine avant de continuer le script ?" {
+        - "Start-Process msiexec.exe -ArgumentList '/i app.msi /qn' -Async"
+        + "Start-Process msiexec.exe -ArgumentList '/i app.msi /qn' -Wait"
+        - "Invoke-Item app.msi -Silent"
+        - "Start-Service msiexec -Wait"
+        explanation: "-Wait bloque le script jusqu'à la fin du processus lancé. Sans lui, le script continue immédiatement, avant la fin de l'installation."
+      }
+      question "Dans PowerShell 7, comment interroger les services du serveur SRV-AD01 ?" {
+        - "Get-Service -ComputerName SRV-AD01"
+        + "Invoke-Command -ComputerName SRV-AD01 -ScriptBlock { Get-Service }"
+        - "Get-Service \\\\SRV-AD01"
+        - "Enter-Service SRV-AD01"
+        explanation: "Le paramètre -ComputerName de Get-Service n'existe plus dans PowerShell 7. Invoke-Command exécute le bloc sur la machine distante par WinRM."
+      }
+      question "Pourquoi faut-il arrêter le spouleur avant de vider C:\\Windows\\System32\\spool\\PRINTERS ?" {
+        - "parce que le dossier est caché"
+        + "parce que le service garde les fichiers de la file ouverts et verrouillés"
+        - "parce que Remove-Item ne fonctionne pas sur les dossiers système"
+        - "parce que le service se supprimerait avec le dossier"
+        explanation: "Tant que le spouleur tourne, il utilise les fichiers de la file d'attente : leur suppression échoue. On arrête, on vide, on redémarre."
+      }
+      question "Quelle commande ouvre une console PowerShell avec élévation de privilèges ?" {
+        - "Start-Process powershell.exe -Admin"
+        + "Start-Process powershell.exe -Verb RunAs"
+        - "Start-Process powershell.exe -Elevated"
+        - "runas powershell.exe /admin"
+        explanation: "-Verb RunAs déclenche la demande d'élévation (UAC). Il faut l'accepter : le script ne peut pas contourner cette confirmation."
+      }
+      question "Dans le filtre WQL de Win32_Service, quelle valeur de StartMode correspond au démarrage automatique ?" {
+        - "Automatic"
+        + "Auto"
+        - "Boot"
+        - "Enabled"
+        explanation: "Win32_Service utilise Auto, Manual et Disabled. Get-Service, lui, affiche Automatic : ne mélange pas les deux interfaces."
+      }
+    }
+  }
+
+  module "utilisateurs-local-ad" {
+    title: "Chapitre 8 : comptes locaux et comptes Active Directory"
+    duration: "40min"
+    content: """
+### Comptes locaux : le module LocalAccounts
+Le module `Microsoft.PowerShell.LocalAccounts` gère les comptes et groupes **de la machine** (ceux que l'on voit dans « Gestion de l'ordinateur »). Il est fourni avec **Windows PowerShell 5.1**. Dans PowerShell 7, il n'est pas intégré : il se charge par la couche de compatibilité (`Import-Module Microsoft.PowerShell.LocalAccounts -UseWindowsPowerShell`), à refaire dans chaque session. Le plus simple pour ce chapitre : travaille dans **Windows PowerShell 5.1**, console administrateur pour les modifications.
+
+```powershell
+Get-LocalUser                                    # tous les comptes locaux
+Get-LocalUser -Name invite | Select-Object Name, Enabled, LastLogon, PasswordLastSet
+Get-LocalGroup
+Get-LocalGroupMember -Group 'Administrateurs'    # qui est administrateur de ce poste ?
+```
+
+Créer un compte : le mot de passe doit être une **chaîne sécurisée** (SecureString), jamais du texte en clair.
+```powershell
+$mdp = Read-Host -Prompt 'Mot de passe' -AsSecureString
+New-LocalUser -Name 'stagiaire' -Password $mdp -FullName 'Stagiaire réseau' -Description 'Compte de stage, novembre'
+Add-LocalGroupMember -Group 'Utilisateurs' -Member 'stagiaire'
+```
+Les autres actions :
+```powershell
+Disable-LocalUser -Name 'stagiaire'
+Enable-LocalUser -Name 'stagiaire'
+Set-LocalUser -Name 'stagiaire' -Password (Read-Host -AsSecureString)
+Set-LocalUser -Name 'stagiaire' -AccountExpires (Get-Date).AddDays(30)
+Remove-LocalGroupMember -Group 'Administrateurs' -Member 'stagiaire'
+Remove-LocalUser -Name 'stagiaire' -WhatIf
+```
+Contraintes : un nom de compte local fait **20 caractères au plus** et ne doit contenir aucun de ces caractères : `" / \ [ ] : ; | = , + * ? < > @`. La description est limitée à 48 caractères.
+
+**Le nom des groupes dépend de la langue** de Windows : `Administrateurs` en français, `Administrators` en anglais. Un script qui doit marcher partout utilise l'identifiant de sécurité (SID), qui est fixe : `S-1-5-32-544` pour les administrateurs, `S-1-5-32-545` pour les utilisateurs.
+```powershell
+Get-LocalGroupMember -SID 'S-1-5-32-544'
+```
+
+### Active Directory : préparer l'outil
+Le module `ActiveDirectory` est installé sur un contrôleur de domaine. Pour l'utiliser depuis un poste d'administration, installe les outils RSAT :
+```powershell
+# Windows 10 ou 11 (console administrateur)
+Add-WindowsCapability -Online -Name 'Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0'
+# Windows Server (serveur membre)
+Install-WindowsFeature -Name RSAT-AD-PowerShell
+```
+Ce module fonctionne aussi bien dans Windows PowerShell 5.1 que dans PowerShell 7. Les exemples utilisent le domaine du labo `lycee.internal` (DN `DC=lycee,DC=internal`).
+
+### Rechercher des comptes
+```powershell
+Get-ADUser -Identity sofia.martin                       # un compte précis (sAMAccountName)
+Get-ADUser -Identity sofia.martin -Properties *         # toutes les propriétés
+Get-ADUser -Filter "Surname -eq 'Martin'"               # filtre côté serveur
+Get-ADUser -Filter * -SearchBase 'OU=Eleves,DC=lycee,DC=internal' |
+    Select-Object Name, SamAccountName, Enabled
+Get-ADUser -Filter "Enabled -eq 'False'"                # comptes désactivés
+```
+Par défaut, `Get-ADUser` ne renvoie qu'une dizaine de propriétés (nom, SamAccountName, UPN, Enabled…). Pour les autres (service, dernière connexion, adresse), ajoute `-Properties Department, LastLogonDate`. `-Filter` est obligatoire si tu n'utilises pas `-Identity` : `-Filter *` renvoie tout.
+
+`Search-ADAccount` répond aux questions courantes du support :
+```powershell
+Search-ADAccount -LockedOut -UsersOnly                       # comptes verrouillés
+Search-ADAccount -AccountInactive -TimeSpan 90.00:00:00 -UsersOnly   # inactifs depuis 90 jours
+Search-ADAccount -PasswordExpired -UsersOnly
+```
+
+### Créer et modifier
+```powershell
+$mdp = Read-Host 'Mot de passe initial' -AsSecureString
+New-ADUser -Name 'Sofia Martin' -GivenName 'Sofia' -Surname 'Martin' `
+    -SamAccountName 'sofia.martin' -UserPrincipalName 'sofia.martin@lycee.internal' `
+    -Path 'OU=SIO1,OU=Eleves,DC=lycee,DC=internal' `
+    -AccountPassword $mdp -Enabled $true -ChangePasswordAtLogon $true
+```
+• Le caractère `` ` `` (accent grave) en fin de ligne continue la commande sur la ligne suivante. Rien ne doit le suivre, pas même une espace. Le **splatting** (une table de hachage passée avec `@`) est plus lisible : il est utilisé au chapitre 10.
+• Sans `-Path`, le compte est créé dans le conteneur par défaut `CN=Users`.
+• Sans mot de passe valide, le compte est créé **désactivé**. `-Enabled $true` ne suffit que si le mot de passe respecte la stratégie de mot de passe du domaine ; sinon le compte existe mais reste désactivé, et il faut le corriger avec `Set-ADAccountPassword`.
+• Le `SamAccountName` (nom d'ouverture de session « pré-Windows 2000 ») est limité à 20 caractères.
+
+```powershell
+Set-ADUser -Identity sofia.martin -Department 'BTS SIO' -Title 'Élève'
+Set-ADAccountPassword -Identity sofia.martin -Reset -NewPassword (Read-Host -AsSecureString)
+Unlock-ADAccount -Identity sofia.martin
+Disable-ADAccount -Identity sofia.martin
+Add-ADGroupMember -Identity 'GG_SIO1' -Members sofia.martin, lucas.bernard
+Get-ADGroupMember -Identity 'GG_SIO1' | Select-Object Name
+New-ADOrganizationalUnit -Name 'SIO1' -Path 'OU=Eleves,DC=lycee,DC=internal'
+```
+Une unité d'organisation créée par `New-ADOrganizationalUnit` est **protégée contre la suppression accidentelle** par défaut.
+
+### Bonnes pratiques
+• Ne tape jamais un mot de passe en clair dans un script enregistré : il resterait lisible dans le fichier, l'historique (`Get-History`, fichier d'historique de PSReadLine) et les sauvegardes. Préfère `Read-Host -AsSecureString` ou `Get-Credential`.
+• Teste les créations et suppressions en masse avec `-WhatIf`.
+• Un compte de stagiaire ou de prestataire doit avoir une date d'expiration (`-AccountExpirationDate` pour AD, `-AccountExpires` en local).
+
+### À toi de jouer
+Partie A (poste Windows, Windows PowerShell 5.1 en administrateur) :
+1. Liste les membres du groupe des administrateurs locaux en utilisant son SID.
+2. Crée le compte local `test.ps` avec un mot de passe saisi au clavier, qui expire dans 7 jours, puis vérifie sa date d'expiration.
+3. Désactive-le, vérifie, puis supprime-le.
+
+Partie B (labo avec un contrôleur de domaine) :
+4. Affiche le nom, le login et la date de dernière connexion des comptes de l'OU `Eleves`, triés par date.
+5. Un élève appelle : « mon compte est bloqué ». Écris les deux commandes qui vérifient et débloquent son compte `lucas.bernard`.
+
+### Correction
+1. `Get-LocalGroupMember -SID 'S-1-5-32-544'` affiche notamment le compte `Administrateur` intégré et ton compte (colonne `PrincipalSource` : `Local`, `ActiveDirectory`, `MicrosoftAccount` ou `AzureAD`).
+2. ```powershell
+   $mdp = Read-Host 'Mot de passe' -AsSecureString
+   New-LocalUser -Name 'test.ps' -Password $mdp -AccountExpires (Get-Date).AddDays(7)
+   Get-LocalUser 'test.ps' | Select-Object Name, Enabled, AccountExpires
+   ```
+3. ```powershell
+   Disable-LocalUser -Name 'test.ps'
+   (Get-LocalUser -Name 'test.ps').Enabled        # False
+   Remove-LocalUser -Name 'test.ps'
+   ```
+4. ```powershell
+   Get-ADUser -Filter * -SearchBase 'OU=Eleves,DC=lycee,DC=internal' -Properties LastLogonDate |
+       Sort-Object LastLogonDate | Select-Object Name, SamAccountName, LastLogonDate
+   ```
+   Sans `-Properties LastLogonDate`, la colonne serait vide : la propriété n'est pas chargée par défaut. Elle est répliquée avec un décalage pouvant aller jusqu'à environ deux semaines : elle sert à repérer les comptes inactifs, pas à savoir qui s'est connecté ce matin.
+5. ```powershell
+   Get-ADUser -Identity lucas.bernard -Properties LockedOut, BadLogonCount | Select-Object Name, LockedOut, BadLogonCount
+   Unlock-ADAccount -Identity lucas.bernard
+   ```
+   Si le compte se verrouille de nouveau aussitôt, cherche la cause (mot de passe ancien enregistré sur un téléphone ou un lecteur réseau) dans les journaux du chapitre 9, événement 4740.
+"""
+
+    codeblock "powershell" {
+      title: "Audit rapide des comptes d'un domaine"
+      code: """
+Import-Module ActiveDirectory
+$base = 'DC=lycee,DC=internal'
+'Comptes verrouillés :'
+Search-ADAccount -LockedOut -UsersOnly | Select-Object Name, SamAccountName
+'Comptes actifs sans connexion depuis 90 jours :'
+Search-ADAccount -AccountInactive -TimeSpan 90.00:00:00 -UsersOnly |
+    Where-Object Enabled | Select-Object Name, LastLogonDate
+'Membres des Admins du domaine :'
+Get-ADGroupMember -Identity 'Admins du domaine' | Select-Object Name, ObjectClass
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle commande liste les comptes locaux d’un poste Windows ?" {
+        - "Get-ADUser -Local"
+        + "Get-LocalUser"
+        - "Get-User -Scope Local"
+        - "net-user"
+        explanation: "Get-LocalUser, du module Microsoft.PowerShell.LocalAccounts, liste les comptes de la machine. Get-ADUser interroge Active Directory. La commande classique net user existe aussi, mais elle produit du texte."
+      }
+      question "Quel type de valeur attend le paramètre -Password de New-LocalUser ?" {
+        - "une chaîne de caractères en clair"
+        + "une chaîne sécurisée (SecureString)"
+        - "un hachage SHA-256"
+        - "un fichier contenant le mot de passe"
+        explanation: "-Password attend un SecureString, obtenu par exemple avec Read-Host -AsSecureString ou Get-Credential. Une simple chaîne est refusée."
+      }
+      question "Pourquoi utiliser le SID S-1-5-32-544 plutôt que le nom Administrateurs dans un script ?" {
+        - "parce que le SID est plus court à taper"
+        + "parce que le nom du groupe dépend de la langue de Windows, pas le SID"
+        - "parce que le nom Administrateurs est réservé aux contrôleurs de domaine"
+        - "parce que Get-LocalGroupMember n’accepte pas de nom"
+        explanation: "Le groupe s'appelle Administrateurs en français et Administrators en anglais. Son SID S-1-5-32-544 est le même partout."
+      }
+      question "Combien de caractères au plus peut compter le nom d’un compte local ?" {
+        - "8"
+        - "15"
+        + "20"
+        - "64"
+        explanation: "Un nom de compte local est limité à 20 caractères. C'est aussi la limite du SamAccountName dans Active Directory."
+      }
+      question "Dans PowerShell 7, que se passe-t-il pour le module LocalAccounts ?" {
+        - "il est intégré et identique à celui de la 5.1"
+        + "il n’est pas intégré : on le charge par la couche de compatibilité avec -UseWindowsPowerShell"
+        - "il est remplacé par le module ActiveDirectory"
+        - "il n’existe pas et ne peut pas être utilisé"
+        explanation: "Le module dépend de Windows PowerShell. Dans PowerShell 7, Import-Module -UseWindowsPowerShell l'exécute dans un processus 5.1 en arrière-plan. Le plus simple est d'utiliser powershell.exe pour ces tâches."
+      }
+      question "Comment installer le module ActiveDirectory sur un poste Windows 11 d’administration ?" {
+        - "Install-Module ActiveDirectory"
+        + "Add-WindowsCapability -Online -Name 'Rsat.ActiveDirectory.DS-LDS.Tools~~~~0.0.1.0'"
+        - "Install-WindowsFeature AD-Domain-Services"
+        - "winget install ActiveDirectory"
+        explanation: "Sur Windows 10 et 11, les outils RSAT sont des fonctionnalités à la demande (Add-WindowsCapability). Install-WindowsFeature AD-Domain-Services installerait le rôle de contrôleur de domaine sur un serveur."
+      }
+      question "Get-ADUser sofia.martin n’affiche pas le service (Department). Pourquoi ?" {
+        - "parce que le compte est désactivé"
+        + "parce que cette propriété n’est pas chargée par défaut : il faut -Properties Department"
+        - "parce qu’il faut utiliser Get-ADObject"
+        - "parce que le service est stocké dans le groupe"
+        explanation: "Get-ADUser ne renvoie qu'un jeu réduit de propriétés. -Properties ajoute celles demandées, -Properties * les charge toutes (plus lent)."
+      }
+      question "Où New-ADUser crée-t-il le compte si -Path n’est pas indiqué ?" {
+        - "à la racine du domaine"
+        + "dans le conteneur par défaut CN=Users"
+        - "dans l’OU Domain Controllers"
+        - "nulle part : -Path est obligatoire"
+        explanation: "Sans -Path, le compte va dans le conteneur Users. Un conteneur n'est pas une OU : on ne peut pas lui lier de GPO. D'où l'intérêt de préciser -Path."
+      }
+      question "New-ADUser a créé le compte, mais il reste désactivé malgré -Enabled $true. Quelle est la cause la plus probable ?" {
+        - "l’OU est protégée contre la suppression"
+        + "le mot de passe fourni ne respecte pas la stratégie de mot de passe du domaine"
+        - "le paramètre -Enabled n’existe pas"
+        - "le SamAccountName contient un point"
+        explanation: "Un compte n'est jamais activé sans mot de passe valide. Si le mot de passe est refusé par la stratégie, le compte existe mais désactivé ; on corrige avec Set-ADAccountPassword puis Enable-ADAccount."
+      }
+      question "Quelle commande liste les comptes verrouillés du domaine ?" {
+        - "Get-ADUser -Locked"
+        + "Search-ADAccount -LockedOut -UsersOnly"
+        - "Get-ADAccount -Status Locked"
+        - "Unlock-ADAccount -List"
+        explanation: "Search-ADAccount -LockedOut renvoie les comptes verrouillés ; -UsersOnly exclut les comptes d'ordinateurs. Unlock-ADAccount débloque un compte donné."
+      }
+      question "Quel est le rôle de l’accent grave ` en fin de ligne dans une commande PowerShell ?" {
+        - "il commente la fin de la ligne"
+        + "il indique que la commande continue sur la ligne suivante"
+        - "il exécute la ligne en arrière-plan"
+        - "il échappe le mot de passe"
+        explanation: "L'accent grave est le caractère d'échappement : en fin de ligne, il échappe le retour à la ligne. Une espace après lui casse la continuation, d'où la préférence pour le splatting."
+      }
+      question "Pourquoi éviter d’écrire un mot de passe en clair dans un script .ps1 ?" {
+        - "parce que PowerShell refuse les chaînes contenant des chiffres"
+        + "parce qu’il reste lisible dans le fichier, l’historique et les sauvegardes"
+        - "parce que le script devient plus lent"
+        - "parce que la politique d’exécution bloque ce script"
+        explanation: "Un mot de passe en clair se retrouve partout où le fichier est copié. On le saisit avec Read-Host -AsSecureString ou Get-Credential, ou on le génère et le transmet de façon sûre."
+      }
+      question "Quelle commande ajoute deux élèves au groupe GG_SIO1 ?" {
+        - "Add-ADGroupMember -Identity sofia.martin, lucas.bernard -Members GG_SIO1"
+        + "Add-ADGroupMember -Identity 'GG_SIO1' -Members sofia.martin, lucas.bernard"
+        - "Set-ADGroup GG_SIO1 -Add sofia.martin, lucas.bernard"
+        - "New-ADGroupMember GG_SIO1 sofia.martin lucas.bernard"
+        explanation: "-Identity désigne le groupe et -Members les comptes à ajouter. L'inverse, Add-ADPrincipalGroupMembership, ajoute un compte à plusieurs groupes."
+      }
+      question "Quelle commande trouve les comptes utilisateurs sans connexion depuis 90 jours ?" {
+        - "Get-ADUser -Inactive 90"
+        + "Search-ADAccount -AccountInactive -TimeSpan 90.00:00:00 -UsersOnly"
+        - "Search-ADAccount -LockedOut -Days 90"
+        - "Get-ADUser -Filter 'LastLogon -gt 90'"
+        explanation: "Search-ADAccount -AccountInactive s'appuie sur LastLogonDate. Le format 90.00:00:00 est une durée : 90 jours, 0 heure, 0 minute, 0 seconde."
+      }
+    }
+  }
+
+  module "journaux-evenements" {
+    title: "Chapitre 9 : interroger les journaux d'événements"
+    duration: "35min"
+    content: """
+### Les journaux de Windows
+Windows enregistre ce qui se passe dans des **journaux d'événements** (event logs), consultables avec l'Observateur d'événements (`eventvwr.msc`). Les trois principaux :
+| Journal | Contenu | Accès |
+|---|---|---|
+| `System` | pilotes, services, démarrages et arrêts | utilisateur |
+| `Application` | messages des applications | utilisateur |
+| `Security` | ouvertures de session, comptes, droits (audit) | **administrateur** |
+
+S'y ajoutent des centaines de journaux spécialisés (`Microsoft-Windows-PowerShell/Operational`, `Microsoft-Windows-TaskScheduler/Operational`…).
+
+Chaque événement a un **identifiant** (Id), une **source** (ProviderName), un **niveau**, une date (`TimeCreated`) et un message.
+
+### Get-WinEvent
+`Get-WinEvent` est la commande à utiliser. L'ancienne `Get-EventLog` n'existe que dans Windows PowerShell 5.1 ; elle a disparu de PowerShell 7 et ne lit pas les journaux spécialisés.
+
+```powershell
+Get-WinEvent -ListLog * | Where-Object RecordCount -gt 0 | Select-Object LogName, RecordCount
+Get-WinEvent -LogName System -MaxEvents 20
+```
+
+Pour chercher efficacement, utilise **`-FilterHashtable`** : le filtrage est fait par le service de journalisation lui-même (filtrer à gauche), ce qui est beaucoup plus rapide qu'un `Where-Object` sur des milliers d'événements.
+
+```powershell
+# Erreurs et événements critiques du journal Système depuis 24 heures
+Get-WinEvent -FilterHashtable @{
+    LogName   = 'System'
+    Level     = 1, 2
+    StartTime = (Get-Date).AddDays(-1)
+} | Select-Object TimeCreated, Id, ProviderName, Message
+```
+Clés utiles : `LogName`, `ProviderName`, `Id`, `Level`, `StartTime`, `EndTime`. Le niveau s'écrit avec un **nombre** :
+
+| Level | Niveau |
+|---|---|
+| 1 | Critique |
+| 2 | Erreur |
+| 3 | Avertissement |
+| 4 | Information |
+| 5 | Détail (verbose) |
+
+Quand aucun événement ne correspond, `Get-WinEvent` affiche une erreur « Aucun événement trouvé ». Dans un script, ajoute `-ErrorAction SilentlyContinue` et teste si le résultat est vide.
+
+### Les identifiants à connaître
+| Journal | Id | Signification |
+|---|---|---|
+| Security | 4624 | ouverture de session réussie |
+| Security | 4625 | échec d'ouverture de session |
+| Security | 4634 | fermeture de session |
+| Security | 4720 | compte utilisateur créé |
+| Security | 4726 | compte utilisateur supprimé |
+| Security | 4732 | membre ajouté à un groupe local de sécurité (par exemple Administrateurs) |
+| Security | 4740 | compte verrouillé (sur un domaine : enregistré sur le contrôleur de domaine) |
+| System | 7036 | un service a changé d'état (démarré, arrêté) |
+| System | 7034 | un service s'est arrêté de façon inattendue |
+| System | 6005 / 6006 | démarrage / arrêt du service de journalisation (donc de Windows) |
+| System | 6008 | l'arrêt précédent était inattendu |
+| System | 41 | redémarrage sans arrêt propre (Kernel-Power : coupure, plantage) |
+| System | 1074 | arrêt ou redémarrage demandé par un utilisateur ou un programme |
+
+Les événements de sécurité n'apparaissent que si **l'audit** correspondant est activé (stratégie d'audit, par GPO sur un domaine). `auditpol /get /category:*` (console administrateur) montre ce qui est audité.
+
+### Lire le détail d'un événement
+Le message est du texte, mais les données de l'événement sont rangées dans des champs nommés, accessibles par le XML de l'événement :
+
+```powershell
+$echecs = Get-WinEvent -FilterHashtable @{ LogName = 'Security'; Id = 4625; StartTime = (Get-Date).AddHours(-24) } -ErrorAction SilentlyContinue
+
+foreach ($e in $echecs) {
+    $xml = [xml]$e.ToXml()
+    $d = @{}
+    foreach ($champ in $xml.Event.EventData.Data) { $d[$champ.Name] = $champ.'#text' }
+    [PSCustomObject]@{
+        Heure     = $e.TimeCreated
+        Compte    = $d['TargetUserName']
+        Source    = $d['IpAddress']
+        Type      = $d['LogonType']
+        SousCode  = $d['SubStatus']
+    }
+}
+```
+Champs utiles d'un 4625 : `TargetUserName` (compte visé), `IpAddress` et `WorkstationName` (origine), `LogonType` (2 = au clavier, 3 = réseau, 10 = Bureau à distance), `SubStatus` (`0xC000006A` = mauvais mot de passe, `0xC0000064` = compte inexistant, `0xC0000234` = compte verrouillé).
+
+### Détecter une attaque par force brute
+Beaucoup d'échecs en peu de temps sur un même compte, ou sur de nombreux comptes depuis une même adresse, signalent une tentative de deviner les mots de passe. On compte avec `Group-Object` :
+
+```powershell
+$rapport | Group-Object Source | Sort-Object Count -Descending | Select-Object Count, Name -First 5
+```
+Si tu trouves une telle activité sur un système qui n'est pas ton labo, ne « contre-attaque » pas : signale-la au responsable du réseau, qui gère l'incident.
+
+### À toi de jouer
+1. Affiche les 10 derniers événements du journal `System` de niveau erreur.
+2. Trouve la date des 5 derniers démarrages de ta machine (événement 6005) et vérifie s'il y a eu des arrêts inattendus (41 ou 6008) depuis 30 jours.
+3. Dans ton labo, ouvre une session avec un mauvais mot de passe trois fois sur un compte local de test, par exemple `test.ps` recréé pour l'occasion (écran de verrouillage ou `runas /user:test.ps cmd`). Dans une console administrateur, retrouve ces échecs et affiche pour chacun l'heure, le compte et le sous-code.
+4. Explique pourquoi `Get-WinEvent -LogName Security | Where-Object Id -eq 4625` est déconseillé.
+
+### Correction
+1. ```powershell
+   Get-WinEvent -FilterHashtable @{ LogName = 'System'; Level = 2 } -MaxEvents 10 |
+       Select-Object TimeCreated, Id, ProviderName, Message
+   ```
+2. ```powershell
+   Get-WinEvent -FilterHashtable @{ LogName = 'System'; Id = 6005 } -MaxEvents 5 | Select-Object TimeCreated
+   Get-WinEvent -FilterHashtable @{ LogName = 'System'; Id = 41, 6008; StartTime = (Get-Date).AddDays(-30) } -ErrorAction SilentlyContinue |
+       Select-Object TimeCreated, Id, Message
+   ```
+   La clé `Id` accepte plusieurs valeurs. Aucun résultat pour la deuxième commande : pas d'arrêt brutal depuis 30 jours. Des 41 répétés orientent vers l'alimentation, la température ou un pilote.
+3. Avec le script de la section « Lire le détail », filtré sur la dernière heure : trois lignes avec `Compte = test.ps`, `Type = 2` pour une ouverture au clavier, et `SousCode = 0xC000006A` (mauvais mot de passe). Si rien n'apparaît, l'audit des échecs d'ouverture de session n'est pas activé : vérifie avec `auditpol`.
+4. Cette commande lit **tout** le journal Sécurité (souvent des dizaines de milliers d'événements), crée un objet pour chacun, puis jette presque tout. `-FilterHashtable @{ LogName = 'Security'; Id = 4625 }` demande au service de journalisation de ne renvoyer que les 4625 : c'est beaucoup plus rapide.
+"""
+
+    codeblock "powershell" {
+      title: "Comptes visés par des échecs de connexion depuis 24 h"
+      code: """
+#Requires -RunAsAdministrator
+$filtre = @{ LogName = 'Security'; Id = 4625; StartTime = (Get-Date).AddDays(-1) }
+$evts = Get-WinEvent -FilterHashtable $filtre -ErrorAction SilentlyContinue
+if (-not $evts) { 'Aucun échec de connexion enregistré.'; return }
+
+$evts | ForEach-Object {
+    $x = [xml]$_.ToXml()
+    ($x.Event.EventData.Data | Where-Object Name -eq 'TargetUserName').'#text'
+} | Group-Object | Sort-Object Count -Descending | Select-Object Count, Name
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle commande lit les journaux d’événements dans PowerShell 7 ?" {
+        - "Get-EventLog"
+        + "Get-WinEvent"
+        - "Read-EventLog"
+        - "Get-Log"
+        explanation: "Get-WinEvent fonctionne dans les deux versions et lit tous les journaux. Get-EventLog n'existe que dans Windows PowerShell 5.1 et ne connaît que les journaux classiques."
+      }
+      question "Quel identifiant correspond à un échec d’ouverture de session dans le journal Sécurité ?" {
+        - "4624"
+        + "4625"
+        - "4720"
+        - "7036"
+        explanation: "4625 = échec d'ouverture de session ; 4624 = réussite ; 4720 = création de compte ; 7036 = changement d'état d'un service dans le journal Système."
+      }
+      question "Pourquoi utiliser -FilterHashtable plutôt que Where-Object pour filtrer des événements ?" {
+        - "parce que Where-Object ne connaît pas la propriété Id"
+        + "parce que le filtre est appliqué par le service de journalisation, ce qui évite de charger tous les événements"
+        - "parce que -FilterHashtable affiche les messages en français"
+        - "parce que Where-Object ne fonctionne pas sur le journal Security"
+        explanation: "C'est le principe filtrer à gauche : seuls les événements demandés sont lus et transmis. Sur un gros journal, la différence se compte en minutes."
+      }
+      question "Quelle valeur de la clé Level sélectionne les erreurs ?" {
+        - "'Error'"
+        - "1"
+        + "2"
+        - "4"
+        explanation: "Level attend un nombre : 1 critique, 2 erreur, 3 avertissement, 4 information, 5 détail. Une chaîne comme Error provoque une erreur."
+      }
+      question "Pourquoi Get-WinEvent -LogName Security échoue-t-il dans une console normale ?" {
+        - "parce que le journal Security n’existe que sur les serveurs"
+        + "parce que la lecture du journal Sécurité exige des droits d’administration"
+        - "parce qu’il faut écrire Securite en français"
+        - "parce que la politique d’exécution le bloque"
+        explanation: "Le journal Sécurité contient des informations sensibles : seuls les administrateurs (ou les membres du groupe Lecteurs des journaux d'événements) peuvent le lire."
+      }
+      question "Un poste redémarre seul la nuit. Quel événement du journal Système indique un redémarrage sans arrêt propre ?" {
+        - "6005"
+        - "1074"
+        + "41 (Kernel-Power)"
+        - "7036"
+        explanation: "L'événement 41 signale un redémarrage sans arrêt propre : coupure de courant, plantage, bouton maintenu. 1074 indique au contraire un arrêt demandé par un utilisateur ou un programme, comme une mise à jour."
+      }
+      question "Dans un événement 4625, que signifie le sous-code 0xC000006A ?" {
+        - "le compte n’existe pas"
+        + "le nom de compte est correct mais le mot de passe est faux"
+        - "le compte est désactivé"
+        - "l’heure du poste est mal réglée"
+        explanation: "0xC000006A = mauvais mot de passe pour un compte existant. 0xC0000064 = compte inexistant, ce qui peut indiquer un attaquant qui essaie des noms au hasard."
+      }
+      question "Aucun événement 4625 n’apparaît alors que tu as raté trois connexions. Quelle est la cause la plus probable ?" {
+        - "le journal Security est plein"
+        + "l’audit des échecs d’ouverture de session n’est pas activé"
+        - "Get-WinEvent ne lit que les événements de la veille"
+        - "les échecs sont dans le journal Application"
+        explanation: "Les événements de sécurité ne sont écrits que si la stratégie d'audit les demande. auditpol /get /category:* montre la configuration."
+      }
+      question "Dans un événement 4625, quel LogonType correspond à une tentative par Bureau à distance ?" {
+        - "2"
+        - "3"
+        - "5"
+        + "10"
+        explanation: "2 = ouverture au clavier, 3 = accès réseau (partage), 5 = service, 10 = RemoteInteractive, c'est-à-dire le Bureau à distance."
+      }
+      question "Comment récupérer le champ TargetUserName d’un événement de manière fiable ?" {
+        - "en découpant le message texte avec Split"
+        + "en lisant les champs nommés du XML de l’événement ([xml]$e.ToXml())"
+        - "avec la propriété $e.TargetUserName"
+        - "avec Get-WinEvent -Field TargetUserName"
+        explanation: "Le message est traduit et peut changer selon la langue ; les champs de EventData ont des noms fixes. L'objet événement n'a pas de propriété TargetUserName directe."
+      }
+      question "Sur un domaine, où chercher l’événement 4740 qui indique quel poste a verrouillé un compte ?" {
+        - "sur le poste de l’utilisateur seulement"
+        + "dans le journal Sécurité des contrôleurs de domaine"
+        - "dans le journal Application du serveur de fichiers"
+        - "dans le journal System du poste"
+        explanation: "Le verrouillage d'un compte de domaine est enregistré par le contrôleur de domaine. L'événement indique le nom de l'ordinateur d'où viennent les échecs."
+      }
+      question "Quel événement 4732 surveiller pour repérer un ajout suspect ?" {
+        - "la création d’une unité d’organisation"
+        + "l’ajout d’un membre à un groupe local de sécurité, comme Administrateurs"
+        - "la modification d’un mot de passe"
+        - "l’installation d’un logiciel"
+        explanation: "4732 signale qu'un membre a été ajouté à un groupe local de sécurité. Un compte ajouté aux Administrateurs sans demande est un signal d'alerte classique."
+      }
+      question "Que fait Get-WinEvent quand aucun événement ne correspond au filtre ?" {
+        - "il renvoie silencieusement $null"
+        + "il affiche une erreur indiquant qu’aucun événement n’a été trouvé"
+        - "il renvoie les 10 derniers événements du journal"
+        - "il crée un événement vide"
+        explanation: "L'absence de résultat produit une erreur non bloquante. Dans un script, on ajoute -ErrorAction SilentlyContinue puis on teste si la variable est vide."
+      }
+    }
+  }
+
+  module "synthese" {
+    title: "Chapitre 10 : synthèse, créer des comptes depuis un CSV"
+    duration: "45min"
+    content: """
+### Le besoin
+À chaque rentrée, le lycée reçoit de la vie scolaire la liste des nouveaux élèves dans un fichier Excel. Il faut créer un compte Active Directory par élève, dans l'OU de sa classe, l'ajouter au groupe de sa classe, lui donner un mot de passe initial à changer à la première connexion, et remettre à chaque professeur principal la liste des identifiants. À la main, pour 150 élèves, c'est une journée de clics et d'erreurs de frappe. Le script qui suit le fait en une minute, de façon reproductible.
+
+Il réutilise tout le cours : paramètres et `-WhatIf` (chapitre 5), CSV (chapitre 6), boucles et objets (chapitre 4), AD (chapitre 8), gestion des erreurs, rapport.
+
+### Étape 1 : le fichier d'entrée
+La vie scolaire exporte depuis Excel au format « CSV UTF-8 (délimité par des points-virgules) » :
+```text
+Prenom;Nom;Classe
+Sofia;Martin;SIO1
+Lucas;Bernard;SIO1
+Inès;Petit;CIEL2
+Jean-Baptiste;Le Gall;CIEL2
+Maëlys;N'Diaye-Fontaine;SIO1
+```
+Prérequis dans l'annuaire du labo : les OU `OU=SIO1,OU=Eleves,DC=lycee,DC=internal` et `OU=CIEL2,OU=Eleves,DC=lycee,DC=internal`, et les groupes `GG_SIO1` et `GG_CIEL2`.
+
+### Étape 2 : construire un identifiant propre
+Règle choisie : `prenom.nom`, en minuscules, sans accent, sans espace ni apostrophe, 20 caractères au plus (limite du SamAccountName).
+
+```powershell
+function ConvertTo-Login {
+    param([string]$Prenom, [string]$Nom)
+    $t = "$Prenom.$Nom".ToLower()
+    $t = $t.Normalize([Text.NormalizationForm]::FormD) -replace '\p{Mn}', ''   # é devient e
+    $t = $t -replace '[^a-z0-9.\-]', ''                                         # garde lettres, chiffres, point, tiret
+    if ($t.Length -gt 20) { $t = $t.Substring(0, 20) }
+    $t
+}
+ConvertTo-Login 'Maëlys' "N'Diaye-Fontaine"     # maelys.ndiaye-fontai
+```
+La normalisation `FormD` sépare chaque lettre accentuée en lettre de base suivie d'un accent ; l'expression régulière `\p{Mn}` supprime ces accents. Le second `-replace` retire tout ce qui n'est pas autorisé, ce qui protège aussi le filtre AD de l'étape 4 contre une apostrophe.
+
+### Étape 3 : générer un mot de passe initial
+Un mot de passe initial doit être aléatoire et différent pour chaque compte (jamais « Lycee2026! » pour tout le monde). On utilise le générateur aléatoire **cryptographique** de .NET, pas `Get-Random`, qui n'est pas conçu pour la sécurité.
+
+```powershell
+function New-MotDePasse {
+    param([int]$Longueur = 14)
+    # 64 caractères sans les confusions I/l/1/O/0 : 256 est un multiple de 64, donc chaque caractère a la même probabilité
+    $car = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!?#%+=-'
+    $rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+    do {
+        $octets = New-Object byte[] $Longueur
+        $rng.GetBytes($octets)
+        $mdp = -join ($octets | ForEach-Object { $car[$_ % $car.Length] })
+    } until ($mdp -cmatch '[A-Z]' -and $mdp -cmatch '[a-z]' -and $mdp -match '\d' -and $mdp -match '[^A-Za-z0-9]')
+    $mdp
+}
+```
+La boucle recommence tant que le mot de passe ne contient pas les quatre familles de caractères exigées par la stratégie de complexité par défaut de Windows. 14 caractères parmi 64 donnent 84 bits d'entropie, au-dessus des 80 bits que la CNIL recommande pour un mot de passe seul.
+
+### Étape 4 : le script complet
+```powershell
+# C:\Scripts\New-ComptesEleves.ps1
+#Requires -Modules ActiveDirectory
+[CmdletBinding(SupportsShouldProcess)]
+param(
+    [Parameter(Mandatory)][string]$CheminCsv,
+    [string]$OuRacine = 'OU=Eleves,DC=lycee,DC=internal',
+    [string]$Domaine  = 'lycee.internal',
+    [string]$DossierRapport = 'C:\Scripts\Rapports'
+)
+# (coller ici les fonctions ConvertTo-Login et New-MotDePasse)
+
+$ErrorActionPreference = 'Stop'
+New-Item -Path $DossierRapport -ItemType Directory -Force | Out-Null
+$eleves = Import-Csv -Path $CheminCsv -Delimiter ';' -Encoding UTF8
+
+$resultats = foreach ($e in $eleves) {
+    $login = ConvertTo-Login -Prenom $e.Prenom -Nom $e.Nom
+    $ou    = "OU=$($e.Classe),$OuRacine"
+    $ligne = [PSCustomObject]@{ Login = $login; Nom = "$($e.Prenom) $($e.Nom)"; Classe = $e.Classe; Etat = ''; MotDePasse = '' }
+    try {
+        if (Get-ADUser -Filter "SamAccountName -eq '$login'") {
+            $ligne.Etat = 'Existe déjà'
+        }
+        elseif ($PSCmdlet.ShouldProcess($login, "Créer le compte dans $ou")) {
+            $mdp = New-MotDePasse
+            $params = @{
+                Name                  = $ligne.Nom
+                GivenName             = $e.Prenom
+                Surname               = $e.Nom
+                SamAccountName        = $login
+                UserPrincipalName     = "$login@$Domaine"
+                Path                  = $ou
+                Description           = "Élève $($e.Classe)"
+                AccountPassword       = ConvertTo-SecureString $mdp -AsPlainText -Force
+                Enabled               = $true
+                ChangePasswordAtLogon = $true
+            }
+            New-ADUser @params
+            Add-ADGroupMember -Identity "GG_$($e.Classe)" -Members $login
+            $ligne.Etat = 'Créé'
+            $ligne.MotDePasse = $mdp
+        }
+        else {
+            $ligne.Etat = 'Simulation'
+        }
+    }
+    catch {
+        $ligne.Etat = "Erreur : $($_.Exception.Message)"
+    }
+    $ligne
+}
+
+$fichier = Join-Path $DossierRapport "comptes-$(Get-Date -Format 'yyyyMMdd-HHmm').csv"
+$resultats | Export-Csv -Path $fichier -Delimiter ';' -Encoding UTF8 -NoTypeInformation
+$resultats | Group-Object Etat | Select-Object Name, Count
+"Rapport : $fichier"
+```
+Points à remarquer :
+• `@params` est du **splatting** : la table de hachage devient la liste des paramètres. C'est plus lisible qu'une longue ligne avec des accents graves.
+• `ConvertTo-SecureString -AsPlainText -Force` est nécessaire ici car le mot de passe vient d'être généré en mémoire ; il n'est jamais écrit dans le script.
+• Chaque élève est traité dans son propre `try/catch` : une erreur (OU absente, groupe inexistant) n'arrête pas les autres, elle est notée dans le rapport.
+• Les mots de passe n'apparaissent pas à l'écran : seul le résumé par état est affiché.
+
+### Étape 5 : simuler, exécuter, vérifier
+```powershell
+Set-Location C:\Scripts
+.\New-ComptesEleves.ps1 -CheminCsv .\rentree.csv -WhatIf      # 1. simulation : rien n'est créé
+.\New-ComptesEleves.ps1 -CheminCsv .\rentree.csv              # 2. exécution réelle
+Get-ADUser -Filter * -SearchBase 'OU=Eleves,DC=lycee,DC=internal' |
+    Select-Object SamAccountName, Enabled                       # 3. vérification
+.\New-ComptesEleves.ps1 -CheminCsv .\rentree.csv              # 4. relance : tout doit être « Existe déjà »
+```
+La relance montre que le script est **idempotent** : le lancer deux fois ne crée pas de doublons. C'est une qualité essentielle d'un script d'administration.
+
+### Étape 6 : protéger le rapport
+Le rapport contient des mots de passe en clair. Range-le dans un dossier dont les droits NTFS sont réservés aux administrateurs, remets à chaque professeur principal seulement la liste de sa classe, puis supprime le fichier. Le changement obligatoire à la première connexion garantit que le mot de passe transmis ne sert qu'une fois. C'est la démarche recommandée par l'ANSSI et la CNIL : mot de passe initial unique, transmis par un canal maîtrisé, changé dès la première utilisation.
+
+### À toi de jouer
+1. Monte le labo (OU et groupes), crée `rentree.csv` avec les cinq élèves ci-dessus et lance le script avec `-WhatIf`, puis pour de vrai. Quel login obtient Jean-Baptiste Le Gall ?
+2. Ajoute au début de la boucle une vérification qui crée l'OU de la classe si elle n'existe pas (`Get-ADOrganizationalUnit`, `New-ADOrganizationalUnit`), en respectant `-WhatIf`.
+3. Deux élèves s'appellent Lucas Bernard. Que fait le script actuel pour le second ? Propose une amélioration.
+4. Ton établissement n'a pas de domaine : adapte la partie création pour des comptes **locaux** sur un poste partagé (Windows PowerShell 5.1).
+
+### Correction
+1. `jean-baptiste.legall` : les minuscules sont appliquées, l'espace de « Le Gall » est retiré, le tiret est gardé ; 20 caractères exactement, donc pas de coupure. La simulation affiche des lignes « WhatIf : Opération « Créer le compte dans OU=CIEL2,... » en cours sur la cible « jean-baptiste.legall » » et le résumé compte 5 « Simulation ».
+2. Juste après le calcul de `$ou` :
+   ```powershell
+   $existe = Get-ADOrganizationalUnit -Filter "Name -eq '$($e.Classe)'" -SearchBase $OuRacine -SearchScope OneLevel
+   if (-not $existe -and $PSCmdlet.ShouldProcess($ou, 'Créer l''OU')) {
+       New-ADOrganizationalUnit -Name $e.Classe -Path $OuRacine
+   }
+   ```
+   `-SearchScope OneLevel` cherche seulement juste sous `OU=Eleves`. Dans une chaîne entre guillemets simples, une apostrophe s'écrit en la doublant (`''`). Il faudrait aussi créer le groupe `GG_<classe>` s'il manque (`New-ADGroup -GroupScope Global`).
+3. Le second Lucas Bernard obtient l'état « Existe déjà » et **n'a pas de compte** : c'est un vrai problème, signalé seulement dans le rapport. Amélioration : si le login est pris, essayer `lucas.bernard2`, `lucas.bernard3`… jusqu'à en trouver un libre (boucle `while` avec un compteur), et vérifier aussi que le `Name` (« Lucas Bernard ») n'existe pas déjà dans la même OU, car deux objets ne peuvent pas avoir le même nom dans un même conteneur. Pour distinguer un vrai doublon d'un homonyme, il faudrait un identifiant fourni par la vie scolaire (numéro d'élève) stocké par exemple dans `EmployeeID`.
+4. ```powershell
+   $mdpSecurise = ConvertTo-SecureString $mdp -AsPlainText -Force
+   New-LocalUser -Name $login -FullName $ligne.Nom -Password $mdpSecurise -Description "Élève $($e.Classe)"
+   Add-LocalGroupMember -SID 'S-1-5-32-545' -Member $login
+   ```
+   L'existence se teste avec `Get-LocalUser -Name $login -ErrorAction SilentlyContinue`. `New-LocalUser` n'a pas d'équivalent de `-ChangePasswordAtLogon` ; on peut l'obtenir avec `net user $login /logonpasswordchg:yes`. Le `#Requires -Modules ActiveDirectory` doit être remplacé par `#Requires -RunAsAdministrator`.
+
+### Pour aller plus loin
+• Documentation PowerShell, Microsoft Learn : « about_Execution_Policies », « about_Comparison_Operators », « about_Try_Catch_Finally », « about_Splatting » (learn.microsoft.com/powershell).
+• Module ActiveDirectory, Microsoft Learn : pages de référence de New-ADUser, Get-ADUser et Search-ADAccount.
+• « Creating Get-WinEvent queries with FilterHashtable », Microsoft Learn, et la page « 4625(F): An account failed to log on » de la documentation d'audit de sécurité Windows.
+• ANSSI, « Recommandations relatives à l'administration sécurisée des systèmes d'information » et « Recommandations relatives à l'authentification multifacteur et aux mots de passe » (cyber.gouv.fr).
+• CNIL, recommandation relative aux mots de passe et autres secrets partagés (délibération n° 2022-100).
+• Référentiels du BTS SIO (bloc 2 SISR) et du BTS CIEL : automatisation des tâches d'administration.
+"""
+
+    codeblock "powershell" {
+      title: "Lancer le mini-projet en toute sécurité"
+      code: """
+Set-Location C:\Scripts
+Get-Content .\rentree.csv -Encoding UTF8 | Select-Object -First 3      # contrôle du fichier
+.\New-ComptesEleves.ps1 -CheminCsv .\rentree.csv -WhatIf              # simulation
+.\New-ComptesEleves.ps1 -CheminCsv .\rentree.csv -Verbose             # exécution
+Get-ADGroupMember -Identity GG_SIO1 | Select-Object SamAccountName    # contrôle
+"""
+    }
+
+    quiz {
+      pick: 10
+      question "Quel programme lance Windows PowerShell 5.1 ?" {
+        + "powershell.exe"
+        - "pwsh.exe"
+        - "ps51.exe"
+        - "cmd.exe /powershell"
+        explanation: "powershell.exe est Windows PowerShell 5.1, fourni avec Windows. pwsh.exe lance PowerShell 7."
+      }
+      question "Quelle commande donne les exemples d’utilisation de New-ADUser ?" {
+        - "Get-Command New-ADUser -Examples"
+        + "Get-Help New-ADUser -Examples"
+        - "New-ADUser -?Examples"
+        - "Get-Member New-ADUser"
+        explanation: "Get-Help -Examples affiche les exemples de l'aide. Get-Command trouve des commandes, Get-Member décrit des objets."
+      }
+      question "Que fait l’instruction $t.Normalize([Text.NormalizationForm]::FormD) -replace ’\\p{Mn}’, ’’ ?" {
+        - "elle met le texte en majuscules"
+        + "elle retire les accents des lettres"
+        - "elle supprime les chiffres"
+        - "elle chiffre le texte"
+        explanation: "FormD décompose é en e suivi d'un accent combinant ; \\p{Mn} désigne ces marques, que -replace supprime. Résultat : maelys au lieu de maëlys."
+      }
+      question "Pourquoi le script coupe-t-il le login à 20 caractères ?" {
+        - "pour des raisons d’affichage dans le rapport"
+        + "parce que le SamAccountName est limité à 20 caractères"
+        - "parce qu’Import-Csv tronque les valeurs"
+        - "parce que les mots de passe font 20 caractères"
+        explanation: "Le nom d'ouverture de session pré-Windows 2000 (SamAccountName) ne dépasse pas 20 caractères, comme les noms de comptes locaux."
+      }
+      question "Pourquoi le mini-projet n’utilise-t-il pas Get-Random pour les mots de passe ?" {
+        - "parce que Get-Random n’existe pas dans PowerShell 7"
+        + "parce que Get-Random n’est pas un générateur conçu pour la sécurité ; on utilise RandomNumberGenerator"
+        - "parce que Get-Random ne renvoie que des nombres pairs"
+        - "parce que Get-Random est trop lent"
+        explanation: "Un mot de passe doit venir d'un générateur cryptographique, imprévisible. System.Security.Cryptography.RandomNumberGenerator remplit ce rôle."
+      }
+      question "Qu’est-ce que le splatting dans New-ADUser @params ?" {
+        - "une façon de lancer la commande en parallèle"
+        + "le passage des paramètres sous forme d’une table de hachage préparée à l’avance"
+        - "une compression des paramètres"
+        - "un alias de New-ADUser"
+        explanation: "Avec @params, chaque clé de la table devient un paramètre et chaque valeur son argument. Le code est plus lisible et facile à compléter."
+      }
+      question "Que garantit l’exécution du script avec -WhatIf ?" {
+        - "les comptes sont créés désactivés"
+        + "aucun compte n’est créé : les actions protégées par ShouldProcess sont seulement décrites"
+        - "les comptes sont créés puis supprimés"
+        - "le rapport n’est pas écrit mais les comptes sont créés"
+        explanation: "Grâce à SupportsShouldProcess et $PSCmdlet.ShouldProcess, -WhatIf décrit chaque création sans la faire. Les lectures (Get-ADUser) s'exécutent normalement."
+      }
+      question "Le script est relancé une deuxième fois avec le même fichier. Quel résultat attendre ?" {
+        - "des comptes en double avec un suffixe"
+        + "tous les comptes à l’état Existe déjà, sans modification"
+        - "la suppression des comptes existants"
+        - "une erreur bloquante dès le premier élève"
+        explanation: "Le script vérifie l'existence avant de créer : il est idempotent. Relancer ne casse rien, ce qui est indispensable après une coupure en cours d'exécution."
+      }
+      question "Pourquoi chaque élève est-il traité dans son propre bloc try/catch ?" {
+        - "pour accélérer le script"
+        + "pour qu’une erreur sur un élève n’empêche pas la création des autres et soit notée dans le rapport"
+        - "parce que New-ADUser l’exige"
+        - "pour masquer toutes les erreurs"
+        explanation: "Avec un seul try autour de toute la boucle, la première erreur arrêterait tout. Ici, l'erreur est enregistrée dans la colonne Etat et la boucle continue."
+      }
+      question "Pourquoi faut-il $ErrorActionPreference = ’Stop’ dans ce script ?" {
+        - "pour arrêter le script à la première erreur"
+        + "pour que les erreurs non bloquantes des cmdlets AD deviennent bloquantes et soient captées par catch"
+        - "pour désactiver l’affichage des avertissements"
+        - "pour exiger une console administrateur"
+        explanation: "catch ne voit que les erreurs bloquantes. Avec la préférence Stop, une erreur d'Add-ADGroupMember (groupe absent, par exemple) est captée par le catch de l'élève."
+      }
+      question "Que vaut ConvertTo-Login ’Jean-Baptiste’ ’Le Gall’ ?" {
+        - "jean-baptiste.le gall"
+        + "jean-baptiste.legall"
+        - "jeanbaptiste.legall"
+        - "jean-baptiste.le"
+        explanation: "Le texte est mis en minuscules, l'espace est retirée par le filtre [^a-z0-9.\\-], le tiret est conservé. Le résultat fait 20 caractères, il n'est donc pas coupé."
+      }
+      question "Le rapport CSV du mini-projet contient les mots de passe initiaux. Quelle mesure est adaptée ?" {
+        - "le publier sur le partage commun pour que chacun retrouve le sien"
+        + "le stocker avec des droits réservés aux administrateurs, transmettre chaque liste à la bonne personne, puis le supprimer"
+        - "l’envoyer à tous les professeurs par messagerie"
+        - "le garder indéfiniment comme sauvegarde des mots de passe"
+        explanation: "Un secret ne circule qu'auprès de qui en a besoin et ne se conserve pas inutilement. Le changement obligatoire à la première connexion limite la durée de vie du mot de passe transmis."
+      }
+      question "Dans le script, que se passe-t-il pour un deuxième élève qui s’appelle aussi Lucas Bernard ?" {
+        - "un compte lucas.bernard2 est créé automatiquement"
+        + "il obtient l’état Existe déjà et n’a pas de compte"
+        - "le compte du premier élève est remplacé"
+        - "le script s’arrête"
+        explanation: "Le script ne distingue pas un homonyme d'un compte déjà créé. Il faut lire le rapport, ou améliorer le script avec un suffixe numérique et un identifiant d'élève."
+      }
+      question "Quelle commande filtre les élèves de la classe SIO1 après Import-Csv ?" {
+        - "$eleves | Select-Object Classe -eq 'SIO1'"
+        + "$eleves | Where-Object Classe -eq 'SIO1'"
+        - "$eleves | Sort-Object SIO1"
+        - "$eleves -Filter 'Classe=SIO1'"
+        explanation: "Where-Object filtre les objets selon une condition. Select-Object choisit des colonnes, Sort-Object trie."
+      }
+      question "Pourquoi le script lit-il le CSV avec -Delimiter ’;’ -Encoding UTF8 ?" {
+        - "parce que ce sont les valeurs par défaut d’Import-Csv"
+        + "parce que l’export Excel français utilise le point-virgule et que les noms contiennent des accents"
+        - "parce que New-ADUser exige un fichier UTF-8"
+        - "pour chiffrer le fichier"
+        explanation: "Sans -Delimiter ';', chaque ligne serait une seule valeur. Sans le bon encodage, Inès ou Maëlys seraient mal lus et les logins faux."
+      }
+      question "Quelle politique d’exécution permet de lancer le script local sans affaiblir la protection contre les scripts téléchargés ?" {
+        - "Unrestricted pour LocalMachine"
+        - "Bypass pour CurrentUser"
+        + "RemoteSigned"
+        - "Restricted"
+        explanation: "RemoteSigned autorise les scripts écrits sur le poste et exige une signature pour ceux venus d'Internet. Restricted bloquerait le script, Bypass et Unrestricted ne protègent plus de rien."
+      }
+      question "Quel paramètre de New-ADUser oblige l’élève à changer son mot de passe à la première connexion ?" {
+        - "-PasswordNeverExpires $false"
+        + "-ChangePasswordAtLogon $true"
+        - "-ResetPassword"
+        - "-MustChange"
+        explanation: "-ChangePasswordAtLogon $true force le changement au premier logon. Il est incompatible avec PasswordNeverExpires à $true."
+      }
+      question "Après la création, quelle commande vérifie les membres du groupe GG_SIO1 ?" {
+        - "Get-ADGroup GG_SIO1 -Members"
+        + "Get-ADGroupMember -Identity GG_SIO1"
+        - "Get-LocalGroupMember GG_SIO1"
+        - "Search-ADAccount -Group GG_SIO1"
+        explanation: "Get-ADGroupMember liste les membres d'un groupe AD. Get-LocalGroupMember concerne les groupes locaux d'une machine."
+      }
+      question "Un élève créé hier ne peut pas se connecter : « compte verrouillé ». Quel enchaînement de commandes est adapté ?" {
+        - "Remove-ADUser puis relancer le script"
+        + "Search-ADAccount -LockedOut pour confirmer, chercher l’origine (4740 sur un contrôleur), puis Unlock-ADAccount"
+        - "Set-ExecutionPolicy Bypass puis relancer le script"
+        - "Restart-Service NTDS sur le contrôleur de domaine"
+        explanation: "On confirme le verrouillage, on comprend sa cause pour qu'il ne se reproduise pas, puis on débloque. Supprimer le compte ou redémarrer l'annuaire est disproportionné."
+      }
+      question "Comment exécuter le script s’il est dans C:\\Scripts et que la console est déjà dans ce dossier ?" {
+        - "New-ComptesEleves.ps1 -CheminCsv rentree.csv"
+        + ".\\New-ComptesEleves.ps1 -CheminCsv .\\rentree.csv"
+        - "run New-ComptesEleves -CheminCsv rentree.csv"
+        - "Start-Script New-ComptesEleves.ps1"
+        explanation: "PowerShell exige un chemin explicite pour un script du dossier courant : .\\ devant le nom. Sans lui, la commande n'est pas trouvée."
+      }
+    }
+  }
+}

@@ -1,0 +1,2088 @@
+tdc-version: 2
+type: course
+
+course "linux-basics" {
+  title: "Linux : premiers pas dans le terminal"
+  description: """
+Ce cours t'apprend à utiliser un système Linux en ligne de commande, sans interface graphique : te repérer dans l'arborescence, manipuler des fichiers, chercher une information, enchaîner des commandes, gérer les droits et installer des logiciels. Il s'adresse aux élèves de bac pro CIEL, BTS SIO, BTS CIEL et BUT réseaux, et à toute personne qui ouvre un terminal pour la première fois.
+
+À la fin, tu sauras :
+• distinguer le terminal, le shell et la console, et lire une invite de commande ;
+• te déplacer dans l'arborescence avec des chemins absolus et relatifs, et savoir à quoi sert chaque grand dossier du système ;
+• créer, copier, déplacer et supprimer des fichiers et des dossiers sans mauvaise surprise ;
+• lire un fichier ou un journal avec cat, less, head et tail, et y chercher une ligne avec grep ;
+• retrouver un fichier avec find selon son nom, son type, sa taille ou sa date ;
+• rediriger les sorties d'une commande et en enchaîner plusieurs avec des tubes ;
+• lire et modifier les droits d'un fichier (rwx, chmod, chown) et expliquer qui peut faire quoi ;
+• trouver de l'aide seul (man, --help), éditer un fichier de configuration avec nano et installer un paquet avec apt.
+
+Le cours se pratique sur une machine Debian 12 ou 13, ou Ubuntu 22.04 ou 24.04 : une machine virtuelle, un vieux PC, ou WSL sous Windows. Chaque chapitre contient un exercice pratique avec sa correction et une banque de questions tirées au hasard.
+
+Prérequis : aucun, à part savoir installer une machine virtuelle ou demander un accès à une machine Linux.
+"""
+  category: "linux"
+  level: "beginner"
+  duration: "6h"
+  icon: "Terminal"
+  keywords: ["linux", "terminal", "shell", "bash", "debian", "ubuntu", "ls", "cd", "chemin", "fhs", "cp", "mv", "rm", "cat", "less", "tail", "grep", "find", "redirection", "tube", "pipe", "chmod", "chown", "droits", "sudo", "man", "nano", "apt", "paquet"]
+
+  module "terminal-shell" {
+    title: "Chapitre 1 : terminal, shell et première commande"
+    duration: "25min"
+    content: """
+### Pourquoi la ligne de commande
+La plupart des serveurs Linux n'ont pas d'écran ni d'interface graphique : on les administre à distance, en tapant des commandes. Le terminal a trois avantages concrets : il fonctionne sur une connexion lente (SSH), une commande se recopie et se rejoue à l'identique, et plusieurs commandes s'enchaînent dans un script. Ce que tu apprends ici te servira sur un serveur web, un routeur, une box, un conteneur Docker ou un Raspberry Pi.
+
+### Trois mots qu'on confond souvent
+• Le **terminal** (ou émulateur de terminal) est la fenêtre dans laquelle tu tapes : GNOME Terminal, Konsole, Windows Terminal, le client SSH PuTTY. Il affiche du texte et transmet ton clavier, rien de plus.
+• Le **shell** est le programme qui lit ta commande, l'interprète et lance les programmes demandés. Sur Debian et Ubuntu, le shell interactif des utilisateurs est **bash** (Bourne Again SHell). D'autres existent : `sh` (sur Debian, c'est `dash`, plus léger, utilisé pour les scripts système), `zsh`, `fish`.
+• La **console** est l'écran texte « physique » de la machine, sans interface graphique (celui que tu vois sur un serveur, ou avec Ctrl+Alt+F3 sur un poste Linux).
+
+Pour savoir quel shell tu utilises :
+
+```bash
+echo $SHELL
+```
+
+La réponse est en général `/bin/bash`.
+
+### Lire l'invite de commande
+Quand le shell attend une commande, il affiche une **invite** (prompt) :
+
+```text
+eleve@debian:~$
+```
+
+| Partie | Signification |
+|---|---|
+| `eleve` | l'utilisateur connecté |
+| `debian` | le nom de la machine (hostname) |
+| `~` | le dossier courant (`~` désigne ton dossier personnel) |
+| `$` | tu es un utilisateur normal |
+
+Si l'invite se termine par `#` (par exemple `root@debian:~#`), tu es connecté en **root**, l'administrateur qui a tous les droits. Une erreur de frappe en root peut détruire le système : on ne travaille en root que le temps nécessaire.
+
+### Anatomie d'une commande
+Une commande se compose d'un **nom**, d'**options** et d'**arguments**, séparés par des espaces :
+
+```bash
+ls -l -a /etc
+```
+
+• `ls` est la commande (lister le contenu d'un dossier) ;
+• `-l` et `-a` sont des options courtes (une lettre, un tiret) ; on peut les regrouper : `ls -la` ;
+• beaucoup d'options ont une forme longue avec deux tirets : `ls --all` est identique à `ls -a` ;
+• `/etc` est l'argument : ce sur quoi la commande travaille.
+
+Linux **distingue les majuscules et les minuscules** : `ls` fonctionne, `LS` donne `command not found` ; `Notes.txt` et `notes.txt` sont deux fichiers différents.
+
+### Quelques commandes pour se présenter
+```bash
+whoami          # qui suis-je ? -> eleve
+hostname        # nom de la machine -> debian
+date            # date et heure actuelles
+uname -r        # version du noyau Linux, par exemple 6.1.0-28-amd64
+cat /etc/os-release   # nom et version de la distribution
+```
+
+### Les raccourcis qui font gagner du temps
+| Touche | Effet |
+|---|---|
+| Tab | complète un nom de commande ou de fichier ; deux appuis listent les possibilités |
+| Flèches haut et bas | parcourent les commandes déjà tapées (l'historique) |
+| Ctrl+R | recherche dans l'historique : tape quelques lettres d'une ancienne commande |
+| Ctrl+C | interrompt la commande en cours (un `ping` qui ne s'arrête pas, par exemple) |
+| Ctrl+L | efface l'écran (comme la commande `clear`) |
+| Ctrl+D | signale la fin de la saisie ; sur une invite vide, ferme le shell |
+| Ctrl+Maj+C / Ctrl+Maj+V | copier et coller dans la plupart des terminaux graphiques |
+
+La commande `history` affiche l'historique numéroté. Il est enregistré dans le fichier `~/.bash_history` à la fermeture du shell.
+
+Attention : dans un terminal, Ctrl+C n'est pas « copier », c'est « interrompre ». C'est l'erreur la plus fréquente des débutants.
+
+### Monter son labo
+Trois possibilités, au choix :
+• une **machine virtuelle** Debian (VirtualBox, VMware, Proxmox), installée avec l'utilisateur `eleve` ;
+• **WSL** sous Windows 10 ou 11 : dans un PowerShell administrateur, `wsl --install` installe Ubuntu par défaut ;
+• une machine physique ou un Raspberry Pi.
+
+Pendant l'installation de Debian, si tu laisses vide le mot de passe de root, ton premier utilisateur reçoit le droit d'utiliser `sudo`. Sinon, il faudra l'ajouter au groupe `sudo` (chapitre 7).
+
+### sudo, une première fois
+Certaines commandes modifient le système et demandent les droits d'administrateur. On les préfixe par `sudo` (« faire en tant que superutilisateur ») :
+
+```bash
+sudo apt update
+```
+
+`sudo` demande **ton** mot de passe (pas celui de root), puis le garde en mémoire quelques minutes. Pendant la saisie, rien ne s'affiche à l'écran, pas même des étoiles : c'est normal.
+
+### À toi de jouer
+1. Ouvre un terminal et note ton invite complète. Identifie l'utilisateur, la machine, le dossier courant et le type de compte.
+2. Tape `whoami`, `hostname`, `uname -r`, puis `cat /etc/os-release`. Relève le nom exact de la distribution (ligne `PRETTY_NAME`).
+3. Lance `ping 127.0.0.1`. La commande ne s'arrête pas : arrête-la proprement.
+4. Tape `LS -LA`, observe le message, puis tape la bonne version.
+5. Retrouve la commande `uname -r` sans la retaper, de deux façons différentes.
+
+### Correction
+1. Avec `eleve@debian:~$` : utilisateur `eleve`, machine `debian`, dossier courant `~` (ton dossier personnel, `/home/eleve`), `$` donc compte normal.
+2. `whoami` affiche `eleve`, `hostname` affiche `debian`, `uname -r` affiche une version du noyau (par exemple `6.1.0-28-amd64` sur Debian 12). Dans `/etc/os-release`, `PRETTY_NAME` vaut par exemple `"Debian GNU/Linux 12 (bookworm)"`.
+3. Ctrl+C interrompt `ping`, qui affiche alors un résumé (paquets envoyés, reçus, perdus).
+4. Le shell répond `bash: LS: command not found` (ou « commande introuvable » en français) : les commandes sont en minuscules. La bonne commande est `ls -la`.
+5. Flèche haut jusqu'à retrouver la ligne, puis Entrée ; ou Ctrl+R, taper `uname`, puis Entrée. La commande `history` permet aussi de retrouver son numéro.
+"""
+
+    quiz {
+      pick: 5
+      question "Quel programme lit et interprète la commande que tu tapes ?" {
+        - "le terminal"
+        + "le shell, par exemple bash"
+        - "le noyau Linux directement"
+        - "la console"
+        explanation: "Le shell lit la ligne, découpe la commande et ses arguments, puis lance le programme. Le terminal n'est que la fenêtre qui affiche le texte ; le noyau exécute les programmes mais ne lit pas ce que tu tapes."
+      }
+      question "L’invite affiche « root@srv-web:/var/log# ». Que peux-tu en déduire ?" {
+        - "tu es l'utilisateur srv-web dans le dossier root"
+        + "tu es root, sur la machine srv-web, dans le dossier /var/log"
+        - "tu es un utilisateur normal sur la machine root"
+        - "la commande précédente a échoué"
+        explanation: "L'invite suit le format utilisateur@machine:dossier, et le # final indique le compte root. Un utilisateur normal aurait un $ à la fin."
+      }
+      question "Que fait Ctrl+C dans un terminal où tourne la commande ping ?" {
+        - "il copie le texte sélectionné"
+        - "il ferme la fenêtre du terminal"
+        + "il interrompt la commande en cours"
+        - "il met la commande en pause"
+        explanation: "Dans un terminal, Ctrl+C envoie un signal d'interruption au programme en cours. Pour copier, on utilise en général Ctrl+Maj+C. Ctrl+D ferme le shell sur une invite vide."
+      }
+      question "Quelle commande est équivalente à « ls --all » ?" {
+        - "ls -l"
+        + "ls -a"
+        - "ls -A -l"
+        - "ls --list"
+        explanation: "--all est la forme longue de -a, qui affiche aussi les fichiers cachés. -l donne le format détaillé ; --list n'existe pas."
+      }
+      question "Tu tapes « Ls /etc » et le shell répond « command not found ». Pourquoi ?" {
+        - "le dossier /etc n'existe pas"
+        - "il faut être root pour lister /etc"
+        + "Linux distingue les majuscules : la commande s'appelle ls"
+        - "il manque l'option -l"
+        explanation: "Le shell cherche un programme nommé exactement Ls, qui n'existe pas. Les noms de commandes et de fichiers sont sensibles à la casse sous Linux."
+      }
+      question "Quel raccourci permet de retrouver une ancienne commande en tapant quelques-unes de ses lettres ?" {
+        - "Ctrl+L"
+        + "Ctrl+R"
+        - "Ctrl+D"
+        - "Tab deux fois"
+        explanation: "Ctrl+R lance une recherche inverse dans l'historique. Ctrl+L efface l'écran, Ctrl+D ferme le shell sur une invite vide et Tab complète les noms."
+      }
+      question "Pendant que tu tapes ton mot de passe après « sudo », rien ne s’affiche. Que se passe-t-il ?" {
+        - "le clavier est bloqué, il faut relancer le terminal"
+        + "c'est normal : la saisie est masquée, tape puis valide avec Entrée"
+        - "sudo attend le mot de passe de root et non le tien"
+        - "il faut d'abord taper Ctrl+D"
+        explanation: "Par sécurité, la saisie des mots de passe n'affiche rien, pas même des étoiles. sudo demande le mot de passe de l'utilisateur qui lance la commande, pas celui de root."
+      }
+      question "Sur Debian, quel shell est utilisé par défaut pour les sessions interactives des utilisateurs ?" {
+        - "sh"
+        - "zsh"
+        + "bash"
+        - "PowerShell"
+        explanation: "Les comptes créés sur Debian et Ubuntu ont /bin/bash comme shell. /bin/sh pointe vers dash, plus léger, utilisé pour les scripts système. zsh est le défaut de macOS, pas de Debian."
+      }
+      question "Dans la commande « cp -r photos /mnt/cle », quel élément est une option ?" {
+        - "cp"
+        + "-r"
+        - "photos"
+        - "/mnt/cle"
+        explanation: "cp est le nom de la commande, -r une option (elle commence par un tiret), photos et /mnt/cle sont les arguments : la source et la destination."
+      }
+      question "Quelle commande affiche la version du noyau Linux ?" {
+        - "cat /etc/hostname"
+        - "whoami -v"
+        + "uname -r"
+        - "lsb --kernel"
+        explanation: "uname -r affiche la version (release) du noyau, par exemple 6.1.0-28-amd64. La version de la distribution se lit dans /etc/os-release, ce n'est pas la même chose."
+      }
+      question "Quelle est la différence entre le terminal et la console ?" {
+        - "aucune, ce sont deux mots pour le shell"
+        + "le terminal est une fenêtre qui émule un écran texte, la console est l'écran texte de la machine elle-même"
+        - "la console fonctionne en root, le terminal en utilisateur normal"
+        - "le terminal n'existe que sous Windows"
+        explanation: "La console est l'affichage texte directement relié à la machine (écran du serveur, Ctrl+Alt+F3). Un terminal graphique ou un client SSH l'émule dans une fenêtre. Dans les deux cas, c'est un shell qui interprète les commandes."
+      }
+      question "Où bash enregistre-t-il l’historique des commandes d’un utilisateur ?" {
+        - "dans /var/log/history"
+        + "dans le fichier ~/.bash_history"
+        - "dans /etc/bash.bashrc"
+        - "nulle part, il est perdu à la fermeture"
+        explanation: "bash garde l'historique en mémoire pendant la session et l'écrit dans ~/.bash_history à la fermeture du shell. /etc/bash.bashrc est un fichier de configuration commun, pas un historique."
+      }
+    }
+  }
+
+  module "arborescence-chemins" {
+    title: "Chapitre 2 : l'arborescence et les chemins"
+    duration: "35min"
+    content: """
+### Un seul arbre, une seule racine
+Sous Windows, chaque disque a sa lettre (`C:`, `D:`). Sous Linux, tout part d'**une seule racine**, notée `/`. Les disques, les clés USB et les partages réseau sont **montés** quelque part dans cet arbre : une clé USB apparaît par exemple dans `/media/eleve/CLE`. Le séparateur est la barre oblique `/`, et non la barre inverse `\` de Windows.
+
+### Les grands dossiers du système (FHS)
+L'organisation des dossiers est décrite par une norme, le **FHS** (Filesystem Hierarchy Standard, version 3.0, publiée par la Linux Foundation). Toutes les distributions courantes la suivent à quelques détails près.
+
+| Dossier | Contenu |
+|---|---|
+| `/` | la racine, point de départ de tout |
+| `/bin`, `/sbin` | commandes de base et d'administration (sur Debian 12 et Ubuntu récents, ce sont des liens vers `/usr/bin` et `/usr/sbin`) |
+| `/boot` | noyau et chargeur de démarrage |
+| `/dev` | fichiers spéciaux qui représentent les périphériques (`/dev/sda` : premier disque) |
+| `/etc` | **fichiers de configuration** du système et des services (texte) |
+| `/home` | dossiers personnels des utilisateurs (`/home/eleve`) |
+| `/root` | dossier personnel de root (pas dans `/home`) |
+| `/lib` | bibliothèques partagées et modules du noyau |
+| `/media`, `/mnt` | points de montage : supports amovibles, montages temporaires |
+| `/opt` | logiciels tiers installés en bloc |
+| `/proc`, `/sys` | systèmes de fichiers virtuels créés par le noyau (processus, matériel) |
+| `/run` | données d'exécution, effacées à chaque démarrage |
+| `/srv` | données servies par la machine (site web, dépôt FTP) |
+| `/tmp` | fichiers temporaires, à ne pas considérer comme durables |
+| `/usr` | programmes et données partagées installés par les paquets |
+| `/var` | données qui **varient** : journaux (`/var/log`), caches, files d'impression, bases |
+
+Sur Debian 13, `/tmp` est en mémoire vive et vidé à chaque redémarrage ; les fichiers inutilisés depuis 10 jours y sont aussi supprimés. Ne range jamais un travail dans `/tmp`.
+
+À retenir pour l'administration : **la configuration est dans `/etc`, les journaux dans `/var/log`, tes fichiers dans `/home`.**
+
+### Où suis-je ? pwd
+La commande `pwd` (print working directory) affiche le **dossier courant**, celui dans lequel tu te trouves :
+
+```bash
+pwd
+/home/eleve
+```
+
+### Que contient ce dossier ? ls
+```bash
+ls                # noms des éléments du dossier courant
+ls /etc           # contenu d'un autre dossier
+ls -l             # format long : droits, propriétaire, taille, date
+ls -a             # affiche aussi les fichiers cachés
+ls -lh            # tailles lisibles (K, M, G)
+ls -lt            # trié par date de modification, le plus récent en haut
+ls -ld /etc       # informations sur le dossier lui-même, pas son contenu
+ls -R             # contenu des sous-dossiers, récursivement
+```
+
+Un fichier dont le nom commence par un point est **caché** : `.bashrc`, `.ssh`. Il n'est pas protégé, seulement masqué par défaut. Voici une sortie de `ls -la` :
+
+```text
+drwxr-xr-x 4 eleve eleve 4096 Nov 26 10:02 .
+drwxr-xr-x 3 root  root  4096 Nov 20 08:15 ..
+-rw-r--r-- 1 eleve eleve  220 Nov 20 08:15 .bash_logout
+-rw-r--r-- 1 eleve eleve 3526 Nov 20 08:15 .bashrc
+drwxr-xr-x 2 eleve eleve 4096 Nov 26 10:02 Documents
+-rw-r--r-- 1 eleve eleve  118 Nov 26 09:58 notes.txt
+lrwxrwxrwx 1 eleve eleve    9 Nov 26 10:05 raccourci -> notes.txt
+```
+
+Le premier caractère donne le **type** : `-` fichier ordinaire, `d` dossier (directory), `l` lien symbolique. Le reste de la ligne (droits, propriétaire) est expliqué au chapitre 7.
+
+### Se déplacer : cd
+```bash
+cd /var/log       # aller dans /var/log
+cd ..             # remonter d'un niveau (dossier parent)
+cd                # revenir dans son dossier personnel
+cd ~              # idem
+cd -              # revenir au dossier précédent
+```
+
+### Chemins absolus et relatifs
+Un **chemin absolu** commence par `/` : il part de la racine et fonctionne quel que soit le dossier courant. `/etc/apt/sources.list` désigne toujours le même fichier.
+
+Un **chemin relatif** ne commence pas par `/` : il part du dossier courant. Si tu es dans `/home/eleve`, le chemin `Documents/cv.txt` désigne `/home/eleve/Documents/cv.txt`.
+
+Trois notations spéciales :
+• `.` : le dossier courant (`./script.sh` lance le script situé ici) ;
+• `..` : le dossier parent ;
+• `~` : ton dossier personnel (`~/Documents` = `/home/eleve/Documents`) ; `~paul` est celui de l'utilisateur paul.
+
+Exemple : depuis `/var/log`, pour aller dans `/etc/apt`, deux chemins équivalents :
+
+```bash
+cd /etc/apt          # absolu
+cd ../../etc/apt     # relatif : /var/log -> /var -> / -> /etc/apt
+```
+
+Règle pratique : dans un script ou une documentation, préfère les chemins absolus, ils ne dépendent pas de l'endroit où l'on se trouve.
+
+### Les espaces dans les noms
+Le shell sépare les arguments par des espaces. Pour un dossier nommé `Mes cours`, il faut des guillemets ou une barre inverse :
+
+```bash
+cd "Mes cours"
+cd Mes\ cours
+```
+
+La touche Tab ajoute ces protections toute seule. Sur un serveur, on évite les espaces et les accents dans les noms de fichiers.
+
+### À toi de jouer
+1. Affiche ton dossier courant, puis la liste complète (fichiers cachés compris, format long) de ton dossier personnel. Combien de fichiers cachés vois-tu ?
+2. Va dans `/var/log` avec un chemin absolu, vérifie avec `pwd`, puis liste les fichiers du plus récent au plus ancien avec les tailles lisibles.
+3. Depuis `/var/log`, va dans `/etc/apt` avec un chemin **relatif**, puis reviens dans `/var/log` avec une seule commande de deux caractères.
+4. Sans te déplacer, liste le contenu de `/home` puis affiche les informations du dossier `/tmp` lui-même.
+5. Dans quel dossier chercherais-tu : le fichier de configuration du serveur SSH ? le journal des installations de paquets ? le premier disque ?
+
+### Correction
+1. `pwd` puis `ls -la ~` (ou `ls -la` si tu es déjà chez toi). Les fichiers cachés sont ceux dont le nom commence par un point, sans compter `.` et `..` : sur une installation neuve, on trouve au moins `.bashrc`, `.bash_logout` et `.profile`.
+2. `cd /var/log`, `pwd` affiche `/var/log`, puis `ls -lht`.
+3. `cd ../../etc/apt` puis `cd -` : le tiret ramène au dossier précédent et affiche son chemin.
+4. `ls /home` (on y voit `eleve`), puis `ls -ld /tmp`. La ligne commence par `drwxrwxrwt` : le `t` final est expliqué au chapitre 7.
+5. Configuration SSH : `/etc/ssh/sshd_config`. Journal des paquets : `/var/log/apt/history.log` ou `/var/log/dpkg.log`. Premier disque : `/dev/sda` (ou `/dev/nvme0n1` sur un SSD NVMe, `/dev/vda` sur certaines machines virtuelles).
+"""
+
+    quiz {
+      pick: 5
+      question "Dans quel dossier se trouvent les fichiers de configuration du système ?" {
+        - "/usr"
+        + "/etc"
+        - "/var"
+        - "/opt"
+        explanation: "La FHS réserve /etc à la configuration propre à la machine. /usr contient les programmes installés, /var les données variables comme les journaux, /opt les logiciels tiers."
+      }
+      question "Où chercher en premier les journaux du système et des services ?" {
+        - "/etc/log"
+        - "/tmp"
+        + "/var/log"
+        - "/home/log"
+        explanation: "Les journaux changent sans cesse : ils sont dans /var, et plus précisément /var/log. /etc/log n'existe pas, et /tmp peut être vidé à tout moment."
+      }
+      question "Tu es dans /home/eleve. Quel chemin absolu désigne « Documents/tp1.txt » ?" {
+        - "/Documents/tp1.txt"
+        + "/home/eleve/Documents/tp1.txt"
+        - "/home/Documents/tp1.txt"
+        - "~/home/eleve/Documents/tp1.txt"
+        explanation: "Un chemin relatif part du dossier courant : on le colle derrière /home/eleve. /Documents/tp1.txt partirait de la racine, ce qui est une autre destination."
+      }
+      question "Tu es dans /var/log. Où t’emmène « cd ../../etc » ?" {
+        - "/var/etc"
+        - "/var/log/etc"
+        + "/etc"
+        - "/log/etc"
+        explanation: "Le premier .. remonte à /var, le second à /, puis etc descend dans /etc. Compter les .. un par un évite les erreurs."
+      }
+      question "Quelle commande ramène dans ton dossier personnel, quel que soit l’endroit où tu es ?" {
+        - "cd /"
+        - "cd .."
+        + "cd sans argument"
+        - "cd ."
+        explanation: "cd seul (ou cd ~) ramène dans le dossier personnel. cd / va à la racine, cd .. remonte d'un niveau et cd . reste sur place."
+      }
+      question "Dans la sortie de « ls -l », une ligne commence par « d ». De quoi s’agit-il ?" {
+        - "d'un fichier supprimé"
+        + "d'un dossier"
+        - "d'un fichier de périphérique (device)"
+        - "d'un lien symbolique"
+        explanation: "Le premier caractère indique le type : d pour un dossier (directory), - pour un fichier ordinaire, l pour un lien symbolique. Les périphériques sont marqués b ou c."
+      }
+      question "Pourquoi « ls » n’affiche-t-il pas le fichier .bashrc ?" {
+        - "parce qu'il appartient à root"
+        - "parce qu'il est vide"
+        + "parce que son nom commence par un point, ce qui le rend caché"
+        - "parce qu'il est dans /etc"
+        explanation: "Les fichiers dont le nom commence par un point sont masqués par défaut. ls -a les affiche. Ce n'est pas une protection : n'importe qui ayant les droits peut le lire."
+      }
+      question "Quelle commande affiche les informations du dossier /etc lui-même, sans lister son contenu ?" {
+        - "ls -l /etc"
+        + "ls -ld /etc"
+        - "ls -R /etc"
+        - "pwd /etc"
+        explanation: "L'option -d traite le dossier comme un élément unique. Sans elle, ls -l /etc liste tout ce qu'il contient ; -R descend dans tous les sous-dossiers."
+      }
+      question "Que désigne le chemin « ./sauvegarde.sh » ?" {
+        - "le script sauvegarde.sh situé à la racine"
+        + "le fichier sauvegarde.sh situé dans le dossier courant"
+        - "le fichier caché .sauvegarde.sh"
+        - "le script sauvegarde.sh du dossier parent"
+        explanation: "Le point seul représente le dossier courant. Le dossier parent serait ../sauvegarde.sh, et un fichier caché aurait un point collé au nom, sans barre oblique."
+      }
+      question "Sous Linux, où apparaît en général une clé USB branchée sur un poste avec interface graphique ?" {
+        - "dans une nouvelle lettre de lecteur E:"
+        - "dans /etc/usb"
+        + "dans un dossier de montage comme /media/eleve/NOM_DE_LA_CLE"
+        - "dans /boot"
+        explanation: "Linux n'a pas de lettres de lecteur : chaque support est monté dans l'arbre unique. Les postes de bureau montent les supports amovibles sous /media/utilisateur."
+      }
+      question "Quelle commande trie le contenu d’un dossier du plus récent au plus ancien ?" {
+        - "ls -lS"
+        + "ls -lt"
+        - "ls -lr"
+        - "ls -la"
+        explanation: "-t trie par date de modification, le plus récent en premier. -S trie par taille, -r inverse l'ordre et -a affiche les fichiers cachés."
+      }
+      question "Pourquoi éviter de laisser un travail important dans /tmp ?" {
+        - "parce que seul root peut y écrire"
+        + "parce que son contenu peut être effacé au redémarrage ou après quelques jours"
+        - "parce que les fichiers y sont chiffrés"
+        - "parce que /tmp est sur une clé USB"
+        explanation: "/tmp est prévu pour des fichiers temporaires : sur Debian 13, il est en mémoire et vidé à chaque démarrage, et les fichiers inutilisés depuis 10 jours sont supprimés. Tout le monde peut y écrire."
+      }
+    }
+  }
+
+  module "fichiers-dossiers" {
+    title: "Chapitre 3 : créer, copier, déplacer et supprimer"
+    duration: "35min"
+    content: """
+### Créer
+```bash
+touch rapport.txt          # crée un fichier vide (ou met à jour sa date s'il existe)
+mkdir tp-linux             # crée un dossier
+mkdir -p tp-linux/semaine1/jour1   # crée toute la chaîne de dossiers d'un coup
+```
+
+Sans `-p`, `mkdir a/b/c` échoue si `a/b` n'existe pas encore. Avec `-p`, les dossiers manquants sont créés, et aucune erreur n'apparaît si le dossier existe déjà : pratique dans un script.
+
+### Copier : cp
+```bash
+cp rapport.txt rapport.bak          # copie sous un autre nom
+cp rapport.txt tp-linux/            # copie dans un dossier, même nom
+cp -r tp-linux tp-linux-sauvegarde  # copie un dossier et tout son contenu
+cp -i rapport.txt tp-linux/         # demande confirmation avant d'écraser
+cp -a site/ /srv/site-sauvegarde    # copie fidèle : droits, propriétaires, dates, liens
+```
+
+Sans `-r`, `cp` refuse de copier un dossier : `cp: -r not specified; omitting directory 'tp-linux'`. Attention : si la destination existe déjà, `cp` l'**écrase sans prévenir**, sauf avec `-i`.
+
+### Déplacer et renommer : mv
+Sous Linux, renommer et déplacer sont la même opération :
+
+```bash
+mv rapport.txt compte-rendu.txt        # renomme
+mv compte-rendu.txt tp-linux/          # déplace dans un dossier
+mv tp-linux/semaine1 ~/archives/       # déplace un dossier entier (pas besoin de -r)
+mv -i notes.txt tp-linux/              # demande avant d'écraser
+```
+
+### Supprimer : rm et rmdir
+```bash
+rm rapport.bak          # supprime un fichier
+rm -i *.bak             # demande confirmation pour chaque fichier
+rmdir vide/             # supprime un dossier, seulement s'il est vide
+rm -r tp-linux-sauvegarde   # supprime un dossier et tout son contenu
+```
+
+**Il n'y a pas de corbeille dans le terminal.** Un fichier supprimé par `rm` est perdu, sauf sauvegarde. La commande `rm -rf` (récursif, sans aucune confirmation ni message d'erreur) est la plus dangereuse que tu taperas : une espace de trop dans `rm -rf / home/eleve/tmp` vise la racine entière. Par défaut, `rm` refuse d'agir sur `/` lui-même (protection `--preserve-root`), mais `rm -rf /*` n'est pas protégé. Avant chaque `rm -r`, relis le chemin et vérifie avec `ls` ce qui va disparaître.
+
+### Les jokers (globbing)
+Le shell remplace certains caractères par la liste des fichiers correspondants, **avant** de lancer la commande :
+
+| Motif | Correspond à | Exemple |
+|---|---|---|
+| `*` | n'importe quelle suite de caractères, même vide | `*.txt` : tous les fichiers en .txt |
+| `?` | exactement un caractère | `tp?.txt` : tp1.txt, tp2.txt, pas tp10.txt |
+| `[abc]` | un caractère parmi la liste | `tp[12].txt` : tp1.txt et tp2.txt |
+| `[0-9]` | un caractère dans l'intervalle | `log[0-9]` |
+
+`*` ne correspond pas aux fichiers cachés (ceux qui commencent par un point). Bonne habitude : tester un motif avec `ls` avant de l'utiliser avec `rm`. `ls *.bak` montre exactement ce que `rm *.bak` supprimera.
+
+bash propose aussi les **accolades**, qui génèrent des mots même si les fichiers n'existent pas :
+
+```bash
+mkdir -p projet/{doc,src,tests}     # crée trois sous-dossiers
+cp config.ini{,.bak}                # équivaut à cp config.ini config.ini.bak
+```
+
+### Liens symboliques
+Un lien symbolique est un raccourci vers un autre chemin :
+
+```bash
+ln -s /var/log/apt/history.log ~/historique-apt
+```
+
+Supprimer le lien (`rm ~/historique-apt`) ne supprime pas le fichier cible. Si la cible disparaît, le lien devient « cassé ».
+
+### Une situation réelle
+Avant de modifier un fichier de configuration, un administrateur en garde toujours une copie datée :
+
+```bash
+sudo cp -a /etc/ssh/sshd_config /etc/ssh/sshd_config.2025-11-26
+```
+
+Si la modification casse le service, il restaure la copie avec `cp` (ou `mv`) et redémarre le service.
+
+### À toi de jouer
+Dans ton dossier personnel :
+1. Crée en une seule commande l'arborescence `tp3/cours/linux`, `tp3/cours/reseau` et `tp3/archives`.
+2. Crée trois fichiers vides `tp1.txt`, `tp2.txt` et `tp10.txt` dans `tp3/cours/linux`.
+3. Copie le dossier `tp3/cours` entier dans `tp3/archives`. Que se passe-t-il sans l'option adaptée ?
+4. Renomme `tp3/cours/linux/tp10.txt` en `tp3/cours/linux/tp03.txt`.
+5. Dans `tp3/cours/linux`, liste uniquement les fichiers dont le nom fait « tp » suivi d'un seul caractère puis « .txt ».
+6. Supprime le dossier `tp3/archives` et tout son contenu, en vérifiant d'abord ce qui sera supprimé.
+
+### Correction
+1. `mkdir -p tp3/cours/{linux,reseau} tp3/archives` (ou trois `mkdir -p` séparés).
+2. `touch tp3/cours/linux/tp1.txt tp3/cours/linux/tp2.txt tp3/cours/linux/tp10.txt`, ou plus court : `cd tp3/cours/linux` puis `touch tp1.txt tp2.txt tp10.txt`.
+3. `cp -r tp3/cours tp3/archives/`. Sans `-r`, `cp` répond `-r not specified; omitting directory` et ne copie rien.
+4. `mv tp3/cours/linux/tp10.txt tp3/cours/linux/tp03.txt`.
+5. `ls tp?.txt` affiche `tp1.txt` et `tp2.txt` : `tp03.txt` a deux caractères entre « tp » et « .txt », il n'est pas retenu.
+6. `ls -R tp3/archives` pour voir le contenu, puis `rm -r tp3/archives`. Un `rm -ri` aurait demandé une confirmation pour chaque élément.
+"""
+
+    quiz {
+      pick: 5
+      question "Que fait « touch notes.txt » si le fichier notes.txt existe déjà ?" {
+        - "il vide le fichier"
+        - "il affiche une erreur"
+        + "il met à jour sa date de modification sans toucher au contenu"
+        - "il crée notes.txt.1"
+        explanation: "touch sert d'abord à changer les dates d'un fichier ; s'il n'existe pas, il le crée vide. Le contenu existant n'est jamais modifié."
+      }
+      question "Quelle commande crée « cours/linux/tp1 » alors qu’aucun de ces dossiers n’existe ?" {
+        - "mkdir cours/linux/tp1"
+        + "mkdir -p cours/linux/tp1"
+        - "mkdir -r cours/linux/tp1"
+        - "touch cours/linux/tp1"
+        explanation: "L'option -p (parents) crée les dossiers intermédiaires manquants. Sans elle, mkdir échoue car cours/linux n'existe pas. -r n'existe pas pour mkdir, et touch crée des fichiers, pas des dossiers."
+      }
+      question "Tu tapes « cp photos /mnt/sauvegarde » et photos est un dossier. Que se passe-t-il ?" {
+        - "le dossier est copié avec son contenu"
+        + "cp refuse et indique qu'il faut l'option -r"
+        - "seuls les fichiers à la racine de photos sont copiés"
+        - "le dossier est déplacé"
+        explanation: "cp ne copie pas un dossier sans -r (récursif) : il affiche « -r not specified; omitting directory ». mv, lui, déplace un dossier sans option particulière."
+      }
+      question "Comment renommer le fichier brouillon.txt en final.txt ?" {
+        - "rename brouillon.txt final.txt"
+        - "cp -n brouillon.txt final.txt"
+        + "mv brouillon.txt final.txt"
+        - "ren brouillon.txt final.txt"
+        explanation: "Sous Linux, mv sert à la fois à déplacer et à renommer. ren est une commande Windows ; cp laisserait l'original en place."
+      }
+      question "Pourquoi « rmdir projet » échoue-t-il avec « Directory not empty » ?" {
+        - "parce qu'il faut être root"
+        + "parce que rmdir ne supprime que les dossiers vides"
+        - "parce que le nom du dossier est mal écrit"
+        - "parce que rmdir supprime seulement les fichiers"
+        explanation: "rmdir est volontairement prudent : il refuse un dossier qui contient quelque chose. Pour tout supprimer, il faut rm -r, après avoir vérifié le contenu."
+      }
+      question "Quel motif sélectionne tp1.txt et tp2.txt mais pas tp10.txt ?" {
+        - "tp*.txt"
+        + "tp?.txt"
+        - "tp[10].txt"
+        - "tp??.txt"
+        explanation: "? représente exactement un caractère. * accepterait aussi tp10.txt, ?? exige deux caractères, et [10] n'accepte qu'un caractère valant 1 ou 0."
+      }
+      question "Que fait la commande « rm -rf dossier » ?" {
+        - "elle déplace dossier dans la corbeille"
+        - "elle supprime dossier seulement s'il est vide"
+        + "elle supprime dossier et tout son contenu, sans demander de confirmation"
+        - "elle demande une confirmation pour chaque fichier"
+        explanation: "-r rend la suppression récursive et -f force sans confirmation ni message pour les fichiers absents. Il n'y a pas de corbeille : c'est définitif. La confirmation fichier par fichier, c'est -i."
+      }
+      question "Quelle est la bonne habitude avant de lancer « rm *.log » ?" {
+        - "lancer la commande deux fois pour être sûr"
+        + "taper d'abord « ls *.log » pour voir exactement les fichiers visés"
+        - "ajouter -f pour éviter les erreurs"
+        - "passer en root"
+        explanation: "Le shell remplace *.log de la même façon pour ls et pour rm : ls montre donc la liste qui serait supprimée. -f et root ne font qu'augmenter les dégâts possibles."
+      }
+      question "Tu as écrasé par erreur un fichier avec cp. Quelle option t’aurait protégé ?" {
+        - "-r"
+        - "-a"
+        + "-i"
+        - "-v"
+        explanation: "-i (interactive) demande une confirmation avant d'écraser. -r copie récursivement, -a conserve les attributs, -v affiche ce qui est copié : aucune ne protège."
+      }
+      question "Que produit « mkdir -p site/{css,js,img} » dans bash ?" {
+        - "un dossier nommé {css,js,img}"
+        + "trois dossiers site/css, site/js et site/img"
+        - "une erreur, car les accolades sont interdites"
+        - "trois fichiers vides dans site"
+        explanation: "Les accolades sont développées par bash en trois mots avant l'exécution : mkdir reçoit site/css site/js site/img. Le développement se fait même si rien n'existe encore, contrairement aux jokers."
+      }
+      question "Tu supprimes un lien symbolique avec rm. Qu’arrive-t-il au fichier qu’il désignait ?" {
+        - "il est supprimé lui aussi"
+        + "il reste intact, seul le lien disparaît"
+        - "il devient vide"
+        - "il est déplacé à la place du lien"
+        explanation: "Un lien symbolique est un fichier qui contient seulement un chemin. Le supprimer n'affecte pas la cible. À l'inverse, supprimer la cible rend le lien cassé."
+      }
+      question "Quelle commande copie un site web en conservant droits, propriétaires et dates ?" {
+        - "cp site /srv/copie"
+        - "mv -a site /srv/copie"
+        + "cp -a site /srv/copie"
+        - "cp -i site /srv/copie"
+        explanation: "cp -a (archive) copie récursivement en préservant les attributs et les liens. Sans -a ni -r, cp refuse le dossier ; mv n'a pas d'option -a et déplacerait au lieu de copier."
+      }
+    }
+  }
+
+  module "lire-fichiers" {
+    title: "Chapitre 4 : lire des fichiers et des journaux"
+    duration: "30min"
+    content: """
+### Les fichiers texte, partout
+Sous Linux, presque toute la configuration et la plupart des journaux sont de simples fichiers texte. Savoir les lire vite est la base du dépannage.
+
+### cat : afficher un fichier court
+```bash
+cat /etc/hostname         # une seule ligne : le nom de la machine
+cat -n /etc/hosts         # avec les numéros de ligne
+cat partie1.txt partie2.txt   # affiche les deux à la suite (cat = concatenate)
+```
+
+`cat` affiche tout d'un coup : sur un fichier de 5 000 lignes, tu ne vois que la fin défiler.
+
+### less : parcourir un fichier long
+```bash
+less /etc/services
+```
+
+| Touche | Effet |
+|---|---|
+| Espace ou Page suivante | page suivante |
+| b | page précédente |
+| flèches | ligne par ligne |
+| g / G | début / fin du fichier |
+| /mot | cherche « mot » vers le bas |
+| n / N | occurrence suivante / précédente |
+| q | quitter |
+
+`less` ne charge pas tout le fichier en mémoire et ne peut pas le modifier : c'est l'outil sûr pour lire un gros journal. Les pages d'aide `man` et la commande `journalctl` utilisent le même affichage.
+
+### head et tail : le début et la fin
+```bash
+head /etc/passwd          # les 10 premières lignes (valeur par défaut)
+head -n 3 /etc/passwd     # les 3 premières
+tail /var/log/dpkg.log    # les 10 dernières
+tail -n 50 /var/log/dpkg.log   # les 50 dernières
+sudo tail -f /var/log/apt/history.log   # suit le fichier en direct
+```
+
+`tail -f` (follow) affiche les nouvelles lignes au fur et à mesure qu'elles sont écrites : c'est ce qu'on fait pendant qu'on reproduit une panne. Ctrl+C arrête le suivi.
+
+Exemple avec les trois premières lignes de `/etc/passwd` sur Debian :
+
+```text
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+```
+
+### Les journaux sur une Debian récente
+Sur Debian 12 et 13, le service rsyslog n'est plus installé par défaut : il n'y a donc pas de `/var/log/syslog` ni de `/var/log/auth.log`. Les messages du système sont gérés par **journald** et se lisent avec `journalctl` :
+
+```bash
+sudo journalctl -n 20     # les 20 dernières lignes
+sudo journalctl -f        # suivi en direct, comme tail -f
+sudo journalctl -u ssh    # seulement le service ssh
+```
+
+Sans `sudo` (ou sans appartenir aux groupes `adm` ou `systemd-journal`), `journalctl` ne montre que tes propres messages et l'indique par une ligne « Hint ».
+
+Certains fichiers restent en texte dans `/var/log` : `dpkg.log` et `apt/history.log` (paquets), les journaux d'Apache ou de Nginx s'ils sont installés. Sur Ubuntu, rsyslog est présent et `/var/log/syslog` existe.
+
+### Compter et identifier
+```bash
+wc -l /etc/passwd         # nombre de lignes, par exemple « 27 /etc/passwd »
+wc -w rapport.txt         # nombre de mots
+file /bin/ls              # type de fichier : ELF 64-bit LSB pie executable...
+file photo.jpg            # JPEG image data...
+```
+
+`file` regarde le contenu, pas l'extension. Un fichier binaire affiché par `cat` remplit l'écran de caractères illisibles et peut dérégler le terminal ; la commande `reset` le remet en état.
+
+### À toi de jouer
+1. Affiche le nom et la version de ta distribution, avec les numéros de ligne.
+2. Combien de lignes contient `/etc/passwd` ? Affiche seulement ses 5 dernières.
+3. Ouvre `/etc/services` dans `less`, cherche le port de `ssh`, puis le port de `https`, et quitte.
+4. Ouvre un deuxième terminal. Dans le premier, lance le suivi en direct de `/var/log/apt/history.log`. Dans le second, installe le petit paquet `tree` avec `sudo apt install tree`. Que vois-tu dans le premier terminal ?
+5. Quel est le type réel du fichier `/usr/bin/zcat` ?
+
+### Correction
+1. `cat -n /etc/os-release`.
+2. `wc -l /etc/passwd`, puis `tail -n 5 /etc/passwd`. Le nombre dépend des paquets installés (une vingtaine à une quarantaine de lignes).
+3. `less /etc/services`, puis `/ssh` et Entrée : la ligne `ssh 22/tcp` apparaît. Puis `/https` : `https 443/tcp` (et `443/udp` sur les versions récentes). `q` pour quitter.
+4. `sudo tail -f /var/log/apt/history.log` dans le premier terminal. Pendant l'installation, des lignes apparaissent : `Start-Date:`, `Commandline: apt install tree`, `Requested-By: eleve (1000)`, `Install: tree:amd64 (...)`, `End-Date:`. Ctrl+C pour arrêter.
+5. `file /usr/bin/zcat` répond qu'il s'agit d'un script shell (`POSIX shell script, ASCII text executable`) : ce n'est pas un programme compilé. Tu peux donc le lire avec `less`.
+"""
+
+    quiz {
+      pick: 5
+      question "Quelle commande permet de parcourir un fichier de 10 000 lignes page par page ?" {
+        - "cat"
+        + "less"
+        - "touch"
+        - "wc"
+        explanation: "less affiche le fichier page par page, permet de chercher et de revenir en arrière. cat affiche tout d'un bloc, wc compte, touch change des dates."
+      }
+      question "Dans less, comment cherches-tu le mot « error » ?" {
+        - "en tapant Ctrl+F puis error"
+        + "en tapant /error puis Entrée"
+        - "en tapant :find error"
+        - "en tapant ?error!"
+        explanation: "La barre oblique lance une recherche vers le bas, n passe à l'occurrence suivante. Le point d'interrogation seul cherche vers le haut. Ctrl+F avance d'une page."
+      }
+      question "Combien de lignes affiche « head fichier.txt » sans option ?" {
+        - "5"
+        + "10"
+        - "20"
+        - "tout le fichier"
+        explanation: "head et tail affichent 10 lignes par défaut. On change ce nombre avec -n, par exemple head -n 3."
+      }
+      question "Quelle commande affiche en direct les lignes ajoutées à un journal ?" {
+        - "tail -n journal.log"
+        - "less -n journal.log"
+        + "tail -f journal.log"
+        - "cat -f journal.log"
+        explanation: "tail -f (follow) reste ouvert et affiche chaque nouvelle ligne écrite dans le fichier. On l'arrête avec Ctrl+C. cat n'a pas d'option -f."
+      }
+      question "Sur une Debian 12 fraîchement installée, « cat /var/log/syslog » répond « No such file or directory ». Pourquoi ?" {
+        - "le disque est plein"
+        - "il faut être root pour voir ce fichier"
+        + "rsyslog n'est pas installé : les journaux sont gérés par journald"
+        - "les journaux sont dans /etc/log"
+        explanation: "Depuis Debian 12, rsyslog n'est plus installé par défaut. Les messages sont dans le journal de systemd, lu avec journalctl. Un problème de droits donnerait « Permission denied », pas une absence de fichier."
+      }
+      question "Que donne « wc -l /etc/passwd » ?" {
+        - "la taille du fichier en octets"
+        + "le nombre de lignes, donc à peu près le nombre de comptes"
+        - "la liste des utilisateurs connectés"
+        - "la date de dernière modification"
+        explanation: "wc -l compte les lignes. Dans /etc/passwd, chaque ligne décrit un compte (utilisateurs et comptes système). La taille en octets s'obtient avec wc -c."
+      }
+      question "Comment quitter less ?" {
+        - "Ctrl+X"
+        - "Échap"
+        + "q"
+        - ":exit"
+        explanation: "q quitte less (et donc man). Ctrl+X est le raccourci de nano pour quitter, Échap ne fait rien de particulier dans less."
+      }
+      question "Tu veux voir les 30 dernières lignes de /var/log/dpkg.log. Quelle commande tapes-tu ?" {
+        - "head -n 30 /var/log/dpkg.log"
+        + "tail -n 30 /var/log/dpkg.log"
+        - "tail -f 30 /var/log/dpkg.log"
+        - "less -30 /var/log/dpkg.log"
+        explanation: "tail montre la fin du fichier, -n fixe le nombre de lignes. head montre le début, et -f n'attend pas de nombre."
+      }
+      question "Comment savoir si un fichier sans extension est une image, un script ou un programme ?" {
+        - "en regardant sa taille avec ls -lh"
+        + "avec la commande file, qui examine son contenu"
+        - "avec cat -n"
+        - "c'est impossible sans extension"
+        explanation: "file lit les premiers octets du contenu (signatures connues) et en déduit le type. Sous Linux, l'extension n'est qu'une convention ; elle peut être absente ou trompeuse."
+      }
+      question "Quelle commande affiche les 20 dernières lignes du journal système sur Debian 12 ?" {
+        - "tail -n 20 /var/log/messages"
+        + "sudo journalctl -n 20"
+        - "head -n 20 /var/log/journal"
+        - "cat -n 20 /var/log/syslog"
+        explanation: "journalctl -n 20 lit les 20 dernières entrées du journal de systemd ; sudo permet de voir aussi les messages du système. /var/log/messages est utilisé sur d'autres distributions, et le dossier /var/log/journal contient des fichiers binaires, illisibles avec head."
+      }
+      question "Ton terminal affiche des symboles bizarres après « cat » sur un fichier binaire. Que fais-tu ?" {
+        - "tu redémarres la machine"
+        + "tu tapes reset pour remettre le terminal en état"
+        - "tu supprimes le fichier binaire"
+        - "tu tapes cat -n pour corriger"
+        explanation: "Un binaire peut contenir des codes de contrôle qui dérèglent l'affichage. reset réinitialise le terminal. La prochaine fois, vérifie le type avec file avant de l'afficher."
+      }
+    }
+  }
+
+  module "rechercher" {
+    title: "Chapitre 5 : retrouver un fichier et une ligne (find, grep)"
+    duration: "35min"
+    content: """
+### Deux outils, deux questions
+• `find` répond à « **où est ce fichier** ? » : il parcourt l'arborescence et filtre par nom, type, taille, date, propriétaire.
+• `grep` répond à « **quelle ligne contient ce mot** ? » : il lit le contenu des fichiers et affiche les lignes qui correspondent.
+
+### find : chercher des fichiers
+La forme générale est : `find <où chercher> <critères> <action>`.
+
+```bash
+find /etc -name "hosts"              # nom exact
+find ~ -name "*.txt"                 # motif : tous les .txt de ton dossier
+find ~ -iname "*rapport*"            # sans tenir compte des majuscules
+find /var/log -type f                # seulement les fichiers ordinaires
+find ~ -type d -name "tp*"           # seulement les dossiers
+find /var -type f -size +100M        # fichiers de plus de 100 Mio
+find ~ -type f -mtime -7             # modifiés il y a moins de 7 jours
+find /tmp -user eleve                # appartenant à l'utilisateur eleve
+```
+
+Mets toujours le motif **entre guillemets** : sans eux, le shell remplacerait `*.txt` par les fichiers du dossier courant avant que `find` ne le voie, et le résultat serait faux.
+
+Les critères s'additionnent (ET logique) : `find /var/log -type f -name "*.log" -size +1M` cherche les fichiers en `.log` de plus de 1 Mio.
+
+Les unités de `-size` sont `k` (kibioctets), `M` (mébioctets) et `G` (gibioctets) ; `+` veut dire « plus de », `-` « moins de ». Pour `-mtime`, l'unité est le jour : `-mtime -7` signifie moins de 7 jours, `-mtime +30` plus de 30 jours.
+
+### Les erreurs « Permission denied »
+Un utilisateur normal n'a pas le droit d'entrer dans certains dossiers. Une recherche dans `/` produit alors des dizaines de lignes comme `find: '/root': Permission denied`. Deux solutions : utiliser `sudo`, ou jeter les erreurs (chapitre 6) :
+
+```bash
+find / -name "sshd_config" 2>/dev/null
+```
+
+### Agir sur les résultats
+```bash
+find ~/tp -name "*.sh" -exec chmod u+x {} \;    # rend exécutables tous les scripts
+find /tmp -user eleve -name "*.tmp" -delete     # supprime les résultats
+```
+
+`{}` est remplacé par chaque fichier trouvé, et `\;` termine la commande. **Attention à `-delete`** : lance d'abord la même commande sans `-delete` pour voir la liste, et place toujours `-delete` en dernier. Placé avant les critères, il supprimerait tout ce que `find` parcourt.
+
+Pour savoir où se trouve une commande, `find` est inutile : `command -v nano` répond `/usr/bin/nano`.
+
+### grep : chercher dans le contenu
+```bash
+grep ssh /etc/services               # lignes contenant « ssh »
+grep -i error app.log                # sans tenir compte des majuscules
+grep -n PermitRootLogin /etc/ssh/sshd_config   # avec le numéro de ligne
+grep -v nologin /etc/passwd          # lignes qui NE contiennent PAS nologin
+grep -c Failed journal.txt           # nombre de lignes qui correspondent
+grep -r "192.168.10.1" /etc/         # dans tous les fichiers d'un dossier
+grep -rl "Listen" /etc/apache2/      # seulement les noms des fichiers concernés
+grep -w ssh /etc/services            # le mot entier « ssh », pas « sshd »
+```
+
+Exemple :
+
+```text
+$ grep -n PermitRootLogin /etc/ssh/sshd_config
+33:#PermitRootLogin prohibit-password
+```
+
+La ligne commence par `#` : c'est un **commentaire**, la valeur affichée est seulement la valeur par défaut documentée.
+
+### Un peu d'expressions régulières
+`grep` comprend des motifs (expressions régulières). Deux symboles suffisent pour commencer :
+• `^` : début de ligne ; `grep "^eleve:" /etc/passwd` trouve la ligne du compte eleve et pas celle d'un autre compte qui contiendrait « eleve » ;
+• `$` : fin de ligne ; `grep "bash$" /etc/passwd` liste les comptes dont le shell est bash ; `^$` est une ligne vide.
+
+Avec `-E`, on peut écrire des alternatives : `grep -E "error|fail" app.log`.
+
+Pour afficher seulement les lignes utiles d'un fichier de configuration (ni commentaires ni lignes vides) :
+
+```bash
+grep -Ev "^(#|$)" /etc/ssh/sshd_config
+```
+
+### Situation réelle
+Un utilisateur dit que « le serveur web refuse les connexions depuis ce matin ». Tu cherches l'adresse IP du serveur dans toute la configuration d'Apache, puis tu regardes les dernières erreurs :
+
+```bash
+grep -rn "192.168.10.20" /etc/apache2/
+sudo grep -i "error" /var/log/apache2/error.log | tail -n 20
+```
+
+### À toi de jouer
+1. Trouve tous les fichiers dont le nom se termine par `.conf` directement ou indirectement sous `/etc`, sans afficher les erreurs de droits. Combien y en a-t-il ? (indice : `| wc -l`)
+2. Trouve, dans ton dossier personnel, les fichiers modifiés depuis moins d'un jour.
+3. Trouve les fichiers de plus de 50 Mio sur tout le système (avec sudo).
+4. Affiche la ligne de ton compte dans `/etc/passwd` avec un motif qui ne peut correspondre à aucun autre compte.
+5. Liste les comptes qui ont un vrai shell de connexion (qui ne finissent ni par `nologin` ni par `false`).
+6. Affiche, avec leur numéro, les lignes actives (non commentées, non vides) de `/etc/ssh/sshd_config`.
+
+### Correction
+1. `find /etc -name "*.conf" 2>/dev/null | wc -l`. Le nombre dépend des paquets installés (souvent plus d'une centaine).
+2. `find ~ -type f -mtime -1` (ou `-mtime 0`).
+3. `sudo find / -type f -size +50M 2>/dev/null`. Tu verras souvent des fichiers de `/usr/lib` ou de `/var/cache/apt` ; `/proc` peut afficher de faux fichiers géants, on l'exclut en pratique avec `-path /proc -prune -o`.
+4. `grep "^eleve:" /etc/passwd` donne par exemple `eleve:x:1000:1000:Eleve,,,:/home/eleve:/bin/bash`. Le `^` et le `:` évitent de trouver un compte `eleve2` ou une ligne qui contient « eleve » ailleurs.
+5. `grep -v -E "nologin$|false$" /etc/passwd` : on garde par exemple `root` et `eleve` (avec `/bin/bash`), et `sync` (avec `/bin/sync`).
+6. `grep -nEv "^(#|$)" /etc/ssh/sshd_config`. Sur Debian 12, on trouve notamment `Include /etc/ssh/sshd_config.d/*.conf`, `KbdInteractiveAuthentication no`, `UsePAM yes`, `X11Forwarding yes`, `PrintMotd no`, `AcceptEnv LANG LC_*` et la ligne `Subsystem sftp`.
+"""
+
+    quiz {
+      pick: 5
+      question "Quelle commande retrouve un fichier dont tu connais le nom mais pas l’emplacement ?" {
+        + "find / -name \"budget.ods\""
+        - "grep budget.ods /"
+        - "ls budget.ods"
+        - "cat / budget.ods"
+        explanation: "find parcourt l'arborescence et filtre par nom. grep cherche dans le contenu des fichiers, pas dans leurs noms ; ls ne cherche que dans le dossier indiqué."
+      }
+      question "Dans une commande find, pourquoi faut-il entourer le motif *.txt de guillemets ?" {
+        - "parce que find exige des guillemets autour de chaque argument"
+        + "pour que le shell ne remplace pas *.txt par les fichiers du dossier courant avant d'appeler find"
+        - "pour chercher aussi dans les fichiers cachés"
+        - "pour rendre la recherche insensible à la casse"
+        explanation: "Sans guillemets, bash développe *.txt s'il trouve des .txt dans le dossier courant, et find reçoit une liste de noms au lieu du motif. Les guillemets transmettent le motif tel quel à find."
+      }
+      question "Que trouve « find /var/log -type f -mtime -2 » ?" {
+        - "les fichiers de plus de 2 jours"
+        + "les fichiers modifiés il y a moins de 2 jours"
+        - "les fichiers de moins de 2 Mio"
+        - "les dossiers modifiés il y a 2 jours exactement"
+        explanation: "-mtime compte en jours ; -2 signifie moins de 2 jours, +2 plus de 2 jours. -type f limite aux fichiers ordinaires, donc aucun dossier."
+      }
+      question "Quelle option de grep affiche les lignes qui ne contiennent PAS le motif ?" {
+        - "-n"
+        - "-c"
+        + "-v"
+        - "-l"
+        explanation: "-v (invert) inverse la sélection. -n ajoute les numéros de ligne, -c compte les lignes, -l n'affiche que les noms de fichiers."
+      }
+      question "Quelle commande cherche « DocumentRoot » dans tous les fichiers de /etc/apache2 et ses sous-dossiers ?" {
+        - "grep DocumentRoot /etc/apache2"
+        + "grep -r DocumentRoot /etc/apache2"
+        - "find /etc/apache2 -name DocumentRoot"
+        - "grep -c DocumentRoot /etc/apache2/*"
+        explanation: "-r parcourt récursivement le dossier. Sans -r, grep signale que /etc/apache2 est un dossier. find chercherait un fichier nommé DocumentRoot, pas une ligne qui le contient."
+      }
+      question "Que trouve grep avec le motif ^root dans /etc/passwd ?" {
+        - "toutes les lignes qui contiennent root n'importe où"
+        + "les lignes qui commencent par root"
+        - "les lignes qui finissent par root"
+        - "les fichiers appartenant à root"
+        explanation: "^ ancre le motif au début de la ligne. La ligne d'un compte qui aurait /root comme dossier personnel mais un autre nom ne serait pas retenue. $ ancre en fin de ligne."
+      }
+      question "Une recherche « find / -name hosts » affiche beaucoup de « Permission denied ». Comment garder seulement les résultats ?" {
+        - "ajouter l'option -quiet"
+        + "ajouter 2>/dev/null pour jeter les messages d'erreur"
+        - "ajouter | grep -v hosts"
+        - "remplacer / par ~"
+        explanation: "Les messages d'erreur partent sur la sortie d'erreur (canal 2) ; 2>/dev/null les jette. Chercher seulement dans ~ supprimerait aussi les résultats de /etc. -quiet n'existe pas."
+      }
+      question "Pourquoi « grep ssh /etc/services » affiche-t-il aussi des lignes contenant « sshell » ?" {
+        - "parce que grep ignore la casse par défaut"
+        + "parce que grep cherche le motif n'importe où dans la ligne, même au milieu d'un mot"
+        - "parce que /etc/services est corrompu"
+        - "parce qu'il manque l'option -r"
+        explanation: "grep cherche une suite de caractères, pas un mot. Pour le mot entier, on ajoute -w. grep tient compte des majuscules par défaut ; -i l'en empêche."
+      }
+      question "Quelle est la précaution indispensable avant de lancer find avec l’action -delete ?" {
+        - "lancer la commande en root"
+        + "lancer d'abord la même commande sans -delete pour vérifier la liste"
+        - "ajouter -type d"
+        - "remplacer -delete par rm -rf"
+        explanation: "-delete supprime définitivement chaque résultat. Sans -delete, find affiche la liste exacte qui serait supprimée. Il faut aussi garder -delete en dernière position."
+      }
+      question "Que fait « grep -c Failed /tmp/connexions.txt » ?" {
+        - "il supprime les lignes contenant Failed"
+        - "il affiche les lignes avec leur numéro"
+        + "il affiche le nombre de lignes contenant Failed"
+        - "il colore le mot Failed"
+        explanation: "-c (count) affiche seulement un nombre : celui des lignes qui correspondent. C'est pratique pour compter des échecs de connexion dans un journal."
+      }
+      question "Quelle commande trouve les fichiers de plus de 1 Gio dans /home ?" {
+        - "find /home -size 1G"
+        + "find /home -type f -size +1G"
+        - "grep -size +1G /home"
+        - "ls -lh /home | find 1G"
+        explanation: "Le + signifie « plus de ». Sans +, -size 1G chercherait une taille arrondie égale à 1 Gio. grep et ls ne filtrent pas par taille."
+      }
+      question "Quelle commande affiche seulement les lignes actives d’un fichier de configuration (sans commentaires ni lignes vides) ?" {
+        - "grep \"#\" fichier.conf"
+        + "grep -Ev \"^(#|$)\" fichier.conf"
+        - "grep -v \"$\" fichier.conf"
+        - "cat -n fichier.conf"
+        explanation: "-E autorise l'alternative, -v inverse : on retire les lignes qui commencent par # et les lignes vides (^$). La première proposition fait l'inverse : elle n'affiche que les lignes contenant un #."
+      }
+    }
+  }
+
+  module "redirections-tubes" {
+    title: "Chapitre 6 : redirections et tubes"
+    duration: "40min"
+    content: """
+### Les trois canaux d'une commande
+Chaque commande lancée dispose de trois canaux, numérotés :
+
+| Numéro | Nom | Par défaut |
+|---|---|---|
+| 0 | entrée standard (stdin) | le clavier |
+| 1 | sortie standard (stdout) | l'écran |
+| 2 | sortie d'erreur (stderr) | l'écran |
+
+Les résultats partent sur le canal 1, les messages d'erreur sur le canal 2. À l'écran, on ne voit pas la différence ; dès qu'on redirige, elle devient essentielle.
+
+### Envoyer une sortie dans un fichier
+```bash
+ls /etc > liste.txt           # crée ou ÉCRASE liste.txt
+date >> journal.txt           # AJOUTE à la fin de journal.txt
+ls /etc /nexistepas 2> erreurs.txt   # seulement les erreurs dans le fichier
+ls /etc /nexistepas > ok.txt 2> erreurs.txt   # chaque canal dans son fichier
+```
+
+`>` écrase le fichier sans prévenir. Une seule faute de frappe (`>` au lieu de `>>`) et l'ancien contenu est perdu.
+
+### Tout dans le même fichier
+```bash
+commande > tout.txt 2>&1      # sortie ET erreurs dans tout.txt
+commande &> tout.txt          # forme courte, propre à bash
+```
+
+`2>&1` signifie « envoie le canal 2 là où va actuellement le canal 1 ». L'**ordre compte** : dans `commande 2>&1 > tout.txt`, les erreurs sont envoyées vers l'écran (là où allait le canal 1 à ce moment), puis seule la sortie normale part dans le fichier.
+
+### Le trou noir : /dev/null
+`/dev/null` est un fichier spécial qui absorbe tout ce qu'on y écrit :
+
+```bash
+find / -name "*.conf" 2>/dev/null     # cache les erreurs
+ping -c 1 192.168.10.1 > /dev/null    # seul le code de retour nous intéresse
+```
+
+### Lire une entrée depuis un fichier
+`<` fournit un fichier sur l'entrée standard :
+
+```bash
+wc -l < /etc/passwd       # affiche seulement le nombre, sans le nom du fichier
+```
+
+### Les tubes : brancher les commandes
+Le tube (pipe) `|` envoie la sortie standard d'une commande sur l'entrée standard de la suivante. C'est l'idée centrale d'Unix : des petits outils, chacun fait une chose, et on les assemble.
+
+```bash
+ls /etc | wc -l                         # combien d'éléments dans /etc ?
+cat /etc/passwd | grep bash             # (grep bash /etc/passwd suffit)
+dpkg -l | grep -i ssh                   # paquets installés contenant ssh
+history | grep apt                      # retrouver une commande apt tapée avant
+```
+
+Seul le canal 1 passe dans le tube. Les erreurs continuent d'arriver à l'écran, sauf si on ajoute `2>&1` avant le `|`.
+
+### Les outils qu'on branche le plus souvent
+| Commande | Rôle |
+|---|---|
+| `sort` | trie les lignes ; `-n` numérique, `-r` inversé, `-h` tailles lisibles (10K, 2M) |
+| `uniq` | supprime les lignes identiques **consécutives** ; `-c` les compte |
+| `cut -d: -f1` | garde un champ : ici le premier, avec `:` comme séparateur |
+| `wc -l` | compte les lignes |
+| `head`, `tail` | gardent le début ou la fin |
+| `tee` | écrit dans un fichier **et** laisse passer la suite à l'écran |
+
+`uniq` ne voit que les doublons qui se suivent : on trie presque toujours avant (`sort | uniq -c`).
+
+Exemple : quels shells sont utilisés par les comptes, et combien de fois ?
+
+```text
+$ cut -d: -f7 /etc/passwd | sort | uniq -c | sort -rn
+     18 /usr/sbin/nologin
+      2 /bin/bash
+      1 /bin/sync
+```
+
+Exemple : les cinq éléments les plus lourds de `/var/log` :
+
+```bash
+sudo du -sh /var/log/* | sort -h | tail -n 5
+```
+
+### Écrire dans un fichier protégé : le piège de sudo
+```bash
+sudo echo "192.168.10.20 nas" >> /etc/hosts
+# bash: /etc/hosts: Permission denied
+```
+
+La redirection `>>` est faite par **ton** shell, avant même que `sudo` ne s'exécute : seul `echo` tourne en root. La solution est `tee`, lancé avec `sudo` :
+
+```bash
+echo "192.168.10.20 nas" | sudo tee -a /etc/hosts
+```
+
+`-a` (append) ajoute à la fin ; sans `-a`, `tee` écraserait le fichier.
+
+### Le code de retour
+Chaque commande renvoie un **code de retour** : `0` si tout s'est bien passé, un autre nombre en cas d'échec. La variable `$?` contient celui de la dernière commande :
+
+```bash
+grep -q "^eleve:" /etc/passwd ; echo $?    # 0 : trouvé
+grep -q "^zorro:" /etc/passwd ; echo $?    # 1 : pas trouvé
+```
+
+Pour `grep`, 0 veut dire « trouvé », 1 « pas trouvé », 2 « erreur » (fichier absent, par exemple). On enchaîne alors selon le résultat :
+
+```bash
+sudo apt update && sudo apt upgrade     # upgrade seulement si update a réussi
+ping -c 1 192.168.10.1 > /dev/null || echo "passerelle injoignable"
+cd /tmp ; ls                            # ; enchaîne sans condition
+```
+
+### À toi de jouer
+1. Enregistre la liste détaillée de `/etc` dans `~/etc.txt`, puis ajoute la date à la fin du même fichier sans l'écraser. Vérifie avec `tail`.
+2. Lance `ls /etc /inexistant` en envoyant les résultats dans `ok.txt` et l'erreur dans `ko.txt`. Que contient chaque fichier ?
+3. Compte le nombre de comptes dont le shell est `/usr/sbin/nologin`, en une seule ligne de commande.
+4. Affiche la liste triée par ordre alphabétique des noms de comptes de `/etc/passwd`.
+5. Ajoute la ligne `192.168.10.30 imprimante` à la fin de `/etc/hosts`, puis vérifie qu'elle y est.
+6. Écris une ligne qui affiche « passerelle OK » si `ping -c 1 192.168.10.1` réussit, « passerelle KO » sinon, sans afficher la sortie de ping.
+
+### Correction
+1. `ls -l /etc > ~/etc.txt`, puis `date >> ~/etc.txt`, puis `tail -n 3 ~/etc.txt` : la date est en dernière ligne.
+2. `ls /etc /inexistant > ok.txt 2> ko.txt`. `ok.txt` contient le contenu de `/etc` ; `ko.txt` contient `ls: cannot access '/inexistant': No such file or directory`.
+3. `grep -c "/usr/sbin/nologin$" /etc/passwd`, ou `cut -d: -f7 /etc/passwd | grep -c nologin`.
+4. `cut -d: -f1 /etc/passwd | sort`.
+5. `echo "192.168.10.30 imprimante" | sudo tee -a /etc/hosts`, puis `tail -n 1 /etc/hosts`. Pense à garder une copie avant : `sudo cp /etc/hosts /etc/hosts.bak`.
+6. `ping -c 1 192.168.10.1 > /dev/null 2>&1 && echo "passerelle OK" || echo "passerelle KO"`. Adapte l'adresse à ta passerelle (`ip route` l'affiche après `default via`).
+"""
+
+    quiz {
+      pick: 5
+      question "Quelle est la différence entre « > » et « >> » ?" {
+        - "> ajoute à la fin, >> écrase"
+        + "> crée ou écrase le fichier, >> ajoute à la fin"
+        - "> redirige les erreurs, >> la sortie normale"
+        - "aucune, >> est seulement plus lisible"
+        explanation: "> remplace tout le contenu du fichier, >> ajoute après le contenu existant. Confondre les deux sur un fichier de configuration fait perdre son contenu."
+      }
+      question "Quel numéro désigne la sortie d’erreur ?" {
+        - "0"
+        - "1"
+        + "2"
+        - "3"
+        explanation: "0 est l'entrée standard, 1 la sortie standard et 2 la sortie d'erreur. On redirige les erreurs avec 2> ou 2>/dev/null."
+      }
+      question "Que fait « commande > journal.txt 2>&1 » ?" {
+        - "elle envoie seulement les erreurs dans journal.txt"
+        + "elle envoie la sortie normale et les erreurs dans journal.txt"
+        - "elle envoie la sortie dans journal.txt et les erreurs dans un fichier nommé 1"
+        - "elle affiche tout à l'écran et dans journal.txt"
+        explanation: "Le canal 1 est d'abord envoyé dans journal.txt, puis 2>&1 envoie le canal 2 au même endroit. Sans le &, 2>1 créerait un fichier nommé 1. Pour écrire à la fois à l'écran et dans un fichier, on utilise tee."
+      }
+      question "À quoi sert /dev/null ?" {
+        - "à stocker les fichiers supprimés"
+        + "à jeter ce qu'on y envoie, par exemple des messages d'erreur inutiles"
+        - "à désigner un disque vide"
+        - "à remettre un fichier à zéro au démarrage"
+        explanation: "/dev/null absorbe tout ce qu'on y écrit et ne renvoie rien à la lecture. On y redirige les sorties dont on ne veut pas. Ce n'est pas une corbeille : rien n'est récupérable."
+      }
+      question "Que fait le tube dans « ls /etc | wc -l » ?" {
+        - "il écrit la liste dans un fichier nommé wc"
+        + "il envoie la sortie de ls sur l'entrée de wc, qui compte les lignes"
+        - "il lance ls et wc l'un après l'autre sans lien"
+        - "il compare /etc et wc"
+        explanation: "Le tube relie la sortie standard de la première commande à l'entrée standard de la seconde. wc -l reçoit la liste et compte ses lignes."
+      }
+      question "Pourquoi « sort | uniq -c » et pas seulement « uniq -c » ?" {
+        - "parce que uniq ne fonctionne qu'avec des nombres"
+        + "parce que uniq ne fusionne que les lignes identiques qui se suivent"
+        - "parce que sort supprime les lignes vides"
+        - "parce que uniq -c trie déjà en sens inverse"
+        explanation: "uniq compare chaque ligne à la précédente seulement. Des doublons séparés par d'autres lignes seraient comptés plusieurs fois. sort les regroupe d'abord."
+      }
+      question "« sudo echo test >> /etc/hosts » répond « Permission denied ». Pourquoi ?" {
+        - "parce que sudo ne fonctionne pas avec echo"
+        + "parce que la redirection est faite par ton shell, qui n'a pas les droits root"
+        - "parce que /etc/hosts est en lecture seule pour root aussi"
+        - "parce qu'il faut écrire sudo deux fois"
+        explanation: "Le shell ouvre /etc/hosts pour la redirection avant de lancer sudo : seul echo tourne en root. La solution : echo test | sudo tee -a /etc/hosts."
+      }
+      question "Quelle commande affiche le premier champ (le nom) de chaque ligne de /etc/passwd ?" {
+        - "cut -f1 /etc/passwd"
+        + "cut -d: -f1 /etc/passwd"
+        - "cut -d1 -f: /etc/passwd"
+        - "head -n 1 /etc/passwd"
+        explanation: "-d: indique que le séparateur est le deux-points, -f1 garde le premier champ. Sans -d, cut utilise la tabulation comme séparateur et renverrait les lignes entières."
+      }
+      question "Après « grep -q zorro /etc/passwd », echo $? affiche 1. Que cela signifie-t-il ?" {
+        - "grep a trouvé une ligne"
+        + "grep n'a trouvé aucune ligne correspondante"
+        - "le fichier /etc/passwd n'existe pas"
+        - "la commande a été interrompue par Ctrl+C"
+        explanation: "Pour grep, 0 signifie trouvé, 1 pas trouvé et 2 erreur (comme un fichier absent). Par convention, 0 est toujours le code d'un succès."
+      }
+      question "Dans « sudo apt update && sudo apt upgrade », quand la deuxième commande s’exécute-t-elle ?" {
+        - "toujours, juste après la première"
+        + "seulement si la première a réussi (code de retour 0)"
+        - "seulement si la première a échoué"
+        - "en même temps que la première"
+        explanation: "&& lance la commande suivante seulement en cas de succès. || la lance seulement en cas d'échec, et ; l'enchaîne sans condition."
+      }
+      question "Que fait « dmesg | tee noyau.txt » ?" {
+        - "il écrit la sortie seulement dans noyau.txt"
+        + "il affiche la sortie à l'écran et l'enregistre dans noyau.txt"
+        - "il ajoute la sortie à la fin de noyau.txt sans l'afficher"
+        - "il compare la sortie avec noyau.txt"
+        explanation: "tee duplique le flux : une copie dans le fichier, une copie sur sa sortie standard. Sans -a, il écrase le fichier ; avec -a, il ajoute à la fin."
+      }
+      question "Dans « ls /etc /inexistant | wc -l », où apparaît le message d’erreur de ls ?" {
+        - "il est compté par wc -l"
+        + "directement à l'écran, car seul le canal 1 passe dans le tube"
+        - "nulle part, les tubes suppriment les erreurs"
+        - "dans un fichier nommé error"
+        explanation: "Le tube ne transporte que la sortie standard. La sortie d'erreur reste reliée à l'écran, sauf si on ajoute 2>&1 avant le tube."
+      }
+    }
+  }
+
+  module "utilisateurs-droits" {
+    title: "Chapitre 7 : utilisateurs, groupes et droits"
+    duration: "40min"
+    content: """
+### Un système multi-utilisateur
+Linux a été conçu pour que plusieurs personnes et plusieurs services partagent la même machine sans se gêner. Chaque fichier appartient à **un utilisateur** et à **un groupe**, et chaque programme tourne sous l'identité d'un utilisateur. Le serveur web Apache, par exemple, tourne sous l'utilisateur `www-data` : s'il est piraté, l'attaquant n'a que les droits de `www-data`, pas ceux de l'administrateur.
+
+### Qui suis-je ?
+```text
+$ id
+uid=1000(eleve) gid=1000(eleve) groups=1000(eleve),24(cdrom),27(sudo),100(users)
+```
+
+• `uid` : le numéro d'utilisateur. **root a toujours l'UID 0** ; les comptes humains commencent à 1000 sur Debian et Ubuntu, les comptes de service sont en dessous.
+• `gid` : le groupe principal ; sur Debian, chaque utilisateur a un groupe à son nom.
+• `groups` : tous les groupes dont il est membre. Être dans le groupe `sudo` (sur Debian et Ubuntu) donne le droit d'utiliser `sudo`.
+
+### Où sont décrits les comptes
+| Fichier | Contenu | Lisible par |
+|---|---|---|
+| `/etc/passwd` | un compte par ligne : `nom:x:UID:GID:commentaire:dossier:shell` | tout le monde |
+| `/etc/shadow` | les empreintes des mots de passe et leurs dates | root et le groupe `shadow` |
+| `/etc/group` | les groupes et leurs membres | tout le monde |
+
+Le `x` du deuxième champ de `/etc/passwd` indique que le mot de passe est rangé dans `/etc/shadow`. Un shell `/usr/sbin/nologin` empêche toute connexion interactive : c'est le cas des comptes de service.
+
+### Gérer les comptes (rappel rapide)
+```bash
+sudo adduser paul             # crée paul, son dossier, demande un mot de passe (Debian, Ubuntu)
+sudo passwd paul              # change le mot de passe de paul
+sudo addgroup profs           # crée un groupe
+sudo usermod -aG profs paul   # ajoute paul au groupe profs
+```
+
+Dans `usermod -aG`, le `-a` (append) est **indispensable** : sans lui, `-G` remplace la liste des groupes secondaires, et paul perdrait par exemple son appartenance au groupe `sudo`. Un nouveau groupe n'est pris en compte qu'à la **prochaine connexion** de l'utilisateur.
+
+### Lire les droits
+```text
+-rw-r----- 1 eleve profs 2048 Nov 26 10:12 notes-bac.ods
+```
+
+Les dix premiers caractères se lisent ainsi :
+
+| Position | `-` | `rw-` | `r--` | `---` |
+|---|---|---|---|---|
+| Sens | type | propriétaire (u, user) | groupe (g, group) | les autres (o, others) |
+
+Chaque triplet contient `r` (read, lire), `w` (write, écrire) et `x` (execute, exécuter), ou un tiret si le droit est absent. Ici : eleve lit et modifie, les membres de `profs` lisent seulement, les autres n'ont aucun accès.
+
+Le système regarde **une seule** catégorie : si tu es le propriétaire, ce sont les droits du propriétaire qui comptent, même si le groupe en a davantage.
+
+### Sur un dossier, les lettres changent de sens
+| Droit | Sur un fichier | Sur un dossier |
+|---|---|---|
+| `r` | lire le contenu | lister les noms qu'il contient |
+| `w` | modifier le contenu | créer, renommer, **supprimer** des fichiers dedans |
+| `x` | exécuter (programme, script) | entrer dedans (`cd`) et accéder aux fichiers |
+
+Conséquence surprenante : **supprimer un fichier dépend des droits sur le dossier**, pas sur le fichier. Un fichier en lecture seule peut être supprimé par quelqu'un qui a `w` et `x` sur le dossier.
+
+Le dossier `/tmp` a les droits `drwxrwxrwt` : tout le monde peut y écrire, et le `t` final (le **sticky bit**) empêche chacun de supprimer les fichiers des autres.
+
+### Modifier les droits : chmod en notation symbolique
+```bash
+chmod u+x script.sh       # ajoute l'exécution au propriétaire
+chmod g-w rapport.txt     # retire l'écriture au groupe
+chmod o= rapport.txt      # retire tous les droits aux autres
+chmod a+r public.txt      # ajoute la lecture à tous (a = all)
+chmod ug=rw,o= notes.ods  # fixe exactement rw pour u et g, rien pour o
+```
+
+### chmod en notation octale
+Chaque droit vaut un nombre : **r = 4, w = 2, x = 1**. On additionne par triplet :
+
+| Chiffre | Droits | Calcul |
+|---|---|---|
+| 7 | rwx | 4 + 2 + 1 |
+| 6 | rw- | 4 + 2 |
+| 5 | r-x | 4 + 1 |
+| 4 | r-- | 4 |
+| 0 | --- | 0 |
+
+```bash
+chmod 644 page.html       # rw-r--r-- : fichier lisible par tous, modifiable par le propriétaire
+chmod 640 notes.ods       # rw-r----- : le groupe lit, les autres rien
+chmod 600 ~/.ssh/id_ed25519   # rw------- : clé privée, propriétaire seul
+chmod 755 script.sh       # rwxr-xr-x : exécutable par tous, modifiable par le propriétaire
+chmod 750 /srv/projet     # rwxr-x--- : dossier réservé au propriétaire et au groupe
+```
+
+**Ne mets jamais `chmod 777`** pour « régler un problème de droits » : n'importe quel compte de la machine, y compris un service compromis, pourrait alors modifier ou remplacer le fichier. Cherche plutôt quel utilisateur a besoin de quel droit.
+
+### Changer le propriétaire : chown et chgrp
+```bash
+sudo chown paul rapport.txt              # nouveau propriétaire
+sudo chown paul:profs rapport.txt        # propriétaire et groupe
+sudo chown -R www-data:www-data /var/www/site   # tout un dossier, récursivement
+chgrp profs rapport.txt                  # change seulement le groupe
+```
+
+Seul root peut donner un fichier à un autre utilisateur. Le propriétaire peut changer le groupe de son fichier, mais seulement vers un groupe dont il est membre. Avec `-R`, vérifie deux fois le chemin : un `chown -R` sur le mauvais dossier peut rendre un système inutilisable.
+
+### Les droits à la création : umask
+Un nouveau fichier ne reçoit pas `rw-rw-rw-` : le **masque** `umask` retire des droits. Avec un umask de `022` (valeur courante sur Debian), un fichier est créé en `644` et un dossier en `755`. La commande `umask` affiche la valeur en cours.
+
+### Situation réelle
+Un script de sauvegarde ne se lance pas :
+
+```text
+$ ./sauvegarde.sh
+bash: ./sauvegarde.sh: Permission denied
+$ ls -l sauvegarde.sh
+-rw-r--r-- 1 eleve eleve 412 Nov 26 11:02 sauvegarde.sh
+```
+
+Il manque le droit `x`. `chmod u+x sauvegarde.sh` suffit ; inutile de passer en root ou de tout ouvrir.
+
+### À toi de jouer
+1. Avec `id`, relève ton UID et tes groupes. Avec `grep`, affiche ta ligne dans `/etc/passwd` et nomme chacun des sept champs.
+2. Essaie `cat /etc/shadow`. Que se passe-t-il ? Explique avec `ls -l /etc/shadow`.
+3. Crée `secret.txt` et donne-lui les droits `rw-------` de deux façons (symbolique et octale).
+4. Traduis en octal : `rwxr-x---`, `rw-rw-r--`, `r--r--r--`. Traduis en lettres : `711`, `664`.
+5. Crée un groupe `projet`, ajoute-toi dedans, crée le dossier `/srv/projet` appartenant à root et au groupe `projet`, avec les droits `rwxrwx---`. Vérifie que tu peux y créer un fichier (attention au piège de la reconnexion).
+6. Un collègue propose `sudo chmod -R 777 /var/www` parce que « le site ne peut pas écrire dans uploads ». Que proposes-tu à la place ?
+
+### Correction
+1. `id` donne par exemple `uid=1000(eleve)`. `grep "^eleve:" /etc/passwd` donne `eleve:x:1000:1000:Eleve,,,:/home/eleve:/bin/bash` : nom, mot de passe déporté (`x`), UID, GID, commentaire (nom complet), dossier personnel, shell.
+2. `Permission denied`. `ls -l /etc/shadow` affiche `-rw-r----- 1 root shadow` : seuls root (lecture et écriture) et le groupe `shadow` (lecture) y ont accès, les autres rien. C'est voulu : les empreintes de mots de passe ne doivent pas être lisibles par tous.
+3. `touch secret.txt`, puis `chmod u=rw,go= secret.txt` ou `chmod 600 secret.txt`. Vérifie avec `ls -l secret.txt`.
+4. `rwxr-x---` = 750, `rw-rw-r--` = 664, `r--r--r--` = 444 ; `711` = `rwx--x--x`, `664` = `rw-rw-r--`.
+5. `sudo addgroup projet`, `sudo usermod -aG projet eleve`, `sudo mkdir /srv/projet`, `sudo chown root:projet /srv/projet`, `sudo chmod 770 /srv/projet`. `touch /srv/projet/test` échoue tant que tu ne t'es pas **reconnecté** (déconnexion puis connexion, ou nouvelle session SSH) : `id` ne montre pas encore le groupe `projet`. Après reconnexion, la création fonctionne.
+6. Donner l'écriture seulement là où elle est nécessaire, à l'utilisateur du service : `sudo chown -R www-data:www-data /var/www/site/uploads` et `sudo chmod 750 /var/www/site/uploads` (ou 770 si un groupe d'administrateurs doit aussi y écrire). Le reste du site reste non modifiable par le service web, ce qui limite les dégâts en cas de faille.
+"""
+
+    quiz {
+      pick: 5
+      question "Que signifient les droits « -rwxr-x--- » ?" {
+        - "tout le monde peut lire et exécuter"
+        + "le propriétaire a tous les droits, le groupe lit et exécute, les autres rien"
+        - "le groupe a tous les droits, le propriétaire lit et exécute"
+        - "le fichier est un dossier accessible à tous"
+        explanation: "Après le caractère de type, les triplets se lisent dans l'ordre propriétaire, groupe, autres. rwx, r-x, puis --- : aucun droit pour les autres. Un dossier commencerait par d."
+      }
+      question "Quelle valeur octale correspond à « rw-r--r-- » ?" {
+        - "755"
+        + "644"
+        - "664"
+        - "600"
+        explanation: "rw- = 4 + 2 = 6, r-- = 4, r-- = 4, donc 644. 664 donnerait rw- au groupe, 755 ajouterait x partout, 600 retirerait tout au groupe et aux autres."
+      }
+      question "Que donne « chmod 750 dossier » ?" {
+        - "rwxr-xr-x"
+        + "rwxr-x---"
+        - "rwxrwx---"
+        - "rw-r-----"
+        explanation: "7 = rwx pour le propriétaire, 5 = r-x pour le groupe, 0 = aucun droit pour les autres. Sur un dossier, x permet d'y entrer : le groupe peut lister et entrer, les autres non."
+      }
+      question "Quel est l’UID de root ?" {
+        - "1"
+        - "1000"
+        + "0"
+        - "65534"
+        explanation: "root a toujours l'UID 0 : c'est ce numéro, pas le nom, qui donne les pleins pouvoirs. 1000 est le premier compte humain sur Debian, 65534 est le compte nobody."
+      }
+      question "Ton script affiche « Permission denied » quand tu tapes ./script.sh. Quelle est la correction adaptée ?" {
+        - "sudo chmod 777 script.sh"
+        + "chmod u+x script.sh"
+        - "sudo chown root script.sh"
+        - "chmod o+w script.sh"
+        explanation: "Il manque seulement le droit d'exécution pour toi. 777 ouvrirait l'écriture à tout le monde, et changer le propriétaire ou ajouter w aux autres ne règle pas le problème."
+      }
+      question "Pourquoi « sudo usermod -G profs paul » est-il dangereux ?" {
+        - "parce que la commande supprime le compte paul"
+        + "parce que sans -a, paul perd tous ses autres groupes secondaires, par exemple sudo"
+        - "parce que paul devient root"
+        - "parce que le groupe profs est supprimé"
+        explanation: "-G seul remplace la liste des groupes secondaires. Avec -aG, profs est ajouté sans retirer les autres. Oublier le -a sur un administrateur peut lui retirer l'accès à sudo."
+      }
+      question "Un fichier est en « r--r--r-- » dans un dossier en « rwxrwxrwx ». Un autre utilisateur peut-il le supprimer ?" {
+        - "non, car le fichier est en lecture seule pour tous"
+        + "oui, car la suppression dépend du droit w sur le dossier"
+        - "seulement s'il est root"
+        - "seulement s'il est dans le groupe du fichier"
+        explanation: "Supprimer un fichier, c'est retirer une entrée du dossier : il faut w et x sur le dossier. Les droits du fichier lui-même n'interviennent pas. C'est pour cela que /tmp a un sticky bit."
+      }
+      question "À quoi sert le « t » à la fin de « drwxrwxrwt » sur /tmp ?" {
+        - "il rend le dossier temporaire"
+        + "il empêche chaque utilisateur de supprimer les fichiers des autres"
+        - "il chiffre les fichiers du dossier"
+        - "il interdit l'exécution de programmes"
+        explanation: "C'est le sticky bit : dans un dossier où tout le monde peut écrire, seul le propriétaire d'un fichier (ou root) peut le supprimer ou le renommer."
+      }
+      question "Quelle commande donne le dossier /var/www/site et tout son contenu à l’utilisateur et au groupe www-data ?" {
+        - "chmod -R www-data /var/www/site"
+        + "sudo chown -R www-data:www-data /var/www/site"
+        - "sudo chgrp www-data:www-data /var/www/site"
+        - "sudo usermod -aG www-data /var/www/site"
+        explanation: "chown change le propriétaire (et le groupe après les deux-points), -R l'applique récursivement. chmod change les droits, pas le propriétaire ; usermod modifie un compte, pas un fichier."
+      }
+      question "Tu viens d’être ajouté au groupe projet, mais « id » ne l’affiche pas. Pourquoi ?" {
+        - "la commande usermod a échoué"
+        + "les groupes sont lus à la connexion : il faut ouvrir une nouvelle session"
+        - "id n'affiche que le groupe principal"
+        - "il faut redémarrer la machine"
+        explanation: "Les groupes d'un processus sont fixés à l'ouverture de session. Une déconnexion puis une reconnexion suffisent ; un redémarrage complet n'est pas nécessaire."
+      }
+      question "Pourquoi « cat /etc/shadow » est-il refusé à un utilisateur normal ?" {
+        - "parce que le fichier est chiffré"
+        + "parce qu'il contient les empreintes des mots de passe et n'est lisible que par root et le groupe shadow"
+        - "parce que le fichier est vide"
+        - "parce que cat ne lit pas les fichiers de /etc"
+        explanation: "/etc/shadow a les droits rw-r----- avec root comme propriétaire et shadow comme groupe. /etc/passwd, lui, est lisible par tous car il ne contient plus de mot de passe (le champ vaut x)."
+      }
+      question "Avec un umask de 022, quels droits reçoit un nouveau fichier texte ?" {
+        - "rw-rw-rw- (666)"
+        + "rw-r--r-- (644)"
+        - "rwxr-xr-x (755)"
+        - "rw------- (600)"
+        explanation: "Un fichier part de 666 et le masque retire 022 : il reste 644. Un dossier part de 777 et devient 755. Le droit x n'est jamais donné automatiquement à un fichier."
+      }
+    }
+  }
+
+  module "aide-nano" {
+    title: "Chapitre 8 : trouver de l'aide et éditer avec nano"
+    duration: "30min"
+    content: """
+### Personne ne retient toutes les options
+Un administrateur ne connaît pas par cœur les options de chaque commande : il sait **où les trouver**, sans Internet, directement sur la machine.
+
+### --help : le résumé rapide
+La plupart des commandes acceptent `--help` et affichent un résumé de leurs options :
+
+```bash
+ls --help | less
+cp --help | grep -- "-i"
+```
+
+Le `--` dans `grep -- "-i"` indique à grep que ce qui suit n'est plus une option : sinon il prendrait `-i` pour sa propre option.
+
+### man : le manuel complet
+```bash
+man ls
+```
+
+Une page de manuel s'affiche avec `less` (mêmes touches : `/` pour chercher, `q` pour quitter) et suit toujours le même plan :
+
+| Section | Contenu |
+|---|---|
+| NAME | nom et résumé en une ligne |
+| SYNOPSIS | forme de la commande |
+| DESCRIPTION, OPTIONS | ce que fait chaque option |
+| EXAMPLES | exemples (pas toujours présents) |
+| SEE ALSO | commandes voisines |
+
+Dans le SYNOPSIS, ce qui est entre crochets `[ ]` est facultatif et `...` signifie « peut être répété » : `ls [OPTION]... [FILE]...`.
+
+### Les sections du manuel
+Le manuel est découpé en sections numérotées. Les plus utiles :
+
+| N° | Contenu | Exemple |
+|---|---|---|
+| 1 | commandes des utilisateurs | `man 1 passwd` : la commande passwd |
+| 5 | formats de fichiers et conventions | `man 5 passwd` : le fichier /etc/passwd |
+| 8 | commandes d'administration | `man 8 usermod` |
+
+Quand un même nom existe dans plusieurs sections, `man passwd` affiche la première trouvée (la 1) : pour lire la description du fichier, il faut `man 5 passwd`.
+
+### Chercher une commande dont on ignore le nom
+```bash
+man -k password        # même chose que : apropos password
+whatis ls              # ls (1) - list directory contents
+```
+
+`man -k` cherche le mot dans les résumés (la section NAME) de toutes les pages installées.
+
+### Les commandes internes du shell
+Certaines commandes, comme `cd`, `echo` ou `history`, sont intégrées à bash et n'ont pas forcément de page de manuel (`man cd` répond `No manual entry for cd` sur Debian). On utilise alors `help` :
+
+```text
+$ type cd
+cd is a shell builtin
+$ help cd
+```
+
+`type` dit si une commande est interne (builtin), un alias ou un programme. Pour `ls`, il répond `ls is /usr/bin/ls`, ou bien indique un alias vers `ls --color=auto` (c'est le cas avec le fichier `.bashrc` fourni par défaut sur Debian et Ubuntu, qui ajoute les couleurs).
+
+Pour avoir les pages de manuel en français : `sudo apt install manpages-fr`. Les pages des outils d'administration ne sont pas toutes traduites.
+
+### nano : l'éditeur des débutants
+Pour modifier un fichier de configuration sans interface graphique, il faut un éditeur en mode texte. `nano` est installé par défaut sur Debian et Ubuntu et affiche ses raccourcis en bas de l'écran. Dans cette aide, `^` signifie Ctrl et `M-` signifie Alt.
+
+```bash
+nano notes.txt            # ouvre (ou crée) notes.txt
+nano -l notes.txt         # affiche les numéros de ligne
+sudo nano /etc/hosts      # fichier système : droits root nécessaires
+```
+
+| Raccourci | Action |
+|---|---|
+| Ctrl+O puis Entrée | enregistrer (écrire le fichier) |
+| Ctrl+S | enregistrer sans question |
+| Ctrl+X | quitter (nano demande s'il faut enregistrer) |
+| Ctrl+W | chercher un texte (Ctrl+F aussi à partir de nano 8) |
+| Ctrl+K | couper la ligne entière |
+| Ctrl+U | coller |
+| Alt+U / Alt+E | annuler / rétablir |
+| Ctrl+C | afficher la position du curseur (ligne, colonne) |
+| Alt+G (ou Ctrl+_) | aller à une ligne donnée |
+| Ctrl+G | aide complète |
+
+En quittant avec Ctrl+X un fichier modifié, nano demande s'il faut enregistrer : réponds par la lettre indiquée (`Y` ou `O` selon la langue), puis Entrée pour confirmer le nom.
+
+### Méthode sûre pour modifier un fichier de configuration
+1. Faire une copie : `sudo cp -a /etc/hosts /etc/hosts.bak`.
+2. Éditer : `sudo nano /etc/hosts` (ou `sudoedit /etc/hosts`, qui fait éditer une copie temporaire avec tes droits puis la remet en place).
+3. Vérifier la syntaxe quand un outil existe (par exemple `sudo sshd -t` pour SSH, `sudo apachectl configtest` pour Apache).
+4. Recharger ou redémarrer le service, puis tester.
+5. En cas de problème, restaurer : `sudo cp -a /etc/hosts.bak /etc/hosts`.
+
+Si tu ouvres un fichier système avec `nano` sans `sudo`, tu peux le lire, mais l'enregistrement échoue avec un message de permission refusée. Tu perds alors tes modifications si tu quittes sans les sauver ailleurs.
+
+### À toi de jouer
+1. Avec `--help`, trouve l'option de `cp` qui n'écrase jamais un fichier existant.
+2. Ouvre `man ls`, cherche l'option qui trie par taille, puis quitte.
+3. Tu veux changer le mot de passe d'un utilisateur mais tu as oublié la commande. Trouve-la avec le manuel.
+4. Quelle est la différence entre `man passwd` et `man 5 passwd` ?
+5. Dis si `cd`, `ls` et `history` sont des commandes internes ou des programmes, et comment obtenir l'aide de chacune.
+6. Avec nano, crée `~/memo.txt` contenant trois lignes : ta distribution, ton nom de machine, ton UID. Coupe la deuxième ligne et colle-la en dernier, enregistre, quitte, puis vérifie avec `cat`.
+
+### Correction
+1. `cp --help | grep -i "overwrite"` fait apparaître `-n, --no-clobber` : ne pas écraser un fichier existant (sur les versions récentes de coreutils, `--update=none` produit le même effet).
+2. `man ls`, puis `/size` et `n` jusqu'à l'option `-S` (« sort by file size, largest first »), puis `q`.
+3. `man -k password` (ou `apropos password`) liste notamment `passwd (1) - change user password`. La commande est donc `passwd` (`sudo passwd paul` pour un autre compte).
+4. `man passwd` affiche la section 1 : la commande qui change un mot de passe. `man 5 passwd` décrit le format du fichier `/etc/passwd` et ses sept champs.
+5. `type cd` et `type history` : `shell builtin`, aide avec `help cd`, `help history`. `type ls` : un programme (`/usr/bin/ls`) ou un alias de ce programme, aide avec `man ls` et `ls --help`.
+6. `nano ~/memo.txt`, taper les trois lignes, placer le curseur sur la deuxième, Ctrl+K, descendre en fin de fichier, Ctrl+U, puis Ctrl+O, Entrée, Ctrl+X. `cat ~/memo.txt` montre la ligne déplacée à la fin.
+"""
+
+    quiz {
+      pick: 5
+      question "Quelle commande affiche la page de manuel décrivant le format du fichier /etc/passwd ?" {
+        - "man passwd"
+        + "man 5 passwd"
+        - "man 8 passwd"
+        - "help passwd"
+        explanation: "La section 5 décrit les formats de fichiers. man passwd seul ouvre la section 1, celle de la commande passwd. help ne concerne que les commandes internes de bash."
+      }
+      question "Comment trouver une commande liée à un mot-clé quand tu ignores son nom ?" {
+        - "man --name mot"
+        + "man -k mot (ou apropos mot)"
+        - "help mot"
+        - "whatis -all mot"
+        explanation: "man -k, équivalent à apropos, cherche le mot dans le résumé de toutes les pages installées. whatis affiche le résumé d'une commande dont on connaît déjà le nom."
+      }
+      question "« man cd » répond « No manual entry for cd ». Comment obtenir l’aide de cd ?" {
+        - "cd --manual"
+        + "help cd, car cd est une commande interne de bash"
+        - "man 8 cd"
+        - "sudo man cd"
+        explanation: "cd est intégrée au shell (type cd affiche « shell builtin »). Les commandes internes se documentent avec help. Le manuel décrit surtout les programmes installés."
+      }
+      question "Dans le SYNOPSIS « ls [OPTION]... [FILE]... », que signifient les crochets ?" {
+        - "qu'il faut taper les crochets"
+        + "que l'élément est facultatif"
+        - "que l'élément est obligatoire"
+        - "que l'élément doit être entre guillemets"
+        explanation: "Les crochets marquent un élément facultatif, et les points de suspension indiquent qu'il peut être répété. ls fonctionne donc sans aucun argument."
+      }
+      question "Dans nano, quel raccourci enregistre le fichier en demandant de confirmer son nom ?" {
+        - "Ctrl+X"
+        + "Ctrl+O"
+        - "Ctrl+W"
+        - "Ctrl+K"
+        explanation: "Ctrl+O (write Out) écrit le fichier après confirmation du nom avec Entrée. Ctrl+X quitte, Ctrl+W cherche un texte, Ctrl+K coupe la ligne."
+      }
+      question "Dans nano, comment déplacer une ligne à un autre endroit ?" {
+        - "Ctrl+C puis Ctrl+V"
+        + "Ctrl+K pour la couper, puis Ctrl+U à la nouvelle position"
+        - "Alt+U puis Alt+E"
+        - "Ctrl+W puis Ctrl+O"
+        explanation: "Ctrl+K coupe la ligne courante et Ctrl+U colle. Dans nano, Ctrl+C affiche la position du curseur et Alt+U annule la dernière action."
+      }
+      question "Tu modifies /etc/hosts avec « nano /etc/hosts » sans sudo. Que se passe-t-il à l’enregistrement ?" {
+        - "le fichier est enregistré normalement"
+        + "l'écriture est refusée faute de droits, les modifications ne sont pas enregistrées"
+        - "nano demande le mot de passe de root"
+        - "le fichier est enregistré dans ton dossier personnel"
+        explanation: "/etc/hosts appartient à root et n'est modifiable que par lui. nano refuse l'écriture. Il faut ouvrir le fichier avec sudo nano ou sudoedit."
+      }
+      question "Quelle est la première étape avant de modifier un fichier de configuration important ?" {
+        - "redémarrer le service"
+        + "en faire une copie de sauvegarde, par exemple avec cp -a"
+        - "lui donner les droits 777"
+        - "supprimer l'ancien fichier"
+        explanation: "Une copie permet de revenir en arrière en quelques secondes si le service ne démarre plus. cp -a conserve aussi les droits et le propriétaire d'origine."
+      }
+      question "Que fait la commande « type ls » ?" {
+        - "elle affiche le contenu du programme ls"
+        + "elle indique si ls est un alias, une commande interne ou un programme, et où il se trouve"
+        - "elle change le type du fichier ls"
+        - "elle affiche la page de manuel de ls"
+        explanation: "type indique comment le shell va interpréter un nom : alias, commande interne (builtin) ou programme avec son chemin. Pour le manuel, c'est man."
+      }
+      question "Comment afficher rapidement le résumé des options de la commande tar ?" {
+        - "tar -?"
+        + "tar --help"
+        - "help tar"
+        - "tar /help"
+        explanation: "La plupart des programmes GNU affichent un résumé avec --help. help est réservé aux commandes internes du shell, et /help est une convention Windows."
+      }
+      question "Dans l’aide affichée en bas de nano, que signifie « M-U » ?" {
+        - "Maj+U"
+        + "Alt+U"
+        - "Ctrl+M puis U"
+        - "Menu puis U"
+        explanation: "Dans nano, ^ désigne la touche Ctrl et M- la touche Méta, c'est-à-dire Alt sur un PC. M-U annule la dernière modification."
+      }
+      question "Quelle section du manuel contient les commandes d’administration comme usermod ?" {
+        - "1"
+        - "5"
+        + "8"
+        - "3"
+        explanation: "La section 8 regroupe les commandes d'administration du système. La 1 contient les commandes des utilisateurs, la 5 les formats de fichiers, la 3 les fonctions des bibliothèques."
+      }
+    }
+  }
+
+  module "paquets-apt" {
+    title: "Chapitre 9 : installer et mettre à jour des logiciels avec apt"
+    duration: "35min"
+    content: """
+### Paquets et dépôts
+Sous Debian et Ubuntu, on n'installe pas un logiciel en téléchargeant un installateur sur un site web. On utilise un **gestionnaire de paquets** :
+• un **paquet** (fichier `.deb`) contient les fichiers d'un logiciel, des scripts d'installation et la liste de ses **dépendances** (les autres paquets dont il a besoin) ;
+• un **dépôt** (repository) est un serveur qui met à disposition des milliers de paquets, signés par la distribution ;
+• `apt` télécharge les paquets depuis les dépôts, vérifie leurs signatures, résout les dépendances et appelle `dpkg`, l'outil de bas niveau qui installe réellement les fichiers.
+
+Avantages : une seule commande met à jour **tout** le système, et les paquets viennent d'une source vérifiée.
+
+### Les dépôts configurés
+Selon la version, la liste des dépôts est dans `/etc/apt/sources.list` (Debian 12) ou dans un fichier `.sources` de `/etc/apt/sources.list.d/` (Debian 13, Ubuntu 24.04). Une ligne de Debian 12 ressemble à :
+
+```text
+deb http://deb.debian.org/debian bookworm main non-free-firmware
+deb http://security.debian.org/debian-security bookworm-security main non-free-firmware
+```
+
+`bookworm` est le nom de Debian 12 (`trixie` pour Debian 13) ; `main` est la partie entièrement libre de l'archive. Le dépôt `-security` apporte les correctifs de sécurité : il ne doit jamais être retiré.
+
+### Les commandes du quotidien
+```bash
+sudo apt update              # télécharge la liste à jour des paquets disponibles
+apt list --upgradable        # affiche ce qui peut être mis à jour
+sudo apt upgrade             # installe les mises à jour
+sudo apt full-upgrade        # idem, en acceptant de retirer des paquets si nécessaire
+sudo apt install tree        # installe un paquet et ses dépendances
+sudo apt install -y htop curl   # plusieurs paquets, sans question
+sudo apt remove tree         # désinstalle, garde les fichiers de configuration
+sudo apt purge tree          # désinstalle et supprime aussi la configuration
+sudo apt autoremove          # retire les dépendances devenues inutiles
+apt search "directory tree"  # cherche dans les noms et descriptions
+apt show tree                # détails : version, taille, dépendances, description
+apt policy nano              # version installée et version candidate, et leur dépôt
+```
+
+Le point qui piège tout le monde : **`apt update` n'installe rien.** Il met seulement à jour la liste de ce qui existe. Sans lui, `apt upgrade` ne voit pas les nouvelles versions et `apt install` peut échouer sur un paquet introuvable ou un fichier qui n'existe plus sur le dépôt (erreur 404). On enchaîne donc :
+
+```bash
+sudo apt update && sudo apt upgrade
+```
+
+`apt upgrade` ne supprime jamais de paquet déjà installé (il peut en installer de nouveaux si une dépendance l'exige). `apt full-upgrade` peut en retirer pour résoudre un conflit : lis la liste qu'il affiche avant de répondre oui.
+
+### Interroger ce qui est installé
+```bash
+apt list --installed | wc -l     # nombre de paquets installés (approximatif : 1 ligne d'en-tête)
+dpkg -l tree                     # état du paquet : « ii » = installé
+dpkg -L tree                     # fichiers installés par le paquet
+dpkg -S /etc/nanorc              # quel paquet a installé ce fichier ? -> nano: /etc/nanorc
+```
+
+Les installations, mises à jour et suppressions sont tracées dans `/var/log/apt/history.log` et `/var/log/dpkg.log` : très utile pour répondre à « qu'est-ce qui a changé sur ce serveur hier ? ».
+
+### apt ou apt-get ?
+`apt` est fait pour un humain : barre de progression, couleurs, sortie qui peut changer d'une version à l'autre. Dans un script, il affiche d'ailleurs `WARNING: apt does not have a stable CLI interface`. Dans les scripts, on utilise `apt-get` et `apt-cache`, dont le comportement est stable.
+
+### Erreurs fréquentes
+| Message | Cause | Solution |
+|---|---|---|
+| `E: Unable to locate package` | nom mal écrit, ou listes pas à jour | vérifier le nom avec `apt search`, lancer `apt update` |
+| `Could not open lock file ... Permission denied` | commande lancée sans `sudo` | relancer avec `sudo` |
+| `Could not get lock /var/lib/dpkg/lock-frontend. It is held by process ...` | un autre apt tourne (mise à jour automatique, autre terminal) | attendre la fin de l'autre processus ; ne pas supprimer le verrou à la main |
+| `Temporary failure resolving 'deb.debian.org'` | pas de résolution de noms | vérifier le réseau et le DNS |
+
+### Bonnes pratiques de sécurité
+• Installe depuis les dépôts officiels de ta distribution. Un `.deb` téléchargé au hasard, ou un script lancé avec `curl ... | sudo bash`, s'exécute en root sans aucune vérification de la distribution.
+• Ne mélange pas les versions (par exemple des dépôts de Debian 13 sur une Debian 12) : c'est la cause classique d'un système qui ne se met plus à jour.
+• Applique les mises à jour de sécurité rapidement. Sur un serveur, le paquet `unattended-upgrades` peut les installer automatiquement.
+• Après une mise à jour du noyau ou de bibliothèques importantes, un redémarrage est nécessaire pour qu'elles prennent effet.
+• Retire ce qui ne sert pas (`apt purge`, `apt autoremove`) : un logiciel absent ne peut pas être attaqué.
+
+### À toi de jouer
+1. Mets à jour la liste des paquets et affiche ceux qui peuvent être mis à jour, puis applique les mises à jour en une seule ligne qui ne lance l'installation que si la mise à jour des listes a réussi.
+2. Cherche un paquet qui affiche l'arborescence des dossiers, affiche ses détails, puis installe-le et teste-le sur ton dossier personnel.
+3. Quel paquet a installé le fichier `/etc/nanorc` ? Quelle version de nano est installée, et laquelle est disponible ?
+4. Désinstalle `tree` en gardant sa configuration, puis vérifie son état avec `dpkg -l`. Supprime-le ensuite complètement.
+5. Retrouve dans le journal d'apt la date à laquelle tu as installé `tree`.
+6. Tu tapes `apt install htop` et obtiens `Could not open lock file /var/lib/dpkg/lock-frontend - open (13: Permission denied)`. Explique et corrige.
+
+### Correction
+1. `sudo apt update`, `apt list --upgradable`, puis `sudo apt update && sudo apt upgrade`.
+2. `apt search tree` donne beaucoup de résultats ; `apt search "directory tree"` est plus précis et fait apparaître `tree`. `apt show tree`, puis `sudo apt install tree`, puis `tree -L 2 ~` (deux niveaux de profondeur).
+3. `dpkg -S /etc/nanorc` répond `nano: /etc/nanorc`. `apt policy nano` affiche `Installed:` et `Candidate:` ; s'ils sont égaux, nano est à jour (par exemple `7.2-1+deb12u1` sur Debian 12).
+4. `sudo apt remove tree`, puis `dpkg -l tree` : l'état devient `rc` (removed, config-files restants) s'il restait de la configuration, sinon le paquet n'apparaît plus comme installé. `sudo apt purge tree` supprime tout. `tree` n'ayant presque pas de configuration, la différence se voit mieux avec un service comme `apache2`.
+5. `grep -B1 "Commandline: apt install tree" /var/log/apt/history.log` : l'option `-B1` affiche aussi la ligne précédente, `Start-Date:`, qui donne la date et l'heure.
+6. `apt install` modifie le système et doit être lancé en root : `sudo apt install htop`. Le message ne veut pas dire qu'un autre apt tourne : c'est `Permission denied` qui donne la cause.
+"""
+
+    quiz {
+      pick: 5
+      question "Que fait « sudo apt update » ?" {
+        - "il installe toutes les mises à jour disponibles"
+        + "il télécharge la liste à jour des paquets et versions disponibles, sans rien installer"
+        - "il met à jour le noyau et redémarre"
+        - "il met à jour apt lui-même uniquement"
+        explanation: "apt update rafraîchit seulement les listes de paquets. C'est apt upgrade qui installe les nouvelles versions. On enchaîne les deux : sudo apt update && sudo apt upgrade."
+      }
+      question "Quelle est la différence entre « apt remove » et « apt purge » ?" {
+        - "remove supprime aussi les dépendances, purge non"
+        + "remove garde les fichiers de configuration, purge les supprime aussi"
+        - "purge vide le cache des paquets téléchargés"
+        - "aucune, purge est un alias de remove"
+        explanation: "remove désinstalle le programme mais laisse sa configuration dans /etc (état rc dans dpkg -l). purge efface aussi cette configuration. Les dépendances inutiles se retirent avec autoremove."
+      }
+      question "« sudo apt install tre » répond « Unable to locate package tre ». Que fais-tu d’abord ?" {
+        - "tu supprimes /var/lib/dpkg/lock"
+        + "tu vérifies le nom avec apt search, puis tu lances apt update si besoin"
+        - "tu ajoutes un dépôt trouvé sur un forum"
+        - "tu relances la commande avec -f"
+        explanation: "Ce message signifie que apt ne connaît pas ce nom : faute de frappe ou listes pas à jour. Ajouter un dépôt inconnu ou toucher aux verrous est risqué et ne règle pas une faute de frappe."
+      }
+      question "Quel outil installe réellement les fichiers d’un paquet .deb, appelé par apt ?" {
+        - "snap"
+        - "rpm"
+        + "dpkg"
+        - "make"
+        explanation: "apt gère les dépôts et les dépendances, puis confie l'installation à dpkg. rpm est l'équivalent pour Red Hat et Fedora ; snap est un autre système de paquets d'Ubuntu."
+      }
+      question "Quelle commande indique quel paquet a installé le fichier /etc/nanorc ?" {
+        - "dpkg -L /etc/nanorc"
+        + "dpkg -S /etc/nanorc"
+        - "apt show /etc/nanorc"
+        - "apt search nanorc --file"
+        explanation: "dpkg -S (search) cherche le paquet propriétaire d'un fichier. dpkg -L fait l'inverse : il liste les fichiers d'un paquet dont on donne le nom."
+      }
+      question "Pourquoi utiliser apt-get plutôt que apt dans un script ?" {
+        - "parce que apt-get est plus rapide"
+        + "parce que la sortie et le comportement de apt-get sont stables, alors que apt est prévu pour un humain"
+        - "parce que apt ne fonctionne pas sans terminal"
+        - "parce que apt-get n'a pas besoin de sudo"
+        explanation: "apt affiche lui-même un avertissement « does not have a stable CLI interface » quand on l'utilise dans un script. apt-get et apt-cache gardent une interface stable. Les deux demandent les droits root pour installer."
+      }
+      question "Quelle commande installe les mises à jour en acceptant de retirer un paquet si c’est nécessaire ?" {
+        - "apt upgrade"
+        + "apt full-upgrade"
+        - "apt autoremove"
+        - "apt update --force"
+        explanation: "apt upgrade ne retire jamais de paquet installé. full-upgrade peut en retirer pour résoudre un conflit, d'où l'importance de lire sa liste avant de valider. autoremove ne fait que retirer les dépendances inutiles."
+      }
+      question "apt affiche « Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 1342 ». Que fais-tu ?" {
+        - "tu supprimes le fichier de verrou avec rm"
+        + "tu attends que l'autre processus apt (souvent une mise à jour automatique) se termine"
+        - "tu redémarres immédiatement la machine"
+        - "tu relances avec sudo sudo"
+        explanation: "Un autre apt ou dpkg travaille déjà. Supprimer le verrou ou couper la machine en pleine installation peut casser la base des paquets. On attend la fin, puis on relance."
+      }
+      question "Dans la sortie de « dpkg -l », que signifie l’état « ii » ?" {
+        - "le paquet est ignoré"
+        + "le paquet est installé normalement"
+        - "le paquet est en cours d'installation"
+        - "le paquet est retiré mais sa configuration reste"
+        explanation: "ii signifie souhaité installé et effectivement installé. rc indique un paquet retiré dont les fichiers de configuration restent, ce qui arrive après apt remove."
+      }
+      question "Pourquoi éviter « curl https://site-inconnu/install.sh | sudo bash » ?" {
+        - "parce que curl ne sait pas télécharger de scripts"
+        + "parce que le script s'exécute en root sans aucune vérification par la distribution"
+        - "parce que bash ne peut pas lire depuis un tube"
+        - "parce que la commande est réservée à Ubuntu"
+        explanation: "Le contenu du script n'est ni signé ni relu par la distribution, et il reçoit tous les droits. Les paquets des dépôts officiels sont signés et suivis par les mises à jour de sécurité."
+      }
+      question "Où retrouver la liste des installations et mises à jour faites avec apt ?" {
+        - "dans /etc/apt/history"
+        + "dans /var/log/apt/history.log"
+        - "dans ~/.bash_history uniquement"
+        - "dans /tmp/apt.log"
+        explanation: "apt écrit chaque opération dans /var/log/apt/history.log (commande, utilisateur, paquets, dates) et dpkg dans /var/log/dpkg.log. ~/.bash_history ne contient que les commandes tapées par un utilisateur."
+      }
+      question "Que fait « apt policy openssh-server » ?" {
+        - "il affiche la politique de sécurité du serveur SSH"
+        + "il affiche la version installée, la version candidate et le dépôt de chacune"
+        - "il installe la version recommandée"
+        - "il bloque les mises à jour du paquet"
+        explanation: "apt policy compare la version installée (Installed) et la version qui serait installée (Candidate), avec les dépôts d'origine. Si les deux sont égales, le paquet est à jour."
+      }
+    }
+  }
+
+  module "synthese" {
+    title: "Chapitre 10 : synthèse, préparer un serveur pour un projet de classe"
+    duration: "40min"
+    content: """
+### Le contexte
+Le lycée met à disposition un serveur Debian pour un projet de groupe. Tu dois le préparer : vérifier la machine, la mettre à jour, créer un espace partagé pour le groupe `ciel`, écrire un petit script d'inventaire et vérifier le résultat. Chaque étape réutilise un chapitre du cours.
+
+### Étape 1 : faire l'état des lieux (chapitres 1, 2, 4)
+```bash
+whoami ; hostname ; id
+grep PRETTY_NAME /etc/os-release
+uname -r
+df -h /                 # espace disque libre sur la racine
+```
+
+Note la distribution et l'espace libre : s'il reste moins de quelques gigaoctets, les mises à jour peuvent échouer.
+
+### Étape 2 : mettre à jour et installer les outils (chapitre 9)
+```bash
+sudo apt update && sudo apt upgrade
+sudo apt install tree
+```
+
+### Étape 3 : créer l'espace partagé (chapitres 3 et 7)
+On veut :
+• `/srv/ciel/docs` : documents du groupe, lisibles et modifiables par les membres du groupe ;
+• `/srv/ciel/rendus` : chacun y dépose ses fichiers, mais personne ne peut supprimer ceux des autres ;
+• aucun accès pour les comptes qui ne sont pas dans le groupe.
+
+```bash
+sudo addgroup ciel
+sudo usermod -aG ciel eleve
+sudo mkdir -p /srv/ciel/{docs,rendus}
+sudo chown -R root:ciel /srv/ciel
+sudo chmod 770 /srv/ciel /srv/ciel/docs
+sudo chmod 1770 /srv/ciel/rendus
+```
+
+Le `1` devant `770` ajoute le **sticky bit** vu sur `/tmp` : dans `rendus`, un membre ne peut supprimer que ses propres fichiers. Comme les autres n'ont pas le droit `x`, `ls -ld` l'affiche avec un `T` majuscule : `drwxrwx--T`.
+
+Déconnecte-toi puis reconnecte-toi pour que le groupe `ciel` soit pris en compte, et vérifie avec `id`.
+
+### Étape 4 : écrire un script d'inventaire (chapitres 6 et 8)
+Avec `nano ~/inventaire.sh`, écris :
+
+```bash
+#!/bin/bash
+# inventaire.sh : résumé de l'état de la machine
+echo "Inventaire du $(date '+%Y-%m-%d %H:%M')"
+echo "Machine : $(hostname)"
+grep PRETTY_NAME /etc/os-release
+echo "Noyau : $(uname -r)"
+echo "Paquets installés : $(dpkg -l | grep -c '^ii')"
+echo "Comptes avec bash :"
+grep 'bash$' /etc/passwd | cut -d: -f1
+df -h /
+```
+
+La première ligne (`#!/bin/bash`) indique le programme qui exécute le script. `$(commande)` est remplacé par le résultat de la commande : c'est ainsi qu'on insère la date ou le nom de la machine dans une phrase (le cours de scripts bash approfondit ce point).
+
+Rends le script exécutable et range le résultat dans l'espace partagé :
+
+```bash
+chmod u+x ~/inventaire.sh
+~/inventaire.sh > /srv/ciel/docs/inventaire.txt 2>&1
+cat /srv/ciel/docs/inventaire.txt
+```
+
+### Étape 5 : contrôler (chapitres 2, 5, 7)
+```bash
+tree /srv/ciel
+ls -ld /srv/ciel /srv/ciel/docs /srv/ciel/rendus
+find /srv/ciel -type f -user eleve
+sudo -u nobody ls /srv/ciel      # doit être refusé : Permission denied
+```
+
+`sudo -u nobody` lance une commande sous l'identité du compte `nobody`, qui n'est pas dans le groupe : c'est un moyen simple de vérifier que l'espace est bien fermé aux autres.
+
+### À toi de jouer
+Réalise les cinq étapes sur ta machine, puis :
+1. Crée un deuxième compte `paul`, ajoute-le au groupe `ciel`, et vérifie qu'il ne peut pas supprimer un fichier que tu as déposé dans `rendus` (utilise `sudo -u paul rm -f /srv/ciel/rendus/ton-fichier` ; `-f` évite la question de confirmation).
+2. Ajoute à la fin de `inventaire.sh` une ligne qui affiche les 5 dossiers les plus lourds de `/var/log`, puis régénère `inventaire.txt`.
+3. Retrouve dans `/var/log/apt/history.log` toutes les commandes `install` passées sur la machine.
+4. Fais une copie de sauvegarde datée de tout `/srv/ciel` dans `/root`, en conservant droits et propriétaires.
+
+### Correction
+1. `sudo adduser paul`, `sudo usermod -aG ciel paul`. Puis `touch /srv/ciel/rendus/tp-eleve.txt` et `sudo -u paul rm -f /srv/ciel/rendus/tp-eleve.txt` : réponse `rm: cannot remove '/srv/ciel/rendus/tp-eleve.txt': Operation not permitted`, grâce au sticky bit. Le même essai dans `docs` réussirait, car `docs` n'a pas de sticky bit. (`sudo -u paul` ouvre une nouvelle session pour paul : ses groupes sont bien lus, pas besoin de reconnexion.)
+2. Ajouter la ligne `du -sh /var/log/* 2>/dev/null | sort -h | tail -n 5`, puis relancer `~/inventaire.sh > /srv/ciel/docs/inventaire.txt 2>&1`. En utilisateur normal, certains dossiers ne sont pas lisibles : c'est pourquoi les erreurs sont jetées ; lancé avec `sudo`, le script verrait tout.
+3. `grep "Commandline:.*install" /var/log/apt/history.log`.
+4. `sudo cp -a /srv/ciel /root/ciel-$(date +%F)` : `date +%F` donne la date au format `AAAA-MM-JJ`, et `-a` conserve les droits, les propriétaires, les dates et le sticky bit.
+
+### Bilan des commandes du cours
+| Besoin | Commandes |
+|---|---|
+| se repérer | `pwd`, `ls -la`, `cd`, `cd -`, `~`, `..` |
+| manipuler | `touch`, `mkdir -p`, `cp -a`, `mv`, `rm -r` (avec prudence) |
+| lire | `cat`, `less`, `head`, `tail -f`, `journalctl`, `wc -l` |
+| chercher | `find -name -type -size -mtime`, `grep -rinv` |
+| enchaîner | `>`, `>>`, `2>`, `2>&1`, `/dev/null`, `|`, `tee`, `&&`, `||` |
+| droits | `id`, `chmod` (symbolique, octal), `chown`, `usermod -aG` |
+| aide et édition | `man`, `man -k`, `--help`, `help`, `nano` |
+| logiciels | `apt update`, `apt upgrade`, `apt install`, `apt purge`, `dpkg -S` |
+
+### Pour aller plus loin
+• Filesystem Hierarchy Standard 3.0, Linux Foundation : https://refspecs.linuxfoundation.org/FHS_3.0/fhs/index.html
+• GNU Coreutils Manual (ls, cp, mv, rm, chmod, chown…), projet GNU : https://www.gnu.org/software/coreutils/manual/
+• Bash Reference Manual (redirections, développements, commandes internes), projet GNU : https://www.gnu.org/software/bash/manual/
+• Le cahier de l'administrateur Debian, Raphaël Hertzog et Roland Mas : https://debian-handbook.info
+• Documentation de nano, projet GNU nano : https://www.nano-editor.org/docs.php
+• Recommandations de configuration d'un système GNU/Linux (ANSSI-BP-028), ANSSI : https://cyber.gouv.fr
+"""
+
+    codeblock "bash" {
+      title: "Recette rapide de l'espace partagé"
+      code: """
+id | grep -o 'ciel'                          # ciel : le groupe est actif
+ls -ld /srv/ciel /srv/ciel/docs /srv/ciel/rendus
+# drwxrwx--- root ciel /srv/ciel
+# drwxrwx--- root ciel /srv/ciel/docs
+# drwxrwx--T root ciel /srv/ciel/rendus
+sudo -u nobody ls /srv/ciel                  # Permission denied
+test -x ~/inventaire.sh && echo "script exécutable"
+head -n 3 /srv/ciel/docs/inventaire.txt      # date, machine, distribution
+dpkg -l tree | tail -n 1                     # ligne commençant par ii
+"""
+    }
+
+    quiz {
+      pick: 10
+      question "Quel dossier contient les fichiers de configuration, et lequel les journaux ?" {
+        - "/usr pour la configuration, /tmp pour les journaux"
+        + "/etc pour la configuration, /var/log pour les journaux"
+        - "/var pour la configuration, /etc/log pour les journaux"
+        - "/home pour la configuration, /boot pour les journaux"
+        explanation: "La FHS place la configuration de la machine dans /etc et les données variables, dont les journaux, dans /var, en particulier /var/log."
+      }
+      question "Tu es dans /srv/ciel/docs. Que désigne le chemin « ../rendus » ?" {
+        - "/srv/rendus"
+        + "/srv/ciel/rendus"
+        - "/srv/ciel/docs/rendus"
+        - "/rendus"
+        explanation: ".. remonte au parent, /srv/ciel, puis rendus y descend. Un chemin relatif dépend toujours du dossier courant."
+      }
+      question "Quelle commande crée /srv/ciel/docs et /srv/ciel/rendus en une fois, même si /srv/ciel n’existe pas ?" {
+        - "sudo mkdir /srv/ciel/docs /srv/ciel/rendus"
+        + "sudo mkdir -p /srv/ciel/{docs,rendus}"
+        - "sudo touch -p /srv/ciel/{docs,rendus}"
+        - "sudo mkdir -r /srv/ciel/docs,rendus"
+        explanation: "-p crée les parents manquants et les accolades produisent les deux chemins. Sans -p, mkdir échoue car /srv/ciel n'existe pas encore ; touch crée des fichiers."
+      }
+      question "Que donne « chmod 1770 /srv/ciel/rendus » ?" {
+        - "rwxrwxrwx avec un verrou"
+        + "rwxrwx--- pour le propriétaire et le groupe, plus le sticky bit"
+        - "un dossier en lecture seule pour tous"
+        - "rwxrwx--- et l'exécution automatique des scripts déposés"
+        explanation: "770 donne rwx au propriétaire et au groupe, rien aux autres ; le 1 en tête ajoute le sticky bit. ls -ld l'affiche drwxrwx--T : le T est majuscule car les autres n'ont pas x."
+      }
+      question "Dans un dossier avec sticky bit, que peut faire un membre du groupe qui a w et x ?" {
+        - "supprimer tous les fichiers du dossier"
+        + "créer des fichiers et supprimer seulement les siens"
+        - "lire les fichiers mais en créer aucun"
+        - "seulement entrer dans le dossier"
+        explanation: "Le sticky bit réserve la suppression et le renommage d'un fichier à son propriétaire (et à root). La création reste possible pour tous ceux qui ont w et x sur le dossier."
+      }
+      question "Après « sudo usermod -aG ciel eleve », que faut-il faire pour qu’eleve profite du groupe ?" {
+        - "redémarrer le serveur"
+        + "se déconnecter puis se reconnecter"
+        - "lancer apt update"
+        - "taper chmod 770 sur le dossier personnel"
+        explanation: "Les groupes sont attribués à l'ouverture de session. Une nouvelle connexion suffit ; id permet de vérifier que ciel apparaît."
+      }
+      question "Que fait « ~/inventaire.sh > /srv/ciel/docs/inventaire.txt 2>&1 » ?" {
+        - "il affiche le résultat à l'écran et l'ajoute au fichier"
+        + "il écrit la sortie et les erreurs du script dans inventaire.txt, en écrasant l'ancien contenu"
+        - "il ajoute seulement les erreurs à la fin du fichier"
+        - "il copie le script dans inventaire.txt"
+        explanation: "> crée ou écrase le fichier avec la sortie standard, et 2>&1 y envoie aussi la sortie d'erreur. Pour ajouter au lieu d'écraser, il faudrait >>, et pour voir aussi à l'écran, tee."
+      }
+      question "Le script inventaire.sh ne se lance pas : « Permission denied ». Quelle commande corrige le problème ?" {
+        - "sudo chown root ~/inventaire.sh"
+        + "chmod u+x ~/inventaire.sh"
+        - "chmod 666 ~/inventaire.sh"
+        - "sudo apt install inventaire"
+        explanation: "Un script a besoin du droit x pour être lancé directement. 666 donne lecture et écriture à tous mais toujours pas x ; changer le propriétaire ne change pas les droits."
+      }
+      question "Quelle commande donne le nombre de comptes dont le shell est bash ?" {
+        - "grep bash /etc/shadow | wc"
+        + "grep -c 'bash$' /etc/passwd"
+        - "cut -d: -f1 /etc/passwd | grep bash"
+        - "find /etc/passwd -name bash"
+        explanation: "Le shell est le dernier champ de /etc/passwd : bash$ le cherche en fin de ligne et -c compte les lignes. cut -f1 ne garde que les noms, où « bash » n'apparaît pas."
+      }
+      question "Tu veux suivre en direct ce que apt écrit dans son journal pendant une installation. Quelle commande utilises-tu ?" {
+        - "cat /var/log/apt/history.log"
+        - "head -f /var/log/apt/history.log"
+        + "tail -f /var/log/apt/history.log"
+        - "less -n /var/log/apt/history.log"
+        explanation: "tail -f affiche les nouvelles lignes au fur et à mesure. head n'a pas d'option de suivi, et cat affiche le contenu une seule fois."
+      }
+      question "Quelle commande trouve les fichiers de plus de 200 Mio sous /var sans afficher les erreurs de droits ?" {
+        - "grep -r 200M /var"
+        + "find /var -type f -size +200M 2>/dev/null"
+        - "find /var -size 200M > /dev/null"
+        - "ls -lhR /var | grep 200M"
+        explanation: "find filtre par taille avec -size +200M, et 2>/dev/null jette seulement les erreurs. > /dev/null jetterait au contraire les résultats et garderait les erreurs."
+      }
+      question "Comment ajouter la ligne « 192.168.10.40 srv-projet » à /etc/hosts depuis un compte qui utilise sudo ?" {
+        - "sudo echo \"192.168.10.40 srv-projet\" >> /etc/hosts"
+        + "echo \"192.168.10.40 srv-projet\" | sudo tee -a /etc/hosts"
+        - "echo \"192.168.10.40 srv-projet\" > sudo /etc/hosts"
+        - "sudo cat \"192.168.10.40 srv-projet\" /etc/hosts"
+        explanation: "La redirection >> est faite par ton shell sans droits root et échoue. tee lancé avec sudo écrit dans le fichier, et -a ajoute à la fin au lieu d'écraser."
+      }
+      question "Quelle commande installe tree seulement si la mise à jour des listes a réussi ?" {
+        - "sudo apt update ; sudo apt install tree"
+        + "sudo apt update && sudo apt install tree"
+        - "sudo apt update || sudo apt install tree"
+        - "sudo apt update | sudo apt install tree"
+        explanation: "&& n'exécute la seconde commande que si la première renvoie 0. ; enchaîne sans condition, || seulement en cas d'échec, et le tube relierait les sorties, ce qui n'a pas de sens ici."
+      }
+      question "Après « apt remove », un paquet est en état « rc » : seule sa configuration reste. Quelle commande la supprime aussi ?" {
+        - "sudo apt autoremove"
+        + "sudo apt purge nom-du-paquet"
+        - "sudo apt update"
+        - "sudo dpkg -L nom-du-paquet"
+        explanation: "purge supprime les fichiers de configuration restants. autoremove ne retire que des dépendances inutiles, et dpkg -L liste des fichiers sans rien supprimer."
+      }
+      question "Quelle option de cp garde droits, propriétaires et dates lors d’une sauvegarde de /srv/ciel ?" {
+        - "-r"
+        - "-i"
+        + "-a"
+        - "-n"
+        explanation: "-a (archive) copie récursivement en préservant les attributs, liens et bits spéciaux. -r copie le contenu mais pas forcément les propriétaires ni les dates ; -i et -n concernent l'écrasement."
+      }
+      question "Que vérifie « sudo -u nobody ls /srv/ciel » ?" {
+        - "que nobody est administrateur"
+        + "qu'un compte extérieur au groupe ciel ne peut pas lister le dossier"
+        - "que le dossier est vide"
+        - "que le sticky bit est actif"
+        explanation: "sudo -u lance la commande sous une autre identité. nobody n'est pas dans le groupe ciel et les autres n'ont aucun droit : la réponse attendue est Permission denied."
+      }
+      question "Quelle commande affiche l’aide d’une commande interne de bash comme cd ?" {
+        - "man cd"
+        + "help cd"
+        - "cd --man"
+        - "whatis -b cd"
+        explanation: "Les commandes internes du shell sont documentées par help. man cd échoue souvent sur Debian car cd n'est pas un programme installé."
+      }
+      question "Dans nano, tu as fini de modifier inventaire.sh. Quelle séquence enregistre puis quitte ?" {
+        - "Ctrl+C puis Ctrl+Q"
+        + "Ctrl+O, Entrée, puis Ctrl+X"
+        - "Échap puis :wq"
+        - "Ctrl+K puis Ctrl+U"
+        explanation: "Ctrl+O écrit le fichier (Entrée confirme le nom), Ctrl+X quitte. Échap puis :wq est la séquence de l'éditeur vi, pas de nano ; Ctrl+K et Ctrl+U coupent et collent."
+      }
+      question "Pourquoi « rm -rf /srv/ciel /* » (avec une espace en trop) est-il catastrophique ?" {
+        - "parce que rm ne supprime pas les dossiers de /srv"
+        + "parce que /* devient un argument à part : rm tente d'effacer tout le contenu de la racine"
+        - "parce que -f demande une confirmation pour chaque fichier"
+        - "parce que la commande supprime seulement /srv/ciel"
+        explanation: "L'espace sépare deux arguments : /srv/ciel et /*, que le shell remplace par tous les dossiers de la racine. La protection --preserve-root ne couvre que / lui-même, pas /*. Relis toujours un rm -r avant de valider."
+      }
+      question "Quelle commande indique de quel paquet vient le fichier /etc/nanorc ?" {
+        - "apt show /etc/nanorc"
+        - "find /etc -name nanorc -package"
+        + "dpkg -S /etc/nanorc"
+        - "file /etc/nanorc"
+        explanation: "dpkg -S cherche le paquet qui a installé un fichier ; ici il répond nano: /etc/nanorc. file indique seulement le type de contenu (texte)."
+      }
+    }
+  }
+}

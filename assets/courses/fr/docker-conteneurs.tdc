@@ -1,0 +1,1963 @@
+tdc-version: 2
+type: course
+
+course "docker-intro" {
+  title: "Conteneurs avec Docker"
+  description: """
+Ce cours t'apprend à faire tourner, construire, relier et sécuriser des applications dans des conteneurs Docker, jusqu'à déployer une application web avec sa base de données. Il s'adresse aux élèves de BTS SIO (SISR et SLAM), BTS CIEL, BUT réseaux et informatique, et à toute personne qui administre ou développe des services sous Linux.
+
+À la fin, tu sauras :
+• expliquer ce qui distingue un conteneur d'une machine virtuelle, et ce que cela change pour l'isolation ;
+• comprendre une image, ses couches, son tag et son digest, et choisir une image de base fiable ;
+• lancer, observer, entrer dans, arrêter et supprimer des conteneurs (run, ps, logs, exec, stop, rm) ;
+• publier un port sans ouvrir ton serveur au monde entier, et relier des conteneurs par un réseau Docker ;
+• garder les données d'une base avec un volume, et partager un dossier avec un montage lié (bind mount) ;
+• écrire un Dockerfile propre : ordre des couches, utilisateur non root, construction en plusieurs étapes (multi-stage) ;
+• décrire une application web et sa base PostgreSQL dans un fichier compose.yaml, avec secrets et contrôle de santé ;
+• pousser une image dans un registre, durcir un conteneur et diagnostiquer les pannes les plus courantes.
+
+Le cours repose sur un labo simple : une machine virtuelle Debian 12 (2 Go de RAM, 20 Go de disque) avec Docker Engine. Sous Windows 10/11 ou macOS, Docker Desktop convient aussi : il fait tourner une petite machine virtuelle Linux (WSL 2 sous Windows). Chaque chapitre contient au moins un exercice pratique corrigé et une banque de questions tirées au hasard.
+
+Prérequis : utilisation courante du terminal Linux (cd, ls, sudo, éditer un fichier, systemctl), notions d'adressage IP et de ports TCP. Savoir lire un petit programme Python aide pour les chapitres 5 et 7, sans être indispensable.
+"""
+  category: "devops"
+  level: "intermediate"
+  duration: "6h30"
+  icon: "Storage"
+  keywords: ["docker", "conteneur", "image", "dockerfile", "docker compose", "volume", "bind mount", "réseau docker", "registre", "multi-stage", "postgresql", "sécurité", "dépannage", "devops", "oci"]
+
+  module "conteneurs-principes" {
+    title: "Chapitre 1 : conteneur ou machine virtuelle"
+    duration: "35min"
+    content: """
+### Le problème de départ
+Une application ne vit pas seule : elle a besoin d'une version précise de Python, de PHP ou de Java, de bibliothèques, de fichiers de configuration. Sur le poste du développeur tout fonctionne ; sur le serveur, une autre version de la bibliothèque provoque une erreur. Installer deux applications qui veulent deux versions différentes de la même bibliothèque sur un seul serveur devient vite un casse-tête.
+
+La réponse classique est la **machine virtuelle** (VM) : un ordinateur complet simulé, avec son propre système. La réponse plus légère est le **conteneur** : on livre l'application avec tout ce dont elle a besoin, et on la fait tourner isolée, mais sur le système de la machine hôte.
+
+### Machine virtuelle et conteneur, côte à côte
+```text
+     Machines virtuelles                     Conteneurs
+┌─────────┐ ┌─────────┐               ┌─────────┐ ┌─────────┐
+│  App A  │ │  App B  │               │  App A  │ │  App B  │
+│ biblio. │ │ biblio. │               │ biblio. │ │ biblio. │
+│ noyau + │ │ noyau + │               └────┬────┘ └────┬────┘
+│ système │ │ système │               ┌────┴───────────┴────┐
+└────┬────┘ └────┬────┘               │   moteur Docker     │
+┌────┴───────────┴────┐               ├─────────────────────┤
+│     hyperviseur     │               │ noyau Linux de l'hôte│
+├─────────────────────┤               ├─────────────────────┤
+│      matériel       │               │      matériel       │
+└─────────────────────┘               └─────────────────────┘
+```
+
+| Critère | Machine virtuelle | Conteneur |
+|---|---|---|
+| Ce qui est isolé | un ordinateur entier, avec son noyau | un groupe de processus |
+| Noyau | un par VM | celui de l'hôte, partagé |
+| Taille typique | plusieurs Go | de quelques Mo à quelques centaines de Mo |
+| Démarrage | de l'ordre de la minute (démarrage d'un système) | de l'ordre de la seconde (lancement d'un processus) |
+| Systèmes possibles | n'importe lequel (Windows sur un hôte Linux) | même famille de noyau que l'hôte |
+| Isolation | forte (frontière matérielle virtualisée) | plus faible (un seul noyau pour tous) |
+
+Les deux ne s'opposent pas : en entreprise, on fait très souvent tourner Docker **dans** des machines virtuelles (sur Proxmox, VMware, Hyper-V ou chez un hébergeur).
+
+### Comment Linux isole un conteneur
+Un conteneur n'est pas une petite VM. C'est un processus ordinaire de l'hôte, auquel le noyau donne une vue restreinte du système grâce à deux mécanismes :
+• les **espaces de noms** (namespaces) : le processus a sa propre liste de processus (il se croit PID 1), ses propres interfaces réseau, son propre système de fichiers, son propre nom d'hôte ;
+• les **groupes de contrôle** (cgroups) : le noyau limite et compte ce que le processus consomme (mémoire, processeur, nombre de processus).
+
+Conséquence directe : un conteneur Linux a besoin d'un noyau Linux. Sous Windows et macOS, Docker Desktop lance une petite machine virtuelle Linux (WSL 2 sous Windows) dans laquelle tournent les conteneurs. Conséquence de sécurité : une faille du noyau touche tous les conteneurs de l'hôte. Un conteneur isole moins qu'une VM ; il faut donc le configurer avec soin (chapitre 8).
+
+### Les pièces de Docker
+• Le **client** `docker` : la commande que tu tapes. Il ne fait rien lui-même, il envoie des requêtes à une API.
+• Le **démon** `dockerd` : le service qui reçoit ces requêtes, sur le socket `/var/run/docker.sock`. Il gère images, conteneurs, réseaux et volumes, et délègue l'exécution à **containerd**, qui utilise **runc** pour créer le processus isolé.
+• Le **registre** (registry) : un serveur qui stocke et distribue les images. Le registre public par défaut est **Docker Hub** (`docker.io`).
+• Les formats d'image et d'exécution sont normalisés par l'**OCI** (Open Container Initiative) : une image construite avec Docker fonctionne aussi avec Podman ou Kubernetes.
+
+Docker Engine (le moteur pour Linux) est un logiciel libre. Docker Desktop est une application distincte, gratuite pour un usage personnel, éducatif et pour les petites structures, payante pour les grandes entreprises : vérifie ses conditions avant de l'installer au travail.
+
+### Installer Docker Engine sur Debian 12
+Debian fournit un paquet `docker.io`, mais il est en retard sur les versions officielles. La documentation de Docker recommande son propre dépôt APT. Les commandes sont dans le bloc de code de ce chapitre : elles ajoutent la clé de signature du dépôt, déclarent le dépôt, puis installent le moteur, le client, containerd et les extensions `buildx` et `compose`.
+
+Vérifie ensuite :
+```bash
+sudo systemctl status docker --no-pager   # active (running)
+sudo docker version                       # versions du client et du serveur
+sudo docker run hello-world               # télécharge une image de test et l'exécute
+```
+`hello-world` affiche un texte qui commence par « Hello from Docker! » puis décrit les quatre étapes qui viennent d'avoir lieu : le client a contacté le démon, le démon a téléchargé l'image depuis Docker Hub, il a créé un conteneur, puis il a renvoyé la sortie au client.
+
+### Le groupe docker : un raccourci vers root
+Taper `sudo` à chaque commande est pénible, d'où le réflexe `sudo usermod -aG docker $USER`. Attention : la documentation de Docker le dit clairement, **le groupe `docker` donne des droits équivalents à root**. Un membre de ce groupe peut lancer `docker run -v /:/hote ...` et lire ou modifier n'importe quel fichier de la machine. N'ajoute à ce groupe que des comptes d'administration, jamais un compte de service exposé ni un compte élève sur un serveur partagé. Il existe aussi un mode « rootless » où le démon tourne sans droits root.
+
+### À toi de jouer
+1. Installe Docker Engine sur une VM Debian 12 avec le dépôt officiel, puis lance `sudo docker run hello-world`. Relève les quatre étapes décrites dans le message.
+2. Lance `sudo docker run --rm debian:12-slim cat /etc/os-release`, puis `uname -r` sur l'hôte et `sudo docker run --rm debian:12-slim uname -r`. Compare les deux versions du noyau et explique le résultat.
+3. Pour chacun de ces besoins, choisis VM ou conteneur et justifie : (a) faire tourner un serveur Windows Server 2022 sur un hôte Proxmox ; (b) livrer dix copies identiques d'une API Python ; (c) héberger les sites de deux clients qui ne doivent en aucun cas pouvoir s'atteindre, même en cas de faille du noyau.
+
+### Correction
+1. Le message décrit : (1) le client a contacté le démon ; (2) le démon a tiré (pull) l'image `hello-world` depuis Docker Hub ; (3) il a créé un conteneur à partir de l'image, qui a produit le texte ; (4) il a transmis ce texte au client, qui l'a affiché dans ton terminal.
+2. `cat /etc/os-release` affiche `PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"` : le système de fichiers vient de l'image. En revanche, `uname -r` affiche **la même version** dans le conteneur et sur l'hôte : il n'y a qu'un noyau, celui de l'hôte. Fais l'essai avec `alpine` sur un hôte Debian : le système de fichiers est Alpine, le noyau reste celui de Debian.
+3. (a) VM : Windows a besoin de son propre noyau. (b) Conteneurs : même image, démarrage rapide, faible coût. (c) VM (éventuellement avec des conteneurs dedans) : seule une frontière de virtualisation protège contre une faille du noyau partagé.
+"""
+
+    codeblock "bash" {
+      title: "Installer Docker Engine depuis le dépôt officiel (Debian 12)"
+      code: """
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo docker run hello-world
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle est la différence fondamentale entre un conteneur et une machine virtuelle ?" {
+        - "le conteneur embarque son propre noyau, plus léger"
+        + "le conteneur partage le noyau de l'hôte, la VM a le sien"
+        - "la VM ne peut exécuter qu'un seul processus"
+        - "le conteneur a besoin d'un hyperviseur de type 1"
+        explanation: "Un conteneur est un groupe de processus isolés qui utilisent le noyau de l'hôte. Une VM simule un ordinateur complet avec son propre noyau, au-dessus d'un hyperviseur. C'est pour cela qu'un conteneur démarre vite, mais isole moins."
+      }
+      question "Quels mécanismes du noyau Linux Docker utilise-t-il pour isoler et limiter un conteneur ?" {
+        - "SELinux et AppArmor uniquement"
+        - "chroot et cron"
+        + "les espaces de noms (namespaces) et les groupes de contrôle (cgroups)"
+        - "iptables et systemd"
+        explanation: "Les namespaces donnent au conteneur sa propre vue (processus, réseau, fichiers, nom d'hôte), les cgroups limitent ses ressources (mémoire, CPU, nombre de processus). AppArmor, SELinux et iptables complètent la sécurité, mais ne créent pas l'isolation de base."
+      }
+      question "Tu lances « uname -r » sur un hôte Debian puis dans un conteneur alpine sur ce même hôte. Que constates-tu ?" {
+        + "la même version de noyau dans les deux cas"
+        - "la version du noyau Alpine dans le conteneur"
+        - "une erreur, car le conteneur n'a pas de noyau"
+        - "une version vide dans le conteneur"
+        explanation: "Il n'y a qu'un noyau, celui de l'hôte : le conteneur l'utilise directement. Seul le système de fichiers (bibliothèques, commandes) vient de l'image Alpine."
+      }
+      question "Comment Docker Desktop fait-il tourner des conteneurs Linux sous Windows ?" {
+        - "il traduit les appels système Linux en appels Windows"
+        + "il exécute les conteneurs dans une machine virtuelle Linux (WSL 2)"
+        - "il recompile chaque image pour Windows"
+        - "il est impossible de lancer des conteneurs Linux sous Windows"
+        explanation: "Un conteneur Linux a besoin d'un noyau Linux. Docker Desktop fournit ce noyau grâce à une petite VM, sous WSL 2 sur Windows. Il n'y a pas de traduction des appels système."
+      }
+      question "Quel composant reçoit les commandes du client docker et gère images et conteneurs ?" {
+        - "le registre Docker Hub"
+        - "le fichier Dockerfile"
+        + "le démon dockerd, à travers le socket /var/run/docker.sock"
+        - "le service sshd"
+        explanation: "Le client docker n'est qu'une interface : il envoie des requêtes à l'API du démon dockerd, par défaut sur le socket Unix /var/run/docker.sock. Le démon délègue ensuite l'exécution à containerd et runc."
+      }
+      question "Pourquoi ajouter un compte au groupe docker est-il une décision de sécurité importante ?" {
+        - "le compte ne pourra plus utiliser sudo"
+        - "le compte pourra seulement lire les journaux des conteneurs"
+        + "ce groupe donne des droits équivalents à root sur la machine"
+        - "le groupe docker désactive le pare-feu"
+        explanation: "Un membre du groupe docker peut lancer un conteneur qui monte la racine de l'hôte (-v /:/hote) et modifier n'importe quel fichier. La documentation de Docker indique que ce groupe donne des privilèges de niveau root."
+      }
+      question "Quelle situation impose une machine virtuelle plutôt qu’un conteneur ?" {
+        - "déployer dix copies d'une API Python"
+        + "faire tourner Windows Server sur un hôte Linux"
+        - "tester rapidement une version de PostgreSQL"
+        - "livrer une application avec ses bibliothèques"
+        explanation: "Windows Server a besoin de son propre noyau Windows : un conteneur, qui partage le noyau Linux de l'hôte, ne peut pas le fournir. Les trois autres cas sont typiques des conteneurs."
+      }
+      question "Que signifie OCI dans le monde des conteneurs ?" {
+        - "un fournisseur de cloud qui héberge Docker Hub"
+        + "l'Open Container Initiative, qui normalise les formats d'image et d'exécution"
+        - "l'outil de construction d'images de Docker"
+        - "le pilote réseau par défaut de Docker"
+        explanation: "L'Open Container Initiative définit des normes ouvertes (format d'image, exécution, distribution). Grâce à elles, une image construite avec Docker fonctionne avec Podman, containerd ou Kubernetes."
+      }
+      question "Pourquoi déconseille-t-on souvent le paquet docker.io de Debian au profit du dépôt officiel de Docker ?" {
+        - "le paquet Debian n'est pas un logiciel libre"
+        - "le paquet Debian ne permet pas de lancer de conteneurs"
+        + "il est en retard sur les versions publiées par Docker"
+        - "il installe Docker Desktop au lieu de Docker Engine"
+        explanation: "Le paquet de la distribution suit le rythme de Debian : il fonctionne, mais il est souvent plusieurs versions derrière. Le dépôt officiel fournit docker-ce et les extensions buildx et compose à jour."
+      }
+      question "Un conteneur démarre en une seconde alors qu’une VM met une minute. Pourquoi ?" {
+        - "le conteneur utilise un disque plus rapide"
+        + "lancer un conteneur revient à lancer un processus, sans démarrer de système"
+        - "le conteneur garde en mémoire une copie du système déjà démarré"
+        - "la VM doit télécharger son image à chaque démarrage"
+        explanation: "Le noyau de l'hôte tourne déjà : Docker crée seulement les espaces de noms et lance le processus de l'application. Une VM doit démarrer un firmware, un noyau et tous les services de son système."
+      }
+    }
+  }
+
+  module "images-couches" {
+    title: "Chapitre 2 : images, couches, tags et digests"
+    duration: "35min"
+    content: """
+### Image et conteneur
+Une **image** est un modèle en lecture seule : un système de fichiers (bibliothèques, programme, configuration) et des métadonnées (commande à lancer, variables d'environnement, ports documentés, utilisateur). Un **conteneur** est une instance en cours d'exécution (ou arrêtée) d'une image. Le lien ressemble à celui entre un programme installé et ses processus : une image, plusieurs conteneurs.
+
+### Des couches empilées
+Une image est faite de **couches** (layers) superposées. Chaque couche contient seulement les fichiers ajoutés, modifiés ou supprimés par une étape de construction. Le pilote de stockage (`overlay2` sur la plupart des Linux) les présente comme un seul système de fichiers.
+
+```text
+  conteneur  ┌──────────────────────────────┐  couche inscriptible (propre au conteneur)
+             ├──────────────────────────────┤
+             │ COPY app.py                  │  quelques Ko
+   image     │ RUN pip install flask        │  quelques Mo
+ (lecture    │ couches de python:3.12-slim  │  partagées par toutes les images
+   seule)    │ couches de debian:12-slim    │  construites sur la même base
+             └──────────────────────────────┘
+```
+
+Deux conséquences pratiques :
+• **le partage** : dix images construites sur `python:3.12-slim` ne stockent qu'une fois les couches de la base. Le téléchargement aussi est partagé : `docker pull` affiche `Already exists` pour les couches déjà présentes ;
+• **la copie à l'écriture** (copy-on-write) : quand un conteneur modifie un fichier de l'image, le fichier est copié dans sa couche inscriptible. Cette couche disparaît avec le conteneur (`docker rm`). Toute donnée à garder doit aller dans un volume (chapitre 4).
+
+### Nommer une image
+Le nom complet d'une image suit le format `registre/espace/dépôt:tag`, avec des parties implicites :
+
+| Tu tapes | Docker comprend |
+|---|---|
+| `nginx` | `docker.io/library/nginx:latest` |
+| `nginx:alpine` | `docker.io/library/nginx:alpine` |
+| `bitnami/redis:7.4` | `docker.io/bitnami/redis:7.4` |
+| `ghcr.io/org/app:1.2.0` | registre GitHub, dépôt `org/app`, tag `1.2.0` |
+| `localhost:5000/app:1.0` | registre local sur le port 5000 |
+
+`library` est l'espace des **images officielles** de Docker Hub. Le tag `latest` n'a rien de magique : c'est seulement le tag utilisé quand tu n'en précises pas. Il ne garantit pas la version la plus récente, et il peut changer de contenu du jour au lendemain.
+
+### Tag ou digest
+Un **tag** est une étiquette mobile : `nginx:1.27` désigne aujourd'hui une image, demain une version corrigée. Un **digest** (`sha256:...`) est l'empreinte du contenu : il désigne toujours exactement la même image. Pour un déploiement reproductible, on fixe une version précise (`postgres:17.2`), voire le digest (`postgres:17.2@sha256:...`) ; pour suivre les correctifs, on choisit un tag de branche (`postgres:17`) et on reconstruit régulièrement. Dans tous les cas, **jamais `latest` en production**.
+
+### Commandes de base
+```bash
+docker pull nginx:alpine            # télécharger sans lancer
+docker image ls                     # images présentes (REPOSITORY, TAG, IMAGE ID, taille)
+docker image history nginx:alpine   # une ligne par couche et l'instruction qui l'a créée
+docker image inspect nginx:alpine   # métadonnées complètes en JSON
+docker image rm nginx:alpine        # supprimer (refusé si un conteneur l'utilise)
+docker image prune                  # supprimer les images « pendantes » (sans tag)
+```
+`docker images` et `docker rmi` sont les anciennes formes, toujours acceptées.
+
+### Choisir une image de base
+Sur Docker Hub, trois badges signalent des images suivies : **Docker Official Image** (maintenues avec Docker, comme `debian`, `python`, `postgres`, `nginx`), **Verified Publisher** (publiées par l'éditeur du logiciel), **Sponsored OSS** (projets libres soutenus). Une image publiée par un inconnu peut contenir n'importe quoi, y compris un mineur de cryptomonnaie : lis le Dockerfile, regarde la date de mise à jour, préfère les sources identifiées.
+
+Les variantes courantes :
+• `-slim` (Debian réduite) : bon compromis taille et compatibilité ;
+• `-alpine` : très petite, mais utilise la bibliothèque C musl au lieu de glibc ; certains programmes compilés pour glibc n'y fonctionnent pas ;
+• images « distroless » ou `scratch` : presque rien en dehors du programme, idéales en sortie d'une construction en plusieurs étapes (chapitre 5).
+
+### Images multi-architectures
+Une même étiquette peut contenir des variantes pour `amd64` (PC, la plupart des serveurs), `arm64` (Raspberry Pi 4/5, Mac récents) et d'autres. Docker choisit automatiquement celle de ta machine. Si une image n'existe que pour une autre architecture, le conteneur s'arrête avec `exec format error`.
+
+### À toi de jouer
+1. Télécharge `debian:12-slim` puis `python:3.12-slim`. Dans la sortie du second `pull`, repère les couches déjà présentes. Compare les tailles avec `docker image ls`.
+2. Affiche l'historique de `python:3.12-slim`. Quelle colonne indique la taille de chaque couche, et que signifie une couche de 0 B ?
+3. Lance `docker run --name essai debian:12-slim touch /fichier-du-conteneur`, puis `docker run --rm debian:12-slim ls /fichier-du-conteneur`. Explique le résultat. Supprime ensuite le conteneur `essai`.
+4. Un collègue a écrit `image: postgres` dans un fichier de déploiement. Explique les deux problèmes et propose une correction.
+
+### Correction
+1. Si `python:3.12-slim` est construite sur la même version de `debian:12-slim`, la première couche affiche `Already exists` ; sinon tout est téléchargé (les images de base sont reconstruites souvent, les versions peuvent différer de quelques jours). `docker image ls` montre une image Debian slim d'environ 75 Mo et une image Python slim nettement plus grosse ; la taille affichée est la taille décompressée, couches partagées comprises.
+2. La colonne `SIZE`. Une couche de 0 B correspond à une instruction qui ne change que les métadonnées (`ENV`, `CMD`, `EXPOSE`, `WORKDIR` sur un dossier existant) : aucun fichier n'est ajouté.
+3. Le second conteneur répond `ls: cannot access '/fichier-du-conteneur': No such file or directory`. Le fichier a été créé dans la couche inscriptible du conteneur `essai`, pas dans l'image. Chaque nouveau conteneur part de l'image intacte. `docker rm essai` supprime le conteneur et sa couche.
+4. `postgres` signifie `postgres:latest` : (a) la version majeure peut changer à un redémarrage après un `pull`, et une base créée en version 16 ne démarre pas avec un serveur 17 sans migration ; (b) on ne sait pas quelle version tourne. Correction : `image: postgres:17` (suivi des correctifs de la version 17) ou une version exacte comme `postgres:17.2`, mise à jour volontairement.
+"""
+
+    quiz {
+      pick: 5
+      question "Quel nom complet Docker utilise-t-il quand tu tapes « docker pull nginx » ?" {
+        - "nginx.org/nginx:stable"
+        + "docker.io/library/nginx:latest"
+        - "localhost/nginx:1.0"
+        - "docker.io/nginx/nginx:current"
+        explanation: "Sans registre, Docker utilise docker.io ; sans espace, l'espace library des images officielles ; sans tag, le tag latest. D'où docker.io/library/nginx:latest."
+      }
+      question "Que garantit le tag latest ?" {
+        - "que l'image est la version la plus récente du logiciel"
+        - "que l'image a été vérifiée par Docker"
+        + "rien de particulier : c'est le tag pris par défaut quand aucun n'est indiqué"
+        - "que l'image ne changera plus"
+        explanation: "latest est un tag comme un autre, choisi par défaut. L'éditeur peut le faire pointer vers n'importe quelle version et le déplacer à tout moment. C'est pourquoi on l'évite en production."
+      }
+      question "Quelle référence désigne toujours exactement la même image, octet pour octet ?" {
+        - "postgres:17"
+        - "postgres:latest"
+        + "postgres@sha256:<empreinte>"
+        - "postgres:stable"
+        explanation: "Le digest sha256 est calculé sur le contenu : il ne peut pas désigner une autre image. Les tags, même précis, peuvent être déplacés par l'éditeur."
+      }
+      question "Un conteneur modifie /etc/nginx/nginx.conf, qui vient de l’image. Où la modification est-elle écrite ?" {
+        - "dans la couche correspondante de l'image"
+        + "dans la couche inscriptible du conteneur, par copie à l'écriture"
+        - "directement sur le disque de l'hôte dans /etc/nginx"
+        - "nulle part, les fichiers de l'image sont en lecture seule"
+        explanation: "Les couches de l'image ne changent jamais. Le fichier est copié dans la couche inscriptible propre au conteneur, puis modifié. Cette couche est perdue quand le conteneur est supprimé."
+      }
+      question "Pendant un « docker pull », plusieurs lignes affichent « Already exists ». Pourquoi ?" {
+        - "l'image entière est déjà présente et ne sera pas mise à jour"
+        + "ces couches sont déjà sur la machine, partagées avec une autre image"
+        - "le registre refuse de renvoyer ces couches"
+        - "ces couches sont vides"
+        explanation: "Les couches sont identifiées par leur empreinte. Si une autre image (souvent la même base Debian ou Alpine) les a déjà apportées, Docker ne les télécharge pas une seconde fois."
+      }
+      question "Quelle commande montre les couches d’une image et l’instruction qui a créé chacune ?" {
+        - "docker ps --layers"
+        - "docker inspect --tree"
+        + "docker image history"
+        - "docker logs"
+        explanation: "docker image history affiche une ligne par couche avec l'instruction (RUN, COPY, ENV…) et la taille. docker image inspect donne les métadonnées en JSON mais pas cette vue par instruction."
+      }
+      question "Un conteneur s’arrête immédiatement avec « exec format error ». Quelle est la cause la plus probable ?" {
+        - "le port demandé est déjà utilisé"
+        + "l'image a été construite pour une autre architecture de processeur"
+        - "le disque de l'hôte est plein"
+        - "l'utilisateur n'est pas dans le groupe docker"
+        explanation: "Le noyau refuse d'exécuter un binaire compilé pour une autre architecture, par exemple une image amd64 seule sur un Raspberry Pi arm64. Il faut une image multi-architecture ou une variante arm64."
+      }
+      question "Quelle particularité des images alpine peut empêcher certains programmes de fonctionner ?" {
+        - "elles n'ont pas de shell"
+        - "elles ne peuvent pas utiliser le réseau"
+        + "elles utilisent la bibliothèque C musl au lieu de glibc"
+        - "elles imposent l'utilisateur root"
+        explanation: "Alpine est construite avec musl. Un binaire compilé pour glibc (beaucoup de paquets précompilés, certaines roues Python) peut ne pas y démarrer. Les variantes slim, basées sur Debian, utilisent glibc."
+      }
+      question "Pourquoi « docker image rm nginx:alpine » peut-il être refusé ?" {
+        - "les images officielles ne peuvent pas être supprimées"
+        + "un conteneur, même arrêté, utilise encore cette image"
+        - "il faut d'abord se déconnecter de Docker Hub"
+        - "les images ne se suppriment qu'avec docker system prune"
+        explanation: "Un conteneur existant (en marche ou arrêté) dépend des couches de son image. Il faut d'abord le supprimer avec docker rm, ou forcer, ce qui est rarement une bonne idée."
+      }
+      question "Quel est le meilleur choix d’image pour une base PostgreSQL en production ?" {
+        - "postgres:latest"
+        + "postgres:17 ou une version exacte, mise à jour volontairement"
+        - "une image postgres publiée par un compte inconnu, plus légère"
+        - "ubuntu:latest avec PostgreSQL installé à la main à chaque démarrage"
+        explanation: "On choisit l'image officielle avec une version majeure fixée (ou exacte) pour éviter un changement de version imprévu. Une image inconnue n'est pas digne de confiance, et latest peut changer de version majeure."
+      }
+    }
+  }
+
+  module "cycle-de-vie" {
+    title: "Chapitre 3 : lancer, observer et arrêter des conteneurs"
+    duration: "40min"
+    content: """
+### docker run, la commande centrale
+`docker run` crée un conteneur à partir d'une image (en la téléchargeant si besoin) puis le démarre. Ses options les plus utiles :
+
+| Option | Effet |
+|---|---|
+| `-d` (detach) | lance en arrière-plan et affiche l'identifiant du conteneur |
+| `-it` | `-i` garde l'entrée ouverte, `-t` alloue un terminal : pour un shell interactif |
+| `--name web` | donne un nom (sinon Docker en invente un, comme `nervous_turing`) |
+| `--rm` | supprime le conteneur dès qu'il s'arrête |
+| `-p 8080:80` | publie le port 80 du conteneur sur le port 8080 de l'hôte |
+| `-e CLE=valeur` | définit une variable d'environnement |
+| `--env-file fichier` | lit les variables d'un fichier, une `CLE=valeur` par ligne |
+| `--restart unless-stopped` | politique de redémarrage (voir plus bas) |
+| `--memory 256m --cpus 0.5` | limite la mémoire et le processeur |
+
+L'ordre compte : les options de `docker run` se placent **avant** le nom de l'image ; ce qui suit l'image est la commande à lancer dans le conteneur. `docker run -d nginx:alpine -p 8080:80` ne publie rien : `-p 8080:80` est passé à nginx comme argument.
+
+```bash
+docker run -d --name web -p 8080:80 nginx:alpine
+curl -I http://localhost:8080         # HTTP/1.1 200 OK, Server: nginx/...
+```
+
+### Un conteneur vit autant que son processus principal
+Le processus lancé par le conteneur a le PID 1 dans son espace de noms. **Quand il se termine, le conteneur s'arrête.** C'est pourquoi `docker run debian:12-slim` s'arrête tout de suite : la commande par défaut est `bash`, qui, sans terminal ni entrée, se termine aussitôt. Pour explorer une image, on demande un shell interactif : `docker run -it --rm debian:12-slim bash`.
+
+Une application lancée en conteneur doit donc tourner **au premier plan** et écrire ses journaux sur la sortie standard (stdout et stderr) ; c'est ce que font les images officielles de nginx, PostgreSQL ou Redis.
+
+### Observer
+```bash
+docker ps                      # conteneurs en marche
+docker ps -a                   # tous, y compris arrêtés (colonne STATUS : Up, Exited (0)...)
+docker logs web                # sortie standard du conteneur
+docker logs -f --tail 20 web   # 20 dernières lignes puis suivi en direct (Ctrl+C pour quitter)
+docker logs --since 10m web    # journaux des 10 dernières minutes
+docker stats --no-stream       # CPU, mémoire, réseau de chaque conteneur à l'instant
+docker inspect web             # tout le détail en JSON
+docker inspect -f '{{.State.Status}} {{.State.ExitCode}}' web
+docker port web                # ports publiés : 80/tcp -> 0.0.0.0:8080
+```
+
+### Entrer dans un conteneur qui tourne
+`docker exec` lance un **processus supplémentaire** dans un conteneur déjà démarré :
+```bash
+docker exec -it web sh                        # shell (sh : les images alpine n'ont pas bash)
+docker exec web cat /etc/nginx/conf.d/default.conf
+docker exec -u root web id                    # en tant que root si l'image utilise un autre compte
+```
+C'est un outil de diagnostic. Une modification faite à la main dans un conteneur est perdue au prochain remplacement du conteneur : la vraie correction se fait dans l'image ou dans la configuration montée.
+
+### Arrêter, redémarrer, supprimer
+• `docker stop web` envoie le signal **SIGTERM** au PID 1, attend **10 secondes** par défaut (option `-t`), puis envoie **SIGKILL**.
+• `docker kill web` envoie SIGKILL immédiatement.
+• `docker start web` redémarre un conteneur arrêté, avec la même couche inscriptible.
+• `docker restart web` fait `stop` puis `start`.
+• `docker rm web` supprime un conteneur arrêté ; `docker rm -f web` l'arrête et le supprime.
+• `docker container prune` supprime tous les conteneurs arrêtés.
+
+Le code de sortie indique comment le processus s'est terminé. Au-delà de 128, c'est 128 + le numéro du signal reçu : `137` = 128 + 9 (SIGKILL, souvent après `docker stop` sur un programme qui ignore SIGTERM, ou un dépassement de mémoire), `143` = 128 + 15 (SIGTERM).
+
+### Politiques de redémarrage
+| Politique | Comportement |
+|---|---|
+| `no` (défaut) | jamais de redémarrage automatique |
+| `on-failure[:N]` | redémarre si le code de sortie n'est pas 0, au plus N fois si précisé |
+| `always` | redémarre toujours ; un conteneur arrêté à la main repart au redémarrage du démon |
+| `unless-stopped` | comme `always`, sauf si tu l'as arrêté à la main : il reste alors arrêté |
+
+Pour un service sur un serveur, `unless-stopped` est le choix habituel : il repart après un redémarrage de la machine, mais respecte un arrêt volontaire.
+
+### À toi de jouer
+1. Lance un nginx nommé `web` en arrière-plan, publié sur le port 8080, avec la politique `unless-stopped`. Vérifie avec `curl` et `docker ps`.
+2. Fais trois requêtes, puis affiche les deux dernières lignes de journal de `web`. Que contiennent-elles ?
+3. Entre dans le conteneur, remplace le contenu de `/usr/share/nginx/html/index.html` par « Lycée : page de test », vérifie avec `curl`, puis supprime et recrée le conteneur. Que devient ta page ?
+4. Lance `docker run --name court debian:12-slim sleep 5`, puis, dans un autre terminal, regarde son état avec `docker ps -a` pendant et après. Quel est son code de sortie ?
+5. Repère l'erreur : `docker run -d nginx:alpine --name web2 -p 8081:80`.
+
+### Correction
+1. `docker run -d --name web -p 8080:80 --restart unless-stopped nginx:alpine` puis `curl -I http://localhost:8080` (`HTTP/1.1 200 OK`). `docker ps` montre `0.0.0.0:8080->80/tcp` (et `[::]:8080->80/tcp`).
+2. `docker logs --tail 2 web` : des lignes au format « combined » de nginx, avec l'adresse du client (passerelle du réseau Docker, souvent `172.17.0.1`), la date, `"GET / HTTP/1.1" 200` et l'agent `curl/...`. L'image officielle redirige les journaux d'accès de nginx vers stdout.
+3. `docker exec -it web sh`, puis `echo "Lycée : page de test" > /usr/share/nginx/html/index.html`, `exit`. `curl http://localhost:8080` affiche la nouvelle page. Après `docker rm -f web` et un nouveau `docker run`, la page d'accueil d'origine revient : la modification était dans la couche inscriptible, supprimée avec le conteneur. Pour garder des fichiers, il faut un volume ou un bind mount (chapitre 4), ou une image construite avec la page (chapitre 5).
+4. Pendant 5 secondes : `Up 2 seconds`. Ensuite : `Exited (0) ...` ; le processus `sleep` s'est terminé normalement, avec le code 0. `docker inspect -f '{{.State.ExitCode}}' court` affiche `0`.
+5. Les options `--name web2 -p 8081:80` sont placées après l'image : Docker les transmet comme commande au conteneur, qui échoue. Bonne forme : `docker run -d --name web2 -p 8081:80 nginx:alpine`.
+"""
+
+    codeblock "bash" {
+      title: "Cycle de vie complet d'un conteneur"
+      code: """
+docker run -d --name web -p 8080:80 --restart unless-stopped nginx:alpine
+docker ps                                   # STATUS : Up ...
+curl -s http://localhost:8080 | head -n 4
+docker logs --tail 5 web
+docker exec -it web sh                      # exit pour sortir
+docker stop web                             # SIGTERM, puis SIGKILL après 10 s
+docker ps -a --filter name=web              # STATUS : Exited (0) ...
+docker start web
+docker rm -f web                            # arrêt et suppression
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Pourquoi « docker run debian:12-slim » s’arrête-t-il aussitôt ?" {
+        - "l'image Debian est corrompue"
+        + "le processus principal (bash) se termine immédiatement sans terminal interactif"
+        - "Docker arrête tout conteneur qui n'a pas de port publié"
+        - "il manque l'option --restart"
+        explanation: "Un conteneur vit tant que son processus principal (PID 1) tourne. bash sans -it n'a rien à lire et se termine, donc le conteneur s'arrête avec le code 0. Pour un shell : docker run -it --rm debian:12-slim bash."
+      }
+      question "Que fait exactement « docker stop web » ?" {
+        - "il envoie SIGKILL immédiatement"
+        + "il envoie SIGTERM, attend 10 secondes par défaut, puis envoie SIGKILL"
+        - "il met le conteneur en pause en gardant la mémoire"
+        - "il supprime le conteneur et ses volumes"
+        explanation: "docker stop laisse au programme le temps de s'arrêter proprement (SIGTERM), puis le tue (SIGKILL) après le délai, 10 secondes par défaut, réglable avec -t. docker kill envoie SIGKILL directement ; docker pause gèle les processus."
+      }
+      question "Un conteneur affiche « Exited (137) ». Que signifie ce code ?" {
+        - "l'image n'a pas été trouvée"
+        - "le programme s'est terminé normalement"
+        + "le processus a été tué par SIGKILL (128 + 9)"
+        - "le port publié était déjà pris"
+        explanation: "Un code supérieur à 128 vaut 128 + numéro du signal. 137 = 128 + 9, SIGKILL : arrêt forcé après le délai de docker stop, docker kill, ou manque de mémoire (vérifie .State.OOMKilled)."
+      }
+      question "Quelle commande affiche les 20 dernières lignes des journaux du conteneur web puis suit les nouvelles ?" {
+        - "docker exec web tail -f /var/log/syslog"
+        + "docker logs -f --tail 20 web"
+        - "docker inspect --logs web"
+        - "docker ps --tail 20 web"
+        explanation: "docker logs lit ce que le conteneur écrit sur stdout et stderr ; --tail limite le nombre de lignes, -f suit en direct. Les applications en conteneur écrivent normalement leurs journaux sur la sortie standard, pas dans un fichier."
+      }
+      question "Quelle est la différence entre docker run et docker exec ?" {
+        + "run crée et démarre un nouveau conteneur ; exec lance un processus dans un conteneur déjà en marche"
+        - "run fonctionne en arrière-plan, exec au premier plan"
+        - "exec crée un conteneur temporaire à partir de la même image"
+        - "aucune, exec est un alias de run"
+        explanation: "docker exec ajoute un processus dans un conteneur existant, qui doit tourner. docker run crée un conteneur neuf, avec sa propre couche inscriptible."
+      }
+      question "Que fait « docker run -d nginx:alpine -p 8080:80 » ?" {
+        - "il publie le port 8080 comme prévu"
+        - "il refuse de démarrer avec une erreur de syntaxe de Docker"
+        + "il passe -p 8080:80 comme argument à nginx, sans publier de port"
+        - "il publie le port 80 sur un port aléatoire"
+        explanation: "Tout ce qui suit le nom de l'image est la commande du conteneur. Les options de docker run doivent être placées avant l'image : docker run -d -p 8080:80 nginx:alpine."
+      }
+      question "Quelle politique de redémarrage relance un service après un redémarrage du serveur, mais pas s’il a été arrêté volontairement ?" {
+        - "no"
+        - "on-failure"
+        - "always"
+        + "unless-stopped"
+        explanation: "unless-stopped relance le conteneur au démarrage du démon, sauf si tu l'avais arrêté avec docker stop. always le relancerait même dans ce cas. on-failure ne réagit qu'à un code de sortie non nul."
+      }
+      question "Tu modifies un fichier dans un conteneur avec docker exec, puis tu fais docker rm -f et docker run. Que devient la modification ?" {
+        - "elle est conservée dans l'image"
+        + "elle est perdue, car elle était dans la couche inscriptible du conteneur supprimé"
+        - "elle est sauvegardée automatiquement dans un volume"
+        - "elle est reportée dans tous les conteneurs de la même image"
+        explanation: "Chaque conteneur a sa couche inscriptible, détruite avec lui. Une modification durable se fait dans l'image (Dockerfile) ou dans un fichier monté depuis l'hôte ou un volume."
+      }
+      question "Comment voir aussi les conteneurs arrêtés ?" {
+        - "docker ps --stopped"
+        + "docker ps -a"
+        - "docker images -a"
+        - "docker logs --all"
+        explanation: "docker ps n'affiche que les conteneurs en marche. -a (--all) ajoute ceux qui sont créés ou arrêtés, avec leur état et leur code de sortie (Exited (0), Exited (137)…)."
+      }
+      question "Quelle commande affiche seulement l’état et le code de sortie du conteneur web ?" {
+        - "docker ps web --format exit"
+        - "docker logs --exit-code web"
+        + "docker inspect -f '{{.State.Status}} {{.State.ExitCode}}' web"
+        - "docker stats web"
+        explanation: "docker inspect renvoie l'état complet en JSON ; l'option -f applique un modèle Go pour n'en extraire que les champs voulus, ici State.Status et State.ExitCode."
+      }
+      question "Pourquoi une image d’application doit-elle faire tourner son programme au premier plan ?" {
+        - "pour que la sortie s'affiche en couleur"
+        + "parce que le conteneur s'arrête dès que son processus principal se termine"
+        - "parce que Docker interdit les services systemd"
+        - "pour réduire la taille de l'image"
+        explanation: "Si le programme passe en arrière-plan (mode démon) et rend la main, le PID 1 se termine et le conteneur s'arrête. C'est pourquoi l'image nginx lance nginx avec l'option daemon off."
+      }
+    }
+  }
+
+  module "volumes-montages" {
+    title: "Chapitre 4 : garder les données avec volumes et bind mounts"
+    duration: "35min"
+    content: """
+### Le problème
+La couche inscriptible d'un conteneur disparaît avec lui. Or on remplace un conteneur à chaque mise à jour d'image. Une base de données qui écrit dans sa couche inscriptible perd tout à la première mise à jour. Il faut stocker les données **hors** du conteneur.
+
+### Trois types de montage
+| Type | Où sont les données | Usage typique |
+|---|---|---|
+| **Volume** | géré par Docker, sous `/var/lib/docker/volumes/<nom>/_data` sur Linux | données d'une base, fichiers envoyés par les utilisateurs |
+| **Bind mount** (montage lié) | un dossier ou fichier précis de l'hôte | fichier de configuration, code source en développement |
+| **tmpfs** | en mémoire vive, jamais sur disque | fichiers temporaires, données sensibles éphémères |
+
+On préfère un **volume** pour les données d'une application : Docker le crée, le nomme, le sauvegarde et le déplace facilement, sans dépendre de l'arborescence de l'hôte ni de ses droits. On prend un **bind mount** quand on veut voir ou modifier le fichier depuis l'hôte.
+
+### Deux syntaxes : -v et --mount
+```bash
+# volume nommé
+docker run -d --name db -e POSTGRES_PASSWORD=essai -v pgdata:/var/lib/postgresql/data postgres:17
+docker run -d --name db -e POSTGRES_PASSWORD=essai --mount type=volume,src=pgdata,dst=/var/lib/postgresql/data postgres:17
+
+# bind mount en lecture seule
+docker run -d --name web -p 8080:80 -v "$PWD/site":/usr/share/nginx/html:ro nginx:alpine
+docker run -d --name web -p 8080:80 --mount type=bind,src="$PWD/site",dst=/usr/share/nginx/html,readonly nginx:alpine
+```
+La documentation recommande `--mount`, plus explicite. Une différence piège : avec `-v`, si le dossier source d'un bind mount **n'existe pas**, Docker le crée (vide, appartenant à root) ; avec `--mount`, Docker renvoie une **erreur**. Une faute de frappe dans le chemin passe donc inaperçue avec `-v` : le conteneur démarre avec un dossier vide.
+
+Avec `-v`, ce qui est à gauche des deux-points décide du type : un nom simple (`pgdata`) est un volume, un chemin (`/srv/site`, `./site`, `$PWD/site`) est un bind mount.
+
+Remarque : avec PostgreSQL 18 et suivants, l'image officielle a déplacé son dossier de données ; le point de montage recommandé devient `/var/lib/postgresql`. Lis toujours la page de l'image sur Docker Hub avant de choisir le chemin.
+
+### Ce qui se passe au montage
+• Un **volume vide** monté sur un dossier qui contient déjà des fichiers dans l'image reçoit une **copie** de ces fichiers. C'est pratique : la configuration par défaut d'une image apparaît dans le volume.
+• Un **bind mount** **masque** le contenu du dossier de l'image : seul le contenu de l'hôte est visible. Monter un dossier vide sur `/usr/share/nginx/html` donne une erreur 403 : nginx ne trouve plus `index.html`.
+
+### Gérer les volumes
+```bash
+docker volume ls
+docker volume inspect pgdata      # Mountpoint: /var/lib/docker/volumes/pgdata/_data
+docker volume rm pgdata           # refusé si un conteneur l'utilise
+docker volume prune               # supprime les volumes non utilisés (attention)
+```
+Un volume nommé **survit** à `docker rm` du conteneur. `docker run --rm` et `docker rm -v` suppriment seulement les volumes **anonymes** (créés sans nom). Avant tout `prune`, vérifie la liste : la suppression d'un volume est définitive.
+
+### Sauvegarder un volume
+Le principe : un conteneur temporaire monte le volume en lecture seule et un dossier de l'hôte, puis crée une archive.
+```bash
+docker run --rm -v pgdata:/donnees:ro -v "$PWD":/sauvegarde debian:12-slim \
+  tar czf /sauvegarde/pgdata-$(date +%F).tar.gz -C /donnees .
+```
+Pour une base de données, une copie des fichiers pendant que le serveur écrit peut être incohérente : arrête le conteneur avant, ou utilise l'outil de la base (`pg_dump` pour PostgreSQL, `mariadb-dump` pour MariaDB). C'est ce que fera le projet final.
+
+### Droits et propriétaires
+Dans un bind mount, les fichiers gardent leurs propriétaires **numériques** (UID et GID). Si le processus du conteneur tourne avec l'UID 101 et que le dossier de l'hôte appartient à l'UID 1000 en mode 700, l'application reçoit `Permission denied`. On corrige en donnant les droits à l'UID utilisé dans le conteneur (`sudo chown -R 101:101 dossier`), pas en mettant tout en 777.
+
+### À toi de jouer
+1. Crée un dossier `site` avec un `index.html` contenant « Bienvenue au CDI ». Sers-le avec nginx sur le port 8080 en bind mount en lecture seule. Modifie le fichier depuis l'hôte et recharge la page.
+2. Lance PostgreSQL 17 avec un volume nommé `pgdata`. Crée une table, supprime le conteneur, recrée-le avec le même volume et vérifie que la table existe toujours.
+3. Sauvegarde le volume `pgdata` dans une archive datée (conteneur arrêté).
+4. Lance `docker run --rm -v ./sitte:/usr/share/nginx/html -p 8081:80 nginx:alpine` (faute de frappe volontaire). Que vois-tu dans le navigateur, et qu'aurait fait `--mount` ?
+
+### Correction
+1. `mkdir site && echo "Bienvenue au CDI" > site/index.html` puis `docker run -d --name cdi -p 8080:80 --mount type=bind,src="$PWD/site",dst=/usr/share/nginx/html,readonly nginx:alpine`. Une modification sur l'hôte est visible tout de suite : c'est le même fichier. Le conteneur, lui, ne peut pas écrire dedans (`readonly`).
+2. Commandes :
+```bash
+docker run -d --name db -e POSTGRES_PASSWORD=essai -v pgdata:/var/lib/postgresql/data postgres:17
+docker exec -it db psql -U postgres -c "CREATE TABLE prets (id serial PRIMARY KEY, materiel text);"
+docker rm -f db
+docker run -d --name db -e POSTGRES_PASSWORD=essai -v pgdata:/var/lib/postgresql/data postgres:17
+docker exec -it db psql -U postgres -c "\dt"
+```
+La dernière commande liste la table `prets` : les fichiers de la base sont dans le volume, pas dans le conteneur. Au second démarrage, le journal indique que le dossier de données existe déjà et que l'initialisation est sautée. Le mot de passe `essai` ne sert qu'au labo.
+3. `docker stop db`, puis la commande `tar` du cours avec `-v pgdata:/donnees:ro`, puis `docker start db`. `tar tzf pgdata-AAAA-MM-JJ.tar.gz | head` permet de vérifier le contenu (`./PG_VERSION`, `./base/`...).
+4. La page affiche `403 Forbidden` (ou une erreur selon la version) : avec `-v`, Docker a créé un dossier `sitte` vide qui masque le contenu de l'image. Avec `--mount type=bind,src=...`, Docker aurait refusé de démarrer en signalant que le chemin source n'existe pas, ce qui révèle la faute tout de suite. Note : `-v ./sitte:...` accepte un chemin relatif dans les versions récentes ; `$PWD/sitte` fonctionne partout.
+"""
+
+    quiz {
+      pick: 5
+      question "Où Docker stocke-t-il par défaut les données d’un volume nommé « pgdata » sur Linux ?" {
+        - "/home/docker/pgdata"
+        + "/var/lib/docker/volumes/pgdata/_data"
+        - "dans la couche inscriptible du conteneur"
+        - "/tmp/docker/pgdata"
+        explanation: "Les volumes sont gérés par Docker dans /var/lib/docker/volumes/<nom>/_data. docker volume inspect affiche ce chemin dans le champ Mountpoint."
+      }
+      question "Tu supprimes un conteneur PostgreSQL avec « docker rm -f db ». Que devient le volume nommé pgdata qu’il utilisait ?" {
+        - "il est supprimé avec le conteneur"
+        + "il est conservé et peut être monté dans un nouveau conteneur"
+        - "il est vidé mais garde son nom"
+        - "il devient un volume anonyme"
+        explanation: "Un volume nommé a une vie indépendante des conteneurs. Seuls les volumes anonymes sont supprimés par docker rm -v ou --rm. Pour supprimer pgdata, il faut docker volume rm pgdata."
+      }
+      question "Dans « -v ./site:/usr/share/nginx/html », de quel type de montage s’agit-il ?" {
+        - "un volume nommé site"
+        + "un bind mount du dossier site de l'hôte"
+        - "un tmpfs"
+        - "un volume anonyme"
+        explanation: "Avec -v, un chemin (qui commence par / ou ./) à gauche des deux-points désigne un bind mount. Un nom simple sans barre oblique désigne un volume nommé."
+      }
+      question "Avec -v, que se passe-t-il si le dossier source d’un bind mount n’existe pas sur l’hôte ?" {
+        - "le conteneur refuse de démarrer"
+        + "Docker crée un dossier vide, qui masque le contenu de l'image"
+        - "Docker crée un volume nommé à la place"
+        - "Docker copie le contenu de l'image vers l'hôte"
+        explanation: "La syntaxe -v crée le dossier manquant (vide, propriété de root). Le conteneur démarre, mais le dossier de l'image est masqué. --mount, lui, renvoie une erreur, ce qui aide à repérer une faute de frappe."
+      }
+      question "Tu montes un volume neuf et vide sur un dossier qui contient des fichiers dans l’image. Que contient le volume après le démarrage ?" {
+        - "rien, le dossier apparaît vide"
+        + "une copie des fichiers que l'image avait dans ce dossier"
+        - "un lien vers les fichiers de l'image, en lecture seule"
+        - "le contenu du dossier personnel de l'utilisateur"
+        explanation: "Par défaut, Docker copie le contenu existant du dossier de l'image dans un volume vide (option volume-nocopy pour l'éviter). Un bind mount, lui, masque le contenu de l'image."
+      }
+      question "Quel montage choisir pour qu’un fichier de configuration nginx, édité sur l’hôte, soit utilisé par le conteneur sans pouvoir être modifié par lui ?" {
+        - "un volume nommé"
+        - "un tmpfs"
+        + "un bind mount en lecture seule (:ro ou readonly)"
+        - "une copie avec docker exec"
+        explanation: "Un bind mount donne accès au fichier exact de l'hôte ; l'option ro (ou readonly avec --mount) empêche le conteneur d'écrire dedans. Un volume n'est pas pratique à éditer depuis l'hôte, un tmpfs est vide au démarrage."
+      }
+      question "Quelle commande sauvegarde correctement le contenu du volume pgdata dans le dossier courant ?" {
+        - "docker volume export pgdata > pgdata.tar"
+        + "docker run --rm -v pgdata:/donnees:ro -v $PWD:/sauvegarde debian:12-slim tar czf /sauvegarde/pgdata.tar.gz -C /donnees ."
+        - "docker cp pgdata:/ ./pgdata"
+        - "docker commit pgdata sauvegarde"
+        explanation: "Un conteneur temporaire monte le volume et un dossier de l'hôte, puis tar crée l'archive. docker volume export n'existe pas, docker cp travaille sur un conteneur et docker commit crée une image à partir d'un conteneur, pas d'un volume."
+      }
+      question "Pourquoi une simple copie des fichiers d’un volume PostgreSQL en marche est-elle risquée ?" {
+        - "les volumes sont chiffrés pendant l'exécution"
+        + "la base écrit pendant la copie, l'archive peut être incohérente"
+        - "tar ne sait pas lire les fichiers de PostgreSQL"
+        - "Docker interdit la lecture d'un volume utilisé"
+        explanation: "Pendant la copie, le serveur modifie des fichiers : l'archive peut mélanger des états différents. On arrête le conteneur avant, ou on utilise pg_dump, qui produit une sauvegarde cohérente."
+      }
+      question "Un conteneur dont le processus tourne avec l’UID 101 reçoit « Permission denied » sur un bind mount. Quelle correction est la bonne ?" {
+        - "chmod -R 777 sur le dossier de l'hôte"
+        + "donner le dossier à l'UID 101 (chown -R 101:101) ou adapter l'UID du processus"
+        - "lancer le conteneur avec --privileged"
+        - "remplacer le bind mount par un tmpfs"
+        explanation: "Dans un bind mount, les droits Unix de l'hôte s'appliquent avec les UID numériques. Il faut que l'UID du processus ait les droits nécessaires. 777 ouvre le dossier à tous, --privileged donne bien trop de droits."
+      }
+      question "Quel type de montage n’écrit jamais sur le disque ?" {
+        - "un volume nommé"
+        - "un bind mount en lecture seule"
+        + "un tmpfs"
+        - "un volume anonyme"
+        explanation: "Un tmpfs vit en mémoire vive et disparaît à l'arrêt du conteneur. C'est utile pour des fichiers temporaires, notamment avec un système de fichiers racine en lecture seule (--read-only)."
+      }
+    }
+  }
+
+  module "dockerfile" {
+    title: "Chapitre 5 : construire ses images avec un Dockerfile"
+    duration: "40min"
+    content: """
+### Une recette, une image
+Un **Dockerfile** est un fichier texte qui décrit, instruction par instruction, comment construire une image. `docker build` le lit et produit l'image ; chaque instruction qui modifie des fichiers crée une couche.
+
+```bash
+docker build -t lycee/accueil:1.0 .
+```
+Le point final est le **contexte de construction** : le dossier dont le contenu est envoyé au moteur de construction (BuildKit). `-t` donne le nom et le tag.
+
+### Les instructions essentielles
+| Instruction | Rôle |
+|---|---|
+| `FROM image:tag` | image de base ; toujours la première instruction (après d'éventuels `ARG`) |
+| `WORKDIR /app` | dossier de travail pour la suite (créé s'il n'existe pas) |
+| `COPY src dst` | copie des fichiers du contexte dans l'image |
+| `ADD src dst` | comme `COPY`, mais sait aussi télécharger une URL et décompresser une archive locale ; à réserver à ces cas |
+| `RUN commande` | exécute une commande pendant la construction (installation de paquets...) |
+| `ENV CLE=valeur` | variable d'environnement, présente aussi dans les conteneurs |
+| `ARG NOM=defaut` | variable de construction seulement (`--build-arg NOM=...`) |
+| `EXPOSE 8000` | **documente** le port écouté ; ne publie rien (il faut `-p`) |
+| `USER appuser` | compte utilisé pour la suite et au lancement du conteneur |
+| `HEALTHCHECK CMD ...` | commande qui teste si le service répond |
+| `CMD [...]` | commande par défaut, remplaçable en fin de `docker run` |
+| `ENTRYPOINT [...]` | programme toujours lancé ; `CMD` lui fournit alors des arguments par défaut |
+
+### Un premier Dockerfile pour une application Python
+Le projet `accueil/` contient `app.py`, `requirements.txt` et le Dockerfile (code complet dans le bloc de ce chapitre) :
+```dockerfile
+FROM python:3.12-slim
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+RUN useradd --system --uid 10001 appuser
+USER appuser
+EXPOSE 8000
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/')"
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "app:app"]
+```
+Chaque ligne a une raison :
+• `PYTHONUNBUFFERED=1` : les journaux sortent tout de suite sur stdout, donc dans `docker logs` ;
+• `requirements.txt` est copié **avant** le code (voir le cache plus bas) ;
+• `--no-cache-dir` : pip ne garde pas ses téléchargements dans l'image ;
+• `USER appuser` : le service ne tourne pas en root (chapitre 8) ;
+• `0.0.0.0:8000` : le serveur écoute sur toutes les interfaces **du conteneur**. S'il écoutait sur `127.0.0.1`, il ne serait joignable que depuis l'intérieur du conteneur, et le port publié ne répondrait pas.
+
+### Le cache de construction
+Docker réutilise une couche si l'instruction et ses fichiers d'entrée n'ont pas changé. Dès qu'une couche change, **toutes les suivantes** sont reconstruites. D'où la règle : ce qui change rarement en haut, ce qui change souvent en bas. Si on écrivait `COPY . .` avant `pip install`, chaque modification d'une ligne de `app.py` relancerait l'installation de toutes les dépendances.
+
+Pour les paquets Debian, on regroupe la mise à jour de l'index et l'installation dans **le même** `RUN`, puis on nettoie dans ce même `RUN` :
+```dockerfile
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends curl \
+ && rm -rf /var/lib/apt/lists/*
+```
+Séparés, `apt-get update` resterait en cache avec un index périmé, et `apt-get install` finirait un jour par échouer. Supprimer un fichier dans un `RUN` suivant ne réduit pas la taille : il reste dans la couche précédente.
+
+### Le fichier .dockerignore
+Tout le contexte est envoyé au moteur. Un `.dockerignore` (même syntaxe que `.gitignore`) exclut ce qui n'a rien à faire dans l'image : `.git`, `__pycache__`, `.venv`, `node_modules`, fichiers `.env` et clés. C'est une question de taille et de **sécurité** : un `COPY . .` copierait sinon un fichier de secrets dans l'image.
+
+### CMD et ENTRYPOINT : forme exec ou forme shell
+• Forme **exec** : `CMD ["gunicorn", "--bind", "0.0.0.0:8000", "app:app"]`. Le programme est le PID 1 et reçoit directement SIGTERM.
+• Forme **shell** : `CMD gunicorn --bind 0.0.0.0:8000 app:app`. Docker lance `/bin/sh -c "..."` ; c'est `sh` qui reçoit SIGTERM et ne le transmet pas. `docker stop` attend alors 10 secondes et tue le conteneur (code 137).
+Préfère toujours la forme exec. Si tu as besoin d'un script de démarrage, termine-le par `exec "$@"` ou `exec programme` pour que le programme remplace le shell.
+
+### Construction en plusieurs étapes (multi-stage)
+Pour un langage compilé, les outils de compilation (compilateur, en-têtes, cache de modules) sont inutiles à l'exécution. Une construction multi-stage compile dans une première étape, puis ne copie que le résultat dans une image minimale :
+```dockerfile
+FROM golang:1.23 AS build
+WORKDIR /src
+COPY go.mod ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 go build -o /out/bonjour .
+
+FROM gcr.io/distroless/static-debian12:nonroot
+COPY --from=build /out/bonjour /bonjour
+USER 65532:65532
+EXPOSE 8080
+ENTRYPOINT ["/bonjour"]
+```
+L'image `golang` pèse plus de 800 Mo ; l'image finale ne contient qu'un binaire statique et quelques fichiers de base, une dizaine de Mo. Moins de fichiers, c'est aussi moins de failles possibles : pas de shell, pas de gestionnaire de paquets. `CGO_ENABLED=0` produit un binaire sans dépendance à la bibliothèque C, nécessaire pour une image sans glibc. Le même principe sert pour Java (compiler avec Maven, exécuter sur un JRE) ou pour une application web JavaScript (construire avec Node, servir les fichiers statiques avec nginx).
+
+### Bonnes pratiques, en résumé
+• Image de base officielle, version fixée (`python:3.12-slim`, pas `python`).
+• Ordre des couches pensé pour le cache ; un `.dockerignore`.
+• `apt-get update` et `install` dans le même `RUN`, avec nettoyage.
+• `COPY` plutôt qu'`ADD` pour les fichiers locaux.
+• Un utilisateur non root ; forme exec pour `CMD` et `ENTRYPOINT`.
+• Aucun secret dans le Dockerfile (`ENV`, `ARG`, fichiers copiés) : il resterait lisible dans l'image (chapitre 8).
+• Un seul service par conteneur : le serveur web dans un conteneur, la base dans un autre.
+
+### À toi de jouer
+1. Crée le projet `accueil` du bloc de code, construis `lycee/accueil:1.0`, lance-le sur le port 8000 et vérifie avec `curl`. Après une minute, regarde la colonne STATUS de `docker ps`.
+2. Modifie le texte de `app.py` et reconstruis. Quelles étapes affichent `CACHED` ? Inverse ensuite `COPY requirements.txt .` / `RUN pip install` avec `COPY . .` (en mettant `COPY . .` en premier), modifie encore `app.py` et compare.
+3. Vérifie que le conteneur ne tourne pas en root avec `docker exec`.
+4. Repère quatre problèmes dans ce Dockerfile :
+```dockerfile
+FROM python
+COPY . /app
+RUN apt-get update
+RUN apt-get install -y gcc
+ENV DB_PASSWORD=Lycee2025!
+CMD python /app/app.py
+```
+
+### Correction
+1. `docker build -t lycee/accueil:1.0 .` puis `docker run -d --name accueil -p 8000:8000 lycee/accueil:1.0` et `curl http://localhost:8000` (« Bonjour depuis un conteneur »). Au bout d'un intervalle, STATUS passe de `Up 10 seconds (health: starting)` à `Up 1 minute (healthy)`.
+2. Avec l'ordre du cours, les étapes `FROM`, `WORKDIR`, `COPY requirements.txt` et `RUN pip install` sont `CACHED` ; seules `COPY . .` et les suivantes sont refaites, en quelques secondes. Avec `COPY . .` en premier, toute modification du code invalide le cache dès cette ligne, et `pip install` est relancé à chaque construction.
+3. `docker exec accueil id` affiche `uid=10001(appuser) gid=...` : le service ne tourne pas en root.
+4. Problèmes : (a) `FROM python` = `python:latest`, version non maîtrisée et image complète très lourde ; (b) `apt-get update` et `install` dans deux `RUN` séparés (index périmé en cache) et sans nettoyage, alors que `gcc` n'est sans doute utile qu'à la construction (multi-stage) ; (c) mot de passe en clair dans `ENV`, visible par `docker image inspect` et dans tous les conteneurs ; (d) `CMD` en forme shell et aucun `USER` : le programme tourne en root et ne reçoit pas SIGTERM. Bonus : pas de `.dockerignore`, et `COPY . /app` avant l'installation casse le cache.
+"""
+
+    codeblock "bash" {
+      title: "Projet accueil : créer les fichiers et construire l'image"
+      code: """
+mkdir -p ~/accueil && cd ~/accueil
+
+cat > app.py <<'EOF'
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.get("/")
+def index():
+    return "Bonjour depuis un conteneur\n"
+EOF
+
+printf 'flask==3.1.*\ngunicorn==23.*\n' > requirements.txt
+printf '.git\n__pycache__/\n.venv/\n.env\n*.pyc\n' > .dockerignore
+# écrire ensuite le Dockerfile du chapitre dans ~/accueil/Dockerfile
+
+docker build -t lycee/accueil:1.0 .
+docker run -d --name accueil -p 8000:8000 lycee/accueil:1.0
+curl http://localhost:8000
+docker image history lycee/accueil:1.0
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Que fait l’instruction EXPOSE 8000 dans un Dockerfile ?" {
+        - "elle publie le port 8000 sur l'hôte"
+        + "elle documente que l'application écoute sur le port 8000, sans rien publier"
+        - "elle ouvre le port 8000 dans le pare-feu de l'hôte"
+        - "elle interdit tous les autres ports"
+        explanation: "EXPOSE est une métadonnée. Pour rendre le port accessible depuis l'hôte, il faut -p à docker run (ou ports dans Compose). -P publie les ports déclarés par EXPOSE sur des ports aléatoires."
+      }
+      question "Pourquoi copie-t-on requirements.txt et lance-t-on pip install avant de copier le reste du code ?" {
+        - "parce que pip refuse de s'exécuter si le code est présent"
+        + "pour que la couche des dépendances reste en cache quand seul le code change"
+        - "pour réduire le nombre de couches à une seule"
+        - "parce que COPY . . ne copie pas requirements.txt"
+        explanation: "Une couche est reconstruite si ses entrées changent, et toutes les suivantes aussi. Le code change souvent, les dépendances rarement : en les installant d'abord, on évite de réinstaller tout à chaque modification."
+      }
+      question "Pourquoi faut-il écrire « apt-get update && apt-get install ... » dans un seul RUN ?" {
+        - "parce qu'un Dockerfile ne peut contenir qu'un seul RUN"
+        + "pour éviter qu'un apt-get update en cache laisse un index de paquets périmé"
+        - "pour que la commande s'exécute en root"
+        - "parce que && est obligatoire dans un Dockerfile"
+        explanation: "Si update est dans sa propre couche, elle reste en cache indéfiniment. Plus tard, install s'appuie sur un vieil index et peut échouer ou installer d'anciennes versions. Le nettoyage de /var/lib/apt/lists se fait dans le même RUN pour réduire la couche."
+      }
+      question "Quelle est la conséquence de « CMD gunicorn --bind 0.0.0.0:8000 app:app » (forme shell) ?" {
+        - "gunicorn ne peut pas lire ses variables d'environnement"
+        + "sh devient le PID 1 et ne transmet pas SIGTERM : docker stop attend puis tue le conteneur"
+        - "le conteneur tourne forcément en root"
+        - "la commande est exécutée pendant la construction"
+        explanation: "En forme shell, Docker lance /bin/sh -c. Le shell ne relaie pas SIGTERM au programme ; après 10 secondes, SIGKILL arrête tout sans fermeture propre. La forme exec, avec la commande écrite comme une liste entre crochets, évite ce problème."
+      }
+      question "Quel est le principal intérêt d’une construction en plusieurs étapes (multi-stage) ?" {
+        - "construire plusieurs images en parallèle"
+        + "garder les outils de compilation hors de l'image finale, plus petite et plus sûre"
+        - "chiffrer les couches de l'image"
+        - "lancer plusieurs services dans un même conteneur"
+        explanation: "La première étape compile avec toutes les dépendances de construction ; l'image finale reçoit seulement le résultat via COPY --from. Elle est plus légère et offre moins de prises à un attaquant (pas de compilateur, souvent pas de shell)."
+      }
+      question "Une application Python écoute sur 127.0.0.1:8000 dans son conteneur, lancé avec -p 8000:8000. Que se passe-t-il avec curl localhost:8000 depuis l’hôte ?" {
+        - "la page s'affiche normalement"
+        + "la connexion échoue, car le service n'écoute que sur la boucle locale du conteneur"
+        - "Docker corrige automatiquement l'adresse d'écoute"
+        - "la requête arrive sur un autre conteneur"
+        explanation: "Le conteneur a sa propre interface de boucle locale. Le trafic publié arrive sur son interface réseau (eth0), où rien n'écoute. Le service doit écouter sur 0.0.0.0 dans le conteneur."
+      }
+      question "Pourquoi ajoute-t-on un fichier .dockerignore ?" {
+        - "pour ignorer les erreurs de construction"
+        - "pour empêcher le téléchargement de l'image de base"
+        + "pour exclure du contexte de construction les fichiers inutiles ou sensibles (.git, .env…)"
+        - "pour lister les ports à ne pas publier"
+        explanation: "Tout le contexte est envoyé au moteur de construction et un COPY . . le recopie. .dockerignore réduit la taille et évite d'embarquer par erreur des secrets ou l'historique git dans l'image."
+      }
+      question "Dans quel cas ADD est-il justifié plutôt que COPY ?" {
+        - "pour copier un fichier local de configuration"
+        - "pour copier un dossier entier"
+        + "pour télécharger un fichier distant ou extraire automatiquement une archive locale"
+        - "pour copier depuis une étape de construction précédente"
+        explanation: "ADD a des fonctions supplémentaires (URL, extraction d'archive) qui peuvent surprendre. Pour de simples fichiers locaux ou entre étapes (COPY --from), on utilise COPY, plus prévisible."
+      }
+      question "Tu supprimes un gros fichier avec « RUN rm /tmp/archive.tar » dans un RUN qui suit celui qui l’a créé. L’image est-elle plus petite ?" {
+        - "oui, le fichier est retiré de l'image"
+        + "non, le fichier reste dans la couche précédente, il est seulement masqué"
+        - "oui, mais seulement après docker image prune"
+        - "non, car rm est interdit dans un Dockerfile"
+        explanation: "Les couches s'empilent : une suppression dans une couche suivante masque le fichier sans le retirer de la couche qui l'a créé. Il faut créer et supprimer le fichier dans le même RUN, ou utiliser une construction multi-stage."
+      }
+      question "Quelle est la valeur par défaut de l’intervalle d’un HEALTHCHECK si on ne le précise pas ?" {
+        - "5 secondes"
+        - "10 secondes"
+        + "30 secondes"
+        - "60 secondes"
+        explanation: "Par défaut, interval vaut 30 s, timeout 30 s et retries 3. Le conteneur passe à unhealthy après 3 échecs consécutifs. On ajuste ces valeurs selon le service."
+      }
+      question "Que signifie le point final dans « docker build -t lycee/accueil:1.0 . » ?" {
+        - "la dernière version de l'image"
+        + "le contexte de construction : le dossier courant, envoyé au moteur"
+        - "le registre par défaut"
+        - "le nom du Dockerfile"
+        explanation: "Le dernier argument est le contexte. Les fichiers copiés par COPY sont pris dans ce dossier. Le Dockerfile est cherché par défaut à la racine du contexte, sinon on l'indique avec -f."
+      }
+    }
+  }
+
+  module "reseaux" {
+    title: "Chapitre 6 : réseaux Docker et publication de ports"
+    duration: "40min"
+    content: """
+### Les pilotes réseau
+| Pilote | Effet | Usage |
+|---|---|---|
+| `bridge` | réseau privé interne à l'hôte, avec traduction d'adresses vers l'extérieur | le cas général |
+| `host` | le conteneur partage la pile réseau de l'hôte, sans isolation réseau | besoins de performance particuliers ; `-p` est alors ignoré |
+| `none` | seulement l'interface de boucle locale | traitement isolé, sans réseau |
+| `overlay` | réseau étendu à plusieurs hôtes | Docker Swarm |
+| `macvlan` / `ipvlan` | le conteneur obtient une adresse sur le réseau physique | cas particuliers (appareils réseau) |
+
+`docker network ls` montre trois réseaux créés à l'installation : `bridge`, `host` et `none`.
+
+### Le réseau bridge par défaut, et pourquoi l'éviter
+Un conteneur lancé sans `--network` rejoint le réseau `bridge` par défaut (interface `docker0` sur l'hôte, souvent en `172.17.0.0/16`). Sur ce réseau, les conteneurs ne se trouvent **que par adresse IP** ; l'ancienne option `--link` est dépréciée. Et tous les conteneurs lancés sans précaution s'y retrouvent ensemble.
+
+### Les réseaux définis par l'utilisateur
+La documentation de Docker le dit : un réseau bridge créé par l'utilisateur est meilleur que le réseau par défaut.
+```bash
+docker network create lycee-net
+docker run -d --name db  --network lycee-net -e POSTGRES_PASSWORD=essai postgres:17
+docker run --rm --network lycee-net debian:12-slim getent hosts db
+# 172.18.0.2      db
+```
+• **Résolution de noms** : un serveur DNS intégré, joignable dans chaque conteneur à l'adresse `127.0.0.11`, traduit le nom d'un conteneur (ou ses alias) en son adresse sur ce réseau. Les adresses IP des conteneurs changent à chaque recréation ; les noms restent. On configure donc toujours une application avec `db`, jamais avec `172.18.0.2`.
+• **Isolation** : seuls les conteneurs connectés au réseau se voient.
+• **Souplesse** : `docker network connect` et `disconnect` ajoutent ou retirent un conteneur en marche ; un conteneur peut être sur plusieurs réseaux.
+• **Réseau interne** : `docker network create --internal back-net` crée un réseau sans accès vers l'extérieur, idéal pour une base de données.
+
+```bash
+docker network ls
+docker network inspect lycee-net      # sous-réseau, passerelle, conteneurs connectés
+docker network connect lycee-net web
+docker network rm lycee-net           # refusé si des conteneurs y sont encore
+```
+
+### Entre conteneurs, pas besoin de -p
+Deux conteneurs sur le même réseau communiquent directement sur tous les ports où le service écoute. `-p` ne sert qu'à rendre un port accessible **depuis l'extérieur du réseau Docker** (l'hôte, le réseau local, Internet). Une base de données utilisée seulement par l'application ne doit **pas** être publiée.
+
+### Publier un port : à quelle adresse ?
+`-p 8080:80` publie le port sur **toutes les adresses de l'hôte** (`0.0.0.0` et `[::]`) : n'importe quelle machine qui peut joindre le serveur y accède. Pour un service qui ne doit être vu que de l'hôte (une interface d'administration, une base pour des tests), précise l'adresse :
+```bash
+docker run -d -p 127.0.0.1:8080:80 nginx:alpine      # seulement depuis l'hôte
+docker run -d -p 192.168.10.20:8080:80 nginx:alpine  # seulement sur cette interface
+docker run -d -p 5353:53/udp coredns/coredns:1.11.3   # port UDP : préciser /udp
+```
+
+### Le piège du pare-feu
+Sur Linux, Docker écrit ses propres règles de filtrage et de traduction d'adresses (iptables ou nftables). La documentation prévient : le trafic vers un port publié est détourné **avant** les règles d'entrée que gère `ufw`. Résultat : `ufw deny 8080` ne bloque pas un conteneur publié avec `-p 8080:80`. Les bons réflexes :
+• ne publier que ce qui doit l'être ;
+• lier à `127.0.0.1` ce qui ne doit être vu que localement ;
+• pour filtrer les ports publiés, ajouter les règles dans la chaîne `DOCKER-USER`, prévue pour cela ;
+• vérifier depuis **une autre machine** avec `nmap` ou `nc`, pas seulement depuis le serveur.
+
+### Diagnostiquer un problème réseau
+```bash
+docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$k}} {{$v.IPAddress}} {{end}}' web
+docker exec web cat /etc/resolv.conf                     # nameserver 127.0.0.11 sur un réseau utilisateur
+docker run --rm --network lycee-net busybox ping -c 2 db
+docker run --rm --network lycee-net busybox nc -zv db 5432
+sudo ss -ltnp | grep 8080                                # qui écoute sur le port de l'hôte
+```
+
+### À toi de jouer
+1. Lance deux conteneurs `busybox` (`sleep 3600`) nommés `a` et `b` sur le réseau par défaut. Depuis `a`, essaie `ping -c 1 b`. Recommence avec un réseau `essai-net` créé par toi. Explique la différence.
+2. Crée un réseau `front` et un réseau interne `back`. Lance `db` (PostgreSQL) sur `back` seulement, et un conteneur `outil` (`debian:12-slim`, `sleep infinity`) sur les deux. Vérifie que `outil` résout `db`, et qu'un conteneur sur `back` seul ne peut pas joindre Internet.
+3. Sur un serveur protégé par `ufw` (seul le SSH autorisé), un collègue lance `docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=azerty postgres:17`. Quel est le risque, et comment le corriger ?
+
+### Correction
+1. Sur le réseau par défaut : `ping: bad address 'b'`, aucun nom n'est résolu. Sur `essai-net` (`docker network create essai-net`, puis `--network essai-net` sur les deux), `ping -c 1 b` répond : le DNS intégré connaît les noms des conteneurs de ce réseau.
+2. Commandes :
+```bash
+docker network create front
+docker network create --internal back
+docker run -d --name db --network back -e POSTGRES_PASSWORD=essai postgres:17
+docker run -d --name outil --network front debian:12-slim sleep infinity
+docker network connect back outil
+docker exec outil getent hosts db                 # adresse de db sur back
+docker run --rm --network back busybox ping -c 1 -W 2 9.9.9.9   # échec : réseau interne
+```
+`outil` résout `db` car il est connecté à `back`. Le dernier `ping` échoue (`Network unreachable` ou aucune réponse) : un réseau `--internal` n'a pas de route vers l'extérieur.
+3. Le port 5432 est publié sur toutes les adresses et Docker contourne `ufw` : la base est joignable depuis le réseau, voire depuis Internet, avec un mot de passe faible. Les bases exposées sont trouvées et attaquées en quelques heures par des robots. Correction : supprimer `-p` si seule une application du même réseau Docker l'utilise ; sinon `-p 127.0.0.1:5432:5432` pour un accès local (tunnel SSH pour l'administration), mot de passe fort passé par un secret, et vérification depuis une autre machine avec `nmap -p 5432 <ip-du-serveur>`.
+"""
+
+    quiz {
+      pick: 5
+      question "Deux conteneurs sont sur le réseau bridge par défaut. Le premier fait « ping db ». Que se passe-t-il ?" {
+        - "le ping fonctionne grâce au DNS intégré"
+        + "le nom n'est pas résolu : sur le réseau par défaut, on ne se joint que par adresse IP"
+        - "le ping part vers Internet"
+        - "Docker crée automatiquement un lien entre les deux"
+        explanation: "La résolution des noms de conteneurs n'existe que sur les réseaux créés par l'utilisateur. Sur le bridge par défaut, il faut l'IP ou l'ancienne option --link, dépréciée."
+      }
+      question "À quelle adresse se trouve le serveur DNS intégré de Docker dans un conteneur relié à un réseau utilisateur ?" {
+        - "172.17.0.1"
+        - "8.8.8.8"
+        + "127.0.0.11"
+        - "192.168.65.1"
+        explanation: "Docker fournit un résolveur intégré à l'adresse 127.0.0.11 dans les conteneurs des réseaux utilisateur. Il répond pour les noms des conteneurs et transmet les autres questions aux serveurs DNS de l'hôte."
+      }
+      question "Sur quelles adresses de l’hôte « -p 8080:80 » publie-t-il le port ?" {
+        - "seulement 127.0.0.1"
+        + "toutes les adresses de l'hôte (0.0.0.0 et [::])"
+        - "seulement l'adresse de docker0"
+        - "aucune, il faut ajouter EXPOSE"
+        explanation: "Sans adresse précisée, le port est publié sur toutes les interfaces. Pour le limiter à l'hôte lui-même, on écrit -p 127.0.0.1:8080:80."
+      }
+      question "Pourquoi « ufw deny 8080 » ne bloque-t-il pas un conteneur publié avec -p 8080:80 ?" {
+        - "ufw ne gère que l'IPv6"
+        + "Docker détourne le trafic des ports publiés avant les règles d'entrée gérées par ufw"
+        - "le port 8080 est réservé par le noyau"
+        - "il faut redémarrer ufw après chaque conteneur"
+        explanation: "Les règles de traduction d'adresses de Docker s'appliquent avant les chaînes que gère ufw. Pour filtrer, on utilise la chaîne DOCKER-USER, ou on publie seulement sur 127.0.0.1, ou on ne publie pas du tout."
+      }
+      question "Une application et sa base sont sur le même réseau Docker. Faut-il publier le port 5432 de la base pour que l’application s’y connecte ?" {
+        - "oui, sinon aucun conteneur ne peut l'atteindre"
+        + "non, les conteneurs d'un même réseau communiquent directement"
+        - "oui, mais seulement en UDP"
+        - "non, mais il faut ajouter EXPOSE 5432 dans l'application"
+        explanation: "-p sert uniquement à l'accès depuis l'extérieur du réseau Docker. Publier une base inutilement l'expose au réseau, d'autant plus que Docker contourne ufw."
+      }
+      question "Quelle option crée un réseau sans accès vers l’extérieur ?" {
+        - "docker network create --private"
+        + "docker network create --internal"
+        - "docker network create --driver none"
+        - "docker network create --no-nat"
+        explanation: "--internal crée un réseau bridge sans route vers l'extérieur : les conteneurs se parlent entre eux, mais ne joignent pas Internet. C'est adapté à une base de données."
+      }
+      question "Avec le pilote réseau host, que devient l’option -p 8080:80 ?" {
+        - "elle publie le port 80 sur 8080 comme d'habitude"
+        + "elle est ignorée : le conteneur utilise directement les ports de l'hôte"
+        - "elle provoque l'arrêt du conteneur"
+        - "elle publie le port sur toutes les machines du réseau local"
+        explanation: "En mode host, le conteneur partage la pile réseau de l'hôte : un service qui écoute sur 80 dans le conteneur écoute sur le port 80 de l'hôte. Il n'y a ni traduction ni isolation réseau."
+      }
+      question "Pourquoi configure-t-on une application avec le nom « db » plutôt qu’avec l’IP 172.18.0.2 ?" {
+        - "parce que les IP sont interdites dans les variables d'environnement"
+        + "parce que l'IP d'un conteneur peut changer à chaque recréation, le nom reste"
+        - "parce que le nom est plus rapide à résoudre qu'une IP"
+        - "parce que PostgreSQL refuse les connexions par IP"
+        explanation: "Docker attribue les adresses au démarrage : un conteneur recréé peut en obtenir une autre. Le DNS intégré suit ces changements et le nom reste valable."
+      }
+      question "Comment publier le port UDP 53 d’un conteneur sur le port 5353 de l’hôte ?" {
+        - "-p 5353:53"
+        + "-p 5353:53/udp"
+        - "-p udp:5353:53"
+        - "--udp 5353:53"
+        explanation: "Sans suffixe, la publication concerne le TCP. Pour l'UDP, on ajoute /udp après le port du conteneur."
+      }
+      question "Quelle commande affiche le sous-réseau d’un réseau Docker et la liste des conteneurs qui y sont connectés ?" {
+        - "docker network ls -v"
+        + "docker network inspect lycee-net"
+        - "docker ps --network lycee-net --subnet"
+        - "ip route show lycee-net"
+        explanation: "docker network inspect renvoie la configuration IPAM (Subnet, Gateway) et la section Containers avec le nom et l'adresse de chaque conteneur connecté."
+      }
+    }
+  }
+
+  module "compose" {
+    title: "Chapitre 7 : une application web et sa base avec Docker Compose"
+    duration: "40min"
+    content: """
+### Pourquoi Compose
+Une vraie application, c'est plusieurs conteneurs, un réseau, des volumes, des variables, un ordre de démarrage. Avec `docker run`, cela fait cinq longues commandes à retaper sans erreur. **Docker Compose** décrit tout cela dans un fichier YAML, `compose.yaml`, versionné avec le code, et le met en place en une commande.
+
+Compose est aujourd'hui une extension de la commande docker : on tape `docker compose` (avec une espace). L'ancien programme `docker-compose` (avec un tiret, écrit en Python) n'est plus maintenu. L'attribut `version:` en tête de fichier est obsolète : Compose l'ignore et affiche un avertissement.
+
+### Le projet
+Une petite application compte les visites de la page d'accueil du lycée et les enregistre dans PostgreSQL. Arborescence :
+```text
+visites/
+├── compose.yaml
+├── secrets/
+│   └── db_password.txt
+└── web/
+    ├── Dockerfile        (celui du chapitre 5)
+    ├── requirements.txt  (flask, gunicorn, psycopg[binary])
+    └── app.py
+```
+Le code de `app.py` est dans le bloc de ce chapitre. Il lit le mot de passe dans un **fichier** dont le chemin est donné par `DB_PASSWORD_FILE`, et se connecte à l'hôte `db`.
+
+### Le fichier compose.yaml
+```yaml
+services:
+  web:
+    build: ./web
+    ports:
+      - "8080:8000"
+    environment:
+      DB_HOST: db
+      DB_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: lycee
+      POSTGRES_USER: lycee
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lycee -d lycee"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  db-data:
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+```
+
+Lecture, bloc par bloc :
+• `services` : un service par conteneur. `web` est **construit** à partir de `./web`, `db` utilise une **image** officielle.
+• `ports` : seul `web` est publié. `db` n'a **pas** de `ports` : l'application la joint par le réseau interne.
+• **Réseau** : Compose crée automatiquement un réseau `<projet>_default` et y place tous les services ; chaque service est joignable **par son nom** (`db`). Le nom du projet est par défaut celui du dossier (`visites`).
+• `volumes` : le volume nommé `db-data` (en réalité `visites_db-data`) garde la base entre deux `down`/`up`.
+• `secrets` : Compose monte le fichier dans le conteneur sous `/run/secrets/db_password`. L'image officielle de PostgreSQL accepte la convention `_FILE` : avec `POSTGRES_PASSWORD_FILE`, elle lit le mot de passe dans ce fichier. Le mot de passe n'apparaît ni dans le `compose.yaml`, ni dans `docker inspect`.
+• `healthcheck` et `depends_on` : `web` ne démarre que lorsque `db` est **en bonne santé** (`pg_isready` répond). Sans `condition`, `depends_on` attend seulement que le conteneur soit lancé, pas que la base accepte des connexions. Les conditions possibles sont `service_started`, `service_healthy` et `service_completed_successfully`.
+
+Attention : le mot de passe n'est utilisé par PostgreSQL qu'à la **création** de la base, quand le volume est vide. Le changer ensuite dans le fichier ne change pas le mot de passe de la base existante.
+
+### Le fichier de secret et ses droits
+Sans Docker Swarm, Compose monte le fichier tel quel : les droits Unix de l'hôte s'appliquent. Le processus de `web` (UID 10001) et celui de PostgreSQL (UID 999) doivent pouvoir le lire. On protège donc le **dossier** sur l'hôte et on laisse le fichier lisible :
+```bash
+mkdir -p secrets && chmod 700 secrets
+openssl rand -base64 24 > secrets/db_password.txt
+chmod 644 secrets/db_password.txt
+echo "secrets/" >> .gitignore
+```
+Sur l'hôte, les autres comptes ne peuvent pas traverser le dossier `secrets` (700) ; dans le conteneur, seul le fichier monté est visible. Et le secret n'est jamais versionné dans git.
+
+### Les commandes du quotidien
+```bash
+docker compose up -d --build      # construire si besoin, créer et démarrer en arrière-plan
+docker compose ps                 # état des services (colonne STATUS avec healthy)
+docker compose logs -f web        # journaux d'un service
+docker compose exec db psql -U lycee lycee   # entrer dans la base
+docker compose config             # fichier final, variables remplacées : vérifie la syntaxe
+docker compose pull               # télécharger les nouvelles versions des images
+docker compose restart web
+docker compose down               # arrêter et supprimer conteneurs et réseau ; les volumes restent
+docker compose down -v            # idem, et SUPPRIME les volumes nommés du projet : données perdues
+```
+
+### Variables et fichier .env
+Compose lit un fichier `.env` placé à côté de `compose.yaml` et remplace les `${VARIABLE}` du fichier :
+```yaml
+    ports:
+      - "${WEB_PORT:-8080}:8000"
+```
+`${WEB_PORT:-8080}` vaut 8080 si `WEB_PORT` n'est pas définie. À ne pas confondre avec `env_file:`, qui transmet des variables **au conteneur**. Pour des mots de passe, préfère les `secrets` : les variables d'environnement sont visibles par `docker inspect`, par tous les processus du conteneur, et finissent souvent dans des journaux de débogage.
+
+### À toi de jouer
+1. Crée le projet `visites` (fichiers du chapitre et du bloc de code), génère le secret, puis `docker compose up -d --build`. Suis avec `docker compose ps` le passage de `db` à `healthy`, puis le démarrage de `web`.
+2. Appelle trois fois `curl http://localhost:8080`. Puis `docker compose down` et `docker compose up -d`. Le compteur repart-il de zéro ? Et après `docker compose down -v` ?
+3. Affiche le contenu de la table depuis le conteneur `db`.
+4. Vérifie que la base n'est pas joignable depuis l'hôte sur le port 5432, et que `docker inspect` ne montre pas le mot de passe.
+5. Sans `condition: service_healthy`, que risque-t-il de se passer au tout premier démarrage ?
+
+### Correction
+1. Pendant quelques secondes, `db` affiche `Up ... (health: starting)` et `web` reste `Created` ; dès que `db` passe `healthy`, `web` démarre. Les journaux de `db` montrent l'initialisation (`CREATE DATABASE`), puis `database system is ready to accept connections`.
+2. Réponses `Visites : 1`, `2`, `3`. Après `down` puis `up`, le compteur continue (`Visites : 4`) : la base est dans le volume `visites_db-data`, qui survit à `down`. Après `down -v`, le volume est supprimé : au redémarrage, la base est recréée et le compteur repart à 1.
+3. `docker compose exec db psql -U lycee lycee -c "SELECT count(*) FROM visites;"`. La connexion locale dans le conteneur ne demande pas de mot de passe (authentification `trust` sur le socket local dans l'image officielle).
+4. `nc -zv 127.0.0.1 5432` échoue (`Connection refused`) : aucun port publié. `docker inspect visites-db-1 | grep -i password` ne montre que `POSTGRES_PASSWORD_FILE=/run/secrets/db_password`, le chemin, pas la valeur.
+5. `web` démarrerait dès que le conteneur `db` est lancé, alors que PostgreSQL initialise encore la base. La première connexion échouerait (`connection refused`), gunicorn renverrait une erreur 500, ou l'application s'arrêterait au démarrage. Le contrôle de santé règle l'ordre ; une application robuste doit malgré tout savoir réessayer.
+"""
+
+    codeblock "python" {
+      title: "web/app.py : compteur de visites dans PostgreSQL"
+      code: """
+import os
+
+import psycopg
+from flask import Flask
+
+app = Flask(__name__)
+
+
+def connexion():
+    with open(os.environ["DB_PASSWORD_FILE"]) as fichier:
+        mot_de_passe = fichier.read().strip()
+    return psycopg.connect(host=os.environ["DB_HOST"], dbname="lycee",
+                           user="lycee", password=mot_de_passe)
+
+
+@app.get("/")
+def index():
+    with connexion() as conn:
+        conn.execute("CREATE TABLE IF NOT EXISTS visites "
+                     "(id serial PRIMARY KEY, quand timestamptz DEFAULT now())")
+        conn.execute("INSERT INTO visites DEFAULT VALUES")
+        total = conn.execute("SELECT count(*) FROM visites").fetchone()[0]
+    return f"Visites : {total}\n"
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Comment le service web joint-il la base dans un projet Compose sans configuration réseau particulière ?" {
+        - "par l'adresse 127.0.0.1, car tout est sur la même machine"
+        + "par le nom du service, db, sur le réseau par défaut créé par Compose"
+        - "par l'adresse publiée sur l'hôte, port 5432"
+        - "il faut déclarer un lien avec links"
+        explanation: "Compose crée un réseau <projet>_default et y place tous les services. Le DNS intégré résout le nom de chaque service. 127.0.0.1 désignerait le conteneur web lui-même."
+      }
+      question "Que fait « depends_on » sans condition ?" {
+        - "il attend que la base accepte des connexions"
+        + "il démarre la dépendance avant, sans attendre qu'elle soit prête"
+        - "il redémarre web si db s'arrête"
+        - "il partage le réseau de db avec web"
+        explanation: "Par défaut, la condition est service_started : le conteneur db est lancé, mais PostgreSQL peut encore s'initialiser. Avec condition: service_healthy et un healthcheck, Compose attend que la base réponde."
+      }
+      question "Que fait « docker compose down -v » ?" {
+        - "il arrête les services et affiche les volumes"
+        - "il arrête seulement les conteneurs, en gardant le réseau"
+        + "il supprime conteneurs et réseau, et aussi les volumes nommés du projet"
+        - "il met à jour les images puis redémarre"
+        explanation: "down supprime conteneurs et réseaux ; -v ajoute la suppression des volumes déclarés, donc des données de la base. C'est irréversible : à réserver aux environnements de test."
+      }
+      question "Où Compose rend-il disponible le secret db_password dans le conteneur ?" {
+        - "dans la variable d'environnement DB_PASSWORD"
+        + "dans le fichier /run/secrets/db_password"
+        - "dans /etc/docker/secrets/db_password.txt"
+        - "dans le fichier .env du conteneur"
+        explanation: "Chaque secret est monté comme fichier sous /run/secrets/<nom>. L'application (ou l'image, avec la convention _FILE) lit ce fichier. La valeur n'apparaît pas dans l'environnement ni dans docker inspect."
+      }
+      question "Pourquoi préférer POSTGRES_PASSWORD_FILE à POSTGRES_PASSWORD dans compose.yaml ?" {
+        - "parce que POSTGRES_PASSWORD n'existe pas"
+        + "parce que la valeur n'est plus visible dans le fichier, l'environnement ni docker inspect"
+        - "parce que le mot de passe est chiffré par PostgreSQL"
+        - "parce que _FILE permet plusieurs mots de passe"
+        explanation: "Une variable d'environnement est lisible par docker inspect et par tous les processus du conteneur, et finit facilement dans des journaux. Avec _FILE, l'image lit la valeur dans un fichier de secret."
+      }
+      question "Tu changes le mot de passe dans secrets/db_password.txt et fais docker compose up -d. PostgreSQL utilise-t-il le nouveau mot de passe ?" {
+        - "oui, il est relu à chaque démarrage"
+        + "non, il n'est utilisé qu'à la création de la base, quand le volume est vide"
+        - "oui, mais seulement après docker compose restart"
+        - "non, car Compose garde les secrets en cache pour toujours"
+        explanation: "L'image initialise la base et le mot de passe une seule fois. Ensuite, il faut le changer dans PostgreSQL (ALTER USER) puis mettre à jour le secret pour l'application."
+      }
+      question "Quelle commande vérifie la syntaxe du fichier et affiche la configuration finale, variables remplacées ?" {
+        - "docker compose check"
+        + "docker compose config"
+        - "docker compose lint"
+        - "docker compose ps --all"
+        explanation: "docker compose config valide le fichier, applique .env et les valeurs par défaut, et affiche le résultat. Une erreur de YAML ou de clé y est signalée avant tout démarrage."
+      }
+      question "Que vaut « ${WEB_PORT:-8080} » si WEB_PORT n’est définie ni dans l’environnement ni dans .env ?" {
+        - "une chaîne vide"
+        + "8080"
+        - "une erreur bloquante"
+        - "le port aléatoire choisi par Docker"
+        explanation: "La forme ${VAR:-defaut} donne la valeur par défaut quand la variable est absente ou vide, comme dans le shell. ${VAR:?message} provoquerait au contraire une erreur."
+      }
+      question "Comment s’appelle la commande Compose actuelle ?" {
+        - "docker-compose, avec un tiret, installée par pip"
+        + "docker compose, une extension de la commande docker"
+        - "compose-docker"
+        - "dockerd compose"
+        explanation: "Compose v2 est une extension (plugin) de la commande docker : docker compose. L'ancien docker-compose écrit en Python n'est plus maintenu."
+      }
+      question "Pourquoi le service db n’a-t-il pas de section ports dans le projet ?" {
+        - "parce que PostgreSQL n'utilise pas de port"
+        - "parce que Compose publie automatiquement tous les ports"
+        + "parce que seule l'application doit la joindre, par le réseau interne du projet"
+        - "parce que les ports sont déclarés dans le healthcheck"
+        explanation: "Les services d'un même projet communiquent sur le réseau du projet. Publier la base ouvrirait un accès depuis l'extérieur, inutile et dangereux, d'autant que Docker contourne ufw."
+      }
+    }
+  }
+
+  module "registre-securite" {
+    title: "Chapitre 8 : registres et sécurité des conteneurs"
+    duration: "40min"
+    content: """
+### Partager ses images : les registres
+Un **registre** stocke des images et les distribue. Une image construite sur ton poste doit être **poussée** (push) dans un registre pour être **tirée** (pull) par un serveur.
+
+| Registre | Adresse | Remarque |
+|---|---|---|
+| Docker Hub | `docker.io` | registre par défaut, images publiques et privées |
+| GitHub Container Registry | `ghcr.io` | lié aux dépôts GitHub |
+| GitLab Container Registry | `registry.gitlab.com` | lié aux projets GitLab |
+| Harbor | serveur interne | registre libre à installer soi-même, avec analyse de failles |
+| `registry` (image officielle) | serveur interne | registre minimal, idéal pour un labo |
+
+Le cycle est toujours le même :
+```bash
+docker login ghcr.io                                       # identifiants ou jeton
+docker tag lycee/accueil:1.0 ghcr.io/mon-lycee/accueil:1.0 # nouveau nom, même image
+docker push ghcr.io/mon-lycee/accueil:1.0
+docker pull ghcr.io/mon-lycee/accueil:1.0                  # sur le serveur
+```
+`docker tag` ne copie rien : il ajoute un nom à une image existante. Le préfixe du nom indique à Docker vers quel registre pousser.
+
+`docker login` enregistre les identifiants dans `~/.docker/config.json`, simplement **encodés en base64** si aucun gestionnaire d'identifiants (credential helper) n'est configuré : Docker affiche d'ailleurs un avertissement. Utilise un **jeton d'accès** à droits limités plutôt que ton mot de passe, et un gestionnaire d'identifiants sur les postes.
+
+### Un registre local pour le labo
+```bash
+docker run -d -p 127.0.0.1:5000:5000 --restart always --name registry registry:3
+docker tag lycee/accueil:1.0 localhost:5000/lycee/accueil:1.0
+docker push localhost:5000/lycee/accueil:1.0
+curl http://localhost:5000/v2/_catalog          # {"repositories":["lycee/accueil"]}
+curl http://localhost:5000/v2/lycee/accueil/tags/list
+```
+Docker accepte un registre en HTTP sans chiffrement seulement sur `localhost` (127.0.0.0/8). Pour un registre partagé sur le réseau, il faut un certificat TLS et une authentification ; déclarer le registre comme « insecure » dans la configuration du démon est à éviter hors labo.
+
+### Sécurité : ce qui protège vraiment
+Un conteneur partage le noyau de l'hôte. Une mauvaise configuration peut transformer une faille dans une application web en prise de contrôle du serveur. L'ANSSI (fiche « Recommandations de sécurité relatives au déploiement de conteneurs Docker ») et l'OWASP (Docker Security Cheat Sheet) insistent sur les mêmes points.
+
+**1. Des images de confiance et à jour**
+• images officielles ou d'éditeurs vérifiés, version fixée ;
+• reconstruire régulièrement pour intégrer les correctifs de l'image de base ;
+• analyser les images avec un scanner de vulnérabilités, par exemple `docker scout cves lycee/accueil:1.0` ou l'outil libre Trivy (`trivy image lycee/accueil:1.0`) ;
+• images minimales : moins de paquets, moins de failles (multi-stage, slim, distroless).
+
+**2. Pas de root dans le conteneur**
+Par défaut, le processus d'un conteneur tourne en **root** (UID 0), le même UID que le root de l'hôte. En cas d'évasion du conteneur, l'attaquant serait root sur la machine. Déclare un `USER` non root dans le Dockerfile (ou `--user 10001:10001`). Pour aller plus loin, le mode rootless de Docker ou le remappage des UID (`userns-remap`) font correspondre le root du conteneur à un compte sans droits sur l'hôte.
+
+**3. Le moins de droits possible**
+```bash
+docker run -d --name accueil -p 8000:8000 \
+  --read-only --tmpfs /tmp \
+  --cap-drop ALL \
+  --security-opt no-new-privileges \
+  --memory 256m --pids-limit 100 \
+  lycee/accueil:1.0
+```
+• `--read-only` : système de fichiers racine en lecture seule ; un attaquant ne peut pas déposer d'outil. `--tmpfs /tmp` donne un espace temporaire en mémoire.
+• `--cap-drop ALL` : retire toutes les capacités Linux (des morceaux des pouvoirs de root) ; on rajoute seulement celles qui manquent avec `--cap-add`.
+• `--security-opt no-new-privileges` : un programme setuid ne peut pas obtenir plus de droits (`sudo` et `su` cessent de fonctionner).
+• `--memory`, `--pids-limit` : un conteneur compromis ou défaillant ne peut pas épuiser la mémoire ou lancer une bombe de processus.
+
+**4. Les options à ne jamais banaliser**
+• `--privileged` donne au conteneur presque tous les droits sur l'hôte (périphériques, capacités) : ce n'est plus une isolation.
+• Monter le socket `-v /var/run/docker.sock:/var/run/docker.sock` donne au conteneur le contrôle complet de Docker, donc de la machine (même raisonnement que le groupe `docker`).
+• `--network host` et `--pid host` suppriment des pans entiers de l'isolation.
+
+**5. Les secrets hors des images**
+Tout ce qui est écrit dans une couche se retrouve dans l'image et peut en être extrait :
+• `ENV DB_PASSWORD=...` : visible avec `docker image inspect` et dans tous les conteneurs ;
+• `ARG` utilisé dans un `RUN` : visible avec `docker image history` ;
+• un fichier `.env` ou une clé copiés par `COPY . .` puis supprimés : toujours présents dans la couche du `COPY`.
+On passe les secrets **à l'exécution** (secrets Compose, fichiers montés) et, si la construction en a besoin, avec les secrets de construction de BuildKit (`RUN --mount=type=secret,id=...`), qui ne laissent aucune trace dans l'image. Un secret poussé par erreur dans une image publique doit être **révoqué** : supprimer l'image ne suffit pas.
+
+**6. L'hôte et le démon**
+Hôte à jour et durci, Docker à jour, accès au groupe `docker` et au socket réservé aux administrateurs, journaux des conteneurs centralisés, ports publiés réduits au minimum (chapitre 6).
+
+### À toi de jouer
+1. Lance un registre local, pousse `lycee/accueil:1.0` sous le nom `localhost:5000/lycee/accueil:1.0`, supprime l'image locale puis retire-la depuis le registre.
+2. Lance `lycee/accueil:1.0` avec les options de durcissement du cours. Vérifie qu'il répond, puis essaie `docker exec accueil touch /app/test`. Que se passe-t-il ?
+3. Construis cette image puis retrouve le mot de passe sans lancer de conteneur :
+```dockerfile
+FROM debian:12-slim
+ARG TOKEN=jeton-de-demo-123
+RUN echo "configuration avec $TOKEN" > /dev/null
+```
+4. Classe ces options de la plus dangereuse à la moins dangereuse, et justifie : `--cap-drop ALL`, `--privileged`, `-v /var/run/docker.sock:/var/run/docker.sock`, `--user 1000`.
+
+### Correction
+1. Commandes : `docker run -d -p 127.0.0.1:5000:5000 --name registry registry:3`, `docker tag ...`, `docker push localhost:5000/lycee/accueil:1.0`, `docker image rm localhost:5000/lycee/accueil:1.0 lycee/accueil:1.0`, `docker pull localhost:5000/lycee/accueil:1.0`. `curl http://localhost:5000/v2/_catalog` liste `lycee/accueil`.
+2. `curl http://localhost:8000` répond. `touch` échoue avec `touch: cannot touch '/app/test': Read-only file system`. gunicorn fonctionne car il n'écrit que dans `/tmp`, monté en tmpfs. Si une application a besoin d'écrire ailleurs, on lui donne un volume précis, pas tout le système de fichiers.
+3. `docker build -t essai-secret .` puis `docker image history --no-trunc essai-secret` : la ligne du `RUN` montre `TOKEN=jeton-de-demo-123`. Une valeur passée par `ARG` (ou `--build-arg`) reste dans les métadonnées de l'image : il faut un secret de construction.
+4. Du plus au moins dangereux : `--privileged` et le montage du socket Docker (les deux donnent en pratique le contrôle de l'hôte ; le socket permet en plus de lancer d'autres conteneurs privilégiés), puis `--user 1000` et `--cap-drop ALL`, qui **réduisent** les droits : ce sont des protections, pas des risques.
+"""
+
+    quiz {
+      pick: 5
+      question "Que fait « docker tag lycee/accueil:1.0 localhost:5000/lycee/accueil:1.0 » ?" {
+        - "il envoie l'image au registre local"
+        + "il ajoute un second nom à la même image, sans rien copier"
+        - "il crée une copie complète de l'image"
+        - "il renomme l'image et supprime l'ancien nom"
+        explanation: "docker tag crée seulement une nouvelle référence vers la même image (même IMAGE ID). Le préfixe localhost:5000 indique le registre de destination ; c'est docker push qui envoie l'image."
+      }
+      question "Comment docker login enregistre-t-il les identifiants quand aucun gestionnaire d’identifiants n’est configuré ?" {
+        - "chiffrés avec la clé du démon"
+        + "encodés en base64 dans ~/.docker/config.json, donc lisibles"
+        - "dans le trousseau du registre, jamais sur le disque"
+        - "ils ne sont pas enregistrés"
+        explanation: "Sans credential helper, le fichier ~/.docker/config.json contient les identifiants en base64, un simple encodage. On utilise un gestionnaire d'identifiants et des jetons à droits limités."
+      }
+      question "Par défaut, avec quel utilisateur tourne le processus d’un conteneur si l’image ne déclare pas de USER ?" {
+        - "nobody"
+        - "l'utilisateur qui a tapé docker run"
+        + "root (UID 0)"
+        - "un utilisateur aléatoire au-dessus de 100000"
+        explanation: "Sans USER ni --user, le processus tourne en root, avec l'UID 0 partagé avec l'hôte (hors mode rootless ou userns-remap). C'est pourquoi on déclare un utilisateur non root dans le Dockerfile."
+      }
+      question "Pourquoi monter /var/run/docker.sock dans un conteneur est-il dangereux ?" {
+        - "le conteneur perd l'accès au réseau"
+        + "le conteneur peut piloter Docker, donc lancer un conteneur privilégié et contrôler l'hôte"
+        - "le socket est effacé à l'arrêt du conteneur"
+        - "il empêche les mises à jour de Docker"
+        explanation: "Le socket donne accès à l'API complète du démon, qui tourne en root. Depuis le conteneur, on peut lancer un autre conteneur qui monte / de l'hôte. C'est l'équivalent d'un accès root."
+      }
+      question "Quel est l’effet de --read-only sur docker run ?" {
+        - "les volumes montés deviennent en lecture seule"
+        + "le système de fichiers racine du conteneur devient en lecture seule"
+        - "le conteneur ne peut plus lire les fichiers de l'hôte"
+        - "l'image ne peut plus être supprimée"
+        explanation: "--read-only empêche l'écriture dans le système de fichiers du conteneur. Les volumes et tmpfs déclarés restent inscriptibles : on ajoute --tmpfs /tmp si l'application en a besoin."
+      }
+      question "Un Dockerfile contient « ENV DB_PASSWORD=Lycee2025! ». Où ce mot de passe est-il visible ?" {
+        - "nulle part, ENV est chiffré"
+        - "seulement pendant la construction"
+        + "dans les métadonnées de l'image (docker image inspect) et dans tous les conteneurs"
+        - "seulement dans les journaux du registre"
+        explanation: "ENV est enregistré dans la configuration de l'image et injecté dans chaque conteneur. Toute personne qui peut tirer l'image lit le mot de passe. Les secrets se passent à l'exécution."
+      }
+      question "Comment fournir un secret à une étape RUN de construction sans qu’il reste dans l’image ?" {
+        - "avec ARG et --build-arg"
+        - "avec COPY puis RUN rm dans l'étape suivante"
+        + "avec un secret de construction BuildKit : RUN --mount=type=secret,id=..."
+        - "avec ENV puis unset dans le RUN suivant"
+        explanation: "Le secret BuildKit est monté seulement pendant ce RUN et n'est écrit dans aucune couche. ARG reste visible dans l'historique, et une suppression dans une couche suivante ne retire rien de la couche précédente."
+      }
+      question "Que fait l’option --cap-drop ALL ?" {
+        - "elle supprime tous les conteneurs arrêtés"
+        + "elle retire au conteneur toutes les capacités Linux, qu'on rajoute au besoin une à une"
+        - "elle désactive toutes les limites de ressources"
+        - "elle bloque tout le trafic réseau du conteneur"
+        explanation: "Les capacités découpent les pouvoirs de root (changer de propriétaire, manipuler le réseau…). Les retirer toutes limite ce qu'un attaquant peut faire même s'il est root dans le conteneur ; --cap-add rajoute le strict nécessaire."
+      }
+      question "Sur quelles adresses Docker accepte-t-il par défaut un registre en HTTP non chiffré ?" {
+        - "sur toutes les adresses privées (RFC 1918)"
+        + "seulement sur la boucle locale (127.0.0.0/8, localhost)"
+        - "sur aucune, le TLS est toujours obligatoire"
+        - "sur toutes les adresses, le chiffrement est facultatif"
+        explanation: "Les registres sur 127.0.0.0/8 sont acceptés en HTTP. Pour un registre réseau, on met en place TLS ; le déclarer insecure-registries dans le démon est à réserver à un labo."
+      }
+      question "Un jeton d’accès a été inclus par erreur dans une image publique sur Docker Hub. Quelle est l’action prioritaire ?" {
+        - "supprimer l'image de Docker Hub, cela suffit"
+        - "pousser une nouvelle version sans le jeton"
+        + "révoquer le jeton immédiatement, puis reconstruire l'image sans lui"
+        - "rendre l'image privée"
+        explanation: "L'image a pu être téléchargée par n'importe qui avant la suppression : le secret doit être considéré comme connu. On le révoque et on en émet un nouveau, puis on corrige la construction."
+      }
+      question "Quelle commande analyse une image à la recherche de vulnérabilités connues ?" {
+        - "docker image history --cve"
+        + "docker scout cves lycee/accueil:1.0 (ou trivy image lycee/accueil:1.0)"
+        - "docker inspect --security lycee/accueil:1.0"
+        - "docker logs --scan lycee/accueil:1.0"
+        explanation: "Docker Scout et Trivy comparent les paquets de l'image à des bases de vulnérabilités (CVE). docker image history et docker inspect montrent la structure de l'image, pas les failles."
+      }
+    }
+  }
+
+  module "depannage" {
+    title: "Chapitre 9 : diagnostiquer et réparer"
+    duration: "40min"
+    content: """
+### Une méthode plutôt que des essais au hasard
+Quand « le conteneur ne marche pas », suis toujours le même ordre, du plus simple au plus précis :
+1. **L'état** : `docker ps -a` (ou `docker compose ps`). Le conteneur tourne-t-il, est-il arrêté (`Exited (1)`), redémarre-t-il en boucle (`Restarting`), est-il `unhealthy` ?
+2. **Les journaux** : `docker logs --tail 50 <nom>`. Dans 9 cas sur 10, la cause y est écrite en toutes lettres.
+3. **Les détails** : `docker inspect` pour le code de sortie, le manque de mémoire, les montages, les réseaux, la commande réellement lancée.
+4. **L'intérieur** : `docker exec` pour tester depuis le conteneur (fichier présent ? nom résolu ? port en écoute ?).
+5. **L'hôte** : ressources (`docker stats`, `docker system df`), pare-feu, ports occupés (`ss -ltnp`), journal du démon (`journalctl -u docker`).
+
+### Les commandes du diagnostic
+```bash
+docker ps -a --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
+docker logs --tail 50 -t web
+docker inspect -f '{{.State.ExitCode}} OOM={{.State.OOMKilled}} restarts={{.RestartCount}}' web
+docker inspect -f '{{json .State.Health}}' web          # dernières sorties du healthcheck
+docker inspect -f '{{json .Mounts}}' web                # montages réels
+docker inspect -f '{{.Config.Cmd}} {{.Config.Entrypoint}}' web
+docker events --since 10m                               # créations, arrêts, OOM, health_status...
+docker stats --no-stream
+docker system df                                        # place prise par images, conteneurs, volumes, cache
+journalctl -u docker --since "1 hour ago"
+```
+
+### Les erreurs que tu rencontreras
+| Message (extrait) | Cause | Correction |
+|---|---|---|
+| `Conflict. The container name "/web" is already in use` | un conteneur, même arrêté, porte déjà ce nom | `docker rm web` (ou `-f`), ou un autre nom |
+| `Bind for 0.0.0.0:8080 failed: port is already allocated` | un autre conteneur publie déjà ce port | `docker ps` pour le trouver ; changer le port de l'hôte |
+| `address already in use` | un programme de l'hôte (Apache, nginx...) écoute déjà | `sudo ss -ltnp \| grep :8080` |
+| `permission denied while trying to connect to the Docker daemon socket` | ton compte n'a pas accès au socket | `sudo`, ou groupe `docker` en connaissance de cause |
+| `Cannot connect to the Docker daemon ... Is the docker daemon running?` | démon arrêté ou en échec | `sudo systemctl status docker`, `journalctl -u docker` |
+| `pull access denied for ngnix, repository does not exist or may require 'docker login'` | faute de frappe dans le nom, ou image privée | corriger le nom ; `docker login` si privée |
+| `manifest unknown` | le tag n'existe pas | vérifier les tags disponibles sur le registre |
+| `exec format error` | image d'une autre architecture | image multi-architecture ou variante adaptée |
+| `exec /entrypoint.sh: no such file or directory` alors que le fichier existe | script avec fins de ligne Windows (CRLF) : l'interpréteur `/bin/sh\r` est introuvable | convertir en LF (`dos2unix`, `sed -i 's/\r$//'`) |
+| `no space left on device` | disque plein : images, cache de construction, journaux | `docker system df`, puis nettoyage ciblé |
+| `Exited (137)` et `OOMKilled=true` | limite de mémoire dépassée | augmenter `--memory` ou corriger l'application |
+
+### Trois pièges classiques
+**Le service écoute sur 127.0.0.1 dans le conteneur.** Le port est publié, `docker ps` est correct, mais `curl` renvoie `Connection reset by peer` ou ne répond pas. Vérifie depuis l'intérieur : `docker exec web ss -ltn` (si l'outil existe) ou la configuration de l'application ; elle doit écouter sur `0.0.0.0`.
+
+**Le conteneur redémarre en boucle.** `docker ps` affiche `Restarting (1) 3 seconds ago`. La politique de redémarrage relance un programme qui échoue au démarrage. Regarde `docker logs` : une variable manquante, un fichier de configuration absent (bind mount mal écrit), une base pas encore prête.
+
+**Les noms ne sont pas résolus.** `could not translate host name "db"` : les deux conteneurs ne sont pas sur le même réseau utilisateur, ou le nom du service est mal orthographié. `docker network inspect` montre qui est connecté où.
+
+### Faire de la place sans casse
+```bash
+docker system df                    # d'abord mesurer
+docker container prune              # conteneurs arrêtés
+docker image prune                  # images pendantes (sans tag)
+docker builder prune                # cache de construction
+docker system prune                 # conteneurs arrêtés, réseaux inutilisés, images pendantes, cache
+docker system prune -a --volumes    # DANGER : aussi toutes les images non utilisées et les volumes non utilisés
+```
+Ne lance jamais `prune --volumes` sur un serveur sans avoir vérifié la liste des volumes : un volume de base de données d'un service momentanément arrêté serait « non utilisé » et supprimé sans retour possible.
+
+Les journaux des conteneurs grossissent aussi : par défaut, le pilote `json-file` ne fait **aucune rotation**. On la configure dans `/etc/docker/daemon.json` :
+```json
+{ "log-driver": "json-file", "log-opts": { "max-size": "10m", "max-file": "3" } }
+```
+puis `sudo systemctl restart docker`. Ce réglage s'applique aux conteneurs **créés après** le changement.
+
+### À toi de jouer
+Pour chaque situation, donne la commande qui confirme la cause, puis la correction.
+1. `docker run -d --name web -p 80:80 nginx:alpine` échoue avec `address already in use`. Le serveur héberge déjà un site.
+2. Dans le projet `visites`, `web` affiche dans ses journaux `could not translate host name "bd" to address`.
+3. Un conteneur d'API passe `Exited (137)` toutes les nuits vers 2 h, au moment d'un traitement lourd. Il est lancé avec `--memory 128m`.
+4. Après une mise à jour de l'image, `docker compose ps` montre `web` en `unhealthy` alors que le site s'affiche.
+5. Le disque du serveur est plein à 98 %. `docker system df` montre 14 Go d'images, dont 11 récupérables, et 6 Go de cache de construction.
+
+### Correction
+1. `sudo ss -ltnp | grep ':80 '` montre `apache2` ou `nginx` de l'hôte sur le port 80. Correction : publier le conteneur sur un autre port (`-p 8080:80`), ou placer le site existant derrière le même proxy, ou arrêter le service de l'hôte s'il n'est plus utile.
+2. Faute de frappe : le service s'appelle `db`. `docker compose config | grep -n bd` la retrouve. Corriger `DB_HOST: db`, puis `docker compose up -d` (Compose recrée le conteneur dont la configuration a changé).
+3. `docker inspect -f '{{.State.OOMKilled}}' api` affiche `true`, et `docker events` montre un événement `oom` à 2 h. Le noyau a tué le processus pour dépassement de la limite. Correction : mesurer la consommation réelle (`docker stats` pendant le traitement), augmenter la limite à une valeur justifiée, ou découper le traitement.
+4. `docker inspect -f '{{json .State.Health}}' visites-web-1` montre la sortie du test : par exemple une page déplacée, un port ou un chemin changé dans la nouvelle version, ou un outil (`curl`) absent de la nouvelle image. Corriger le test de santé pour qu'il interroge une adresse qui existe, avec un outil présent dans l'image.
+5. `docker system df -v` détaille. Commencer par le moins risqué : `docker builder prune` (cache, reconstructible), `docker image prune -a` après avoir vérifié que les images supprimées ne sont pas nécessaires à un retour arrière. Ne pas toucher aux volumes. Puis mettre en place la rotation des journaux et vérifier `du -sh /var/lib/docker/containers/*/*-json.log`.
+"""
+
+    quiz {
+      pick: 5
+      question "Un conteneur ne fonctionne pas. Quelle est la première commande utile après docker ps -a ?" {
+        - "docker system prune"
+        + "docker logs --tail 50 <nom>"
+        - "docker rm -f <nom>"
+        - "systemctl restart docker"
+        explanation: "Les journaux contiennent presque toujours la cause (variable manquante, fichier introuvable, connexion refusée). Supprimer ou redémarrer avant de lire efface les indices."
+      }
+      question "« Bind for 0.0.0.0:8080 failed: port is already allocated ». Que signifie ce message ?" {
+        - "le conteneur n'a pas le droit d'écouter sur 8080"
+        + "un autre conteneur publie déjà le port 8080 de l'hôte"
+        - "le port 8080 est bloqué par ufw"
+        - "l'image n'expose pas le port 8080"
+        explanation: "Un port de l'hôte ne peut être publié qu'une fois. docker ps montre quel conteneur l'utilise ; on change le port de l'hôte (-p 8081:80) ou on arrête l'autre conteneur."
+      }
+      question "Un conteneur affiche « Restarting (1) 3 seconds ago » en permanence. Que se passe-t-il ?" {
+        - "Docker met à jour l'image en boucle"
+        + "le programme échoue au démarrage avec le code 1 et la politique de redémarrage le relance"
+        - "le conteneur est en pause"
+        - "le healthcheck redémarre le conteneur toutes les 3 secondes"
+        explanation: "Restarting (1) indique le dernier code de sortie (1) et une relance automatique par la politique restart. La cause est dans docker logs. Un healthcheck unhealthy, lui, ne redémarre pas un conteneur à lui seul."
+      }
+      question "Comment savoir si un conteneur arrêté avec le code 137 a été tué pour manque de mémoire ?" {
+        - "docker logs --oom web"
+        + "docker inspect -f '{{.State.OOMKilled}}' web"
+        - "docker stats --killed web"
+        - "free -h dans le conteneur"
+        explanation: "Le champ State.OOMKilled vaut true si le noyau a tué le processus pour dépassement de la limite de mémoire. Le code 137 seul indique un SIGKILL, qui peut aussi venir de docker stop ou docker kill."
+      }
+      question "Le script /entrypoint.sh existe dans l’image, pourtant le conteneur affiche « exec /entrypoint.sh: no such file or directory ». Cause probable ?" {
+        - "le script n'a pas le droit d'exécution"
+        + "le script a des fins de ligne Windows (CRLF) : l'interpréteur /bin/sh suivi de \\r est introuvable"
+        - "le conteneur tourne en lecture seule"
+        - "le script est trop long"
+        explanation: "La première ligne #!/bin/sh se termine par un retour chariot invisible : le noyau cherche un interpréteur nommé « /bin/sh\\r », qui n'existe pas. Il faut convertir le fichier en fins de ligne LF. Un manque de droit donnerait permission denied."
+      }
+      question "Que supprime « docker system prune -a --volumes » ?" {
+        - "seulement les conteneurs arrêtés"
+        - "seulement le cache de construction"
+        + "conteneurs arrêtés, réseaux et images non utilisés, cache, et volumes non utilisés"
+        - "tous les conteneurs, y compris ceux qui tournent"
+        explanation: "C'est le nettoyage le plus large. --volumes ajoute les volumes non utilisés par un conteneur existant : une base de données d'un service supprimé ou recréé plus tard serait perdue. À n'utiliser qu'en connaissance de cause."
+      }
+      question "Quelle commande montre la place prise sur disque par les images, conteneurs, volumes et le cache de construction ?" {
+        - "df -h /var/lib/docker"
+        + "docker system df"
+        - "docker image ls --size"
+        - "docker volume ls -s"
+        explanation: "docker system df résume l'espace utilisé et ce qui est récupérable par catégorie ; -v détaille chaque élément. df -h donne la place totale du disque, sans détail Docker."
+      }
+      question "Une application affiche « could not translate host name « db » to address ». Quelle vérification est la plus utile ?" {
+        - "redémarrer le service DNS de l'hôte"
+        + "vérifier que les deux conteneurs sont sur le même réseau utilisateur et que le nom est bien orthographié"
+        - "publier le port de la base sur l'hôte"
+        - "ajouter db dans le fichier /etc/hosts de l'hôte"
+        explanation: "Le nom d'un conteneur n'est résolu que sur un réseau utilisateur commun, par le DNS intégré. docker network inspect montre les conteneurs connectés ; docker compose config révèle une faute de frappe."
+      }
+      question "Par défaut, le pilote de journaux json-file fait-il tourner (rotation) les journaux des conteneurs ?" {
+        - "oui, chaque jour"
+        - "oui, au-delà de 100 Mo"
+        + "non, il faut configurer max-size et max-file"
+        - "non, et il est impossible de la configurer"
+        explanation: "Sans log-opts, les fichiers *-json.log grossissent sans limite et peuvent remplir le disque. On règle max-size et max-file dans /etc/docker/daemon.json ; cela s'applique aux nouveaux conteneurs."
+      }
+      question "Quelle commande affiche le détail des derniers tests de santé d’un conteneur unhealthy ?" {
+        - "docker logs --health web"
+        + "docker inspect -f '{{json .State.Health}}' web"
+        - "docker ps --health web"
+        - "docker events --health"
+        explanation: "State.Health contient l'état, le nombre d'échecs consécutifs et la sortie des dernières exécutions du test. On y voit par exemple qu'une commande du test est introuvable ou qu'une adresse renvoie 404."
+      }
+      question "« docker run -d --name web nginx:alpine » échoue avec « The container name /web is already in use ». Que faire ?" {
+        - "redémarrer le démon Docker"
+        + "supprimer l'ancien conteneur web (docker rm) ou choisir un autre nom"
+        - "supprimer l'image nginx:alpine"
+        - "ajouter --force-name"
+        explanation: "Un conteneur arrêté garde son nom. docker ps -a le montre ; docker rm web le supprime (après avoir vérifié qu'il ne contient rien d'utile), ou on donne un autre nom au nouveau."
+      }
+    }
+  }
+
+  module "synthese" {
+    title: "Chapitre 10 : synthèse, déployer l'application du lycée"
+    duration: "40min"
+    content: """
+### Le mini-projet
+Le lycée veut mettre en service l'application de comptage des visites (chapitre 7) sur un serveur Debian, avec des exigences réalistes :
+• un **proxy nginx** est le seul point d'entrée, sur le port 80 ;
+• l'application n'est pas publiée directement ; la base n'est joignable que par l'application ;
+• la base est sur un **réseau interne**, sans accès à Internet ;
+• mot de passe en **secret**, jamais en clair dans un fichier versionné ;
+• l'application tourne **sans root**, en lecture seule, avec des limites de ressources ;
+• l'image de l'application est versionnée et poussée dans le **registre** local ;
+• une **sauvegarde** de la base est faite et sa restauration testée.
+
+### Étape 1 : l'arborescence
+```text
+visites/
+├── compose.yaml
+├── proxy/default.conf
+├── secrets/db_password.txt     (dossier en 700, fichier en 644, ignoré par git)
+└── web/ (Dockerfile, requirements.txt, app.py, .dockerignore)
+```
+
+### Étape 2 : le proxy
+`proxy/default.conf` transmet tout à l'application :
+```nginx
+server {
+    listen 80;
+    location / {
+        proxy_pass http://web:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+```
+`web` est le nom du service Compose : nginx le résout par le DNS intégré.
+
+### Étape 3 : le fichier compose.yaml
+```yaml
+services:
+  proxy:
+    image: nginx:1.28-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./proxy/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks: [front]
+    depends_on:
+      web:
+        condition: service_healthy
+    restart: unless-stopped
+
+  web:
+    build: ./web
+    image: localhost:5000/lycee/visites:1.0
+    environment:
+      DB_HOST: db
+      DB_PASSWORD_FILE: /run/secrets/db_password
+    secrets: [db_password]
+    networks: [front, back]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 256m
+    pids_limit: 100
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: lycee
+      POSTGRES_USER: lycee
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets: [db_password]
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks: [back]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lycee -d lycee"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    mem_limit: 512m
+    restart: unless-stopped
+
+networks:
+  front:
+  back:
+    internal: true
+
+volumes:
+  db-data:
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+```
+Points à remarquer :
+• `build` et `image` ensemble : Compose construit l'image et lui donne le nom du registre, prêt pour `docker compose push web` ;
+• `web` est sur `front` (pour le proxy) et `back` (pour la base) ; `db` seulement sur `back`, réseau interne ;
+• le durcissement (`read_only`, `cap_drop`, `no-new-privileges`) est appliqué à `web`, dont on connaît le comportement. L'image nginx officielle démarre en root puis change d'utilisateur : lui retirer toutes les capacités l'empêcherait de démarrer (`setgid(101) failed (1: Operation not permitted)`). On durcit service par service, en testant.
+
+### Étape 4 : construire, pousser, démarrer
+```bash
+docker run -d -p 127.0.0.1:5000:5000 --restart always --name registry registry:3
+cd ~/visites
+docker compose build
+docker compose push web
+docker compose up -d
+docker compose ps
+```
+
+### Étape 5 : sauvegarder et restaurer
+```bash
+docker compose exec -T db pg_dump -U lycee lycee > sauvegarde-$(date +%F).sql
+# restauration de test dans une base vide :
+docker compose exec -T db createdb -U lycee essai_restauration
+docker compose exec -T db psql -U lycee essai_restauration < sauvegarde-AAAA-MM-JJ.sql
+docker compose exec db psql -U lycee essai_restauration -c "SELECT count(*) FROM visites;"
+```
+L'option `-T` désactive le terminal, indispensable pour rediriger l'entrée ou la sortie. Une sauvegarde jamais restaurée n'est pas une sauvegarde : le test fait partie du projet. Copie ensuite le fichier hors du serveur.
+
+### Étape 6 : la recette
+| Contrôle | Commande | Résultat attendu |
+|---|---|---|
+| Accès par le proxy | `curl http://<serveur>/` | `Visites : N` qui augmente |
+| Application non publiée | `curl http://<serveur>:8000/` | connexion refusée |
+| Base non publiée | `nmap -p 5432 <serveur>` depuis un autre poste | port fermé |
+| Réseau back sans Internet | `docker run --rm --network visites_back busybox ping -c 1 -W 2 9.9.9.9` | échec (réseau injoignable) |
+| Utilisateur | `docker compose exec web id` | `uid=10001(appuser)` |
+| Lecture seule | `docker compose exec web touch /app/x` | `Read-only file system` |
+| Santé | `docker compose ps` | `web` et `db` en `healthy` |
+| Persistance | `docker compose down` puis `up -d` | compteur conservé |
+| Registre | `curl http://localhost:5000/v2/lycee/visites/tags/list` | tag `1.0` présent |
+| Sauvegarde | restauration de test | même nombre de lignes |
+
+### Étape 7 : la documentation
+Une page suffit : arborescence et rôle de chaque fichier, commandes de démarrage et d'arrêt, procédure de mise à jour (nouveau tag, `build`, `push`, `up -d`), procédure de sauvegarde et de restauration, emplacement du secret et façon de le changer. La personne qui te remplace doit pouvoir mettre à jour l'application sans te téléphoner.
+
+### À toi de jouer
+Réalise le projet, étapes 1 à 7. Puis réponds à ces trois situations :
+1. Après `docker compose up -d`, le proxy reste en `Created` et ne démarre jamais.
+2. Tout fonctionne, mais `curl http://<serveur>/` renvoie `502 Bad Gateway`.
+3. Un collègue propose d'ajouter `ports: ["5432:5432"]` à `db` « pour faire les sauvegardes depuis son poste ».
+
+### Correction
+Points de contrôle du projet :
+• étape 1 : `secrets/` en 700 et dans `.gitignore` ; `.dockerignore` présent dans `web/` ;
+• étape 3 : seul `proxy` a une section `ports` ; `back` est `internal: true` ; `db` n'est que sur `back` ;
+• étape 4 : `docker compose push web` envoie `localhost:5000/lycee/visites:1.0` ;
+• étape 5 : le nombre de lignes de la base restaurée est égal à celui de la base d'origine au moment de la sauvegarde ;
+• étape 6 : chaque ligne de la recette a un résultat obtenu, et chaque écart est expliqué.
+
+Situations :
+1. `proxy` attend que `web` soit `healthy`, et `web` attend `db`. Regarde `docker compose ps` : si `web` est `unhealthy`, `docker inspect -f '{{json .State.Health}}' visites-web-1` donne la sortie du test ; si `web` s'arrête, `docker compose logs web` (souvent : secret illisible pour l'UID 10001, `Permission denied` sur `/run/secrets/db_password`, à corriger par `chmod 644` sur le fichier dans un dossier en 700).
+2. nginx tourne mais ne joint pas `web:8000`. `docker compose logs proxy` montre `connect() failed (111: Connection refused) while connecting to upstream` ou `host not found`. Vérifie que `web` est sur `front`, qu'il écoute sur `0.0.0.0:8000` et qu'il est démarré. Si `web` a été recréé, nginx a pu garder l'ancienne adresse en mémoire : `docker compose restart proxy`.
+3. Refus : la base serait publiée sur toutes les adresses du serveur et Docker contourne `ufw`. La sauvegarde se fait sur le serveur avec `pg_dump` via `docker compose exec`, puis le fichier est copié (scp). Si un accès distant est vraiment nécessaire, on passe par un tunnel SSH vers un port lié à `127.0.0.1`, jamais par une publication ouverte.
+
+### Pour aller plus loin
+• Docker Docs (manuels Docker Engine, Docker Build, Docker Compose, référence de la ligne de commande), Docker Inc. : https://docs.docker.com
+• Compose Specification, projet compose-spec : https://compose-spec.io
+• Recommandations de sécurité relatives au déploiement de conteneurs Docker (fiche technique), ANSSI : https://cyber.gouv.fr
+• Docker Security Cheat Sheet, OWASP : https://cheatsheetseries.owasp.org
+• Spécifications Image, Runtime et Distribution, Open Container Initiative : https://opencontainers.org
+• Pages des images officielles postgres, nginx, python et registry (variables, volumes, conventions _FILE), Docker Hub : https://hub.docker.com
+"""
+
+    codeblock "bash" {
+      title: "Recette rapide depuis le serveur et un autre poste"
+      code: """
+docker compose ps                                        # web et db : healthy ; proxy : Up
+curl -s http://localhost/                                # Visites : N
+curl -s --max-time 3 http://localhost:8000/ || echo "8000 fermé : correct"
+docker compose exec web id                               # uid=10001(appuser)
+docker compose exec web touch /app/x                     # Read-only file system
+docker run --rm --network visites_back busybox ping -c 1 -W 2 9.9.9.9 || echo "back sans Internet : correct"
+curl -s http://localhost:5000/v2/lycee/visites/tags/list # {"name":"lycee/visites","tags":["1.0"]}
+nmap -p 80,5432,8000 192.168.10.30                       # depuis un autre poste : seul 80 ouvert
+"""
+    }
+
+    quiz {
+      pick: 10
+      question "Qu’est-ce qui distingue un conteneur d’une machine virtuelle ?" {
+        - "le conteneur a son propre noyau minimal"
+        + "le conteneur partage le noyau de l'hôte"
+        - "la machine virtuelle n'a pas de système de fichiers"
+        - "le conteneur ne peut pas utiliser le réseau"
+        explanation: "Un conteneur est un ensemble de processus isolés par les namespaces et limités par les cgroups, sur le noyau de l'hôte. Une VM a son propre noyau au-dessus d'un hyperviseur."
+      }
+      question "Pourquoi évite-t-on le tag latest en production ?" {
+        - "il est réservé aux images de test de Docker"
+        + "il peut désigner une autre version à tout moment, y compris une version majeure"
+        - "il est plus lent à télécharger"
+        - "il ne fonctionne qu'avec Docker Desktop"
+        explanation: "latest n'est qu'un tag par défaut que l'éditeur déplace à sa guise. Une mise à jour imprévue peut casser l'application, par exemple une base PostgreSQL incompatible avec ses fichiers."
+      }
+      question "Dans le projet, pourquoi seul le service proxy a-t-il une section ports ?" {
+        - "parce que Compose n'autorise qu'un seul port publié par projet"
+        + "parce que c'est le seul point d'entrée ; les autres communiquent par les réseaux internes du projet"
+        - "parce que nginx est le seul à écouter sur un port"
+        - "parce que les ports de web et db sont publiés automatiquement"
+        explanation: "Les conteneurs d'un même réseau se parlent sans publication. Publier web ou db ouvrirait des accès qui contournent le proxy, et ufw ne les bloquerait pas."
+      }
+      question "Que garantit « internal: true » sur le réseau back ?" {
+        - "le réseau est chiffré"
+        - "seul root peut s'y connecter"
+        + "les conteneurs de ce réseau n'ont pas de route vers l'extérieur"
+        - "le réseau n'existe que pendant la construction"
+        explanation: "Un réseau interne relie les conteneurs entre eux sans accès sortant. La base ne peut ni joindre Internet ni être jointe autrement que par les conteneurs connectés."
+      }
+      question "Pourquoi la commande de sauvegarde utilise-t-elle « docker compose exec -T » ?" {
+        - "pour exécuter la commande en root"
+        + "pour ne pas allouer de terminal, ce qui permet de rediriger proprement la sortie vers un fichier"
+        - "pour limiter la durée de la commande"
+        - "pour exécuter la commande sur tous les services"
+        explanation: "Avec un terminal, la sortie peut être modifiée (fins de ligne, caractères de contrôle) et l'entrée redirigée échoue. -T désactive le terminal, indispensable avec > ou <."
+      }
+      question "Tu modifies seulement app.py. Avec un Dockerfile bien ordonné, quelles étapes sont reconstruites ?" {
+        - "toutes, à partir de FROM"
+        + "la copie du code et les instructions suivantes"
+        - "seulement l'installation des dépendances"
+        - "aucune, il faut ajouter --no-cache"
+        explanation: "Le cache est valide jusqu'à la première instruction dont les entrées changent. Les dépendances, copiées et installées avant le code, restent en cache."
+      }
+      question "Que se passe-t-il si une couche d’un Dockerfile copie un fichier de secrets qu’une couche suivante supprime ?" {
+        - "le secret disparaît de l'image"
+        + "le secret reste lisible dans la couche qui l'a copié"
+        - "Docker refuse de construire l'image"
+        - "le secret est chiffré automatiquement"
+        explanation: "Chaque couche est conservée. La suppression masque le fichier mais ne le retire pas de la couche précédente, qu'on peut extraire de l'image. Il faut exclure le fichier avec .dockerignore et utiliser des secrets."
+      }
+      question "Pourquoi n’applique-t-on pas « cap_drop: [ALL] » tel quel au service nginx officiel ?" {
+        - "parce que nginx n'utilise pas les capacités Linux"
+        + "parce que son processus principal démarre en root puis change d'utilisateur, ce qui demande des capacités"
+        - "parce que Compose interdit cap_drop sur une image officielle"
+        - "parce que nginx tourne en mode host"
+        explanation: "Le maître nginx change de groupe et d'utilisateur (setgid, setuid) pour ses processus de travail. Sans les capacités correspondantes, il s'arrête avec Operation not permitted. On durcit en testant, service par service."
+      }
+      question "Le site renvoie 502 Bad Gateway. Que signifie ce code côté proxy ?" {
+        - "le client n'a pas le droit d'accéder au site"
+        + "nginx n'a pas obtenu de réponse valide du service web vers lequel il transmet"
+        - "la page demandée n'existe pas"
+        - "le certificat TLS a expiré"
+        explanation: "502 indique un échec du serveur amont (upstream). Le journal de nginx précise : connexion refusée, nom introuvable, délai dépassé. On vérifie ensuite web : état, réseau, adresse d'écoute."
+      }
+      question "Un volume nommé et un bind mount : lequel choisir pour les fichiers d’une base PostgreSQL ?" {
+        - "un bind mount vers /tmp"
+        + "un volume nommé, géré par Docker"
+        - "un tmpfs, plus rapide"
+        - "aucun, la couche inscriptible suffit"
+        explanation: "Le volume nommé est géré par Docker, indépendant de l'arborescence et des droits de l'hôte, et survit aux conteneurs. Un tmpfs serait perdu à l'arrêt, la couche inscriptible à la suppression."
+      }
+      question "Comment l’image officielle postgres lit-elle le mot de passe quand on définit POSTGRES_PASSWORD_FILE ?" {
+        - "elle déchiffre la variable avec une clé du démon"
+        + "elle lit le contenu du fichier dont la variable donne le chemin"
+        - "elle demande le mot de passe au premier démarrage dans le terminal"
+        - "elle télécharge le mot de passe depuis le registre"
+        explanation: "Les images officielles qui suivent la convention _FILE lisent la valeur dans le fichier indiqué, typiquement un secret monté sous /run/secrets. La variable ne contient qu'un chemin."
+      }
+      question "Quelle commande publie un port uniquement pour l’hôte lui-même ?" {
+        - "-p 8080:80 --local"
+        + "-p 127.0.0.1:8080:80"
+        - "-p localhost"
+        - "--expose 8080"
+        explanation: "En précisant l'adresse 127.0.0.1, le port n'est publié que sur la boucle locale de l'hôte. Sans adresse, Docker publie sur toutes les interfaces."
+      }
+      question "Que fait « docker compose push web » dans le projet ?" {
+        - "il envoie le code source du service web sur GitHub"
+        + "il envoie l'image localhost:5000/lycee/visites:1.0 au registre indiqué par son nom"
+        - "il redémarre le service web"
+        - "il copie la configuration sur un autre serveur"
+        explanation: "Le service web a un build et un nom d'image ; push envoie cette image au registre désigné par le préfixe du nom, ici le registre local sur le port 5000."
+      }
+      question "Pourquoi l’application doit-elle écouter sur 0.0.0.0 dans son conteneur ?" {
+        - "pour écouter sur toutes les adresses de l'hôte"
+        + "pour recevoir les connexions qui arrivent sur l'interface réseau du conteneur"
+        - "pour désactiver l'IPv6"
+        - "parce que 127.0.0.1 est interdit par Docker"
+        explanation: "0.0.0.0 dans le conteneur couvre ses propres interfaces, dont eth0 où arrivent le proxy et les ports publiés. 127.0.0.1 ne recevrait que les connexions venues du conteneur lui-même."
+      }
+      question "Un service ne doit démarrer que lorsque PostgreSQL accepte les connexions. Quelle configuration Compose l’assure ?" {
+        - "depends_on: [db]"
+        - "restart: always sur db"
+        + "un healthcheck sur db et depends_on avec condition: service_healthy"
+        - "links: [db]"
+        explanation: "depends_on seul attend le lancement du conteneur. Avec un healthcheck (pg_isready) et la condition service_healthy, Compose attend que la base réponde."
+      }
+      question "Pourquoi l’appartenance au groupe docker doit-elle être limitée aux administrateurs ?" {
+        - "elle ralentit le démon"
+        + "elle permet de lancer des conteneurs qui montent la racine de l'hôte, donc équivaut à root"
+        - "elle désactive les mises à jour"
+        - "elle donne accès aux mots de passe des registres de tous les utilisateurs"
+        explanation: "Le démon tourne en root et exécute ce qu'on lui demande, y compris docker run -v /:/hote. Accès au socket ou au groupe docker signifie contrôle de la machine."
+      }
+      question "Le conteneur web est en Exited (137) avec OOMKilled à true. Que faire ?" {
+        - "supprimer le volume de la base"
+        + "mesurer la consommation réelle, puis ajuster la limite mémoire ou corriger l'application"
+        - "lancer le conteneur avec --privileged"
+        - "désactiver le healthcheck"
+        explanation: "Le noyau a tué le processus qui dépassait sa limite. docker stats pendant la charge donne la consommation ; la limite doit être justifiée, ou l'application corrigée si elle fuit."
+      }
+      question "Quelle est la meilleure façon de vérifier qu’une base n’est pas exposée sur le réseau ?" {
+        - "lire la section ports du fichier compose.yaml"
+        - "vérifier que ufw refuse le port 5432"
+        + "tester depuis une autre machine, par exemple nmap -p 5432 <serveur>"
+        - "lancer docker ps sur le serveur"
+        explanation: "Seul un test depuis l'extérieur prouve ce qui est réellement joignable. ufw ne s'applique pas aux ports publiés par Docker, et un fichier peut différer de ce qui tourne."
+      }
+      question "À quoi sert une construction multi-stage pour une application compilée ?" {
+        - "à lancer plusieurs services dans le même conteneur"
+        + "à compiler dans une image complète puis ne copier que le binaire dans une image minimale"
+        - "à signer l'image"
+        - "à publier l'image sur plusieurs registres"
+        explanation: "La première étape contient compilateur et dépendances de construction ; l'image finale ne reçoit que le résultat via COPY --from. Elle est plus petite et expose moins de logiciels."
+      }
+      question "Quelle sauvegarde de la base est fiable pendant que le service tourne ?" {
+        - "copier /var/lib/docker/volumes/visites_db-data avec cp"
+        + "pg_dump exécuté dans le conteneur, puis restauration testée"
+        - "docker commit du conteneur db"
+        - "docker image save postgres:17"
+        explanation: "pg_dump produit un instantané cohérent sans arrêter le service. Une copie de fichiers à chaud peut être incohérente ; docker commit et docker image save ne sauvegardent pas le contenu du volume."
+      }
+    }
+  }
+}

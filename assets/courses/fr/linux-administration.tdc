@@ -1,0 +1,2119 @@
+tdc-version: 2
+type: course
+
+course "linux-administration" {
+  title: "Administration système Linux"
+  description: """
+Ce cours t'apprend à administrer un serveur Linux au quotidien : créer des comptes, régler les droits, surveiller les processus, gérer les services, les disques, le réseau, l'accès à distance, les tâches planifiées, les journaux, les sauvegardes et les mises à jour. Il s'adresse aux élèves de bac pro CIEL, BTS SIO SISR, BTS CIEL et BUT réseaux, et à toute personne qui doit faire tourner un serveur Debian ou Ubuntu.
+
+À la fin, tu sauras :
+• créer et gérer des utilisateurs et des groupes, et donner des droits d'administration limités avec sudo ;
+• régler des droits fins avec umask, SUID, SGID, sticky bit et ACL ;
+• observer les processus et les arrêter proprement avec les bons signaux ;
+• piloter les services avec systemctl, écrire ta propre unité systemd et lire ses journaux avec journalctl ;
+• partitionner un disque, créer un système de fichiers et le monter au démarrage par /etc/fstab sans bloquer la machine ;
+• configurer une adresse IP fixe avec ip, nmcli ou netplan ;
+• te connecter en SSH par clé et durcir le serveur SSH ;
+• planifier des tâches avec cron et les timers systemd, sauvegarder avec tar et rsync, et appliquer les mises à jour en sécurité.
+
+Le cours est construit autour d'un labo : une machine virtuelle Debian 12 ou 13 (ou Ubuntu Server 24.04) avec deux disques virtuels, et ton poste habituel comme client SSH. Chaque chapitre contient au moins un exercice pratique avec sa correction, et une banque de questions tirées au hasard.
+
+Prérequis : utilisation courante du terminal (cd, ls, cp, mv, éditer un fichier avec nano), droits de base rwx et chmod, adressage IPv4 (savoir lire 192.168.10.50/24).
+"""
+  category: "linux"
+  level: "intermediate"
+  duration: "8h"
+  icon: "Terminal"
+  keywords: ["linux", "debian", "ubuntu", "useradd", "sudo", "umask", "suid", "acl", "processus", "signaux", "systemd", "systemctl", "journalctl", "fstab", "lsblk", "nmcli", "netplan", "ssh", "cron", "timer", "rsync", "tar", "apt"]
+
+  module "utilisateurs-groupes" {
+    title: "Chapitre 1 : utilisateurs, groupes et sudo"
+    duration: "40min"
+    content: """
+### Pourquoi des comptes séparés
+Sur un serveur, chaque personne et chaque service a son propre compte. Cela permet de savoir qui a fait quoi (les journaux nomment le compte), de limiter les dégâts d'une erreur ou d'un piratage (un compte n'a que les droits dont il a besoin) et de retirer un accès sans toucher aux autres. C'est le **principe du moindre privilège**, que l'ANSSI place parmi les premières règles de configuration d'un système GNU/Linux.
+
+Le compte **root** (identifiant 0) a tous les droits. On ne travaille pas en root au quotidien : on utilise un compte personnel et on élève ses droits ponctuellement avec `sudo`.
+
+### Les fichiers qui décrivent les comptes
+| Fichier | Contenu | Lisible par |
+|---|---|---|
+| `/etc/passwd` | un compte par ligne : nom, UID, GID principal, dossier personnel, shell | tout le monde |
+| `/etc/shadow` | empreinte du mot de passe, dates d'expiration | root seulement |
+| `/etc/group` | un groupe par ligne et la liste de ses membres secondaires | tout le monde |
+
+Une ligne de `/etc/passwd` a **7 champs** séparés par `:` :
+```text
+alice:x:1001:1001:Alice Martin:/home/alice:/bin/bash
+```
+nom, `x` (le mot de passe est dans `/etc/shadow`), UID, GID du groupe principal, commentaire, dossier personnel, shell de connexion. Sur Debian et Ubuntu, les comptes humains commencent à l'UID 1000 ; en dessous, ce sont des comptes système (`www-data` a l'UID 33, par exemple).
+
+Un utilisateur a **un groupe principal** (celui de son GID, qui devient le groupe des fichiers qu'il crée) et peut avoir **plusieurs groupes secondaires**. La commande `id` affiche le tout :
+```text
+$ id alice
+uid=1001(alice) gid=1001(alice) groupes=1001(alice),27(sudo),1002(compta)
+```
+
+### Créer un compte
+Deux outils existent sur Debian et Ubuntu :
+• `useradd` : l'outil de base, présent sur toutes les distributions. Il ne fait que ce qu'on lui demande : sans `-m`, pas de dossier personnel ; sans `-s`, le shell est celui de `/etc/default/useradd`, parfois `/bin/sh`.
+• `adduser` : un script propre à Debian et Ubuntu, interactif, qui crée le dossier personnel, copie `/etc/skel` et demande le mot de passe.
+
+```bash
+sudo useradd -m -s /bin/bash -c "Alice Martin" alice   # -m : crée /home/alice
+sudo passwd alice                                      # définit le mot de passe
+sudo adduser bob                                       # version interactive Debian
+```
+
+Pour un compte de service (un programme, pas une personne) : `sudo useradd --system --no-create-home --shell /usr/sbin/nologin sauvegarde`. Le shell `nologin` refuse toute connexion interactive.
+
+### Modifier un compte
+`usermod` change un compte existant. Les options à connaître :
+| Option | Effet |
+|---|---|
+| `-aG groupe` | **ajoute** le compte au groupe secondaire, sans toucher aux autres |
+| `-G g1,g2` | **remplace** la liste des groupes secondaires par g1,g2 |
+| `-g groupe` | change le groupe principal |
+| `-s /bin/bash` | change le shell |
+| `-L` / `-U` | verrouille / déverrouille le mot de passe |
+| `-l nouveau` | renomme le compte |
+
+Le piège classique : `usermod -G sudo alice` sans `-a` retire alice de tous ses autres groupes secondaires. Retiens `-aG` (append).
+
+Un changement de groupe ne s'applique qu'aux **nouvelles sessions** : l'utilisateur doit se déconnecter et se reconnecter (ou lancer `newgrp groupe` dans le terminal courant).
+
+Autres commandes utiles :
+• `groupadd compta`, `groupdel compta`, `gpasswd -d alice compta` (retire alice du groupe) ;
+• `chage -l alice` (affiche les dates d'expiration), `chage -E 2027-06-30 alice` (le compte expire à cette date, pratique pour un stagiaire) ;
+• `userdel -r alice` supprime le compte **et** son dossier personnel. Sans `-r`, le dossier reste. Avant de supprimer, verrouille d'abord (`usermod -L` et `chage -E 0`) et archive les données si besoin.
+
+### sudo : déléguer l'administration
+`sudo commande` exécute la commande en root après avoir demandé **ton** mot de passe (pas celui de root). Qui a droit à quoi est décrit dans `/etc/sudoers` et dans les fichiers de `/etc/sudoers.d/`.
+
+• Sur Debian et Ubuntu, les membres du groupe **sudo** ont tous les droits (ligne `%sudo ALL=(ALL:ALL) ALL`). Sur Red Hat et ses dérivées, c'est le groupe **wheel**.
+• On n'édite jamais ces fichiers avec un éditeur ordinaire : on utilise `visudo` (ou `visudo -f /etc/sudoers.d/fichier`), qui vérifie la syntaxe avant d'enregistrer. Une erreur de syntaxe dans sudoers peut bloquer sudo pour tout le monde.
+• Les noms de fichiers dans `/etc/sudoers.d/` qui contiennent un point ou se terminent par `~` sont ignorés : nomme-les `technicien`, pas `technicien.conf`.
+
+Une règle se lit « qui, sur quelle machine, en tant que qui, peut lancer quoi » :
+```text
+# /etc/sudoers.d/technicien
+%techniciens ALL=(root) /usr/bin/systemctl restart apache2, /usr/bin/journalctl
+```
+Les membres du groupe `techniciens` peuvent redémarrer Apache et lire les journaux, rien d'autre. Les commandes s'écrivent avec leur **chemin complet**. `sudo -l` affiche ce que tu as le droit de faire.
+
+Bon usage : évite `sudo su` ou `sudo -i` à longueur de journée, car chaque commande lancée par sudo est journalisée avec son auteur, alors qu'un shell root ne laisse qu'une seule trace. Évite aussi `NOPASSWD` pour les comptes humains.
+
+### À toi de jouer
+Sur ta VM, pour une PME de 20 postes :
+1. Crée le groupe `techniciens` et deux comptes `alice` (dossier personnel, bash) et `stagiaire` qui expire le 30 juin 2027.
+2. Ajoute `alice` aux groupes `techniciens` et `adm` (lecture des journaux) sans lui retirer ses autres groupes, puis vérifie.
+3. Autorise le groupe `techniciens` à redémarrer le service `ssh` et rien d'autre, puis vérifie avec le compte `alice`.
+4. Un collègue a tapé `sudo usermod -G techniciens bob` et bob a perdu l'accès à sudo. Explique et corrige.
+
+### Correction
+1. Commandes :
+```bash
+sudo groupadd techniciens
+sudo useradd -m -s /bin/bash -c "Alice Martin" alice && sudo passwd alice
+sudo useradd -m -s /bin/bash -e 2027-06-30 stagiaire && sudo passwd stagiaire
+sudo chage -l stagiaire        # « Le compte expire : juin 30, 2027 »
+```
+2. `sudo usermod -aG techniciens,adm alice`, puis `id alice` doit afficher `techniciens` et `adm` en plus de `alice`. Alice doit rouvrir sa session pour que ce soit pris en compte.
+3. `sudo visudo -f /etc/sudoers.d/techniciens` et la ligne `%techniciens ALL=(root) /usr/bin/systemctl restart ssh`. Ensuite `su - alice` puis `sudo -l` liste cette seule commande ; `sudo systemctl restart ssh` fonctionne, `sudo systemctl stop ssh` est refusé avec le message « n'est pas autorisé ».
+4. `-G` sans `-a` a **remplacé** les groupes secondaires de bob : il n'est plus membre de `sudo`. Correction : `sudo usermod -aG sudo,techniciens bob` (lancé par un autre administrateur), puis reconnexion de bob.
+"""
+
+    codeblock "bash" {
+      title: "Inspecter les comptes et les droits sudo"
+      code: """
+getent passwd alice          # ligne de /etc/passwd (fonctionne aussi avec un annuaire LDAP)
+getent group sudo            # membres du groupe sudo
+id alice                     # UID, groupe principal, groupes secondaires
+sudo chage -l alice          # expiration du mot de passe et du compte
+sudo -l -U alice             # ce qu'alice a le droit de lancer avec sudo
+awk -F: '$3 >= 1000 && $3 < 65534 {print $1}' /etc/passwd   # comptes humains
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Combien de champs contient une ligne de /etc/passwd ?" {
+        - "5"
+        - "6"
+        + "7"
+        - "9"
+        explanation: "Les 7 champs sont : nom, mot de passe (x), UID, GID, commentaire, dossier personnel, shell. C'est /etc/shadow qui contient 9 champs, avec l'empreinte du mot de passe et les dates."
+      }
+      question "Quelle commande ajoute bob au groupe docker sans lui retirer ses autres groupes ?" {
+        - "usermod -G docker bob"
+        + "usermod -aG docker bob"
+        - "usermod -g docker bob"
+        - "groupadd docker bob"
+        explanation: "-aG ajoute (append) un groupe secondaire. -G seul remplace toute la liste des groupes secondaires, -g change le groupe principal, et groupadd crée un groupe."
+      }
+      question "Où est stockée l’empreinte du mot de passe d’un utilisateur ?" {
+        - "dans /etc/passwd, deuxième champ"
+        + "dans /etc/shadow, lisible par root seulement"
+        - "dans /etc/group"
+        - "dans le fichier .bashrc de l'utilisateur"
+        explanation: "Le x du deuxième champ de /etc/passwd indique que l'empreinte est dans /etc/shadow. /etc/passwd est lisible par tous, c'est pourquoi les empreintes en ont été retirées."
+      }
+      question "Pourquoi utiliser visudo plutôt que nano pour modifier les règles sudo ?" {
+        - "nano ne peut pas ouvrir les fichiers de /etc"
+        + "visudo vérifie la syntaxe avant d'enregistrer et évite de casser sudo"
+        - "visudo chiffre le fichier sudoers"
+        - "visudo redémarre le service sudo après la modification"
+        explanation: "Une erreur de syntaxe dans sudoers peut rendre sudo inutilisable pour tout le monde. visudo verrouille le fichier, contrôle la syntaxe et refuse d'enregistrer un fichier invalide. sudo n'est pas un service à redémarrer."
+      }
+      question "Sur Debian, quel groupe donne par défaut tous les droits sudo ?" {
+        - "wheel"
+        - "root"
+        + "sudo"
+        - "adm"
+        explanation: "Debian et Ubuntu utilisent le groupe sudo. wheel est l'équivalent sur Red Hat, Fedora et leurs dérivées. adm donne seulement la lecture de certains journaux."
+      }
+      question "Tu ajoutes alice au groupe compta. Elle est connectée et n’a toujours pas accès au dossier du groupe. Pourquoi ?" {
+        - "il faut redémarrer le serveur"
+        - "il faut lancer systemctl restart groups"
+        + "les groupes sont lus à l'ouverture de session : elle doit se reconnecter"
+        - "il faut aussi changer son groupe principal"
+        explanation: "La liste des groupes d'un processus est fixée à la connexion. Une nouvelle session (ou newgrp compta) prend en compte le changement. Un redémarrage complet est inutile."
+      }
+      question "Que fait userdel -r stagiaire ?" {
+        - "verrouille le compte sans le supprimer"
+        + "supprime le compte et son dossier personnel"
+        - "supprime le compte mais garde son dossier personnel"
+        - "supprime seulement le mot de passe"
+        explanation: "-r (remove) supprime aussi le dossier personnel et la boîte aux lettres locale. Sans -r, le dossier reste en place. Pour bloquer un compte sans rien perdre, on utilise usermod -L et chage -E 0."
+      }
+      question "Quel shell donne-t-on à un compte de service qui ne doit jamais ouvrir de session ?" {
+        - "/bin/bash"
+        - "/bin/sh"
+        + "/usr/sbin/nologin"
+        - "/etc/shells"
+        explanation: "nologin affiche un message et refuse la connexion. /bin/bash et /bin/sh permettraient d'ouvrir une session. /etc/shells est la liste des shells autorisés, pas un shell."
+      }
+      question "Que signifie la règle « %web ALL=(root) /usr/bin/systemctl reload nginx » ?" {
+        - "l'utilisateur web peut tout faire en root"
+        + "les membres du groupe web peuvent recharger nginx en root, et rien d'autre"
+        - "nginx peut lancer systemctl en tant que web"
+        - "les membres du groupe web peuvent tout faire sauf recharger nginx"
+        explanation: "Le % désigne un groupe. ALL est la liste des machines, (root) le compte cible, puis vient la seule commande autorisée, avec son chemin complet."
+      }
+      question "Quel fichier de /etc/sudoers.d/ sera ignoré par sudo ?" {
+        - "techniciens"
+        - "admins_web"
+        + "techniciens.conf"
+        - "stagiaires"
+        explanation: "sudo ignore les fichiers de sudoers.d dont le nom contient un point ou se termine par ~, pour éviter de lire des copies de sauvegarde d'éditeurs. Le fichier techniciens.conf n'est donc jamais lu."
+      }
+      question "Quelle commande indique à un utilisateur ce qu’il a le droit de lancer avec sudo ?" {
+        - "sudo -i"
+        + "sudo -l"
+        - "sudo -s"
+        - "id -sudo"
+        explanation: "sudo -l (list) affiche les règles qui s'appliquent au compte courant. sudo -i et sudo -s ouvrent un shell root, et id n'a pas d'option -sudo."
+      }
+      question "Pourquoi préférer sudo commande à un shell root ouvert toute la journée ?" {
+        - "sudo est plus rapide"
+        - "un shell root ne peut pas lancer systemctl"
+        + "chaque commande passée par sudo est journalisée avec son auteur"
+        - "sudo n'a jamais besoin de mot de passe"
+        explanation: "sudo trace qui a lancé quelle commande, ce qui aide au diagnostic et à l'audit. Dans un shell root, les commandes suivantes ne sont plus rattachées à une personne. Le shell root a tous les droits, y compris systemctl."
+      }
+      question "Comment faire expirer automatiquement le compte stagiaire le 30 juin 2027 ?" {
+        - "passwd -e stagiaire 2027-06-30"
+        + "chage -E 2027-06-30 stagiaire"
+        - "usermod -L 2027-06-30 stagiaire"
+        - "userdel --date 2027-06-30 stagiaire"
+        explanation: "chage -E fixe la date d'expiration du compte (usermod -e fait la même chose). passwd -e force seulement un changement de mot de passe, usermod -L verrouille tout de suite, et userdel n'a pas d'option de date."
+      }
+    }
+  }
+
+  module "droits-avances" {
+    title: "Chapitre 2 : droits avancés (umask, SUID, SGID, sticky bit, ACL)"
+    duration: "40min"
+    content: """
+### Rappel en une minute
+`ls -l` affiche `-rwxr-x---` : le premier caractère est le type (`-` fichier, `d` dossier, `l` lien), puis trois triplets pour le **propriétaire** (u), le **groupe** (g) et les **autres** (o). En octal, r = 4, w = 2, x = 1 : `rwxr-x---` vaut `750`.
+
+Sur un dossier, `r` permet de lister, `w` de créer et supprimer des fichiers dedans, `x` de le traverser (y entrer, atteindre ce qu'il contient). Supprimer un fichier dépend donc des droits sur le **dossier**, pas sur le fichier.
+
+### umask : les droits des nouveaux fichiers
+Un programme crée en principe ses fichiers avec les droits `666` (rw pour tous) et ses dossiers avec `777`. Le **umask** retire des droits à ce point de départ : chaque bit à 1 dans le umask est enlevé.
+
+| umask | Fichiers créés | Dossiers créés | Usage |
+|---|---|---|---|
+| `022` | `644` rw-r--r-- | `755` rwxr-xr-x | valeur courante par défaut |
+| `027` | `640` rw-r----- | `750` rwxr-x--- | serveur : rien pour les autres |
+| `077` | `600` rw------- | `700` rwx------ | données personnelles |
+
+Le umask ne fait que **retirer** : il ne peut jamais ajouter `x` à un fichier. Ce n'est pas une soustraction en chiffres, c'est un masque bit à bit : avec un umask `033`, un fichier obtient `644`, et non 666 − 033 = 633.
+
+`umask` affiche la valeur du shell courant ; `umask 027` la change pour la session. La valeur par défaut du système vient de `/etc/login.defs` (ligne `UMASK`) et du module PAM `pam_umask`. Pour un service systemd, on la fixe dans l'unité avec `UMask=0027`.
+
+### SUID, SGID et sticky bit
+Trois bits spéciaux s'ajoutent devant les trois chiffres habituels :
+| Bit | Valeur | Sur un fichier exécutable | Sur un dossier | Affichage |
+|---|---|---|---|---|
+| SUID | 4000 | le programme s'exécute avec les droits de son **propriétaire** | sans effet sous Linux | `s` à la place du `x` du propriétaire |
+| SGID | 2000 | s'exécute avec les droits du groupe du fichier | les fichiers créés dedans **héritent du groupe du dossier** | `s` à la place du `x` du groupe |
+| Sticky | 1000 | sans effet aujourd'hui | seul le propriétaire d'un fichier (ou root) peut le supprimer ou le renommer | `t` à la place du `x` des autres |
+
+Exemples réels :
+```text
+-rwsr-xr-x 1 root root  /usr/bin/passwd     # SUID root : un utilisateur peut modifier /etc/shadow via passwd
+drwxrwxrwt 1 root root  /tmp                # sticky : chacun écrit, personne n'efface le fichier des autres
+```
+
+Une lettre **majuscule** (`S` ou `T`) signale que le bit spécial est posé mais que le `x` correspondant manque : c'est presque toujours une erreur de configuration.
+
+Le SUID est sensible : un programme SUID root mal écrit permet à n'importe qui de devenir root. L'ANSSI recommande de garder la liste des exécutables SUID et SGID au strict minimum et de la vérifier régulièrement :
+```bash
+sudo find / -xdev -perm -4000 -type f 2>/dev/null   # fichiers SUID
+sudo find / -xdev -perm -2000 -type f 2>/dev/null   # fichiers SGID
+```
+`-perm -4000` signifie « au moins ce bit ». L'option `nosuid` dans `/etc/fstab` (chapitre 6) ignore les bits SUID et SGID sur une partition, ce qui est utile pour `/home`, `/tmp` ou une clé USB.
+
+### Le dossier partagé : SGID + sticky
+Pour un dossier d'équipe `/srv/compta` partagé par le groupe `compta` :
+```bash
+sudo mkdir /srv/compta
+sudo chgrp compta /srv/compta
+sudo chmod 3770 /srv/compta      # 2000 (SGID) + 1000 (sticky) + 770
+ls -ld /srv/compta               # drwxrws--T ... root compta /srv/compta
+```
+Le SGID fait que chaque fichier créé appartient au groupe `compta`, et pas au groupe personnel de son auteur. Le sticky empêche un membre d'effacer les fichiers des autres. Le `T` majuscule est normal ici : les autres n'ont pas le droit `x`. Pense aussi à un umask `007` ou `002` pour les membres, sinon leurs fichiers seront créés sans le droit d'écriture du groupe.
+
+### Les ACL : des droits au cas par cas
+Les droits classiques ne connaissent qu'un propriétaire et un groupe. Quand il faut donner un accès à une personne de plus sans changer le groupe, on utilise les **ACL POSIX** (listes de contrôle d'accès). Elles sont prises en charge par ext4, XFS et Btrfs ; les outils viennent du paquet `acl`.
+
+```bash
+sudo setfacl -m u:alice:rx /srv/compta        # ajoute un droit pour alice
+sudo setfacl -m g:direction:rwx /srv/compta   # ajoute un droit pour un groupe
+getfacl /srv/compta                           # affiche toutes les entrées
+sudo setfacl -x u:alice /srv/compta           # retire l'entrée d'alice
+sudo setfacl -b /srv/compta                   # retire toutes les entrées ACL
+sudo setfacl -d -m g:direction:rwx /srv/compta  # ACL par défaut : héritée par les nouveaux fichiers
+sudo setfacl -R -m u:alice:rX /srv/compta     # récursif ; X = x seulement sur les dossiers
+```
+
+Quand un fichier a des ACL, `ls -l` affiche un **+** à la fin des droits (`drwxrws---+`). L'entrée **mask** d'une ACL plafonne les droits des utilisateurs et groupes nommés et du groupe propriétaire : si le mask vaut `r-x`, une entrée `u:alice:rwx` ne donne en réalité que `r-x` (getfacl l'indique par `#effective:r-x`). Attention : un `chmod g-w` sur un fichier à ACL modifie le mask, pas l'entrée du groupe.
+
+### À toi de jouer
+1. Avec un umask `027`, quels droits auront un nouveau fichier et un nouveau dossier ? Et avec `umask 002` ?
+2. Que signifient ces affichages : `-rwsr-xr-x root root /usr/bin/su`, `drwxrwsr-x root projet /srv/projet`, `-rwSr--r-- alice alice note.txt` ?
+3. Crée `/srv/compta` pour le groupe `compta` comme dans le cours, puis donne à `bob` (qui n'est pas dans `compta`) la lecture seule sur le dossier et sur tout ce qui y sera créé ensuite.
+4. Un audit trouve `/usr/local/bin/sauve` avec les droits `4755` et le propriétaire root. Le script n'a besoin d'aucun droit particulier. Que fais-tu ?
+
+### Correction
+1. umask `027` : fichier `640` (rw-r-----), dossier `750` (rwxr-x---). umask `002` : fichier `664`, dossier `775`, utile pour un travail en groupe.
+2. `su` est SUID root : il s'exécute en root pour pouvoir changer d'utilisateur. `/srv/projet` a le SGID : les fichiers créés dedans appartiennent au groupe `projet`. `note.txt` a un `S` majuscule : le SUID est posé sans droit `x`, ce qui n'a aucun sens ; retire-le avec `chmod u-s note.txt`.
+3. Commandes :
+```bash
+sudo setfacl -m u:bob:rx /srv/compta              # bob peut entrer et lister
+sudo setfacl -d -m u:bob:rX /srv/compta           # héritage pour les futurs fichiers et dossiers
+getfacl /srv/compta                               # vérifie user:bob:r-x et default:user:bob:r-X
+```
+Pour les fichiers déjà présents : `sudo setfacl -R -m u:bob:rX /srv/compta`. Vérifie en te connectant en bob : `ls /srv/compta` fonctionne, `touch /srv/compta/test` est refusé.
+4. Un SUID inutile est une porte vers root. `sudo chmod u-s /usr/local/bin/sauve` (droits `755`), puis vérifie avec `ls -l`. Signale-le et relance la recherche `find / -xdev -perm -4000` pour comparer avec la liste des SUID attendus.
+"""
+
+    codeblock "bash" {
+      title: "Observer umask, bits spéciaux et ACL"
+      code: """
+umask                         # 0022 en général
+umask -S                      # u=rwx,g=rx,o=rx (forme symbolique)
+stat -c '%a %A %U %G %n' /usr/bin/passwd /tmp   # 4755 -rwsr-xr-x root root ... 1777 drwxrwxrwt
+sudo find / -xdev -perm -4000 -type f 2>/dev/null | sort > suid-$(date +%F).txt
+getfacl -p /srv/compta        # -p : garde le / initial dans l'affichage
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Avec un umask 027, quels droits reçoit un nouveau fichier ordinaire ?" {
+        - "750"
+        + "640"
+        - "644"
+        - "600"
+        explanation: "Un fichier part de 666 ; le masque 027 retire w au groupe et tout aux autres, ce qui donne 640. 750 est le résultat pour un dossier, qui part de 777."
+      }
+      question "Avec un umask 022, quels droits reçoit un nouveau dossier ?" {
+        - "644"
+        - "777"
+        + "755"
+        - "700"
+        explanation: "Un dossier part de 777 et le masque 022 retire w au groupe et aux autres : 755. 644 est le résultat pour un fichier."
+      }
+      question "Que permet le bit SUID posé sur /usr/bin/passwd ?" {
+        - "seul root peut lancer passwd"
+        + "passwd s'exécute avec les droits de son propriétaire root, pour pouvoir écrire dans /etc/shadow"
+        - "passwd ne peut pas être supprimé"
+        - "les fichiers créés par passwd héritent du groupe root"
+        explanation: "Le SUID fait tourner le programme avec l'identité du propriétaire du fichier. C'est ce qui permet à un utilisateur ordinaire de changer son propre mot de passe dans /etc/shadow."
+      }
+      question "Quel effet a le sticky bit sur /tmp ?" {
+        - "les fichiers de /tmp sont effacés au démarrage"
+        - "seul root peut écrire dans /tmp"
+        + "chacun peut créer des fichiers, mais seul leur propriétaire peut les supprimer"
+        - "les fichiers de /tmp héritent du groupe du dossier"
+        explanation: "Le sticky bit (t) sur un dossier empêche de supprimer ou renommer le fichier d'un autre, même si le dossier est en écriture pour tous. L'héritage du groupe est l'effet du SGID."
+      }
+      question "Quelle valeur octale pose le SGID et le sticky bit sur un dossier en 770 ?" {
+        - "1770"
+        - "2770"
+        + "3770"
+        - "6770"
+        explanation: "SGID vaut 2000 et sticky 1000 : 2000 + 1000 + 770 = 3770. 6770 serait SUID + SGID."
+      }
+      question "ls -l affiche -rwSr--r-- pour un fichier. Qu’est-ce que cela indique ?" {
+        - "le fichier est exécutable avec les droits du propriétaire"
+        + "le SUID est posé mais le propriétaire n'a pas le droit x"
+        - "le fichier est un lien symbolique"
+        - "le fichier a une ACL"
+        explanation: "Un S majuscule signifie bit spécial sans x : le SUID n'a alors aucun effet, c'est une erreur de configuration. Un s minuscule indiquerait SUID et x. Une ACL est signalée par un + en fin de droits."
+      }
+      question "Quelle commande liste les fichiers SUID du système de fichiers racine ?" {
+        - "ls -R / | grep suid"
+        + "find / -xdev -perm -4000 -type f"
+        - "find / -perm 0777"
+        - "getfacl -R / | grep s"
+        explanation: "-perm -4000 cherche les fichiers qui ont au moins le bit SUID, -xdev reste sur le même système de fichiers et -type f garde les fichiers ordinaires."
+      }
+      question "Quelle commande donne la lecture et la traversée du dossier /srv/projet à l’utilisateur bob, sans changer le groupe ?" {
+        - "chmod o+rx /srv/projet"
+        - "chown bob /srv/projet"
+        + "setfacl -m u:bob:rx /srv/projet"
+        - "usermod -aG projet bob"
+        explanation: "setfacl -m ajoute une entrée ACL pour bob seul. chmod o+rx ouvrirait le dossier à tout le monde, chown donnerait la propriété à bob, et usermod -aG lui donnerait tous les droits du groupe."
+      }
+      question "Que signifie le + à la fin de drwxrwx---+ dans ls -l ?" {
+        - "le dossier a le sticky bit"
+        + "le dossier possède des entrées ACL"
+        - "le dossier est un point de montage"
+        - "le dossier est chiffré"
+        explanation: "Le + signale des entrées ACL en plus des droits classiques. On les lit avec getfacl. Le sticky bit s'affiche t à la place du dernier x."
+      }
+      question "getfacl affiche « user:alice:rwx #effective:r-x ». Pourquoi alice n’a-t-elle pas l’écriture ?" {
+        - "alice n'est pas dans le groupe propriétaire"
+        + "l'entrée mask vaut r-x et plafonne les droits des entrées nommées"
+        - "le umask d'alice vaut 022"
+        - "le système de fichiers est monté en lecture seule"
+        explanation: "Le mask limite les droits effectifs des utilisateurs et groupes nommés et du groupe propriétaire. setfacl -m m::rwx relève le plafond. Le umask ne joue qu'à la création des fichiers."
+      }
+      question "À quoi sert l’option -d de setfacl ?" {
+        - "supprimer une entrée"
+        + "définir une ACL par défaut, héritée par les fichiers créés ensuite dans le dossier"
+        - "appliquer la modification à tous les sous-dossiers existants"
+        - "afficher les droits effectifs"
+        explanation: "-d agit sur l'ACL par défaut d'un dossier, copiée sur les nouveaux fichiers et sous-dossiers. La récursion sur l'existant se fait avec -R, et la suppression d'une entrée avec -x."
+      }
+      question "Sur un dossier, quel droit faut-il pour supprimer un fichier qu’il contient (sans sticky bit) ?" {
+        - "w sur le fichier"
+        + "w et x sur le dossier"
+        - "r sur le dossier seulement"
+        - "x sur le fichier"
+        explanation: "Supprimer un fichier modifie le dossier, qui contient la liste des noms : il faut w et x sur le dossier. Les droits du fichier lui-même ne comptent pas, sauf si le sticky bit est posé."
+      }
+      question "Un développeur demande un umask 033 pour avoir des fichiers en 633. Qu’obtient-il vraiment ?" {
+        - "633"
+        + "644"
+        - "600"
+        - "744"
+        explanation: "Le umask est un masque bit à bit, pas une soustraction. 666 sans les bits 033 (w et x pour groupe et autres) donne 644. Un umask ne peut jamais produire un fichier en écriture seule pour le groupe."
+      }
+    }
+  }
+
+  module "processus-signaux" {
+    title: "Chapitre 3 : processus, ressources et signaux"
+    duration: "35min"
+    content: """
+### Ce qu'est un processus
+Un **processus** est un programme en cours d'exécution. Il a un numéro unique, le **PID**, un parent (le **PPID**), un propriétaire (l'utilisateur qui l'a lancé), un état et une consommation de processeur et de mémoire. Le premier processus, PID 1, est **systemd** : il lance tous les autres, directement ou non.
+
+### ps : une photo à un instant donné
+```text
+$ ps aux | head -3
+USER   PID %CPU %MEM    VSZ   RSS TTY  STAT START   TIME COMMAND
+root     1  0.0  0.6 168000 12500 ?    Ss   08:02   0:01 /sbin/init
+www-data 812 2.5 1.9 220000 40000 ?    S    08:03   0:12 /usr/sbin/apache2 -k start
+```
+• `ps aux` : tous les processus, avec utilisateur, %CPU, %MEM, mémoire réellement occupée (`RSS`, en Kio) ;
+• `ps -ef` : même liste au format System V, avec le PPID ;
+• `ps -u alice` : les processus d'alice ;
+• `ps -eo pid,ppid,user,%cpu,%mem,cmd --sort=-%mem | head` : colonnes choisies, triées par mémoire décroissante ;
+• `pgrep -a apache2` : PID et ligne de commande des processus dont le nom correspond ;
+• `pstree -p` : l'arbre des processus.
+
+La colonne **STAT** donne l'état :
+| Code | État |
+|---|---|
+| `R` | en cours d'exécution ou prêt (running) |
+| `S` | endormi, attend un événement (cas le plus courant) |
+| `D` | attente non interruptible, presque toujours une entrée-sortie disque ou réseau |
+| `T` | arrêté (suspendu par un signal ou un débogueur) |
+| `Z` | zombie : terminé, mais son parent n'a pas encore lu son code de retour |
+
+Un zombie n'occupe presque rien et ne peut pas être tué : il disparaît quand son parent lit son état ou se termine. Beaucoup de processus en `D` signalent en général un disque ou un partage réseau qui ne répond plus.
+
+### top : le direct
+`top` (ou `htop`, plus lisible, à installer) rafraîchit l'affichage toutes les 3 secondes. Lis d'abord l'en-tête :
+• `load average: 0.52, 0.80, 1.10` : la charge moyenne sur 1, 5 et 15 minutes, c'est-à-dire le nombre moyen de processus qui veulent le processeur ou attendent un disque. Compare-la au nombre de cœurs (`nproc`) : une charge de 4 sur 4 cœurs est pleine, sur 16 cœurs elle est faible.
+• `%Cpu(s)` : `us` (programmes), `sy` (noyau), `id` (inactif), `wa` (attente disque). Un `wa` élevé désigne le stockage, pas le processeur.
+• `MiB Mem` et `MiB Swap` : regarde surtout `avail Mem`. Linux remplit la mémoire libre avec un cache disque qu'il rend dès qu'on en a besoin ; une colonne `free` basse est donc normale.
+
+Touches utiles dans top : `P` trie par processeur, `M` par mémoire, `1` détaille chaque cœur, `k` envoie un signal, `r` change la priorité, `q` quitte. `free -h` et `uptime` donnent les mêmes chiffres en une ligne.
+
+### Priorité : nice et renice
+La **niceness** va de **-20** (le plus prioritaire) à **19** (le plus gentil avec les autres) ; la valeur normale est 0. `nice -n 10 commande` lance une commande moins prioritaire (10 est aussi la valeur par défaut de `nice` sans option), `renice -n 15 -p 1234` change un processus en cours. Un utilisateur ordinaire peut seulement baisser la priorité de ses propres processus ; augmenter la priorité (valeur négative) demande root. Pour les accès disque, `ionice -c3 commande` ne donne le disque qu'en l'absence d'autres demandes : idéal pour une sauvegarde en journée.
+
+### Les signaux
+On ne « tue » pas un processus, on lui envoie un **signal**. Le programme peut intercepter la plupart des signaux pour réagir proprement.
+| Signal | Numéro | Effet habituel | Interceptable |
+|---|---|---|---|
+| `SIGHUP` | 1 | beaucoup de démons relisent leur configuration | oui |
+| `SIGINT` | 2 | interruption, envoyée par Ctrl+C | oui |
+| `SIGKILL` | 9 | arrêt immédiat par le noyau | **non** |
+| `SIGTERM` | 15 | demande d'arrêt propre (signal par défaut de kill) | oui |
+| `SIGCONT` | 18 | reprend un processus suspendu | non |
+| `SIGSTOP` | 19 | suspend le processus | **non** |
+| `SIGTSTP` | 20 | suspension demandée par Ctrl+Z | oui |
+
+Les numéros 18, 19 et 20 sont ceux des processeurs x86 et ARM ; utilise de préférence les **noms**, qui ne changent pas. `kill -l` affiche la liste.
+
+```bash
+kill 1234            # envoie SIGTERM : le programme ferme ses fichiers et s'arrête
+kill -HUP 1234       # même chose que kill -1 1234
+kill -9 1234         # SIGKILL : en dernier recours
+pkill -u stagiaire   # SIGTERM à tous les processus de stagiaire
+killall firefox      # par nom exact
+```
+
+La bonne méthode : **SIGTERM d'abord**, attendre quelques secondes, et **SIGKILL seulement si le processus ne s'arrête pas**. Avec SIGKILL, le programme n'a aucune chance de vider ses tampons, de supprimer ses fichiers de verrou ou de terminer une écriture : une base de données peut être abîmée. Pour un service géré par systemd, utilise plutôt `systemctl stop` ou `systemctl reload` (chapitre 4), qui envoient les bons signaux dans le bon ordre.
+
+### Tâches de fond dans le shell
+`commande &` lance en arrière-plan, `jobs` liste les tâches du shell, `Ctrl+Z` suspend, `bg` relance en arrière-plan, `fg` ramène au premier plan. Une tâche lancée ainsi meurt en général à la fermeture du terminal (SIGHUP) : pour un long travail sur un serveur distant, utilise `nohup commande &`, `tmux` ou `screen`, ou mieux une unité systemd.
+
+### À toi de jouer
+1. Le serveur est lent. `uptime` affiche `load average: 7.90, 7.50, 6.80` et `nproc` répond `2`. Dans `top`, la ligne CPU indique `wa` à 85 %. Où chercher ?
+2. Lance `sleep 600 &`, retrouve son PID de deux façons différentes, puis arrête-le proprement.
+3. Lance `yes > /dev/null &` deux fois, observe-les dans `top` trié par processeur, baisse la priorité de l'un à 19, puis arrête les deux en une seule commande.
+4. Un collègue fait toujours `kill -9` sur le processus PostgreSQL quand il veut l'arrêter. Que lui dis-tu ?
+
+### Correction
+1. La charge (environ 8) vaut quatre fois le nombre de cœurs, mais le processeur attend surtout le disque (`wa` 85 %). C'est un problème d'entrées-sorties : cherche les processus en état `D` (`ps -eo pid,stat,cmd | awk '$2 ~ /D/'`), regarde l'activité disque avec `iostat -x 2` (paquet `sysstat`) ou `iotop`, et vérifie l'état du disque et l'espace libre (`df -h`).
+2. `pgrep -a sleep` ou `ps aux | grep '[s]leep 600'` (les crochets évitent de trouver la ligne du grep lui-même), ou encore `jobs -l`. Puis `kill PID` (SIGTERM). `jobs` ne doit plus rien afficher.
+3. `top` puis `P` : les deux `yes` sont en tête, chacun près de 100 % d'un cœur. `renice -n 19 -p PID` sur l'un : sur une machine à un seul cœur, il reçoit alors beaucoup moins de temps processeur que l'autre (colonne `NI` à 19). Arrêt : `pkill yes` (ou `killall yes`).
+4. SIGKILL empêche PostgreSQL de terminer ses écritures et de se fermer proprement : au redémarrage, il devra rejouer son journal et une corruption n'est pas exclue. La bonne commande est `sudo systemctl stop postgresql`, qui envoie SIGTERM et n'utilise SIGKILL qu'après un délai, si le service ne s'est pas arrêté.
+"""
+
+    codeblock "bash" {
+      title: "Trouver ce qui consomme"
+      code: """
+uptime                                                   # charge sur 1, 5 et 15 min
+nproc                                                    # nombre de cœurs
+free -h                                                  # mémoire : regarder la colonne available
+ps -eo pid,user,%cpu,%mem,stat,cmd --sort=-%cpu | head   # les plus gourmands en processeur
+ps -eo pid,user,%cpu,%mem,stat,cmd --sort=-%mem | head   # les plus gourmands en mémoire
+pgrep -a -u www-data                                     # processus d'un compte
+kill -l                                                  # liste des signaux
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quel signal la commande kill envoie-t-elle si on ne précise rien ?" {
+        - "SIGKILL (9)"
+        - "SIGHUP (1)"
+        + "SIGTERM (15)"
+        - "SIGINT (2)"
+        explanation: "kill sans option envoie SIGTERM, une demande d'arrêt propre que le programme peut traiter. SIGKILL doit être demandé explicitement avec -9 ou -KILL."
+      }
+      question "Pourquoi SIGKILL est-il à réserver au dernier recours ?" {
+        - "il redémarre la machine"
+        + "le programme ne peut pas l'intercepter et n'a pas le temps de se terminer proprement"
+        - "il ne fonctionne que pour root"
+        - "il tue aussi tous les processus du même utilisateur"
+        explanation: "SIGKILL est appliqué directement par le noyau : pas de fermeture de fichiers, pas d'écriture des tampons, risque de données incohérentes. Un utilisateur peut l'envoyer à ses propres processus, et il ne vise qu'un PID."
+      }
+      question "Que fait souvent un démon qui reçoit SIGHUP ?" {
+        - "il s'arrête immédiatement"
+        + "il relit sa configuration sans s'arrêter"
+        - "il passe en arrière-plan"
+        - "il vide son cache disque"
+        explanation: "Par convention, de nombreux démons (sshd, nginx, rsyslog) relisent leur configuration à la réception de SIGHUP. C'est ce que font beaucoup de commandes systemctl reload."
+      }
+      question "Dans ps, que signifie l’état Z ?" {
+        - "processus endormi"
+        - "processus en attente disque"
+        + "processus terminé dont le parent n'a pas encore lu le code de retour"
+        - "processus suspendu par Ctrl+Z"
+        explanation: "Z (zombie) : le processus est fini mais reste dans la table tant que son parent n'a pas récupéré son état. Ctrl+Z donne l'état T (arrêté)."
+      }
+      question "Un serveur à 4 cœurs affiche load average: 1.00, 1.10, 0.90. Que conclus-tu ?" {
+        - "le serveur est saturé"
+        + "la charge est modérée, environ un quart de la capacité"
+        - "un seul cœur fonctionne"
+        - "la mémoire est pleine"
+        explanation: "La charge se compare au nombre de cœurs : 1 sur 4 cœurs laisse de la marge. Elle ne renseigne pas sur la mémoire."
+      }
+      question "Dans top, la ligne CPU affiche wa à 70 %. Que faut-il examiner en priorité ?" {
+        - "les processus qui consomment le plus de processeur"
+        + "les accès disque (ou un stockage réseau lent)"
+        - "la température du processeur"
+        - "le nombre d'utilisateurs connectés"
+        explanation: "wa (iowait) est le temps passé à attendre des entrées-sorties. Le processeur n'est pas le goulot : c'est le stockage. iostat, iotop et les processus en état D aident à trouver la cause."
+      }
+      question "Quelle valeur de niceness rend un processus le plus prioritaire ?" {
+        - "19"
+        - "0"
+        + "-20"
+        - "99"
+        explanation: "La niceness va de -20 (le plus prioritaire) à 19 (le moins prioritaire). 0 est la valeur normale. Seul root peut donner une valeur négative."
+      }
+      question "Quelle commande affiche les PID et lignes de commande des processus nommés nginx ?" {
+        - "kill -l nginx"
+        + "pgrep -a nginx"
+        - "top -n nginx"
+        - "jobs nginx"
+        explanation: "pgrep cherche par nom, et -a ajoute la ligne de commande complète. kill -l liste les signaux, et jobs ne voit que les tâches du shell courant."
+      }
+      question "Quels signaux un programme ne peut-il ni intercepter ni ignorer ?" {
+        - "SIGTERM et SIGINT"
+        + "SIGKILL et SIGSTOP"
+        - "SIGHUP et SIGCONT"
+        - "SIGTSTP et SIGTERM"
+        explanation: "SIGKILL et SIGSTOP sont toujours appliqués par le noyau. SIGTSTP (Ctrl+Z), SIGTERM, SIGINT et SIGHUP peuvent être interceptés par le programme."
+      }
+      question "free -h affiche free 180Mi et available 5,2Gi sur un serveur de 8 Go. Faut-il s’inquiéter ?" {
+        - "oui, la mémoire est presque pleine"
+        + "non, Linux utilise la mémoire libre comme cache et la rend à la demande"
+        - "oui, il faut ajouter du swap"
+        - "non, car le swap est toujours utilisé en premier"
+        explanation: "La colonne available estime la mémoire disponible pour de nouveaux programmes, cache compris. Une colonne free faible est normale : de la mémoire inutilisée serait gaspillée."
+      }
+      question "Tu dois lancer une sauvegarde longue sans gêner les utilisateurs. Quelle commande est adaptée ?" {
+        - "nice -n -20 sauvegarde.sh"
+        + "nice -n 19 ionice -c3 sauvegarde.sh"
+        - "kill -STOP sauvegarde.sh"
+        - "sauvegarde.sh &"
+        explanation: "nice 19 donne la priorité processeur la plus faible et ionice -c3 (classe idle) n'accorde le disque qu'en l'absence d'autres demandes. -20 ferait l'inverse, et & seul ne change pas la priorité."
+      }
+      question "Tu lances un script long dans une session SSH puis tu fermes la fenêtre. Le script s’arrête. Pourquoi ?" {
+        - "SSH limite la durée des commandes"
+        + "la fermeture du terminal envoie SIGHUP aux tâches de la session"
+        - "le script a reçu SIGKILL du noyau"
+        - "le script manquait de mémoire"
+        explanation: "À la fermeture du terminal, le shell et ses tâches reçoivent SIGHUP, qui les arrête par défaut. nohup, tmux, screen ou un service systemd évitent ce problème."
+      }
+    }
+  }
+
+  module "systemd-services" {
+    title: "Chapitre 4 : services systemd, de systemctl à ta propre unité"
+    duration: "40min"
+    content: """
+### systemd et les unités
+**systemd** est le gestionnaire de démarrage et de services de Debian, Ubuntu, Red Hat et de la plupart des distributions actuelles. Il manipule des **unités** (units), décrites par des fichiers texte. Les plus courantes :
+| Type | Rôle | Exemple |
+|---|---|---|
+| `.service` | un programme à lancer et surveiller | `ssh.service`, `apache2.service` |
+| `.timer` | un déclenchement planifié (chapitre 9) | `apt-daily.timer` |
+| `.mount` | un point de montage | `home.mount` |
+| `.socket` | un port qui démarre un service à la première connexion | `ssh.socket` (Ubuntu 24.04) |
+| `.target` | un groupe d'unités, un « état » du système | `multi-user.target`, `graphical.target` |
+
+Les fichiers fournis par les paquets sont dans `/usr/lib/systemd/system/` (ou `/lib/systemd/system/` selon les versions) : **ne les modifie pas**, une mise à jour les écraserait. Tes propres unités et tes modifications vont dans `/etc/systemd/system/`, qui est prioritaire.
+
+### Piloter un service
+| Commande | Effet |
+|---|---|
+| `systemctl status apache2` | état, PID, dernières lignes du journal |
+| `systemctl start` / `stop` / `restart` | démarre, arrête, arrête puis redémarre |
+| `systemctl reload apache2` | relit la configuration sans couper les connexions (si le service le permet) |
+| `systemctl enable apache2` | lance le service **au démarrage** (n'agit pas tout de suite) |
+| `systemctl enable --now apache2` | active au démarrage **et** démarre maintenant |
+| `systemctl disable apache2` | ne le lance plus au démarrage |
+| `systemctl mask apache2` | empêche tout démarrage, même manuel ou par dépendance |
+| `systemctl is-active` / `is-enabled` | réponse courte, pratique dans un script |
+| `systemctl --failed` | liste des unités en échec |
+| `systemctl cat ssh` | affiche le fichier de l'unité et ses surcharges |
+
+Ne confonds pas **démarré** (active, en ce moment) et **activé** (enabled, au prochain démarrage). Après une installation, vérifie les deux.
+
+Lecture de `systemctl status` :
+```text
+● apache2.service - The Apache HTTP Server
+     Loaded: loaded (/lib/systemd/system/apache2.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2026-11-26 08:03:11 CET; 2h ago
+   Main PID: 812 (apache2)
+```
+`Loaded` indique le fichier et si le service est `enabled` ; `Active` donne l'état (`active (running)`, `inactive (dead)`, `failed`). En cas de `failed`, les dernières lignes du journal en dessous donnent souvent la cause, et `journalctl -u apache2` en donne davantage (chapitre 5).
+
+### Écrire une unité de service
+Tu veux faire tourner un petit programme maison, par exemple une API Python dans `/opt/inventaire`, sous un compte dédié, redémarré en cas de plantage. Crée `/etc/systemd/system/inventaire.service` :
+```ini
+[Unit]
+Description=API d'inventaire du parc
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=inventaire
+Group=inventaire
+WorkingDirectory=/opt/inventaire
+ExecStart=/opt/inventaire/venv/bin/python /opt/inventaire/app.py
+Restart=on-failure
+RestartSec=5
+UMask=0027
+NoNewPrivileges=yes
+ProtectSystem=full
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target
+```
+• `[Unit]` : description et ordre. `After=` fixe seulement l'**ordre** ; `Wants=` crée la **dépendance** (demande le démarrage de l'autre unité). On met souvent les deux.
+• `[Service]` : `Type=simple` pour un programme qui reste au premier plan ; `ExecStart=` exige un **chemin absolu** ; `User=` évite de tourner en root ; `Restart=on-failure` relance après un arrêt anormal, `RestartSec=` attend entre deux essais.
+• Les options `NoNewPrivileges`, `ProtectSystem` (`full` rend `/usr`, `/boot` et `/etc` en lecture seule pour le service) et `PrivateTmp` (un `/tmp` privé) réduisent les dégâts si le programme est compromis. `systemd-analyze security inventaire` donne une note et des pistes.
+• `[Install]` : `WantedBy=multi-user.target` indique où accrocher le service quand on fait `enable`.
+
+Puis :
+```bash
+sudo systemd-analyze verify /etc/systemd/system/inventaire.service   # contrôle de syntaxe
+sudo systemctl daemon-reload            # systemd relit les fichiers d'unités
+sudo systemctl enable --now inventaire
+systemctl status inventaire
+```
+Oublier `daemon-reload` après une modification est l'erreur la plus fréquente : systemd continue d'utiliser l'ancienne version et l'indique par un avertissement dans `status`.
+
+### Modifier une unité fournie par un paquet
+Pour changer un réglage d'un service existant, crée une **surcharge** (drop-in) au lieu de copier le fichier : `sudo systemctl edit apache2` ouvre un fichier vide `/etc/systemd/system/apache2.service.d/override.conf`, que systemd ajoute au fichier d'origine et relit tout seul à l'enregistrement. Exemple :
+```ini
+[Service]
+Restart=on-failure
+```
+Pour remplacer une ligne qui accepte plusieurs valeurs (comme `ExecStart=`), il faut d'abord la vider par une ligne `ExecStart=` vide, puis écrire la nouvelle.
+
+### Les cibles et le démarrage
+`systemctl get-default` affiche la cible de démarrage (`multi-user.target` sur un serveur sans interface graphique, `graphical.target` sur un poste). `systemd-analyze blame` classe les unités par temps de démarrage, utile quand une machine met longtemps à démarrer.
+
+### À toi de jouer
+1. Installe `apache2` (ou `nginx`). Vérifie qu'il est démarré et activé. Désactive-le au démarrage sans l'arrêter, redémarre la VM et constate.
+2. Écris une unité `horloge.service` qui lance, sous le compte `nobody`, la commande `/bin/sh -c 'while true; do date; sleep 10; done'`, redémarrée en cas d'échec. Active-la et lis sa sortie.
+3. Tue son processus avec `kill -9`. Que fait systemd ? Et après `systemctl stop horloge` ?
+4. Un service affiche `Active: failed` avec `status=203/EXEC`. Que vérifies-tu ?
+
+### Correction
+1. `systemctl is-active apache2` répond `active` et `systemctl is-enabled apache2` répond `enabled`. `sudo systemctl disable apache2` : le service tourne toujours (`is-active` = `active`) mais `is-enabled` = `disabled`. Après `sudo reboot`, `is-active` répond `inactive`.
+2. Fichier `/etc/systemd/system/horloge.service` :
+```ini
+[Unit]
+Description=Horloge de démonstration
+
+[Service]
+User=nobody
+ExecStart=/bin/sh -c 'while true; do date; sleep 10; done'
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+```
+Puis `sudo systemctl daemon-reload && sudo systemctl enable --now horloge` et `journalctl -u horloge -f` : une date toutes les 10 secondes (la sortie standard d'un service va dans le journal).
+3. Après `kill -9`, le processus se termine sur un signal : c'est un arrêt anormal, donc `Restart=on-failure` le relance (nouveau PID dans `status`). Après `systemctl stop`, l'arrêt est demandé : aucun redémarrage. Pour finir : `sudo systemctl disable --now horloge`.
+4. Le code 203/EXEC signifie que systemd n'a pas pu exécuter `ExecStart` : chemin inexact ou relatif, fichier absent, droit d'exécution manquant, ou script sans ligne `#!`. Vérifie avec `systemctl cat` et `ls -l` le chemin exact, puis `daemon-reload` et `restart`.
+"""
+
+    codeblock "bash" {
+      title: "Commandes systemctl du quotidien"
+      code: """
+systemctl list-units --type=service --state=running   # services en cours
+systemctl list-unit-files --state=enabled             # lancés au démarrage
+systemctl --failed                                    # unités en échec
+systemctl cat ssh                                     # fichier de l'unité et surcharges
+sudo systemctl edit ssh                               # créer une surcharge override.conf
+systemd-analyze security inventaire                   # exposition d'un service
+systemd-analyze blame | head                          # unités lentes au démarrage
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle commande démarre nginx tout de suite et l’active au démarrage ?" {
+        - "systemctl start nginx"
+        - "systemctl enable nginx"
+        + "systemctl enable --now nginx"
+        - "systemctl reload nginx"
+        explanation: "enable seul n'agit qu'au prochain démarrage et start seul n'active pas le démarrage automatique. --now combine les deux."
+      }
+      question "Tu viens de modifier /etc/systemd/system/inventaire.service. Que fais-tu avant le redémarrage du service ?" {
+        - "systemctl reload inventaire"
+        + "systemctl daemon-reload"
+        - "systemctl reset-failed"
+        - "rien, systemd relit le fichier tout seul"
+        explanation: "daemon-reload fait relire les fichiers d'unités à systemd. Sans lui, systemd garde l'ancienne version. reload demande au service de relire sa propre configuration, pas le fichier d'unité."
+      }
+      question "Où place-t-on une unité écrite par l’administrateur ?" {
+        - "/usr/lib/systemd/system/"
+        + "/etc/systemd/system/"
+        - "/var/lib/systemd/"
+        - "/run/systemd/units/"
+        explanation: "/etc/systemd/system est réservé à l'administrateur et prioritaire. /usr/lib/systemd/system appartient aux paquets et peut être écrasé lors d'une mise à jour. /run est effacé au redémarrage."
+      }
+      question "Quelle est la différence entre After= et Wants= ?" {
+        - "aucune, ce sont deux synonymes"
+        + "After= fixe l'ordre de démarrage, Wants= demande que l'autre unité soit démarrée"
+        - "After= est obligatoire, Wants= est facultatif"
+        - "Wants= bloque le service si l'autre unité échoue"
+        explanation: "After= ne fait qu'ordonner, Wants= crée une dépendance souple : si l'autre unité échoue, le service démarre quand même. Pour une dépendance stricte, on utilise Requires=."
+      }
+      question "Quel effet a systemctl mask sur un service ?" {
+        - "il cache le service dans systemctl list-units"
+        - "il désactive le démarrage automatique seulement"
+        + "il empêche tout démarrage, même manuel ou par dépendance"
+        - "il supprime le paquet du service"
+        explanation: "mask relie l'unité à /dev/null : aucun démarrage n'est possible tant qu'on n'a pas fait unmask. disable n'empêche pas un démarrage manuel."
+      }
+      question "Comment modifier proprement un réglage de l’unité apache2.service fournie par le paquet ?" {
+        - "éditer /lib/systemd/system/apache2.service"
+        + "systemctl edit apache2, qui crée une surcharge override.conf"
+        - "copier le fichier dans /tmp et le modifier"
+        - "ajouter le réglage dans /etc/apache2/apache2.conf"
+        explanation: "La surcharge dans /etc/systemd/system/apache2.service.d/ survit aux mises à jour du paquet. Modifier le fichier d'origine serait perdu à la prochaine mise à jour."
+      }
+      question "Que signifie Restart=on-failure ?" {
+        - "le service redémarre toutes les nuits"
+        + "systemd relance le service s'il s'arrête de façon anormale"
+        - "le service redémarre après chaque modification de configuration"
+        - "la machine redémarre si le service échoue"
+        explanation: "on-failure relance après un code de sortie non nul, un arrêt par signal (sauf SIGHUP, SIGINT, SIGTERM et SIGPIPE, considérés comme propres), un dépassement de délai ou un watchdog. Un arrêt demandé par systemctl stop ne déclenche pas de redémarrage."
+      }
+      question "systemctl status affiche « Loaded: ...; disabled » et « Active: active (running) ». Que se passera-t-il au prochain démarrage ?" {
+        - "le service démarrera normalement"
+        + "le service ne démarrera pas automatiquement"
+        - "le service sera masqué"
+        - "le service démarrera en mode dépannage"
+        explanation: "Il tourne maintenant mais n'est pas activé : rien ne le lancera après un redémarrage. systemctl enable corrige cela."
+      }
+      question "Pourquoi indiquer User= dans une unité de service ?" {
+        - "pour que le service démarre plus vite"
+        + "pour que le programme tourne sous un compte non privilégié et pas en root"
+        - "pour autoriser cet utilisateur à arrêter le service"
+        - "pour envoyer les journaux à cet utilisateur"
+        explanation: "Sans User=, un service système tourne en root. Un compte dédié limite les dégâts en cas de faille, selon le principe du moindre privilège."
+      }
+      question "Un service est en échec avec status=203/EXEC. Quelle est la cause la plus probable ?" {
+        - "le port réseau est déjà utilisé"
+        + "la commande de ExecStart= est introuvable ou non exécutable"
+        - "le service a dépassé sa mémoire"
+        - "le fichier d'unité a une section [Install] vide"
+        explanation: "203/EXEC indique que systemd n'a pas pu lancer le programme : chemin faux ou relatif, fichier absent ou sans droit d'exécution. Un port occupé produirait une erreur du programme lui-même, après son lancement."
+      }
+      question "Quelle cible est la cible par défaut d’un serveur sans interface graphique ?" {
+        - "graphical.target"
+        + "multi-user.target"
+        - "rescue.target"
+        - "network.target"
+        explanation: "multi-user.target correspond à un système complet en mode texte avec le réseau. graphical.target y ajoute l'interface graphique, rescue.target est un mode de dépannage."
+      }
+      question "Quelle commande vérifie la syntaxe d’un fichier d’unité avant de l’activer ?" {
+        - "systemctl check inventaire.service"
+        + "systemd-analyze verify /etc/systemd/system/inventaire.service"
+        - "systemctl lint inventaire"
+        - "journalctl --verify inventaire"
+        explanation: "systemd-analyze verify signale les erreurs de syntaxe et les programmes introuvables. journalctl --verify contrôle l'intégrité des fichiers du journal, pas les unités."
+      }
+    }
+  }
+
+  module "journaux-mises-a-jour" {
+    title: "Chapitre 5 : journaux et mises à jour"
+    duration: "40min"
+    content: """
+### Deux systèmes de journaux
+Sur une Debian ou une Ubuntu récente, deux mécanismes coexistent souvent :
+• **systemd-journald** reçoit les messages du noyau, de tous les services et de leur sortie standard. Il les stocke dans un format binaire qu'on lit avec `journalctl`. Avec le réglage par défaut `Storage=auto`, le journal est **conservé sur disque** si le dossier `/var/log/journal` existe (c'est le cas par défaut depuis Debian 11), sinon il est gardé en mémoire et perdu au redémarrage.
+• **rsyslog**, quand il est installé, écrit des fichiers texte classiques dans `/var/log/` : `syslog`, `auth.log` (connexions et sudo), `kern.log`. Beaucoup d'applications ont aussi leurs propres fichiers : `/var/log/apache2/access.log` et `error.log`, `/var/log/apt/history.log`.
+
+Pour lire le journal sans sudo, un compte doit être dans le groupe `adm` ou `systemd-journal`.
+
+### journalctl : filtrer, c'est tout l'art
+| Commande | Ce qu'elle montre |
+|---|---|
+| `journalctl -u ssh` | les messages d'une unité |
+| `journalctl -u ssh -f` | suivi en direct (comme `tail -f`) |
+| `journalctl -n 50` | les 50 dernières lignes |
+| `journalctl -b` | depuis le dernier démarrage ; `-b -1` : le démarrage précédent |
+| `journalctl --list-boots` | la liste des démarrages enregistrés |
+| `journalctl -p err` | priorité `err` et plus grave |
+| `journalctl --since "2026-11-26 08:00" --until "2026-11-26 09:00"` | une plage horaire |
+| `journalctl --since "1 hour ago"` ou `--since today` | une plage relative |
+| `journalctl -k` | messages du noyau (comme `dmesg`) |
+| `journalctl _UID=1001` | messages d'un utilisateur |
+| `journalctl -u ssh -o json-pretty` | format détaillé, avec tous les champs |
+| `journalctl -xe` | la fin du journal avec explications, après une erreur |
+
+Les options se combinent : `journalctl -u apache2 -b -p warning --no-pager` affiche les avertissements et erreurs d'Apache depuis le démarrage, sans pagination (pratique dans un script ou pour copier un extrait).
+
+Les **priorités** reprennent celles de syslog (RFC 5424), de la plus grave à la moins grave : `emerg` (0), `alert` (1), `crit` (2), `err` (3), `warning` (4), `notice` (5), `info` (6), `debug` (7). `-p err` affiche 0 à 3.
+
+### Place disque et conservation
+• `journalctl --disk-usage` : taille occupée par le journal.
+• `sudo journalctl --vacuum-size=500M` ou `--vacuum-time=3months` : supprime les plus anciens fichiers archivés.
+• Le plafond permanent se règle dans `/etc/systemd/journald.conf` (ou mieux, un fichier dans `/etc/systemd/journald.conf.d/`) avec `SystemMaxUse=` ; par défaut, journald utilise au plus 10 % du système de fichiers, dans la limite de 4 Gio.
+
+Les fichiers texte de `/var/log/` sont tournés par **logrotate** (un timer quotidien lit `/etc/logrotate.conf` et `/etc/logrotate.d/`) : chaque fichier est renommé (`syslog.1`, puis compressé en `syslog.2.gz`…) et les plus vieux sont supprimés. Exemple pour une application maison :
+```text
+/var/log/inventaire/*.log {
+    weekly
+    rotate 26
+    compress
+    delaycompress
+    missingok
+    notifempty
+}
+```
+`sudo logrotate -d /etc/logrotate.d/inventaire` teste la règle sans rien modifier.
+
+Combien de temps garder ? Les journaux d'accès contiennent des données personnelles (identifiants, adresses IP). La CNIL recommande, pour la journalisation des accès, une durée de conservation de **six mois à un an**, sauf obligation légale particulière. L'ANSSI conseille de centraliser les journaux sur une autre machine, pour qu'un attaquant qui prend le serveur ne puisse pas effacer ses traces.
+
+### Mettre à jour un serveur Debian ou Ubuntu
+Les paquets viennent des **dépôts** listés dans `/etc/apt/sources.list` ou `/etc/apt/sources.list.d/`. Les mises à jour de sécurité de Debian arrivent par le dépôt `debian-security`. La séquence :
+```bash
+sudo apt update             # télécharge la liste des paquets disponibles (n'installe rien)
+apt list --upgradable       # ce qui peut être mis à jour
+sudo apt upgrade            # met à jour sans jamais supprimer de paquet
+sudo apt full-upgrade       # peut installer ou supprimer des paquets si les dépendances l'exigent
+sudo apt autoremove         # retire les dépendances devenues inutiles (dont les anciens noyaux)
+```
+`apt update` ne fait que rafraîchir la liste : l'oublier, c'est « mettre à jour » vers des versions périmées. `full-upgrade` est nécessaire pour certaines mises à jour (nouveau noyau, changement de dépendances) ; relis ce qu'il propose de supprimer avant de valider.
+
+Bonnes pratiques :
+• **Avant** : vérifie qu'une sauvegarde récente existe ; sur une VM, prends un instantané (snapshot). Lis la liste des paquets touchés.
+• **Pendant** : en SSH, lance la mise à jour dans `tmux` pour qu'une coupure réseau ne l'interrompe pas.
+• **Après** : un nouveau noyau ou une nouvelle bibliothèque n'est utilisé qu'après redémarrage du système ou des services. Sur Ubuntu, le fichier `/var/run/reboot-required` signale qu'un redémarrage est attendu ; l'outil `needrestart` (paquet du même nom) liste les services à redémarrer. Ensuite, contrôle `systemctl --failed` et les journaux.
+• `apt-mark hold paquet` bloque un paquet à sa version actuelle (à utiliser avec parcimonie, et à noter).
+• L'historique est dans `/var/log/apt/history.log` (qui, quoi, quand) et `/var/log/dpkg.log`.
+
+Les mises à jour de sécurité automatiques se font avec le paquet **unattended-upgrades** : `sudo apt install unattended-upgrades` puis `sudo dpkg-reconfigure -plow unattended-upgrades`. Par défaut, seules les mises à jour de sécurité sont appliquées ; son journal est dans `/var/log/unattended-upgrades/`. L'ANSSI recommande d'appliquer les correctifs de sécurité rapidement et de suivre les avis publiés par le CERT-FR.
+
+Un dernier point : une version de distribution a une durée de support limitée (environ 5 ans pour Debian avec le support à long terme, 5 ans pour Ubuntu LTS sans abonnement). Un serveur sur une version qui n'est plus suivie ne reçoit plus aucun correctif.
+
+### À toi de jouer
+1. Le service `ssh` a été redémarré cette nuit et tu veux savoir pourquoi. Écris la commande qui affiche ses messages entre minuit et 6 h aujourd'hui.
+2. Affiche uniquement les erreurs (et plus graves) du démarrage précédent.
+3. Le disque est plein à cause du journal (8 Gio). Libère de la place pour ne garder que 1 Gio, puis rends ce plafond permanent.
+4. Fais une mise à jour complète et propre de ta VM, puis dis si un redémarrage est nécessaire et quels services doivent être relancés.
+
+### Correction
+1. `journalctl -u ssh --since today --until "06:00"` (ou avec la date complète : `--since "2026-11-26 00:00" --until "2026-11-26 06:00"`). Pour les connexions, complète avec `journalctl -u ssh -g "Accepted|Failed"` (`-g` filtre par expression régulière).
+2. `journalctl -b -1 -p err`. Si la commande répond qu'il n'y a pas de démarrage précédent, le journal n'est pas persistant : vérifie que `/var/log/journal` existe.
+3. `sudo journalctl --vacuum-size=1G`, puis crée `/etc/systemd/journald.conf.d/taille.conf` avec :
+```ini
+[Journal]
+SystemMaxUse=1G
+```
+et `sudo systemctl restart systemd-journald`. Contrôle : `journalctl --disk-usage`.
+4. `sudo apt update && apt list --upgradable`, puis `sudo apt full-upgrade` en relisant la liste, `sudo apt autoremove`. Ensuite `ls /var/run/reboot-required` (Ubuntu) ou `sudo needrestart` : si un nouveau noyau a été installé, redémarre (`uname -r` après le redémarrage montre la nouvelle version) ; sinon, relance les services listés. Termine par `systemctl --failed`.
+"""
+
+    codeblock "bash" {
+      title: "Journaux : les requêtes les plus utiles"
+      code: """
+journalctl -u ssh --since "1 hour ago" --no-pager       # activité SSH récente
+journalctl -b -p warning --no-pager | tail -n 40        # avertissements depuis le démarrage
+journalctl -k -b | grep -i -E "error|fail"              # erreurs du noyau (disque, matériel)
+journalctl --list-boots | tail -n 5                     # derniers démarrages
+journalctl --disk-usage                                 # place occupée
+grep -E "Start-Date|Commandline" /var/log/apt/history.log | tail -n 6   # dernières opérations apt
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle commande suit en direct les messages du service apache2 ?" {
+        - "journalctl apache2 --live"
+        + "journalctl -u apache2 -f"
+        - "systemctl follow apache2"
+        - "tail -u apache2"
+        explanation: "-u filtre sur l'unité et -f suit l'arrivée des nouveaux messages. tail -f fonctionne sur un fichier texte comme /var/log/apache2/error.log, mais n'a pas d'option -u."
+      }
+      question "Que montre journalctl -b -1 ?" {
+        - "le dernier message du journal"
+        + "les messages du démarrage précédent"
+        - "la première ligne de chaque démarrage"
+        - "les messages d'il y a une heure"
+        explanation: "-b sélectionne un démarrage : -b seul pour le démarrage actuel, -b -1 pour le précédent. Il faut un journal persistant pour garder les démarrages passés."
+      }
+      question "journalctl -p err affiche quelles priorités ?" {
+        - "seulement err"
+        + "err, crit, alert et emerg"
+        - "err, warning, notice et info"
+        - "toutes sauf debug"
+        explanation: "-p donne un seuil : la priorité indiquée et toutes les plus graves (0 à 3). warning (4) et les suivantes sont exclues."
+      }
+      question "Le journal disparaît à chaque redémarrage. Quelle est la cause probable ?" {
+        - "rsyslog est désinstallé"
+        + "le dossier /var/log/journal n'existe pas et Storage=auto garde le journal en mémoire"
+        - "logrotate supprime le journal chaque nuit"
+        - "journalctl n'est lancé que par root"
+        explanation: "Avec Storage=auto, journald écrit sur disque seulement si /var/log/journal existe. Le créer (ou mettre Storage=persistent) rend le journal persistant. logrotate ne gère pas le journal binaire."
+      }
+      question "Quelle commande réduit le journal à 500 Mio en supprimant les fichiers les plus anciens ?" {
+        - "rm -rf /var/log/journal"
+        + "journalctl --vacuum-size=500M"
+        - "logrotate --size 500M"
+        - "journalctl --disk-usage=500M"
+        explanation: "--vacuum-size supprime des fichiers archivés jusqu'à passer sous la taille indiquée. Supprimer le dossier à la main fait perdre tout l'historique et peut perturber journald. --disk-usage ne fait qu'afficher."
+      }
+      question "Que fait la commande apt update ?" {
+        - "installe les nouvelles versions des paquets"
+        + "télécharge la liste à jour des paquets disponibles, sans rien installer"
+        - "met à jour la distribution vers la version suivante"
+        - "supprime les paquets inutiles"
+        explanation: "update rafraîchit seulement les index des dépôts. Ce sont apt upgrade ou full-upgrade qui installent les nouvelles versions, et autoremove qui supprime les dépendances inutiles."
+      }
+      question "Quelle différence entre apt upgrade et apt full-upgrade ?" {
+        - "aucune, ce sont deux noms pour la même commande"
+        + "full-upgrade peut supprimer ou installer des paquets pour résoudre les dépendances, upgrade jamais"
+        - "upgrade concerne seulement le noyau"
+        - "full-upgrade change de version de Debian automatiquement"
+        explanation: "upgrade ne retire jamais un paquet installé et peut donc retenir certaines mises à jour. full-upgrade va au bout, quitte à supprimer des paquets : il faut lire la liste. Changer de version de Debian demande de modifier les dépôts."
+      }
+      question "Après une mise à jour du noyau, quand le nouveau noyau est-il utilisé ?" {
+        - "immédiatement"
+        - "après apt autoremove"
+        + "après un redémarrage de la machine"
+        - "après systemctl daemon-reload"
+        explanation: "Le noyau en cours reste chargé en mémoire jusqu'au redémarrage. uname -r montre la version en cours d'exécution. daemon-reload ne concerne que les fichiers d'unités."
+      }
+      question "Quel paquet applique automatiquement les mises à jour de sécurité sur Debian ?" {
+        - "apt-cron"
+        + "unattended-upgrades"
+        - "needrestart"
+        - "logrotate"
+        explanation: "unattended-upgrades installe automatiquement les mises à jour, par défaut celles de sécurité. needrestart indique seulement les services à relancer après une mise à jour."
+      }
+      question "Où trouver l’historique des installations faites avec apt ?" {
+        - "/etc/apt/sources.list"
+        + "/var/log/apt/history.log"
+        - "/var/cache/apt/archives"
+        - "~/.bash_history"
+        explanation: "history.log enregistre la date, la commande et les paquets touchés. sources.list contient les dépôts et /var/cache/apt/archives les paquets téléchargés."
+      }
+      question "Quelle durée de conservation des journaux d’accès la CNIL recommande-t-elle en général ?" {
+        - "un mois"
+        + "six mois à un an"
+        - "cinq ans"
+        - "sans limite"
+        explanation: "La recommandation de la CNIL sur la journalisation fixe en général une durée de six mois à un an, sauf obligation légale contraire. Les journaux contiennent des données personnelles, qu'on ne garde pas indéfiniment."
+      }
+      question "Quel outil gère la rotation et la compression des fichiers texte de /var/log ?" {
+        - "journald"
+        - "rsync"
+        + "logrotate"
+        - "cron.log"
+        explanation: "logrotate renomme, compresse et supprime les vieux fichiers selon les règles de /etc/logrotate.d/. journald gère seulement son propre journal binaire."
+      }
+      question "Pourquoi l’ANSSI recommande-t-elle de copier les journaux sur une autre machine ?" {
+        - "pour libérer de la place sur le serveur"
+        + "pour qu'un attaquant qui prend le serveur ne puisse pas effacer ses traces"
+        - "parce que journald ne sait pas écrire sur disque"
+        - "pour que les journaux soient plus rapides à lire"
+        explanation: "Un attaquant qui obtient root peut modifier les journaux locaux. Une copie sur un serveur de collecte reste exploitable pour l'enquête."
+      }
+    }
+  }
+
+  module "disques-partitions" {
+    title: "Chapitre 6 : disques, partitions, systèmes de fichiers et fstab"
+    duration: "40min"
+    content: """
+### Repérer les disques
+Linux nomme les disques par fichiers spéciaux dans `/dev` : `/dev/sda`, `/dev/sdb` (SATA, SAS, USB, et la plupart des disques virtuels), `/dev/vda` (disque virtio sous KVM et Proxmox), `/dev/nvme0n1` (SSD NVMe). Les partitions ajoutent un numéro : `/dev/sdb1`, ou `p1` pour NVMe (`/dev/nvme0n1p1`).
+
+```text
+$ lsblk -f
+NAME   FSTYPE FSVER LABEL   UUID                                 FSAVAIL FSUSE% MOUNTPOINTS
+sda
+├─sda1 ext4   1.0           3c1d...e2a1                            12,1G    35% /
+└─sda2 swap   1                 9f02...77b0                                       [SWAP]
+sdb
+```
+`lsblk` montre l'arbre disques et partitions, `-f` ajoute le système de fichiers, le label et l'**UUID**. Autres outils : `sudo blkid` (UUID et type), `df -h` (place utilisée par système de fichiers monté), `du -sh dossier` (taille d'un dossier), `findmnt` (arbre des montages).
+
+**Attention** : le nom `sdb` n'est pas garanti d'un démarrage à l'autre (l'ordre de détection peut changer). Pour désigner durablement une partition, on utilise son **UUID** (identifiant unique écrit dans le système de fichiers) ou son label.
+
+### Table de partitions : GPT ou MBR
+• **MBR** (ou « dos ») : ancienne table, 4 partitions principales au plus, disques limités à 2 Tio.
+• **GPT** : table moderne, 128 partitions par défaut, disques de très grande taille, requise par l'UEFI pour démarrer. Choisis GPT pour tout nouveau disque.
+
+`fdisk` gère les deux ; `parted` et `gdisk` sont des alternatives. Dans `fdisk`, rien n'est écrit tant que tu n'as pas tapé `w` : `q` quitte sans modifier.
+
+### Partitionner et formater un disque de données
+Exemple sur un second disque vide `/dev/sdb` de 20 Gio.
+
+**Avertissement** : partitionner ou formater **efface** les données du disque visé. Vérifie trois fois le nom du disque avec `lsblk` avant de valider, surtout sur un serveur en production.
+
+```bash
+sudo fdisk /dev/sdb
+#  g   -> crée une table GPT vide
+#  n   -> nouvelle partition (Entrée trois fois : numéro 1, tout le disque)
+#  p   -> affiche la table pour vérifier
+#  w   -> écrit et quitte
+sudo mkfs.ext4 -L donnees /dev/sdb1     # crée un système de fichiers ext4 avec le label donnees
+sudo mkdir -p /srv/donnees
+sudo mount /dev/sdb1 /srv/donnees       # montage manuel, jusqu'au prochain redémarrage
+df -h /srv/donnees
+```
+
+Systèmes de fichiers courants : **ext4** (le choix standard de Debian), **XFS** (par défaut sur Red Hat, très bon pour les gros fichiers, ne peut pas être réduit), **Btrfs** (instantanés intégrés), **vfat/exFAT** (clés USB lisibles par Windows et macOS). `mkfs.xfs`, `mkfs.vfat` existent sur le même modèle.
+
+### Monter au démarrage : /etc/fstab
+Le fichier `/etc/fstab` décrit les montages faits au démarrage. Chaque ligne a **6 champs** :
+```text
+# <source>                                 <point de montage> <type> <options>                 <dump> <pass>
+UUID=5b2e8c1a-0d6f-4c3e-9a77-1f2d3c4b5a69  /srv/donnees       ext4   defaults,nodev,nosuid,nofail  0      2
+```
+1. la **source** : `UUID=...` (recommandé), `LABEL=donnees` ou un chemin `/dev/...` ;
+2. le **point de montage** (le dossier doit exister) ;
+3. le **type** (`ext4`, `xfs`, `swap`, `nfs`…) ;
+4. les **options**, séparées par des virgules sans espace ;
+5. **dump** : `0` (plus utilisé) ;
+6. **pass** : ordre de vérification par fsck au démarrage, `1` pour la racine, `2` pour les autres, `0` pour aucune vérification.
+
+Options utiles :
+| Option | Effet |
+|---|---|
+| `defaults` | réglages standard (lecture-écriture, montage automatique…) |
+| `ro` | lecture seule |
+| `noexec` | interdit d'exécuter un programme depuis cette partition |
+| `nosuid` | ignore les bits SUID et SGID |
+| `nodev` | ignore les fichiers de périphériques |
+| `nofail` | le démarrage continue même si le disque est absent |
+| `noatime` | n'écrit pas la date de dernier accès (moins d'écritures) |
+
+L'ANSSI recommande de séparer `/home`, `/tmp`, `/var` et les données sur des partitions montées avec `nodev`, `nosuid` et, quand c'est possible, `noexec`.
+
+### Ne pas bloquer le démarrage
+Une erreur dans `/etc/fstab` (UUID faux, faute de frappe, disque retiré) peut faire démarrer la machine en **mode de secours** (emergency mode), ce qui est très gênant sur un serveur distant. Avant tout redémarrage :
+```bash
+sudo findmnt --verify          # analyse fstab et signale les erreurs
+sudo systemctl daemon-reload   # systemd régénère ses unités de montage depuis fstab
+sudo mount -a                  # monte tout ce qui est dans fstab et pas encore monté
+```
+Si `mount -a` ne dit rien et que `findmnt /srv/donnees` affiche le montage, la ligne est bonne. `nofail` sur les disques non indispensables est une sécurité supplémentaire.
+
+Pour démonter : `sudo umount /srv/donnees` (sans « n »). Si la réponse est `target is busy`, un processus utilise le dossier : `sudo lsof +D /srv/donnees` ou `sudo fuser -vm /srv/donnees` le trouve (et souvent, c'est ton propre terminal qui est dans le dossier).
+
+### Agrandir et surveiller
+• `df -h` régulièrement : un `/var` plein arrête les bases de données, les journaux et parfois les connexions.
+• `df -i` : un système de fichiers peut être « plein » faute d'**inodes** (trop de petits fichiers) alors qu'il reste de la place.
+• `du -xh /var | sort -h | tail` : les dossiers les plus gros.
+• Sur un disque virtuel agrandi, on agrandit la partition (`growpart` du paquet `cloud-guest-utils`, ou `fdisk`), puis le système de fichiers (`resize2fs` pour ext4, `xfs_growfs` pour XFS). Pour plus de souplesse, on utilise LVM (volumes logiques), qui dépasse le cadre de ce chapitre.
+
+### À toi de jouer
+1. Ajoute un disque de 10 Gio à ta VM. Repère-le, crée une table GPT et une partition unique, formate-la en ext4 avec le label `sauvegardes`.
+2. Monte-la de façon permanente sur `/srv/sauvegardes` par son UUID, avec les options `nodev`, `nosuid`, `noexec` et `nofail`, et vérifie sans redémarrer.
+3. Lis cette ligne et trouve les deux erreurs : `/dev/sdc1 /mnt/usb ext4 defaults, noexec 0 1`
+4. `umount /srv/sauvegardes` répond `target is busy`. Que fais-tu ?
+
+### Correction
+1. `lsblk` : le nouveau disque apparaît sans partition (par exemple `sdb`, 10G). `sudo fdisk /dev/sdb` puis `g`, `n`, Entrée ×3, `w`. Puis `sudo mkfs.ext4 -L sauvegardes /dev/sdb1`. `lsblk -f` affiche `ext4` et le label.
+2. Récupère l'UUID avec `sudo blkid /dev/sdb1`, crée le dossier (`sudo mkdir -p /srv/sauvegardes`) et ajoute dans `/etc/fstab` :
+```text
+UUID=<uuid-lu-avec-blkid>  /srv/sauvegardes  ext4  defaults,nodev,nosuid,noexec,nofail  0  2
+```
+Puis `sudo findmnt --verify`, `sudo systemctl daemon-reload`, `sudo mount -a` et `findmnt /srv/sauvegardes` (les options apparaissent dans la colonne OPTIONS).
+3. Les options contiennent une espace après la virgule : fstab découpe les champs sur les espaces, la ligne est donc mal lue. Il faut écrire `defaults,noexec`. Et le dernier champ vaut `1`, réservé à la racine : pour un autre disque, mettre `2` (ou `0`). On préférera aussi l'UUID à `/dev/sdc1`, et `nofail` pour un disque amovible.
+4. Sors du dossier si ton terminal y est (`cd /`), cherche les processus qui l'utilisent (`sudo fuser -vm /srv/sauvegardes`), arrête-les proprement, puis recommence `sudo umount /srv/sauvegardes`.
+"""
+
+    codeblock "bash" {
+      title: "État des disques en un coup d'œil"
+      code: """
+lsblk -f                         # disques, partitions, systèmes de fichiers, UUID
+df -hT -x tmpfs -x devtmpfs      # place libre, sans les systèmes en mémoire
+df -i /var                       # inodes restants
+sudo du -xh /var 2>/dev/null | sort -h | tail -n 10   # dossiers les plus gros
+findmnt --verify                 # cohérence de /etc/fstab
+sudo dmesg -T | grep -i -E "i/o error|ext4-fs error" | tail   # erreurs disque
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Pourquoi désigner une partition par son UUID dans /etc/fstab ?" {
+        - "l'UUID est plus court à écrire"
+        + "le nom /dev/sdX peut changer d'un démarrage à l'autre, l'UUID non"
+        - "fstab refuse les noms /dev/sdX"
+        - "l'UUID accélère le montage"
+        explanation: "L'ordre de détection des disques peut varier (ajout d'un disque, USB). L'UUID est écrit dans le système de fichiers et reste le même. fstab accepte aussi /dev/sdX, mais c'est fragile."
+      }
+      question "Combien de champs contient une ligne de /etc/fstab ?" {
+        - "4"
+        - "5"
+        + "6"
+        - "7"
+        explanation: "Source, point de montage, type, options, dump et pass. Les deux derniers peuvent être omis, mais on les écrit pour la lisibilité."
+      }
+      question "Quelle valeur mettre dans le sixième champ (pass) pour un disque de données ext4 ?" {
+        - "1"
+        + "2"
+        - "9"
+        - "-1"
+        explanation: "1 est réservé au système de fichiers racine, vérifié en premier. 2 pour les autres, 0 pour ne pas vérifier (swap, NFS, certains XFS)."
+      }
+      question "Quelle option empêche d’exécuter un programme depuis une partition ?" {
+        - "nosuid"
+        - "nodev"
+        + "noexec"
+        - "ro"
+        explanation: "noexec bloque l'exécution directe des fichiers de la partition. nosuid ignore seulement les bits SUID/SGID, nodev les fichiers de périphériques, et ro interdit l'écriture."
+      }
+      question "Quel est l’intérêt de l’option nofail ?" {
+        - "elle répare le système de fichiers en cas d'erreur"
+        + "le démarrage continue même si le disque est absent"
+        - "elle empêche le démontage du disque"
+        - "elle désactive fsck"
+        explanation: "Sans nofail, un disque absent ou en panne peut bloquer le démarrage en mode de secours. Avec nofail, le système démarre et le montage est simplement manqué."
+      }
+      question "Quelle commande vérifie /etc/fstab sans redémarrer ?" {
+        - "fstab --check"
+        + "findmnt --verify, puis mount -a"
+        - "fsck /etc/fstab"
+        - "systemctl restart fstab"
+        explanation: "findmnt --verify analyse le fichier et mount -a monte tout ce qui est déclaré. fsck vérifie un système de fichiers, pas un fichier de configuration."
+      }
+      question "Dans fdisk, quelle touche écrit réellement la table de partitions sur le disque ?" {
+        - "n"
+        - "p"
+        + "w"
+        - "q"
+        explanation: "w (write) écrit et quitte. n crée une partition en mémoire, p l'affiche, q quitte sans rien écrire : tant que w n'est pas tapé, le disque n'est pas modifié."
+      }
+      question "Quel type de table de partitions choisir pour un nouveau disque de 4 Tio ?" {
+        - "MBR, plus compatible"
+        + "GPT, car MBR est limité à 2 Tio"
+        - "aucune, on formate le disque entier"
+        - "FAT32"
+        explanation: "MBR ne gère pas plus de 2 Tio et 4 partitions principales. GPT n'a pas ces limites. FAT32 est un système de fichiers, pas une table de partitions."
+      }
+      question "Quelle commande affiche les disques, partitions, systèmes de fichiers et UUID en arbre ?" {
+        - "df -h"
+        + "lsblk -f"
+        - "du -sh"
+        - "mount -l"
+        explanation: "lsblk -f montre l'arbre complet avec type, label et UUID, y compris les partitions non montées. df -h ne montre que les systèmes montés, du mesure des dossiers."
+      }
+      question "umount /srv/donnees répond « target is busy ». Que signifie ce message ?" {
+        - "le disque est en panne"
+        + "un processus utilise encore un fichier ou le dossier lui-même"
+        - "il faut écrire unmount"
+        - "le système de fichiers est en lecture seule"
+        explanation: "Un processus a un fichier ouvert ou son dossier courant dans le montage. fuser -vm ou lsof +D le trouvent. La commande s'écrit bien umount."
+      }
+      question "df -h indique 40 % d’utilisation, mais la création de fichiers échoue avec « No space left on device ». Que vérifies-tu ?" {
+        - "la mémoire vive avec free -h"
+        + "les inodes avec df -i"
+        - "la table de partitions avec fdisk -l"
+        - "le umask"
+        explanation: "Chaque fichier consomme un inode. Des millions de petits fichiers (cache, sessions) épuisent les inodes alors qu'il reste de la place. df -i le montre."
+      }
+      question "Que fait la commande mkfs.ext4 -L donnees /dev/sdb1 ?" {
+        - "monte /dev/sdb1 sur le dossier donnees"
+        + "crée un système de fichiers ext4 nommé donnees sur la partition, en effaçant son contenu"
+        - "vérifie le système de fichiers de /dev/sdb1"
+        - "crée une partition nommée donnees"
+        explanation: "mkfs crée un système de fichiers vide (formatage) et -L lui donne un label. Les données existantes sont perdues. La partition elle-même se crée avec fdisk."
+      }
+      question "Après avoir modifié /etc/fstab, pourquoi lancer systemctl daemon-reload ?" {
+        - "pour redémarrer tous les services"
+        + "systemd génère ses unités de montage à partir de fstab et doit les régénérer"
+        - "pour formater les nouvelles partitions"
+        - "ce n'est jamais utile"
+        explanation: "systemd convertit chaque ligne de fstab en unité .mount. Sans daemon-reload, il garde l'ancienne version ; mount affiche d'ailleurs un rappel dans ce cas."
+      }
+    }
+  }
+
+  module "reseau" {
+    title: "Chapitre 7 : configurer le réseau avec ip, nmcli et netplan"
+    duration: "40min"
+    content: """
+### Observer avec ip
+La commande `ip` (paquet `iproute2`) remplace les anciennes `ifconfig`, `route` et `netstat`.
+```text
+$ ip -br a
+lo      UNKNOWN  127.0.0.1/8 ::1/128
+ens18   UP       192.168.10.50/24 fe80::be24:11ff:fe2a:51c0/64
+$ ip route
+default via 192.168.10.254 dev ens18 proto static
+192.168.10.0/24 dev ens18 proto kernel scope link src 192.168.10.50
+```
+| Commande | Ce qu'elle montre ou fait |
+|---|---|
+| `ip a` (ou `ip -br a`) | adresses de chaque interface (forme brève avec `-br`) |
+| `ip link` | interfaces, état UP/DOWN, adresse MAC |
+| `ip route` (ou `ip r`) | table de routage ; la ligne `default via` est la passerelle |
+| `ip neigh` | table ARP (voisins IPv4) et voisins IPv6 |
+| `ss -tulpn` | ports TCP et UDP en écoute, avec le programme (`-p` demande sudo) |
+| `resolvectl status` | serveurs DNS utilisés (avec systemd-resolved) |
+
+Les noms d'interfaces modernes sont **prévisibles** : `ens18`, `enp3s0` (carte PCI), `wlp2s0` (Wi-Fi). Ils dépendent de l'emplacement matériel, pas de l'ordre de détection.
+
+### Modifier à chaud, sans persistance
+`ip` peut aussi modifier la configuration, mais **tout est perdu au redémarrage** :
+```bash
+sudo ip addr add 192.168.10.60/24 dev ens18     # ajoute une deuxième adresse
+sudo ip route add 10.20.0.0/16 via 192.168.10.1 # ajoute une route
+sudo ip link set ens18 down                     # coupe l'interface
+```
+C'est utile pour un test ou un dépannage. **Attention** en SSH : `ip link set ... down` ou une erreur de route sur l'interface par laquelle tu es connecté te coupe la session. Pour une configuration durable, il faut passer par l'outil de configuration de la distribution.
+
+### Qui gère le réseau ? Trois cas
+| Système | Outil | Fichiers |
+|---|---|---|
+| Debian serveur (installation sans bureau) | ifupdown | `/etc/network/interfaces` |
+| Ubuntu Server | netplan, qui génère la configuration de systemd-networkd | `/etc/netplan/*.yaml` |
+| Postes avec bureau, Red Hat, beaucoup de serveurs récents | NetworkManager, piloté par `nmcli` | `/etc/NetworkManager/system-connections/` |
+
+Repère le tien : `ls /etc/netplan/` (des fichiers ? netplan), `systemctl is-active NetworkManager`, `cat /etc/network/interfaces`. Ne mélange pas deux outils sur la même interface : ils se contrediraient.
+
+### Debian avec ifupdown
+```text
+# /etc/network/interfaces
+auto ens18
+iface ens18 inet static
+    address 192.168.10.50/24
+    gateway 192.168.10.254
+```
+Les serveurs DNS se mettent dans `/etc/resolv.conf` (ligne `nameserver 192.168.10.10`) ou, si le paquet `resolvconf` est installé, avec `dns-nameservers` dans ce fichier. Puis `sudo systemctl restart networking`, ou `sudo ifdown ens18 && sudo ifup ens18` en console.
+
+### NetworkManager avec nmcli
+NetworkManager raisonne en **connexions** (des profils) appliquées à des interfaces (devices).
+```bash
+nmcli device status                         # interfaces et connexion active
+nmcli connection show                       # profils existants
+sudo nmcli connection modify "Wired connection 1" \
+  ipv4.method manual \
+  ipv4.addresses 192.168.10.50/24 \
+  ipv4.gateway 192.168.10.254 \
+  ipv4.dns "192.168.10.10 9.9.9.9" \
+  ipv4.dns-search lycee.internal
+sudo nmcli connection up "Wired connection 1"   # applique les changements
+```
+Le nom du profil dépend de l'installation (« Wired connection 1 », « Connexion filaire 1 », `ens18`…) : copie-le depuis `nmcli connection show`. Une modification n'est appliquée qu'au `connection up` suivant. Pour revenir en DHCP : `ipv4.method auto` et vider les champs (`ipv4.addresses ""`, `ipv4.gateway ""`). `nmtui` offre la même chose dans une interface texte.
+
+### Ubuntu avec netplan
+Netplan lit des fichiers YAML dans `/etc/netplan/` et génère la configuration du moteur (`networkd` sur un serveur, `NetworkManager` sur un poste). Exemple `/etc/netplan/50-cloud-init.yaml` ou un fichier à toi, `01-lan.yaml` :
+```yaml
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    ens18:
+      dhcp4: false
+      addresses:
+        - 192.168.10.50/24
+      routes:
+        - to: default
+          via: 192.168.10.254
+      nameservers:
+        addresses: [192.168.10.10, 9.9.9.9]
+        search: [lycee.internal]
+```
+Le YAML est **sensible à l'indentation** : uniquement des espaces, jamais de tabulations, et toujours le même décalage. L'ancienne clé `gateway4` est dépréciée : on utilise `routes` avec `to: default`. Les fichiers doivent être lisibles par root seulement (`chmod 600`), sinon netplan affiche un avertissement.
+
+Pour appliquer :
+```bash
+sudo netplan generate      # vérifie la syntaxe et génère la configuration
+sudo netplan try           # applique, puis revient en arrière après 120 s sans confirmation
+sudo netplan apply         # applique définitivement
+```
+`netplan try` est le bon réflexe à distance : si la nouvelle configuration te coupe, tu ne peux pas appuyer sur Entrée, et l'ancienne revient toute seule au bout de 120 secondes.
+
+### Vérifier après chaque changement
+Teste dans l'ordre, du plus proche au plus lointain : adresse (`ip -br a`), passerelle (`ping -c3 192.168.10.254`), route (`ip route get 9.9.9.9`), Internet par adresse (`ping -c3 9.9.9.9`), DNS (`resolvectl query debian.org` ou `getent hosts debian.org`). La première étape qui échoue désigne la couche en cause.
+
+### À toi de jouer
+1. Relève l'adresse, le masque, la passerelle et les serveurs DNS actuels de ta VM, et dis quel outil gère son réseau.
+2. Passe-la en adresse fixe `192.168.10.50/24`, passerelle `192.168.10.254`, DNS `192.168.10.10` (adapte à ton réseau), avec l'outil de ta distribution. Fais-le de façon à ne pas perdre la main si tu te trompes.
+3. Ce fichier netplan est refusé. Trouve les erreurs :
+```yaml
+network:
+  version: 2
+  ethernets:
+    ens18:
+      addresses: 192.168.10.50/24
+      gateway4: 192.168.10.254
+	  nameservers:
+        addresses: [192.168.10.10]
+```
+4. Après ta modification, `ping 192.168.10.254` répond mais `ping 9.9.9.9` affiche `Network is unreachable`. Quelle est la cause ?
+
+### Correction
+1. `ip -br a` (adresse et masque), `ip route | grep default` (passerelle), `resolvectl status` ou `cat /etc/resolv.conf` (DNS). Puis `ls /etc/netplan/`, `systemctl is-active NetworkManager` et `cat /etc/network/interfaces` pour identifier l'outil.
+2. Selon le cas : netplan avec le fichier du cours, puis `sudo netplan try` et confirmation par Entrée si la connexion répond toujours ; nmcli avec `connection modify` puis `connection up` (en console de la VM de préférence) ; ifupdown avec `/etc/network/interfaces` puis `systemctl restart networking` depuis la console de l'hyperviseur. Vérification : `ip -br a`, `ip route`, `ping` de la passerelle puis d'Internet.
+3. Trois problèmes : une **tabulation** devant `nameservers` (interdite en YAML) ; `addresses` doit être une **liste** (`- 192.168.10.50/24` ou `[192.168.10.50/24]`) ; `gateway4` est déprécié, à remplacer par `routes: - to: default via: 192.168.10.254`. On ajoute aussi `dhcp4: false` pour être explicite. `sudo netplan generate` signale l'erreur avec sa ligne.
+4. Le réseau local fonctionne, mais il n'y a pas de **route par défaut** : `ip route` n'affiche pas de ligne `default via`. La passerelle a été oubliée ou mal écrite. Corrige la configuration et vérifie avec `ip route get 9.9.9.9`.
+"""
+
+    codeblock "bash" {
+      title: "Diagnostic réseau du bas vers le haut"
+      code: """
+ip -br link                          # interfaces UP ou DOWN
+ip -br a                             # adresses
+ip route                             # passerelle par défaut
+ip route get 9.9.9.9                 # quelle interface et quelle passerelle seront utilisées
+ping -c3 "$(ip route | awk '/^default/ {print $3; exit}')"   # ping de la passerelle
+resolvectl status | grep -A2 'DNS Servers'                   # serveurs DNS
+sudo ss -tulpn                       # services en écoute
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle commande affiche la passerelle par défaut sous Linux ?" {
+        - "ip a"
+        + "ip route"
+        - "ip link"
+        - "ip neigh"
+        explanation: "La table de routage (ip route) contient la ligne default via, qui est la passerelle. ip a montre les adresses, ip link les interfaces et ip neigh la table ARP."
+      }
+      question "Tu ajoutes une adresse avec sudo ip addr add 192.168.10.60/24 dev ens18. Que se passe-t-il au redémarrage ?" {
+        - "l'adresse est conservée"
+        + "l'adresse disparaît, car ip modifie seulement la configuration en cours"
+        - "l'adresse remplace celle du DHCP"
+        - "la machine refuse de démarrer"
+        explanation: "ip agit sur le noyau en mémoire. Pour une configuration durable, il faut passer par netplan, NetworkManager ou /etc/network/interfaces."
+      }
+      question "Quelle commande netplan applique une configuration et revient en arrière sans confirmation ?" {
+        - "netplan apply --safe"
+        + "netplan try"
+        - "netplan generate"
+        - "netplan rollback"
+        explanation: "netplan try applique la configuration et la retire après 120 secondes si tu ne confirmes pas. generate vérifie et génère sans appliquer ; rollback n'existe pas."
+      }
+      question "Dans un fichier netplan, comment déclare-t-on la passerelle par défaut aujourd’hui ?" {
+        - "gateway: 192.168.10.254"
+        - "gateway4: 192.168.10.254 (forme recommandée)"
+        + "routes avec une entrée to: default et via: 192.168.10.254"
+        - "default-route: 192.168.10.254"
+        explanation: "La clé gateway4 est dépréciée. La forme actuelle est une route dont la destination est default et le prochain saut via. Les deux autres clés n'existent pas."
+      }
+      question "Pourquoi un fichier YAML netplan est-il refusé alors que les valeurs sont justes ?" {
+        - "les adresses IP doivent être entre guillemets"
+        + "il contient une tabulation ou une indentation incohérente"
+        - "le fichier ne se termine pas par .conf"
+        - "les commentaires sont interdits"
+        explanation: "YAML structure les données par l'indentation, en espaces uniquement. Une tabulation ou un décalage différent change ou casse la structure. Les commentaires # sont autorisés et les fichiers se terminent par .yaml."
+      }
+      question "Après nmcli connection modify, la nouvelle adresse n’est pas appliquée. Que manque-t-il ?" {
+        - "systemctl daemon-reload"
+        + "nmcli connection up sur ce profil"
+        - "netplan apply"
+        - "un redémarrage obligatoire de la machine"
+        explanation: "modify enregistre le profil, mais il n'est appliqué qu'à la réactivation de la connexion (connection up). netplan concerne un autre outil."
+      }
+      question "Quelle commande liste les ports TCP et UDP en écoute avec le programme associé ?" {
+        - "ip -p"
+        + "ss -tulpn"
+        - "ping -l"
+        - "ip neigh"
+        explanation: "ss -t (TCP) -u (UDP) -l (écoute) -p (programme) -n (numérique). Pour voir le programme des autres comptes, lance-la avec sudo."
+      }
+      question "Sur une Debian serveur installée sans bureau, quel fichier décrit souvent l’adresse fixe ?" {
+        - "/etc/netplan/01-lan.yaml"
+        + "/etc/network/interfaces"
+        - "/etc/hostname"
+        - "/etc/hosts"
+        explanation: "L'installateur Debian sans bureau utilise ifupdown et /etc/network/interfaces. Netplan est l'outil d'Ubuntu. /etc/hostname contient le nom de la machine."
+      }
+      question "ping vers la passerelle répond, mais ping 9.9.9.9 donne « Network is unreachable ». Que manque-t-il le plus probablement ?" {
+        - "un serveur DNS"
+        + "la route par défaut"
+        - "l'adresse MAC de la carte"
+        - "le port 53 ouvert"
+        explanation: "Network is unreachable signifie que le noyau ne trouve aucune route vers cette adresse. Sans ligne default via, seul le réseau local est joignable. Le DNS n'intervient pas pour une adresse IP."
+      }
+      question "Que montre ip route get 9.9.9.9 ?" {
+        - "le temps de réponse de 9.9.9.9"
+        + "l'interface, la passerelle et l'adresse source qui seront utilisées pour joindre 9.9.9.9"
+        - "le nom DNS de 9.9.9.9"
+        - "la liste des routeurs traversés"
+        explanation: "ip route get interroge la table de routage pour une destination précise. Le chemin complet routeur par routeur se voit avec traceroute ou mtr."
+      }
+      question "Pourquoi le nom d’interface ens18 ne change-t-il pas quand on ajoute une autre carte ?" {
+        - "il est choisi au hasard une fois pour toutes"
+        + "les noms prévisibles dépendent de l'emplacement matériel, pas de l'ordre de détection"
+        - "il est écrit dans /etc/hostname"
+        - "c'est le nom donné par le DHCP"
+        explanation: "Les noms prévisibles (ens, enp, wlp) sont calculés à partir du bus et de l'emplacement de la carte. Les anciens noms eth0, eth1 dépendaient de l'ordre de détection."
+      }
+      question "Quelle précaution prendre avant de modifier le réseau d’un serveur à distance ?" {
+        - "désactiver le pare-feu"
+        + "prévoir un retour arrière automatique ou un accès console"
+        - "redémarrer le serveur avant la modification"
+        - "passer toutes les interfaces en DHCP"
+        explanation: "Une erreur peut couper la session SSH. netplan try, une console de l'hyperviseur ou un accès hors bande permettent de récupérer la main. Désactiver le pare-feu ajoute un risque sans régler celui-là."
+      }
+    }
+  }
+
+  module "ssh-cles" {
+    title: "Chapitre 8 : SSH avec clés et durcissement du serveur"
+    duration: "40min"
+    content: """
+### SSH en deux mots
+**SSH** (Secure Shell) ouvre un terminal chiffré sur une machine distante, sur le **port TCP 22** par défaut. Il sert aussi à copier des fichiers (`scp`, `sftp`, `rsync`) et à faire des tunnels. Le paquet `openssh-server` fournit le serveur (service `ssh` sur Debian et Ubuntu, `sshd` sur Red Hat), `openssh-client` le client, présent aussi sur Windows 10 et 11.
+
+### La première connexion et l'empreinte du serveur
+```text
+$ ssh alice@192.168.10.50
+The authenticity of host '192.168.10.50' can't be established.
+ED25519 key fingerprint is SHA256:Qe3v...k2o.
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+Le client ne connaît pas encore la **clé d'hôte** du serveur. Vérifie l'empreinte par un autre moyen (sur la console du serveur : `ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub`) avant de répondre `yes`. Elle est ensuite enregistrée dans `~/.ssh/known_hosts`. Si elle change un jour (message `REMOTE HOST IDENTIFICATION HAS CHANGED`), c'est soit une réinstallation du serveur, soit une interception : renseigne-toi avant de supprimer l'ancienne ligne avec `ssh-keygen -R 192.168.10.50`.
+
+### Pourquoi des clés plutôt qu'un mot de passe
+Un serveur SSH exposé reçoit en permanence des essais de mots de passe automatisés. Avec une **paire de clés** :
+• la **clé privée** reste sur ton poste, protégée par une phrase de passe ; elle ne circule jamais ;
+• la **clé publique** est copiée sur le serveur, dans `~/.ssh/authorized_keys` du compte ;
+• à la connexion, le serveur vérifie que tu possèdes la clé privée correspondante, sans qu'aucun secret ne transite.
+
+L'ANSSI recommande l'authentification par clé, des algorithmes récents, et l'interdiction de la connexion directe en root.
+
+### Créer et installer une clé
+Sur ton poste (Linux, macOS ou PowerShell sous Windows) :
+```bash
+ssh-keygen -t ed25519 -C "alice@poste-cdi"
+# Fichier proposé : ~/.ssh/id_ed25519 (privée) et ~/.ssh/id_ed25519.pub (publique)
+# Choisis une phrase de passe : elle protège la clé si ton poste est volé
+ssh-copy-id alice@192.168.10.50        # ajoute la clé publique à authorized_keys
+ssh alice@192.168.10.50                # connexion par clé
+```
+Ed25519 est l'algorithme conseillé aujourd'hui (clés courtes, rapides, sûres). Si un vieil équipement l'ignore, utilise RSA avec au moins 3072 bits (`-t rsa -b 4096`).
+
+Sans `ssh-copy-id` (cas de Windows), copie le contenu du `.pub` sur une ligne à la fin de `~/.ssh/authorized_keys` sur le serveur. Les droits comptent : le serveur **refuse la clé** si `~/.ssh` ou `authorized_keys` sont modifiables par d'autres (option `StrictModes`, active par défaut). Les bons droits : `chmod 700 ~/.ssh` et `chmod 600 ~/.ssh/authorized_keys`, propriétaire l'utilisateur lui-même.
+
+`ssh-agent` garde la clé déverrouillée pendant ta session (`ssh-add` la charge) : tu tapes la phrase de passe une fois.
+
+### Le fichier ~/.ssh/config du client
+```text
+Host srv-lab
+    HostName 192.168.10.50
+    User alice
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+```
+Ensuite, `ssh srv-lab` suffit, et `scp fichier srv-lab:/tmp/` aussi.
+
+### Durcir le serveur
+La configuration est dans `/etc/ssh/sshd_config`. Sur Debian et Ubuntu, ce fichier inclut en tête `/etc/ssh/sshd_config.d/*.conf` : crée plutôt ton propre fichier, par exemple `/etc/ssh/sshd_config.d/50-durcissement.conf`. Pour sshd, **c'est la première valeur lue qui compte** : une ligne dans `sshd_config.d` l'emporte donc sur la même ligne plus bas dans le fichier principal.
+```text
+PermitRootLogin no
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PubkeyAuthentication yes
+AllowGroups ssh-users
+MaxAuthTries 3
+LoginGraceTime 30
+X11Forwarding no
+```
+• `PermitRootLogin no` : root ne se connecte pas directement ; on se connecte avec son compte puis `sudo`. (La valeur par défaut, `prohibit-password`, autorise root par clé seulement.)
+• `PasswordAuthentication no` : plus de mot de passe, seulement les clés (par défaut : `yes`).
+• `AllowGroups ssh-users` : seuls les membres de ce groupe peuvent se connecter. Crée le groupe et ajoutes-y les comptes **avant** d'activer la règle.
+• `MaxAuthTries` (6 par défaut) limite les essais par connexion.
+
+La procédure sans risque :
+1. Vérifie que ta connexion par **clé** fonctionne.
+2. Écris la configuration, puis teste la syntaxe : `sudo sshd -t` (aucune sortie = correct).
+3. Recharge : `sudo systemctl reload ssh`. Les sessions ouvertes ne sont pas coupées.
+4. **Garde ta session actuelle ouverte** et teste une nouvelle connexion dans un autre terminal. Si elle échoue, corrige depuis la session restée ouverte.
+
+`sudo sshd -T | grep -i -E "permitrootlogin|passwordauthentication"` affiche les valeurs réellement appliquées. Sur Ubuntu 24.04, SSH est activé par socket (`ssh.socket`) : un changement de **port** demande `sudo systemctl daemon-reload` puis `sudo systemctl restart ssh.socket`.
+
+Changer de port réduit le bruit dans les journaux, mais ne protège pas vraiment. Ce qui protège : clés seulement, pas de root, comptes limités, mises à jour, et un outil comme **fail2ban**, qui bannit temporairement les adresses qui accumulent les échecs, ou un pare-feu qui n'autorise SSH que depuis le réseau d'administration.
+
+### À toi de jouer
+1. Génère une clé Ed25519 avec phrase de passe sur ton poste et installe-la pour `alice` sur la VM. Prouve que la connexion se fait par clé.
+2. Crée le groupe `ssh-users`, mets-y `alice`, puis interdis root, les mots de passe et tous les comptes hors du groupe, sans te couper l'accès.
+3. Un utilisateur te dit : « ma clé ne marche pas, il me redemande mon mot de passe ». Côté serveur, `ls -ld /home/bob/.ssh` affiche `drwxrwxr-x`. Que se passe-t-il ?
+4. Depuis un autre compte, essaie `ssh root@192.168.10.50` et `ssh -o PubkeyAuthentication=no alice@192.168.10.50`. Lis ce que le journal du serveur en dit.
+
+### Correction
+1. `ssh-keygen -t ed25519 -C "alice@poste"` puis `ssh-copy-id alice@192.168.10.50`. Preuve : `ssh -v alice@192.168.10.50` affiche `Authenticated to 192.168.10.50 ... using "publickey"`, et côté serveur `journalctl -u ssh` montre `Accepted publickey for alice`.
+2. Sur le serveur : `sudo groupadd ssh-users && sudo usermod -aG ssh-users alice`. Crée `/etc/ssh/sshd_config.d/50-durcissement.conf` avec les lignes du cours, puis `sudo sshd -t`, `sudo systemctl reload ssh`. Sans fermer ta session, ouvre un autre terminal : `ssh alice@...` doit fonctionner.
+3. Le dossier `.ssh` est modifiable par le groupe : avec `StrictModes yes`, sshd ignore `authorized_keys` et passe au mot de passe (ou refuse si les mots de passe sont interdits). Correction : `sudo chmod 700 /home/bob/.ssh`, `sudo chmod 600 /home/bob/.ssh/authorized_keys`, `sudo chown -R bob:bob /home/bob/.ssh`. Le journal du serveur contient un message `Authentication refused: bad ownership or modes`.
+4. Les deux sont refusées (`Permission denied (publickey)`). `journalctl -u ssh -n 20` montre les tentatives refusées, avec l'adresse source. Ce sont ces lignes que fail2ban surveille.
+"""
+
+    codeblock "bash" {
+      title: "Vérifier un serveur SSH"
+      code: """
+sudo sshd -t                                     # syntaxe (rien = correct)
+sudo sshd -T | grep -i -E "^(permitrootlogin|passwordauthentication|pubkeyauthentication|allowgroups|maxauthtries) "
+ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub # empreinte à communiquer aux utilisateurs
+journalctl -u ssh --since today -g "Accepted|Failed|Invalid" --no-pager | tail -n 20
+ls -ld ~/.ssh ~/.ssh/authorized_keys             # attendu : drwx------ et -rw-------
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Où se place la clé publique d’un utilisateur sur le serveur SSH ?" {
+        - "/etc/ssh/ssh_host_ed25519_key.pub"
+        + "~/.ssh/authorized_keys du compte visé"
+        - "~/.ssh/known_hosts du compte visé"
+        - "/etc/ssh/sshd_config"
+        explanation: "authorized_keys liste les clés publiques autorisées pour ce compte. known_hosts, côté client, contient les clés des serveurs connus, et ssh_host_* sont les clés propres au serveur."
+      }
+      question "Quelle commande crée une paire de clés Ed25519 ?" {
+        - "ssh-copy-id -t ed25519"
+        + "ssh-keygen -t ed25519"
+        - "ssh-add -t ed25519"
+        - "openssl genrsa ed25519"
+        explanation: "ssh-keygen génère les clés. ssh-copy-id installe une clé publique sur un serveur, ssh-add charge une clé dans l'agent."
+      }
+      question "Quels droits doit avoir le fichier ~/.ssh/authorized_keys ?" {
+        - "777"
+        - "664"
+        + "600"
+        - "755"
+        explanation: "Avec StrictModes, actif par défaut, sshd ignore les fichiers modifiables par d'autres que le propriétaire. 600 pour le fichier et 700 pour le dossier .ssh sont les valeurs sûres."
+      }
+      question "Quelle directive interdit toute connexion SSH directe en root ?" {
+        - "PermitRootLogin prohibit-password"
+        + "PermitRootLogin no"
+        - "AllowUsers root"
+        - "PasswordAuthentication no"
+        explanation: "no interdit root par tous les moyens. prohibit-password, la valeur par défaut, l'autorise encore par clé. PasswordAuthentication no interdit les mots de passe pour tous les comptes."
+      }
+      question "Quelle commande teste la syntaxe de la configuration du serveur SSH avant de la recharger ?" {
+        - "ssh -t"
+        + "sshd -t"
+        - "systemctl check ssh"
+        - "ssh-keygen -t"
+        explanation: "sshd -t lit la configuration et signale les erreurs sans démarrer le serveur. ssh -t force l'allocation d'un terminal côté client, et ssh-keygen -t choisit un type de clé."
+      }
+      question "Pourquoi garder une session SSH ouverte pendant que tu modifies sshd_config ?" {
+        - "pour que la modification soit prise en compte"
+        + "pour pouvoir corriger si la nouvelle configuration empêche les connexions"
+        - "parce que reload coupe toutes les sessions"
+        - "pour que la clé reste chargée dans l'agent"
+        explanation: "Un reload n'interrompt pas les sessions établies. Si la nouvelle configuration bloque les nouvelles connexions, la session restée ouverte permet de réparer sans accès physique."
+      }
+      question "Sur Debian, une ligne PasswordAuthentication no est dans /etc/ssh/sshd_config.d/50-durcissement.conf et une ligne PasswordAuthentication yes plus bas dans sshd_config. Quelle valeur s’applique ?" {
+        - "yes, car le fichier principal l'emporte"
+        + "no, car sshd garde la première valeur lue et le dossier .d est inclus en tête"
+        - "aucune, sshd refuse de démarrer"
+        - "la dernière modifiée sur le disque"
+        explanation: "Pour la plupart des options, sshd retient la première valeur rencontrée. Debian inclut sshd_config.d au début du fichier principal : la valeur du fichier .d est lue d'abord. sshd -T le confirme."
+      }
+      question "Le client affiche « REMOTE HOST IDENTIFICATION HAS CHANGED ». Que faut-il faire d’abord ?" {
+        - "supprimer known_hosts et se reconnecter"
+        + "vérifier si le serveur a été réinstallé, car il peut s'agir d'une interception"
+        - "désactiver StrictHostKeyChecking"
+        - "régénérer sa propre clé"
+        explanation: "La clé d'hôte a changé : réinstallation légitime ou attaque de l'homme du milieu. On vérifie la nouvelle empreinte par un autre canal avant de retirer l'ancienne ligne avec ssh-keygen -R."
+      }
+      question "Quel est le rôle de la phrase de passe d’une clé privée SSH ?" {
+        - "elle est envoyée au serveur à chaque connexion"
+        + "elle chiffre la clé privée sur le disque, utile si le poste est volé"
+        - "elle remplace le mot de passe du compte sur le serveur"
+        - "elle est obligatoire pour ssh-copy-id"
+        explanation: "La phrase de passe protège le fichier de la clé privée. Elle ne quitte jamais le poste. ssh-agent évite de la retaper à chaque connexion."
+      }
+      question "Quelle mesure protège réellement un serveur SSH exposé aux essais de mots de passe ?" {
+        - "changer le port 22 en 2222"
+        + "n'accepter que les clés et bannir les adresses fautives avec fail2ban"
+        - "masquer la bannière de version"
+        - "désactiver IPv6"
+        explanation: "Sans mot de passe accepté, les essais automatisés échouent tous ; fail2ban réduit en plus le bruit et la charge. Changer de port réduit seulement le nombre d'essais visibles."
+      }
+      question "Quelle commande installe ta clé publique sur un serveur Linux depuis ton poste ?" {
+        - "ssh-keygen -R alice@srv"
+        + "ssh-copy-id alice@srv"
+        - "scp ~/.ssh/id_ed25519 alice@srv:"
+        - "ssh-add alice@srv"
+        explanation: "ssh-copy-id ajoute la clé publique à authorized_keys avec les bons droits. Copier id_ed25519, la clé privée, serait une grave erreur : elle ne doit jamais quitter ton poste."
+      }
+      question "Tu ajoutes AllowGroups ssh-users et tu recharges sshd. Plus personne ne peut se connecter. Pourquoi ?" {
+        - "AllowGroups n'existe pas"
+        + "aucun compte n'était encore membre du groupe ssh-users"
+        - "il faut redémarrer la machine"
+        - "AllowGroups bloque seulement root"
+        explanation: "Quand AllowGroups est présent, seuls les membres des groupes listés peuvent se connecter. Il faut créer le groupe et y ajouter les comptes avant d'activer la règle, puis tester dans une nouvelle session."
+      }
+    }
+  }
+
+  module "planification-sauvegarde" {
+    title: "Chapitre 9 : planifier avec cron et les timers, sauvegarder avec tar et rsync"
+    duration: "45min"
+    content: """
+### cron : la planification classique
+Le démon **cron** lance des commandes à heure fixe. Chaque utilisateur a sa table, éditée avec `crontab -e` (`crontab -l` pour l'afficher). Une ligne contient **5 champs de temps** puis la commande :
+```text
+# min  heure  jour-du-mois  mois  jour-de-la-semaine  commande
+  30   2      *             *     *                   /usr/local/bin/sauvegarde.sh
+  */15 8-18   *             *     1-5                 /usr/local/bin/verif-disque.sh
+  0    7      1             *     *                   /usr/local/bin/rapport-mensuel.sh
+```
+• minute 0-59, heure 0-23, jour du mois 1-31, mois 1-12, jour de la semaine 0-7 (**0 et 7 = dimanche**, 1 = lundi) ;
+• `*` = toutes les valeurs, `1-5` = intervalle, `1,15` = liste, `*/15` = toutes les 15 unités ;
+• la première ligne s'exécute tous les jours à 2 h 30, la deuxième toutes les 15 minutes de 8 h à 18 h 45 du lundi au vendredi, la troisième le 1er de chaque mois à 7 h ;
+• raccourcis : `@reboot` (au démarrage), `@daily` (chaque jour à minuit), `@weekly`, `@monthly`.
+
+Pièges classiques :
+• cron utilise un environnement minimal (`PATH=/usr/bin:/bin`) : écris des **chemins complets** dans la commande et dans le script.
+• Le caractère `%` a un sens spécial dans une crontab (fin de ligne) : écris `\%`, par exemple `date +\%F`.
+• Si le jour du mois **et** le jour de la semaine sont tous deux restreints, la commande s'exécute quand l'**un ou l'autre** correspond.
+• La sortie de la commande est envoyée par courrier local (variable `MAILTO`) ; sans serveur de courrier, elle est perdue. Redirige-la : `>> /var/log/sauvegarde.log 2>&1`.
+• Machine éteinte à l'heure prévue = tâche manquée (l'outil `anacron` rattrape les tâches quotidiennes sur les postes).
+
+Les tâches système se placent dans `/etc/cron.d/` (fichiers avec un **sixième champ** : l'utilisateur qui exécute) ou dans `/etc/cron.daily/`, `/etc/cron.weekly/` (scripts exécutables). Les exécutions apparaissent dans le journal : `journalctl -u cron`.
+
+### Les timers systemd
+Un **timer** systemd déclenche une unité de service. Il demande deux fichiers, mais apporte des avantages : journal complet de chaque exécution, `Persistent=true` qui rattrape une exécution manquée pendant l'arrêt, délai aléatoire, dépendances, mêmes options de sécurité que les services.
+
+`/etc/systemd/system/sauvegarde.service` :
+```ini
+[Unit]
+Description=Sauvegarde des données vers le disque de sauvegarde
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/sauvegarde.sh
+Nice=19
+IOSchedulingClass=idle
+```
+`/etc/systemd/system/sauvegarde.timer` :
+```ini
+[Unit]
+Description=Sauvegarde quotidienne à 2 h 30
+
+[Timer]
+OnCalendar=*-*-* 02:30:00
+Persistent=true
+RandomizedDelaySec=10min
+
+[Install]
+WantedBy=timers.target
+```
+Le timer active par défaut le service **du même nom** (`sauvegarde.timer` → `sauvegarde.service`). `Type=oneshot` convient à une tâche qui s'exécute puis se termine. On active le **timer**, pas le service :
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now sauvegarde.timer
+systemctl list-timers                # prochaine et dernière exécution
+sudo systemctl start sauvegarde.service   # lancer une fois à la main pour tester
+journalctl -u sauvegarde.service     # résultat de chaque exécution
+```
+Syntaxe de `OnCalendar` : `jour-de-semaine année-mois-jour heure:minute:seconde`. Exemples : `daily` (minuit), `Mon..Fri 18:00`, `*-*-01 07:00` (le 1er du mois), `*:0/15` (toutes les 15 minutes). La commande `systemd-analyze calendar "Mon..Fri 18:00"` affiche la prochaine échéance : teste toujours ton expression avec elle. Pour un délai relatif, on utilise `OnBootSec=10min` et `OnUnitActiveSec=1h`.
+
+### Sauvegarder : la règle 3-2-1
+Une sauvegarde sert le jour où un disque meurt, où un fichier est effacé, ou où un rançongiciel chiffre le serveur. La règle courante :
+• **3** copies des données (l'original et deux sauvegardes) ;
+• sur **2** supports différents ;
+• dont **1** hors site, et idéalement **hors ligne** ou non modifiable, pour résister à un rançongiciel qui chiffrerait tout ce qu'il peut atteindre.
+
+Et surtout : une sauvegarde qui n'a jamais été **restaurée en test** n'est pas une sauvegarde. L'ANSSI insiste sur des sauvegardes déconnectées et des tests de restauration réguliers.
+
+### tar : l'archive
+`tar` regroupe des fichiers en une seule archive, compressée ou non.
+| Option | Sens |
+|---|---|
+| `-c` | créer une archive |
+| `-x` | extraire |
+| `-t` | lister le contenu |
+| `-f fichier` | nom de l'archive (toujours suivi du nom) |
+| `-z` / `-j` / `-J` | compression gzip (`.tar.gz`) / bzip2 (`.tar.bz2`) / xz (`.tar.xz`) |
+| `-v` | affiche chaque fichier traité |
+| `-C dossier` | se place dans ce dossier (pour extraire ailleurs) |
+| `--exclude=motif` | exclut des fichiers |
+
+```bash
+sudo tar -czf /srv/sauvegardes/etc-$(date +%F).tar.gz /etc   # archive de /etc datée
+tar -tzf /srv/sauvegardes/etc-2026-11-26.tar.gz | head       # vérifier le contenu
+sudo mkdir -p /tmp/restauration
+sudo tar -xzf /srv/sauvegardes/etc-2026-11-26.tar.gz -C /tmp/restauration etc/ssh/sshd_config
+```
+tar affiche `Removing leading '/' from member names` : il enregistre `etc/...` sans le `/` initial, pour que l'extraction ne remplace pas les fichiers du système par accident. On extrait donc dans un dossier de travail, puis on recopie ce qu'il faut. **Attention** : `tar -x` dans `/` écraserait les fichiers en place.
+
+### rsync : la copie synchronisée
+`rsync` copie seulement ce qui a changé, localement ou vers une autre machine par SSH. C'est l'outil de base des sauvegardes de fichiers.
+```bash
+rsync -a --delete -v /srv/donnees/ /srv/sauvegardes/donnees/
+rsync -a --delete -e ssh /srv/donnees/ sauvegarde@nas.lycee.internal:/sauvegardes/donnees/
+rsync -a --delete -n -v /srv/donnees/ /srv/sauvegardes/donnees/   # -n : simulation, ne modifie rien
+```
+• `-a` (archive) : récursif, conserve droits, dates, propriétaires, liens symboliques. Ajoute `-A` pour les ACL et `-X` pour les attributs étendus.
+• `--delete` supprime de la destination ce qui n'existe plus à la source : la copie devient un **miroir**. **Attention** : un fichier effacé par erreur (ou chiffré par un rançongiciel) disparaît aussi de la copie à la synchronisation suivante. Un miroir seul n'est donc pas une sauvegarde suffisante : il faut garder plusieurs versions (par exemple avec `--link-dest`, ou des outils comme BorgBackup ou restic).
+• **La barre finale de la source compte** : `/srv/donnees/` copie le **contenu** du dossier ; `/srv/donnees` (sans barre) copie le **dossier lui-même**, qui se retrouve dans `/srv/sauvegardes/donnees/donnees`.
+• Teste toujours avec `-n` avant un `--delete`.
+
+### À toi de jouer
+1. Écris la ligne de crontab de root qui lance `/usr/local/bin/purge-tmp.sh` à 23 h 45 du lundi au vendredi, et celle qui lance `/usr/local/bin/rapport.sh` toutes les 10 minutes.
+2. Écris `/usr/local/bin/sauvegarde.sh` : archive datée de `/etc` dans `/srv/sauvegardes`, copie miroir de `/srv/donnees`, suppression des archives de plus de 14 jours. Planifie-le chaque nuit à 2 h 30 avec un timer qui rattrape les exécutions manquées.
+3. Un collègue lance `rsync -a --delete /srv/sauvegardes/donnees/ /srv/donnees/` en croyant faire une sauvegarde. Que s'est-il passé ?
+4. Restaure le fichier `/etc/ssh/sshd_config` tel qu'il était dans l'archive d'avant-hier, sans écraser l'actuel, et compare les deux versions.
+
+### Correction
+1. `45 23 * * 1-5 /usr/local/bin/purge-tmp.sh` et `*/10 * * * * /usr/local/bin/rapport.sh`. Vérifie avec `sudo crontab -l`.
+2. Script (puis `sudo chmod 750 /usr/local/bin/sauvegarde.sh`) :
+```bash
+#!/bin/bash
+set -euo pipefail
+DEST=/srv/sauvegardes
+tar -czf "$DEST/etc-$(date +%F).tar.gz" /etc 2>/dev/null
+rsync -aAX --delete /srv/donnees/ "$DEST/donnees/"
+find "$DEST" -maxdepth 1 -name 'etc-*.tar.gz' -mtime +14 -delete
+echo "Sauvegarde terminée : $(date)"
+```
+Puis les deux unités du cours (`OnCalendar=*-*-* 02:30:00`, `Persistent=true`), `sudo systemctl daemon-reload`, `sudo systemctl enable --now sauvegarde.timer`, un essai avec `sudo systemctl start sauvegarde.service` et `journalctl -u sauvegarde.service`. `systemctl list-timers sauvegarde.timer` donne la prochaine exécution.
+3. Il a inversé source et destination : `/srv/donnees` a été remplacé par le contenu de la sauvegarde, et `--delete` a **supprimé** tous les fichiers créés depuis la dernière sauvegarde. Il faut arrêter les écritures, chercher ce qui reste (autres sauvegardes, versions antérieures). D'où deux règles : toujours `-n` d'abord, et lire la commande de droite à gauche (destination à la fin).
+4. Commandes :
+```bash
+ARCH=/srv/sauvegardes/etc-$(date -d '2 days ago' +%F).tar.gz
+sudo mkdir -p /tmp/restauration
+sudo tar -xzf "$ARCH" -C /tmp/restauration etc/ssh/sshd_config
+sudo diff /tmp/restauration/etc/ssh/sshd_config /etc/ssh/sshd_config
+```
+`diff` affiche les lignes qui diffèrent. On ne remplace le fichier en place qu'après avoir compris l'écart, puis `sshd -t` et `systemctl reload ssh`.
+"""
+
+    codeblock "bash" {
+      title: "Contrôler les tâches planifiées et les sauvegardes"
+      code: """
+sudo crontab -l                         # crontab de root
+ls /etc/cron.d /etc/cron.daily          # tâches système
+systemctl list-timers --all             # timers : prochaine et dernière exécution
+systemd-analyze calendar "Mon..Fri 18:00" --iterations=3   # tester une expression
+journalctl -u cron --since today --no-pager | tail -n 20   # exécutions cron du jour
+ls -lh /srv/sauvegardes | tail          # archives présentes et leur taille
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Que fait la ligne de crontab « 0 3 * * 0 /usr/local/bin/script.sh » ?" {
+        - "s'exécute à 3 h chaque jour"
+        + "s'exécute chaque dimanche à 3 h 00"
+        - "s'exécute toutes les 3 minutes le dimanche"
+        - "s'exécute le 3 de chaque mois"
+        explanation: "Les champs sont minute (0), heure (3), jour du mois (*), mois (*), jour de la semaine (0 = dimanche). Le 3 du mois se lirait 0 0 3 * *."
+      }
+      question "Quelle ligne lance une commande toutes les 15 minutes ?" {
+        - "15 * * * * commande"
+        + "*/15 * * * * commande"
+        - "* */15 * * * commande"
+        - "0 15 * * * commande"
+        explanation: "*/15 dans le champ des minutes signifie 0, 15, 30, 45. 15 * * * * s'exécute une fois par heure à la minute 15, et 0 15 * * * chaque jour à 15 h."
+      }
+      question "Un script fonctionne à la main mais échoue lancé par cron avec « command not found ». Cause la plus probable ?" {
+        - "cron ne lance que des scripts Python"
+        + "cron utilise un PATH minimal : le script appelle des commandes sans chemin complet"
+        - "le script doit se trouver dans /etc/cron.d"
+        - "cron s'exécute avant le démarrage du réseau"
+        explanation: "L'environnement de cron est réduit (PATH=/usr/bin:/bin). Une commande de /usr/sbin ou /usr/local/bin n'est pas trouvée. On écrit les chemins complets ou on définit PATH en tête de crontab ou du script."
+      }
+      question "Quel est l’intérêt de Persistent=true dans un timer systemd ?" {
+        - "le timer survit à la suppression du service"
+        + "une exécution manquée pendant que la machine était éteinte est lancée au démarrage suivant"
+        - "le service reste actif en permanence"
+        - "le timer est enregistré dans crontab"
+        explanation: "Persistent=true mémorise la dernière exécution sur disque et rattrape l'échéance manquée. Cela ne concerne que les timers OnCalendar."
+      }
+      question "Quelle unité faut-il activer pour planifier une sauvegarde par timer ?" {
+        - "sauvegarde.service"
+        + "sauvegarde.timer"
+        - "cron.service"
+        - "timers.target uniquement"
+        explanation: "On active le timer, qui déclenche le service au bon moment. Activer le service le lancerait au démarrage, ce qui n'est pas le but."
+      }
+      question "Quelle commande vérifie quand une expression OnCalendar se déclenchera ?" {
+        - "systemctl calendar"
+        + "systemd-analyze calendar"
+        - "crontab -t"
+        - "date --calendar"
+        explanation: "systemd-analyze calendar normalise l'expression et affiche la prochaine échéance (plusieurs avec --iterations). Les autres commandes n'existent pas sous cette forme."
+      }
+      question "Que signifie la règle de sauvegarde 3-2-1 ?" {
+        - "3 sauvegardes par jour, 2 par semaine, 1 par mois"
+        + "3 copies des données, sur 2 supports différents, dont 1 hors site"
+        - "3 disques en RAID, 2 serveurs, 1 nuage"
+        - "garder 3 jours, 2 semaines, 1 mois"
+        explanation: "La règle 3-2-1 porte sur le nombre de copies, la variété des supports et l'éloignement d'une copie. Un RAID n'est pas une sauvegarde : il recopie aussi les suppressions."
+      }
+      question "Quelle commande liste le contenu d’une archive .tar.gz sans l’extraire ?" {
+        - "tar -czf archive.tar.gz"
+        - "tar -xzf archive.tar.gz"
+        + "tar -tzf archive.tar.gz"
+        - "tar -lzf archive.tar.gz"
+        explanation: "-t liste, -x extrait, -c crée. Attention : tar -czf archive.tar.gz sans fichier à archiver échoue, et avec des fichiers il écraserait l'archive."
+      }
+      question "Pourquoi tar affiche-t-il « Removing leading ’/’ from member names » ?" {
+        - "l'archive est corrompue"
+        + "il enregistre des chemins relatifs pour qu'une extraction n'écrase pas les fichiers du système"
+        - "il manque les droits root"
+        - "la compression gzip ne gère pas les chemins absolus"
+        explanation: "tar retire le / initial : l'extraction se fait sous le dossier courant (ou celui de -C). C'est une protection, pas une erreur."
+      }
+      question "Quelle est la différence entre rsync -a /srv/donnees/ /sauv/ et rsync -a /srv/donnees /sauv/ ?" {
+        - "aucune"
+        + "avec la barre finale, le contenu est copié dans /sauv ; sans, le dossier donnees est créé dans /sauv"
+        - "sans la barre finale, rsync refuse de copier"
+        - "avec la barre finale, la copie est récursive"
+        explanation: "La barre finale de la source veut dire « le contenu de ». Sans elle, on obtient /sauv/donnees/... L'option -a est déjà récursive dans les deux cas."
+      }
+      question "Pourquoi un miroir fait avec rsync --delete ne suffit-il pas comme sauvegarde ?" {
+        - "rsync ne copie pas les droits"
+        + "une suppression ou un chiffrement à la source est recopié à la synchronisation suivante"
+        - "rsync ne fonctionne pas par SSH"
+        - "--delete compresse les fichiers"
+        explanation: "Le miroir reflète l'état actuel, y compris les erreurs. Il faut garder plusieurs versions dans le temps, et une copie hors ligne contre les rançongiciels."
+      }
+      question "Quelle option fait une simulation de rsync sans rien modifier ?" {
+        - "--test"
+        - "-s"
+        + "-n (ou --dry-run)"
+        - "--check"
+        explanation: "-n (--dry-run) montre ce qui serait copié ou supprimé. À utiliser systématiquement avant un --delete."
+      }
+      question "Dans une crontab, comment écrire la commande date +%F ?" {
+        - "l'écrire tel quel, sans changement"
+        + "précéder le % d'une barre oblique inverse, car % a un sens spécial dans crontab"
+        - "doubler le signe : date +%%F"
+        - "remplacer % par $ : date +$F"
+        explanation: "Dans une crontab, un % non protégé marque une fin de ligne et la suite est envoyée en entrée standard. On l'échappe avec une barre oblique inverse, ou on place la commande dans un script."
+      }
+    }
+  }
+
+  module "synthese" {
+    title: "Chapitre 10 : synthèse, mini-projet guidé"
+    duration: "60min"
+    content: """
+### Le projet
+Une PME de 20 postes te confie un serveur Debian neuf, `srv-fichiers`, qui doit héberger le dossier partagé de la comptabilité et une petite application interne. Tu le prépares de bout en bout, avec les chapitres précédents.
+
+À livrer :
+• une adresse fixe `192.168.10.20/24`, passerelle `192.168.10.254`, DNS `192.168.10.10` ;
+• un compte d'administration personnel (pas de travail en root), un groupe `techniciens` aux droits sudo limités ;
+• un accès SSH par clé seulement, root interdit, réservé au groupe `ssh-users` ;
+• un second disque monté sur `/srv/donnees` par UUID, avec `nodev,nosuid,nofail` ;
+• un dossier `/srv/donnees/compta` pour le groupe `compta` (héritage du groupe, pas d'effacement des fichiers des autres), en lecture seule pour la directrice `dmartin` ;
+• le service `inventaire` (chapitre 4) sous un compte dédié, redémarré en cas d'échec ;
+• une sauvegarde nocturne par timer, testée, et les mises à jour de sécurité automatiques ;
+• une fiche de recette : chaque test, la commande et le résultat obtenu.
+
+### Étapes guidées
+1. **Réseau** (chapitre 7) : identifie l'outil, pose l'adresse fixe avec un retour arrière possible, vérifie passerelle, Internet et DNS.
+2. **Mises à jour** (chapitre 5) : `apt update`, `apt full-upgrade`, `unattended-upgrades`, redémarrage si un nouveau noyau est arrivé.
+3. **Comptes** (chapitre 1) : `adduser admin-prenom`, `usermod -aG sudo,ssh-users admin-prenom`, groupe `techniciens` avec un fichier `/etc/sudoers.d/techniciens` (redémarrage d'`inventaire`, lecture des journaux).
+4. **SSH** (chapitre 8) : clé Ed25519 installée et testée, puis `/etc/ssh/sshd_config.d/50-durcissement.conf`, `sshd -t`, reload, test dans une nouvelle session.
+5. **Disque** (chapitre 6) : table GPT, `mkfs.ext4 -L donnees`, ligne fstab par UUID, `findmnt --verify`, `mount -a`.
+6. **Partage** (chapitre 2) : `chgrp compta`, `chmod 3770`, ACL `u:dmartin:rX` et ACL par défaut, vérification avec les comptes concernés.
+7. **Service** (chapitre 4) : compte système `inventaire`, unité avec `User=`, `Restart=on-failure` et les options de protection, `enable --now`.
+8. **Sauvegarde** (chapitre 9) : script, timer `Persistent=true`, essai manuel, **restauration test** d'un fichier.
+9. **Contrôle final** : `systemctl --failed` vide, `journalctl -b -p err` relu, redémarrage complet de la machine et recette rejouée après.
+
+### Recette type
+| Test | Commande | Résultat attendu |
+|---|---|---|
+| adresse fixe | `ip -br a` | `192.168.10.20/24` sur l'interface |
+| passerelle | `ip route` | `default via 192.168.10.254` |
+| DNS | `getent hosts debian.org` | une adresse |
+| root SSH interdit | `sudo sshd -T \| grep permitrootlogin` | `permitrootlogin no` |
+| mots de passe SSH | `ssh -o PubkeyAuthentication=no admin@srv-fichiers` | `Permission denied (publickey)` |
+| montage | `findmnt /srv/donnees` | `ext4` avec `nodev,nosuid` |
+| partage | `ls -ld /srv/donnees/compta` | `drwxrws--T+ root compta` |
+| ACL | `getfacl /srv/donnees/compta` | `user:dmartin:r-x` et `default:user:dmartin:r-x` |
+| service | `systemctl is-active inventaire` | `active` |
+| timer | `systemctl list-timers sauvegarde.timer` | prochaine exécution à 02:30 |
+| sauvegarde | `journalctl -u sauvegarde.service -n 5` | `Sauvegarde terminée` |
+| mises à jour auto | `systemctl is-enabled unattended-upgrades` | `enabled` |
+
+### À toi de jouer
+Le lendemain de la mise en service, trois incidents :
+1. Après une coupure de courant, le serveur ne redémarre pas : il affiche `You are in emergency mode`. La veille, quelqu'un a ajouté un disque USB dans `/etc/fstab`.
+2. Une comptable dit qu'elle ne peut pas modifier un tableur créé par une collègue dans `/srv/donnees/compta` ; `ls -l` montre `-rw-r--r-- cdupont compta budget.ods`.
+3. La sauvegarde de la nuit n'a pas eu lieu : `systemctl list-timers` affiche `n/a` pour la dernière exécution de `sauvegarde.timer`, et `systemctl is-enabled sauvegarde.timer` répond `disabled`.
+
+### Correction
+1. Le disque USB est absent et la ligne fstab n'a pas `nofail` : systemd attend le montage, échoue, et passe en mode de secours. Sur la console : entre le mot de passe root (ou démarre en mode de secours), `mount -o remount,rw /` si besoin, commente ou corrige la ligne (`nofail`, UUID), `findmnt --verify`, puis `systemctl daemon-reload` et `reboot`. Leçon : tout disque non indispensable porte `nofail`, et fstab se vérifie avant de redémarrer.
+2. Le groupe est bon (le SGID fonctionne), mais le fichier a été créé avec un umask `022` : le groupe n'a que la lecture. Correction immédiate : `sudo chmod g+w /srv/donnees/compta/budget.ods`. Correction durable : une ACL par défaut `setfacl -d -m g:compta:rwX /srv/donnees/compta`, qui donne l'écriture au groupe sur chaque nouveau fichier quel que soit l'umask, ou un umask `007` pour les membres du groupe.
+3. Le timer a été créé mais jamais activé (ou désactivé) : `sudo systemctl enable --now sauvegarde.timer`. Comme `Persistent=true` ne rattrape que ce qui a déjà été planifié, lance la sauvegarde manquée à la main (`sudo systemctl start sauvegarde.service`) et vérifie le journal. Ajoute ce contrôle à la recette.
+
+### Pour aller plus loin
+• Recommandations de configuration d'un système GNU/Linux (ANSSI-BP-028) et Recommandations pour un usage sécurisé d'OpenSSH, ANSSI : https://cyber.gouv.fr
+• Manuel de l'administrateur Debian (The Debian Administrator's Handbook), Raphaël Hertzog et Roland Mas : https://debian-handbook.info
+• Pages de manuel en ligne de Debian (systemctl, systemd.unit, systemd.timer, journalctl, fstab, sshd_config, rsync, crontab) : https://manpages.debian.org
+• Documentation de netplan, Canonical : https://netplan.readthedocs.io ; documentation de NetworkManager (nmcli) : https://networkmanager.dev
+• La journalisation : recommandation relative aux mesures de journalisation, CNIL : https://www.cnil.fr
+"""
+
+    codeblock "bash" {
+      title: "Contrôle final du serveur"
+      code: """
+systemctl --failed                                   # aucune unité en échec
+journalctl -b -p err --no-pager | tail -n 20         # erreurs depuis le démarrage
+ip -br a && ip route | grep default                  # réseau
+findmnt --verify && findmnt /srv/donnees             # montages
+sudo sshd -T | grep -E "^(permitrootlogin|passwordauthentication|allowgroups) "
+ls -ld /srv/donnees/compta && getfacl -p /srv/donnees/compta
+systemctl list-timers sauvegarde.timer apt-daily-upgrade.timer
+"""
+    }
+
+    quiz {
+      pick: 10
+      question "Quelle commande ajoute alice au groupe sudo sans lui retirer ses autres groupes ?" {
+        - "usermod -G sudo alice"
+        + "usermod -aG sudo alice"
+        - "groupmod -a sudo alice"
+        - "passwd -G sudo alice"
+        explanation: "-aG ajoute un groupe secondaire. -G seul remplace la liste complète, ce qui retire alice de ses autres groupes."
+      }
+      question "Quel outil faut-il utiliser pour modifier les règles de sudo ?" {
+        - "nano /etc/sudoers"
+        + "visudo"
+        - "sudo -e"
+        - "chmod /etc/sudoers"
+        explanation: "visudo vérifie la syntaxe avant d'enregistrer : une erreur dans sudoers peut bloquer sudo pour tout le monde."
+      }
+      question "Avec un umask 027, quels droits reçoit un nouveau dossier ?" {
+        - "640"
+        + "750"
+        - "755"
+        - "770"
+        explanation: "Un dossier part de 777 ; le masque retire w au groupe et tout aux autres : 750. Un fichier, qui part de 666, recevrait 640."
+      }
+      question "Quel bit fait que les fichiers créés dans un dossier héritent du groupe de ce dossier ?" {
+        - "SUID"
+        + "SGID"
+        - "sticky bit"
+        - "noexec"
+        explanation: "Le SGID (2000) sur un dossier transmet son groupe aux fichiers créés dedans. Le sticky bit empêche d'effacer les fichiers des autres, le SUID n'a pas d'effet sur un dossier sous Linux."
+      }
+      question "Quelle commande donne la lecture seule sur un dossier à un utilisateur sans le mettre dans le groupe ?" {
+        - "chmod o+r dossier"
+        + "setfacl -m u:dmartin:rx dossier"
+        - "chown dmartin dossier"
+        - "usermod -aG compta dmartin"
+        explanation: "Une entrée ACL vise un seul utilisateur. chmod o+r ouvrirait à tous, chown changerait le propriétaire, usermod donnerait tous les droits du groupe."
+      }
+      question "Quel signal demande à un processus de s’arrêter proprement ?" {
+        - "SIGKILL"
+        + "SIGTERM"
+        - "SIGSTOP"
+        - "SIGCONT"
+        explanation: "SIGTERM (15) peut être traité par le programme, qui ferme ses fichiers avant de s'arrêter. SIGKILL est brutal, SIGSTOP suspend, SIGCONT reprend."
+      }
+      question "Dans top, la charge est de 6 sur une machine à 2 cœurs, avec wa à 80 %. Quel est le goulot ?" {
+        - "le processeur"
+        + "le stockage (entrées-sorties)"
+        - "la mémoire vive"
+        - "le réseau local"
+        explanation: "wa (iowait) indique un processeur qui attend le disque. La charge élevée vient de processus bloqués en entrée-sortie, pas d'un manque de puissance de calcul."
+      }
+      question "Tu modifies le fichier d’une unité systemd. Quelle commande faut-il lancer avant de redémarrer le service ?" {
+        - "systemctl reload"
+        + "systemctl daemon-reload"
+        - "systemctl reset"
+        - "journalctl --rotate"
+        explanation: "daemon-reload fait relire les fichiers d'unités par systemd. Sans lui, l'ancienne définition reste utilisée."
+      }
+      question "Un service tourne mais n’est pas lancé au démarrage. Que faut-il faire ?" {
+        - "systemctl start service"
+        + "systemctl enable service"
+        - "systemctl unmask service"
+        - "systemctl daemon-reload"
+        explanation: "enable crée le lien qui le lance au démarrage. start agit seulement maintenant, et unmask ne sert que si le service a été masqué."
+      }
+      question "Quelle commande affiche les erreurs du journal depuis le démarrage actuel ?" {
+        - "journalctl -e err"
+        + "journalctl -b -p err"
+        - "journalctl --errors"
+        - "dmesg -b err"
+        explanation: "-b limite au démarrage courant et -p err garde les priorités err et plus graves."
+      }
+      question "Quelle séquence apt met à jour un serveur proprement ?" {
+        - "apt upgrade puis apt update"
+        + "apt update, puis apt full-upgrade en relisant la liste, puis apt autoremove"
+        - "apt autoremove seulement"
+        - "apt install --all"
+        explanation: "update rafraîchit la liste, full-upgrade installe les nouvelles versions et autoremove retire les dépendances inutiles. Faire upgrade avant update installerait des versions périmées."
+      }
+      question "Pourquoi utiliser UUID= plutôt que /dev/sdb1 dans /etc/fstab ?" {
+        - "c'est obligatoire depuis Debian 12"
+        + "le nom /dev/sdX peut changer selon l'ordre de détection des disques"
+        - "l'UUID chiffre la partition"
+        - "l'UUID accélère les accès disque"
+        explanation: "L'UUID est attaché au système de fichiers et ne change pas. Les noms sdX dépendent de l'ordre de détection, qui peut changer en ajoutant un disque."
+      }
+      question "Un serveur démarre en emergency mode après l’ajout d’une ligne dans fstab pour un disque USB retiré. Quelle option aurait évité cela ?" {
+        - "noexec"
+        - "defaults"
+        + "nofail"
+        - "noatime"
+        explanation: "nofail permet au démarrage de continuer si le périphérique est absent. Les autres options ne changent rien au comportement en cas de disque manquant."
+      }
+      question "Quelle commande netplan applique une configuration avec retour arrière automatique ?" {
+        - "netplan apply"
+        - "netplan generate"
+        + "netplan try"
+        - "netplan status"
+        explanation: "netplan try revient à l'ancienne configuration après 120 secondes sans confirmation, ce qui évite de perdre l'accès à distance."
+      }
+      question "Après une modification réseau, ping vers la passerelle répond mais pas vers 9.9.9.9 (Network is unreachable). Que vérifies-tu ?" {
+        - "le serveur DNS"
+        + "la présence d'une route par défaut avec ip route"
+        - "les droits de /etc/hosts"
+        - "le service ssh"
+        explanation: "Network is unreachable indique l'absence de route vers la destination. Sans ligne default via, seul le réseau local répond."
+      }
+      question "Quels droits sont attendus pour ~/.ssh et ~/.ssh/authorized_keys ?" {
+        - "755 et 644"
+        + "700 et 600"
+        - "777 et 666"
+        - "750 et 640"
+        explanation: "Avec StrictModes, sshd ignore une clé si le dossier ou le fichier sont modifiables par d'autres. 700 et 600 sont les valeurs sûres."
+      }
+      question "Quelle configuration SSH interdit à la fois root et les mots de passe ?" {
+        - "PermitRootLogin prohibit-password et PasswordAuthentication yes"
+        + "PermitRootLogin no et PasswordAuthentication no"
+        - "AllowUsers root et PubkeyAuthentication no"
+        - "MaxAuthTries 0"
+        explanation: "PermitRootLogin no ferme root à toute méthode, PasswordAuthentication no impose les clés à tous les comptes. prohibit-password autorise encore root par clé."
+      }
+      question "Que fait la ligne de crontab « 30 2 * * 1-5 /usr/local/bin/sauvegarde.sh » ?" {
+        - "toutes les 30 minutes entre 2 h et 5 h"
+        + "à 2 h 30 du lundi au vendredi"
+        - "le 2 de chaque mois à 1 h 30"
+        - "à 2 h 30 du 1er au 5 du mois"
+        explanation: "minute 30, heure 2, tous les jours du mois, tous les mois, jours de la semaine 1 à 5 (lundi à vendredi)."
+      }
+      question "Pourquoi tester avec rsync -n avant un rsync --delete ?" {
+        - "-n accélère la copie"
+        + "-n simule l'opération et montre ce qui serait supprimé, sans rien modifier"
+        - "-n désactive la suppression"
+        - "-n chiffre le transfert"
+        explanation: "--delete supprime à la destination ce qui manque à la source. Une inversion de source et de destination peut tout effacer : la simulation montre l'effet avant qu'il soit trop tard."
+      }
+      question "Qu’est-ce qui prouve vraiment qu’une sauvegarde est utilisable ?" {
+        - "la taille de l'archive est supérieure à zéro"
+        - "le timer s'est exécuté sans erreur"
+        + "une restauration test réussie d'un fichier ou d'un dossier"
+        - "la présence de l'archive sur deux disques"
+        explanation: "Une archive peut être incomplète, corrompue ou mal ciblée tout en existant. Seule une restauration réelle, comparée à l'original, prouve qu'on pourra s'en servir."
+      }
+    }
+  }
+}

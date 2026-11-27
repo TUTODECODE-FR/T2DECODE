@@ -1,0 +1,1568 @@
+tdc-version: 2
+type: course
+
+course "networking-fundamentals" {
+  title: "Comprendre un réseau : modèles OSI et TCP/IP"
+  description: """
+Ce cours explique ce qui se passe réellement quand un poste envoie une donnée sur un réseau : quel matériel intervient, comment les couches OSI et TCP/IP se répartissent le travail, comment une donnée est emballée puis déballée, et à quoi servent les adresses MAC, les adresses IP et les ports. Il s'adresse aux élèves de bac pro CIEL, BTS SIO, BTS CIEL et BUT réseaux qui débutent, et à toute personne qui veut comprendre son réseau avant de le configurer.
+
+À la fin, tu sauras :
+• distinguer LAN et WAN, et dire à quoi servent une carte réseau, un commutateur, un routeur et un point d'accès ;
+• placer un protocole ou un équipement dans la bonne couche OSI et TCP/IP ;
+• décrire l'encapsulation d'une requête web, de l'application jusqu'au câble ;
+• lire une adresse MAC, expliquer ARP et lire le cache ARP d'un poste ;
+• relever la configuration IP d'un poste Linux ou Windows et tester la connectivité avec ping ;
+• expliquer les ports, les sockets, la poignée de main TCP et la différence entre TCP et UDP ;
+• lire une capture Wireshark simple et diagnostiquer une panne couche par couche.
+
+Chaque chapitre contient au moins un exercice pratique avec sa correction, et une banque de questions tirées au hasard. Un poste Linux (Debian ou Ubuntu, réel ou virtuel) et/ou un poste Windows 10/11 suffisent ; Wireshark est gratuit.
+
+Prérequis : aucun, à part savoir ouvrir un terminal (ou l'invite de commandes Windows).
+"""
+  category: "network"
+  level: "beginner"
+  duration: "5h"
+  icon: "Lan"
+  keywords: ["réseau", "osi", "tcp/ip", "encapsulation", "mac", "arp", "ip", "port", "socket", "tcp", "udp", "wireshark", "ping", "ipconfig", "ss", "netstat", "commutateur", "routeur"]
+
+  module "reseau-materiel" {
+    title: "Chapitre 1 : à quoi sert un réseau, LAN, WAN et matériel"
+    duration: "30min"
+    content: """
+### Pourquoi relier des machines
+Un réseau informatique relie des équipements pour qu'ils **échangent des données** et **partagent des ressources** : une imprimante, un serveur de fichiers, une connexion Internet, une application. Au lycée, quand un élève imprime depuis n'importe quelle salle ou ouvre son dossier personnel sur le serveur, c'est le réseau qui travaille.
+
+On appelle **hôte** (host) toute machine qui envoie ou reçoit des données : poste, serveur, imprimante, téléphone, caméra IP. Les équipements qui se contentent de faire circuler les données (commutateur, routeur) sont des **équipements d'interconnexion**.
+
+### LAN, WAN et les autres
+| Sigle | Nom | Étendue | Exemple |
+|---|---|---|---|
+| LAN | réseau local (Local Area Network) | une salle, un bâtiment, un site | le réseau du lycée, celui de ta maison |
+| WLAN | réseau local sans fil | idem, en Wi-Fi | le Wi-Fi de la box |
+| MAN | réseau métropolitain | une ville | réseau qui relie les sites d'une collectivité |
+| WAN | réseau étendu (Wide Area Network) | une région, un pays, le monde | les liaisons d'un opérateur, Internet |
+
+Un LAN appartient en général à celui qui l'utilise (le lycée achète ses câbles et ses commutateurs). Un WAN passe par les infrastructures d'un **opérateur** (fibre, ADSL, 4G/5G, liaisons louées). Internet est un « réseau de réseaux » : des milliers de réseaux indépendants reliés entre eux par des routeurs.
+
+### Le matériel, du poste à Internet
+**La carte réseau** (NIC, Network Interface Card) relie l'hôte au support : prise RJ45 pour l'Ethernet filaire, antenne pour le Wi-Fi. Chaque carte possède une **adresse MAC** (chapitre 4). Un ordinateur portable a souvent deux cartes : une Ethernet et une Wi-Fi.
+
+**Le commutateur** (switch) relie les hôtes d'un même LAN. Il lit l'adresse MAC de destination de chaque trame et l'envoie seulement sur le port où se trouve le destinataire. Pour cela, il apprend tout seul : chaque fois qu'une trame entre par un port, il note « telle adresse MAC est derrière tel port » dans sa **table MAC**. S'il ne connaît pas encore la destination, ou si la trame est destinée à tout le monde (diffusion, broadcast), il la recopie sur tous les autres ports.
+
+L'ancien **concentrateur** (hub) recopiait tout sur tous les ports, sans rien lire. Il n'est plus vendu, mais il revient dans les questions d'examen.
+
+**Le routeur** relie des **réseaux différents** : le LAN du lycée et Internet, ou deux réseaux internes (administration et élèves). Il lit l'**adresse IP** de destination et choisit, grâce à sa **table de routage**, par où envoyer le paquet. Pour un poste, le routeur de son réseau s'appelle la **passerelle par défaut** (default gateway). Un routeur arrête les diffusions : un broadcast émis dans le LAN ne sort pas sur Internet.
+
+**Le point d'accès Wi-Fi** (access point) fait le pont entre les clients sans fil (norme IEEE 802.11) et le réseau filaire (IEEE 802.3, Ethernet). Pour le réseau, un client Wi-Fi se comporte comme un poste branché sur le commutateur.
+
+**La box** d'un particulier regroupe tout cela dans un seul boîtier : un modem (vers l'opérateur), un routeur, un petit commutateur de 4 ports, un point d'accès Wi-Fi, et souvent un serveur DHCP et un pare-feu.
+
+### Un schéma type
+```text
+ Poste A ─┐                                   ┌──── Internet (WAN)
+ Poste B ─┼── Commutateur ──── Routeur ───────┘
+ Imprim. ─┘        │         (passerelle
+                Point d'accès  192.168.1.1)
+                   ))) portable, téléphone
+ └──────────── LAN 192.168.1.0/24 ────────────┘
+```
+
+### Les supports
+• **Cuivre** : câble à paires torsadées avec prises RJ45 (catégories 5e, 6, 6A), 100 mètres au plus par lien Ethernet.
+• **Fibre optique** : longues distances, liaisons entre bâtiments, accès Internet FTTH.
+• **Ondes radio** : Wi-Fi, 4G/5G, Bluetooth.
+
+### À toi de jouer
+1. Chez toi ou au lycée, fais l'inventaire du réseau : quels hôtes, quels équipements d'interconnexion, où est la passerelle, quel lien mène à Internet ?
+2. Le poste A envoie un fichier à l'imprimante (même LAN), puis consulte un site web. Pour chaque échange, quels équipements traversent les données ?
+3. Un commutateur vient d'être allumé, sa table MAC est vide. Le poste A envoie une trame au poste B. Que fait le commutateur, et que fait-il quand B répond ?
+
+### Correction
+1. Exemple à la maison : hôtes = ordinateur, téléphones, télévision, imprimante ; la box joue à la fois commutateur, point d'accès et routeur ; la passerelle est l'adresse de la box (souvent 192.168.1.1 ou 192.168.0.254) ; le lien vers Internet est la fibre ou la ligne ADSL de l'opérateur. Au lycée, on trouve des commutateurs dans des baies de brassage, plusieurs points d'accès, un routeur ou un pare-feu en sortie.
+2. Vers l'imprimante : carte réseau du poste, commutateur, carte de l'imprimante. Le routeur n'intervient pas, car les deux hôtes sont dans le même réseau. Vers le site web : carte réseau, commutateur, routeur (passerelle), puis les routeurs de l'opérateur et d'Internet jusqu'au serveur.
+3. Le commutateur note « MAC de A derrière le port où la trame est arrivée ». Il ne connaît pas B : il recopie la trame sur tous les autres ports (inondation, flooding). Quand B répond, il note « MAC de B derrière ce port » et envoie la réponse uniquement sur le port de A, qu'il connaît déjà. Les échanges suivants ne passent plus que par les deux ports concernés.
+"""
+
+    quiz {
+      pick: 5
+      question "Quel équipement relie le réseau local du lycée à Internet ?" {
+        - "le commutateur"
+        + "le routeur"
+        - "le point d'accès Wi-Fi"
+        - "la carte réseau du serveur"
+        explanation: "Le routeur relie des réseaux différents et choisit le chemin d'après l'adresse IP. Le commutateur ne relie que les hôtes d'un même LAN, et le point d'accès fait le pont entre le Wi-Fi et le filaire du même LAN."
+      }
+      question "Sur quelle information un commutateur décide-t-il du port de sortie d’une trame ?" {
+        - "l'adresse IP de destination"
+        + "l'adresse MAC de destination"
+        - "le numéro de port TCP"
+        - "le nom DNS du destinataire"
+        explanation: "Le commutateur travaille en couche 2 : il consulte sa table MAC avec l'adresse MAC de destination. L'adresse IP est lue par le routeur, le port TCP par l'hôte destinataire."
+      }
+      question "Comment un commutateur remplit-il sa table MAC ?" {
+        - "l'administrateur doit saisir chaque adresse à la main"
+        - "il interroge le serveur DHCP"
+        + "il note l'adresse MAC source de chaque trame reçue et le port d'arrivée"
+        - "il lit l'adresse MAC de destination des trames"
+        explanation: "L'apprentissage se fait sur l'adresse source : si une trame venant de A arrive par le port 3, A est derrière le port 3. La destination sert ensuite à choisir le port de sortie. Une saisie manuelle est possible mais n'est pas le fonctionnement normal."
+      }
+      question "Que fait un commutateur d’une trame dont il ne connaît pas encore la MAC de destination ?" {
+        - "il la jette"
+        - "il la renvoie à l'émetteur"
+        + "il la recopie sur tous les ports sauf celui d'arrivée"
+        - "il la transmet au routeur"
+        explanation: "C'est l'inondation (flooding) : la trame part partout, le bon destinataire la reçoit et répond, et le commutateur apprend alors son port. Il ne jette pas la trame et ne la transmet pas au routeur en particulier."
+      }
+      question "Quelle est la différence principale entre un concentrateur (hub) et un commutateur (switch) ?" {
+        - "le hub est plus rapide car il ne lit rien"
+        + "le hub recopie tout sur tous les ports, le switch envoie seulement vers le port du destinataire"
+        - "le hub travaille avec les adresses IP"
+        - "le switch ne fonctionne qu'en Wi-Fi"
+        explanation: "Le hub est un simple répéteur de couche 1 : tous les hôtes reçoivent tout, ce qui provoque collisions et écoute facile. Le switch lit la MAC de destination et isole les échanges."
+      }
+      question "Qu’est-ce qui définit un WAN ?" {
+        - "un réseau sans fil"
+        - "un réseau de moins de 10 postes"
+        + "un réseau étendu sur une grande zone, qui passe en général par un opérateur"
+        - "un réseau réservé aux serveurs"
+        explanation: "Un WAN (Wide Area Network) couvre une région, un pays ou le monde, avec les liaisons d'un opérateur. Un réseau sans fil local est un WLAN ; la taille en nombre de postes ne définit pas un WAN."
+      }
+      question "Pour un poste, comment appelle-t-on le routeur de son réseau local ?" {
+        - "le serveur DNS"
+        - "le commutateur principal"
+        + "la passerelle par défaut"
+        - "le point d'accès"
+        explanation: "La passerelle par défaut (default gateway) est l'adresse du routeur à qui le poste confie tout paquet destiné à un autre réseau. Le serveur DNS traduit les noms, il ne fait pas sortir les paquets."
+      }
+      question "Une diffusion (broadcast) émise par un poste du LAN atteint-elle Internet ?" {
+        - "oui, elle traverse tous les équipements"
+        + "non, le routeur arrête les diffusions"
+        - "oui, mais seulement en Wi-Fi"
+        - "non, le commutateur la bloque toujours"
+        explanation: "Le routeur délimite le domaine de diffusion : un broadcast reste dans son réseau. Le commutateur, lui, recopie les diffusions sur tous ses ports, il ne les bloque pas."
+      }
+      question "Quel rôle joue un point d’accès Wi-Fi ?" {
+        - "il attribue les adresses IP"
+        - "il relie le LAN à Internet"
+        + "il fait le pont entre les clients sans fil et le réseau filaire"
+        - "il traduit les noms en adresses"
+        explanation: "Le point d'accès relie les clients 802.11 au réseau Ethernet 802.3. L'attribution des adresses est le travail du serveur DHCP et la sortie vers Internet celui du routeur, même si une box regroupe tout."
+      }
+      question "Quelle longueur maximale un lien Ethernet en paires torsadées peut-il avoir ?" {
+        - "10 mètres"
+        - "50 mètres"
+        + "100 mètres"
+        - "1 kilomètre"
+        explanation: "Les normes Ethernet sur cuivre (100BASE-TX, 1000BASE-T…) limitent un lien à 100 mètres. Au-delà, on ajoute un commutateur intermédiaire ou on passe en fibre optique."
+      }
+      question "Une box d’opérateur regroupe plusieurs fonctions. Laquelle n’en fait habituellement PAS partie ?" {
+        - "routeur"
+        - "point d'accès Wi-Fi"
+        - "petit commutateur"
+        + "serveur de fichiers d'entreprise avec sauvegarde"
+        explanation: "Une box contient un modem, un routeur, un commutateur de quelques ports, un point d'accès Wi-Fi et souvent un serveur DHCP. Un serveur de fichiers d'entreprise est une machine dédiée."
+      }
+    }
+  }
+
+  module "modele-osi" {
+    title: "Chapitre 2 : le modèle OSI en 7 couches"
+    duration: "35min"
+    content: """
+### Pourquoi un modèle en couches
+Envoyer une page web met en jeu des dizaines de tâches : produire des signaux électriques, trouver la bonne machine dans le LAN, traverser des routeurs, remettre les données dans l'ordre, chiffrer, afficher. Le **modèle OSI** (Open Systems Interconnection, norme ISO/IEC 7498-1) range ces tâches en **7 couches**. Chaque couche rend un service à la couche du dessus et utilise celle du dessous. On peut changer une couche sans toucher aux autres : passer du câble au Wi-Fi ne change rien pour le navigateur.
+
+Le modèle OSI n'est pas un protocole qu'on installe : c'est une **grille de lecture**, très utile pour classer le matériel et pour diagnostiquer une panne.
+
+### Les 7 couches, de bas en haut
+| N° | Couche | Rôle | Unité (PDU) | Exemples |
+|---|---|---|---|---|
+| 1 | Physique | transmettre des bits sur un support | bit | câble, fibre, ondes, connecteur RJ45, hub |
+| 2 | Liaison de données | transmettre des trames entre voisins du même réseau, adresses MAC, détection d'erreurs | trame | Ethernet, Wi-Fi 802.11, commutateur |
+| 3 | Réseau | acheminer des paquets d'un réseau à l'autre, adresses IP | paquet | IPv4, IPv6, ICMP, routeur |
+| 4 | Transport | livrer les données à la bonne application (ports), fiabilité éventuelle | segment (TCP), datagramme (UDP) | TCP, UDP |
+| 5 | Session | ouvrir, maintenir et fermer un dialogue | données | (peu visible : reprise de session) |
+| 6 | Présentation | format, encodage, compression, chiffrement | données | UTF-8, JPEG, TLS (souvent classé ici) |
+| 7 | Application | service offert à l'utilisateur | données | HTTP, DNS, SMTP, SSH, DHCP |
+
+Moyens mnémotechniques : dans l'ordre 1 → 7, « **P**our **L**e **R**éseau, **T**out **S**e **P**asse **A**utomatiquement » (Physique, Liaison, Réseau, Transport, Session, Présentation, Application). En anglais : « Please Do Not Throw Sausage Pizza Away ».
+
+### Ce qui se passe à chaque couche, sur un exemple
+Tu ouvres `http://intranet.lycee.internal` :
+• **7 Application** : le navigateur fabrique une requête HTTP `GET /`.
+• **6 Présentation** : le texte est encodé en UTF-8 ; en HTTPS, il serait chiffré par TLS.
+• **5 Session** : le navigateur garde le dialogue ouvert pour charger les images de la page.
+• **4 Transport** : TCP numérote les octets et indique le port de destination 80 (le service web) et un port source choisi au hasard.
+• **3 Réseau** : IP ajoute l'adresse IP source du poste et l'adresse IP du serveur.
+• **2 Liaison** : Ethernet ajoute l'adresse MAC du poste et celle du prochain équipement (le serveur s'il est dans le LAN, sinon la passerelle), plus un code de contrôle d'erreur.
+• **1 Physique** : la carte transforme la trame en signaux sur le câble.
+
+Chez le serveur, le chemin se fait à l'envers : chaque couche lit ce qui la concerne et passe le reste au-dessus.
+
+### Placer le matériel dans les couches
+Un équipement est classé selon la couche **la plus haute** qu'il lit :
+• **couche 1** : câble, répéteur, concentrateur (hub), convertisseur de média ;
+• **couche 2** : commutateur, point d'accès Wi-Fi, carte réseau (elle porte l'adresse MAC) ;
+• **couche 3** : routeur, commutateur dit « de niveau 3 » (qui sait router entre VLAN) ;
+• **couches 4 à 7** : pare-feu qui filtre les ports, proxy web, répartiteur de charge.
+
+### Diagnostiquer avec les couches
+Le modèle donne une méthode : on part du bas. Le voyant de la carte est-il allumé (1) ? Le poste voit-il la MAC de sa passerelle (2) ? A-t-il une adresse IP et la passerelle répond-elle (3) ? Le port du service est-il ouvert (4) ? L'application répond-elle correctement (7) ? Le chapitre 8 reprend cette méthode en détail.
+
+### À toi de jouer
+1. Classe dans la bonne couche OSI : adresse MAC, adresse IP, port 443, câble cat. 6, HTTP, commutateur, routeur, TLS, Wi-Fi 802.11, UDP.
+2. Un élève dit « Internet ne marche pas ». Les constats sont : voyant de la prise éteint sur le poste, rien ne fonctionne. À quelle couche se situe la panne ? Que vérifies-tu ?
+3. Pourquoi peut-on remplacer le câble par du Wi-Fi sans modifier le navigateur ?
+
+### Correction
+1. Couche 1 : câble cat. 6. Couche 2 : adresse MAC, commutateur, Wi-Fi 802.11 (qui couvre aussi la partie radio en couche 1). Couche 3 : adresse IP, routeur. Couche 4 : port 443, UDP. Couche 6 : TLS (certains documents le placent entre 4 et 7, car il ne colle pas parfaitement au modèle). Couche 7 : HTTP.
+2. Couche 1 (physique). Vérifie que le câble est bien clipsé aux deux bouts, essaie un autre câble, une autre prise murale, regarde si le port du commutateur s'allume et si la carte n'est pas désactivée dans le système.
+3. Parce que chaque couche ne dépend que du service de la couche du dessous. Le navigateur (7) parle à TCP (4) ; que les bits passent ensuite par un câble ou par des ondes ne concerne que les couches 1 et 2.
+"""
+
+    quiz {
+      pick: 5
+      question "Combien de couches compte le modèle OSI ?" {
+        - "4"
+        - "5"
+        + "7"
+        - "9"
+        explanation: "Le modèle OSI (ISO/IEC 7498-1) compte 7 couches : physique, liaison, réseau, transport, session, présentation, application. Le modèle TCP/IP en compte 4."
+      }
+      question "À quelle couche OSI se situent les adresses IP ?" {
+        - "couche 2, liaison de données"
+        + "couche 3, réseau"
+        - "couche 4, transport"
+        - "couche 7, application"
+        explanation: "IP est le protocole de la couche réseau, qui achemine les paquets d'un réseau à l'autre. Les adresses MAC sont en couche 2, les ports en couche 4."
+      }
+      question "Quel est le nom de l’unité de données (PDU) en couche 2 ?" {
+        - "le paquet"
+        - "le segment"
+        + "la trame"
+        - "le bit"
+        explanation: "En couche 2 on parle de trame (frame), en couche 3 de paquet, en couche 4 de segment (TCP) ou datagramme (UDP), en couche 1 de bits."
+      }
+      question "Dans quelle couche classe-t-on un commutateur classique ?" {
+        - "couche 1"
+        + "couche 2"
+        - "couche 3"
+        - "couche 7"
+        explanation: "Le commutateur lit les adresses MAC des trames : couche 2. Un commutateur dit de niveau 3 sait en plus router, mais le commutateur de base reste en couche 2."
+      }
+      question "Quelle couche est chargée de livrer les données à la bonne application grâce aux ports ?" {
+        - "réseau"
+        + "transport"
+        - "session"
+        - "présentation"
+        explanation: "La couche transport (TCP, UDP) utilise les numéros de port pour désigner l'application. La couche réseau ne connaît que des adresses IP de machines."
+      }
+      question "Dans quelle couche classe-t-on un concentrateur (hub) ?" {
+        + "couche 1, physique"
+        - "couche 2, liaison"
+        - "couche 3, réseau"
+        - "couche 4, transport"
+        explanation: "Le hub ne lit aucune adresse : il régénère les signaux sur tous ses ports. C'est un équipement de couche 1, comme un répéteur."
+      }
+      question "Quel protocole appartient à la couche application ?" {
+        - "IP"
+        - "Ethernet"
+        - "UDP"
+        + "HTTP"
+        explanation: "HTTP est un protocole applicatif (couche 7). IP est en couche 3, UDP en couche 4, Ethernet en couche 2."
+      }
+      question "Quelle couche s’occupe du format des données, de l’encodage et du chiffrement ?" {
+        - "session"
+        + "présentation"
+        - "transport"
+        - "liaison"
+        explanation: "La couche 6, présentation, gère la représentation des données : encodage de caractères, compression, chiffrement. La session gère l'ouverture et la fermeture du dialogue."
+      }
+      question "Un câble débranché provoque une panne de quelle couche ?" {
+        + "couche 1"
+        - "couche 3"
+        - "couche 4"
+        - "couche 7"
+        explanation: "Sans câble, aucun bit ne passe : c'est une panne physique. On commence toujours le diagnostic par cette couche, car toutes les autres en dépendent."
+      }
+      question "Classe dans l’ordre croissant (1 vers 7) : transport, liaison, application, réseau." {
+        - "réseau, liaison, transport, application"
+        + "liaison, réseau, transport, application"
+        - "liaison, transport, réseau, application"
+        - "application, transport, réseau, liaison"
+        explanation: "Liaison = 2, réseau = 3, transport = 4, application = 7. L'erreur classique est d'inverser réseau et transport."
+      }
+      question "Pourquoi le modèle en couches permet-il de passer du câble au Wi-Fi sans changer le navigateur ?" {
+        - "parce que le Wi-Fi utilise les mêmes câbles"
+        + "parce que chaque couche n'utilise que le service de la couche juste en dessous"
+        - "parce que le navigateur détecte le Wi-Fi et s'adapte"
+        - "parce que le Wi-Fi est en couche 7"
+        explanation: "L'indépendance des couches est le but du modèle : changer les couches 1 et 2 ne touche pas TCP, IP ni HTTP. Le Wi-Fi est en couches 1 et 2, pas en 7."
+      }
+      question "Comment appelle-t-on l’unité de données de UDP en couche 4 ?" {
+        - "une trame"
+        - "un segment"
+        + "un datagramme"
+        - "un bit"
+        explanation: "On parle de segment pour TCP et de datagramme pour UDP. La trame est l'unité de la couche 2."
+      }
+    }
+  }
+
+  module "tcpip-encapsulation" {
+    title: "Chapitre 3 : le modèle TCP/IP et l'encapsulation"
+    duration: "35min"
+    content: """
+### Le modèle qui tourne vraiment
+Internet n'a pas été construit à partir de l'OSI mais à partir des protocoles **TCP/IP**. Leur modèle, décrit dans la RFC 1122, compte **4 couches**. C'est celui qu'appliquent réellement Linux, Windows, les box et les routeurs.
+
+| Couche TCP/IP | Correspond à OSI | Protocoles | Adresse utilisée |
+|---|---|---|---|
+| Application | 5, 6, 7 | HTTP, HTTPS, DNS, DHCP, SSH, SMTP, FTP | nom, URL |
+| Transport | 4 | TCP, UDP | port |
+| Internet | 3 | IPv4, IPv6, ICMP | adresse IP |
+| Accès réseau (lien) | 1, 2 | Ethernet, Wi-Fi, ARP | adresse MAC |
+
+Certains manuels présentent un modèle TCP/IP à 5 couches, en séparant « physique » et « liaison ». Les deux présentations décrivent la même chose. ARP est parfois classé entre les couches 2 et 3, car il sert à relier une adresse IP à une adresse MAC.
+
+### L'encapsulation : on emballe à la descente
+Chaque couche ajoute ses propres informations, dans un **en-tête** (header), devant les données reçues de la couche du dessus. C'est l'**encapsulation**. La couche liaison ajoute aussi une **queue** (trailer) : le code de contrôle FCS.
+
+```text
+Application               [ Requête HTTP ]
+Transport           [TCP ][ Requête HTTP ]                     segment
+Internet       [IP ][TCP ][ Requête HTTP ]                     paquet
+Accès réseau [Eth][IP ][TCP ][ Requête HTTP ][FCS]             trame
+                         ↓
+                   bits sur le câble
+```
+
+Chez le destinataire, c'est la **désencapsulation** : chaque couche lit et retire son en-tête, puis passe le contenu à la couche du dessus en s'appuyant sur un champ qui dit « qui est au-dessus » :
+• dans l'en-tête Ethernet, le champ **EtherType** : `0x0800` pour IPv4, `0x86DD` pour IPv6, `0x0806` pour ARP ;
+• dans l'en-tête IPv4, le champ **Protocole** : `1` pour ICMP, `6` pour TCP, `17` pour UDP ;
+• dans l'en-tête TCP ou UDP, le **port de destination** : `80` pour le serveur web, `53` pour DNS.
+
+### Des tailles à connaître
+| Élément | Taille |
+|---|---|
+| en-tête Ethernet (MAC dest., MAC source, EtherType) | 14 octets |
+| FCS Ethernet | 4 octets |
+| en-tête IPv4 sans options | 20 octets |
+| en-tête TCP sans options | 20 octets |
+| en-tête UDP | 8 octets |
+| données maximales dans une trame Ethernet (MTU) | 1500 octets |
+
+La **MTU** (Maximum Transmission Unit) de 1500 octets est la taille maximale du paquet IP transporté par une trame Ethernet. Dans un segment TCP sur Ethernet, il reste donc au plus 1500 − 20 (IP) − 20 (TCP) = **1460 octets** de données : c'est la valeur MSS (Maximum Segment Size) annoncée par la plupart des postes.
+
+### Exemple chiffré
+Une requête HTTP de 400 octets envoyée sur Ethernet :
+• segment TCP : 20 + 400 = 420 octets ;
+• paquet IP : 20 + 420 = 440 octets ;
+• trame Ethernet : 14 + 440 + 4 = 458 octets sur le câble (sans compter le préambule de 8 octets qui précède chaque trame).
+Les en-têtes représentent 58 octets, soit environ 13 % de la trame.
+
+### Les en-têtes changent-ils en route ?
+Oui, mais pas tous. À chaque routeur, la trame Ethernet est **reconstruite** : nouvelles adresses MAC (celles du lien suivant). Le paquet IP garde ses adresses source et destination (sauf traduction d'adresses NAT sur la box) ; seul le champ **TTL** diminue de 1 à chaque routeur. Le segment TCP et les données ne sont pas touchés par les routeurs.
+
+### À toi de jouer
+1. Une requête DNS de 30 octets est envoyée en UDP sur Ethernet. Calcule la taille du datagramme UDP, du paquet IP et de la trame (FCS compris).
+2. Un serveur reçoit une trame dont l'EtherType vaut `0x0800` et dont le champ Protocole IPv4 vaut `6`, port de destination `22`. À quel programme le contenu sera-t-il remis ?
+3. Un paquet traverse 3 routeurs entre le poste et le serveur. Combien de fois l'en-tête Ethernet est-il reconstruit ? Les adresses IP changent-elles (sans NAT) ?
+
+### Correction
+1. UDP : 8 + 30 = 38 octets. IP : 20 + 38 = 58 octets. Trame : 14 + 58 + 4 = 76 octets. La norme impose une trame d'au moins 64 octets (FCS compris) : avec 76 octets, le minimum est déjà dépassé et aucun bourrage n'est nécessaire. Avec une requête de 2 octets, la trame ne ferait que 48 octets et la carte ajouterait 16 octets de bourrage (padding).
+2. `0x0800` : IPv4. Protocole `6` : TCP. Port `22` : le service SSH. Le contenu est remis au serveur SSH (`sshd` sous Linux).
+3. Chaque routeur construit une nouvelle trame pour le lien suivant : 3 reconstructions par les routeurs (4 liens en tout, donc 4 trames différentes de bout en bout). Les adresses IP source et destination restent les mêmes ; seul le TTL baisse de 3.
+"""
+
+    quiz {
+      pick: 5
+      question "Combien de couches compte le modèle TCP/IP décrit dans la RFC 1122 ?" {
+        - "3"
+        + "4"
+        - "5"
+        - "7"
+        explanation: "La RFC 1122 décrit 4 couches : lien (accès réseau), internet, transport, application. Certains manuels en montrent 5 en séparant la couche physique, mais le modèle de référence en a 4."
+      }
+      question "À quelles couches OSI correspond la couche application de TCP/IP ?" {
+        - "seulement la couche 7"
+        + "les couches 5, 6 et 7"
+        - "les couches 4 et 7"
+        - "les couches 1 et 2"
+        explanation: "La couche application de TCP/IP regroupe session, présentation et application. Les protocoles comme HTTP ou TLS gèrent eux-mêmes ces aspects."
+      }
+      question "Qu’est-ce que l’encapsulation ?" {
+        - "le chiffrement des données avant l'envoi"
+        + "l'ajout, par chaque couche, de son en-tête devant les données de la couche supérieure"
+        - "la compression des trames par le commutateur"
+        - "le regroupement de plusieurs paquets en un seul"
+        explanation: "À la descente, chaque couche ajoute son en-tête : TCP, puis IP, puis Ethernet (avec en plus le FCS en queue). Le chiffrement est un autre mécanisme, qui peut exister ou non."
+      }
+      question "Quelle valeur du champ EtherType indique qu’une trame transporte un paquet IPv4 ?" {
+        - "0x0806"
+        + "0x0800"
+        - "0x86DD"
+        - "0x0006"
+        explanation: "0x0800 désigne IPv4, 0x86DD IPv6 et 0x0806 ARP. 6 est la valeur du champ Protocole IPv4 pour TCP, pas un EtherType."
+      }
+      question "Dans l’en-tête IPv4, le champ Protocole vaut 17. Que transporte le paquet ?" {
+        - "du TCP"
+        + "de l'UDP"
+        - "de l'ICMP"
+        - "de l'ARP"
+        explanation: "1 = ICMP, 6 = TCP, 17 = UDP. ARP n'est jamais dans un paquet IP : il est directement dans une trame avec l'EtherType 0x0806."
+      }
+      question "Quelle est la MTU standard d’Ethernet ?" {
+        - "576 octets"
+        - "1460 octets"
+        + "1500 octets"
+        - "9000 octets"
+        explanation: "La MTU Ethernet est de 1500 octets. 1460 est la MSS TCP (1500 − 20 − 20). 9000 correspond aux trames jumbo, qui doivent être activées partout sur le chemin."
+      }
+      question "Pourquoi la MSS TCP annoncée sur Ethernet vaut-elle souvent 1460 octets ?" {
+        - "c'est une limite du câble RJ45"
+        + "1500 octets de MTU moins 20 d'en-tête IP et 20 d'en-tête TCP"
+        - "1500 octets moins l'en-tête Ethernet de 40 octets"
+        - "c'est une valeur imposée par le DNS"
+        explanation: "La MSS est la quantité de données utiles dans un segment : MTU 1500 − IP 20 − TCP 20 = 1460. L'en-tête Ethernet fait 14 octets et n'entre pas dans la MTU."
+      }
+      question "Quelle est la taille de l’en-tête UDP ?" {
+        + "8 octets"
+        - "14 octets"
+        - "20 octets"
+        - "40 octets"
+        explanation: "L'en-tête UDP fait toujours 8 octets (ports source et destination, longueur, somme de contrôle). TCP et IPv4 ont 20 octets au minimum, Ethernet 14."
+      }
+      question "Une requête HTTP de 100 octets est envoyée en TCP sur IPv4. Quelle est la taille du paquet IP ?" {
+        - "120 octets"
+        + "140 octets"
+        - "154 octets"
+        - "158 octets"
+        explanation: "100 + 20 (TCP) + 20 (IP) = 140 octets. 154 serait la trame sans FCS (140 + 14) et 158 la trame complète avec FCS."
+      }
+      question "Que modifie un routeur dans un paquet qu’il fait suivre (sans NAT) ?" {
+        - "les adresses IP source et destination"
+        + "le TTL, et il reconstruit l'en-tête Ethernet avec de nouvelles adresses MAC"
+        - "le port de destination TCP"
+        - "rien du tout"
+        explanation: "Le routeur décrémente le TTL de 1 et fabrique une nouvelle trame pour le lien suivant. Les adresses IP ne changent que si une traduction NAT est faite ; les ports et les données ne sont pas touchés."
+      }
+      question "Quel élément est ajouté en queue de trame par la couche liaison Ethernet ?" {
+        - "l'adresse MAC source"
+        - "le TTL"
+        + "le FCS, code de contrôle d'erreur"
+        - "le numéro de séquence"
+        explanation: "Le FCS (Frame Check Sequence) de 4 octets permet au récepteur de détecter une trame abîmée, qui est alors jetée. Les adresses MAC sont dans l'en-tête, le TTL dans l'en-tête IP, le numéro de séquence dans TCP."
+      }
+      question "Quel champ permet à la couche transport du destinataire de choisir l’application ?" {
+        - "l'EtherType"
+        - "le champ Protocole IPv4"
+        + "le port de destination"
+        - "l'adresse MAC de destination"
+        explanation: "Le port de destination (80, 443, 53, 22…) désigne le service. L'EtherType choisit le protocole de couche 3 et le champ Protocole celui de couche 4."
+      }
+    }
+  }
+
+  module "mac-ethernet-arp" {
+    title: "Chapitre 4 : adresses MAC, trames Ethernet et ARP"
+    duration: "40min"
+    content: """
+### L'adresse MAC
+Une **adresse MAC** (Media Access Control) identifie une carte réseau sur son réseau local. Elle fait **48 bits**, soit 6 octets, écrits en hexadécimal :
+• sous Linux : `08:00:27:3a:5c:e1` ;
+• sous Windows : `08-00-27-3A-5C-E1`.
+
+Les 3 premiers octets forment l'**OUI** (Organizationally Unique Identifier), attribué par l'IEEE au fabricant. Les 3 derniers sont choisis par le fabricant. `08:00:27` correspond par exemple aux cartes virtuelles de VirtualBox. Des sites et l'outil Wireshark retrouvent le fabricant à partir de l'OUI.
+
+Deux bits du premier octet ont un sens particulier :
+• le bit de poids faible (I/G) : à 1, l'adresse est de **groupe** (multicast) ; à 0, elle désigne une seule carte (unicast) ;
+• le bit suivant (U/L) : à 1, l'adresse est **administrée localement**, c'est-à-dire choisie par le logiciel et non gravée par le fabricant.
+
+L'adresse `ff:ff:ff:ff:ff:ff` (tous les bits à 1) est l'adresse de **diffusion** (broadcast) : la trame est pour toutes les cartes du LAN.
+
+Une MAC n'est **pas** un identifiant fiable ni secret : elle se change en une commande, et les téléphones, Windows et macOS utilisent des **adresses aléatoires** sur les réseaux Wi-Fi pour éviter le pistage. Une adresse dont le deuxième chiffre hexadécimal est 2, 6, A ou E (`da:a1:19:…`) a le bit U/L à 1 : c'est souvent une adresse aléatoire.
+
+### La trame Ethernet
+```text
+| Préambule+SFD | MAC dest. | MAC source | EtherType | Données (46 à 1500) | FCS |
+|    8 octets   | 6 octets  |  6 octets  | 2 octets  |                     |  4  |
+```
+Une trame Ethernet fait entre **64 et 1518 octets** (de la MAC de destination au FCS), 1522 avec une étiquette de VLAN 802.1Q. Si les données font moins de 46 octets, la carte ajoute du bourrage. La carte réceptrice garde les trames qui portent sa MAC, la diffusion, ou un groupe qu'elle a rejoint ; elle ignore les autres.
+
+### ARP : trouver la MAC à partir de l'IP
+Le poste connaît l'adresse IP de sa destination (tapée, ou donnée par le DNS) mais, pour construire la trame, il lui faut une adresse MAC. Le protocole **ARP** (Address Resolution Protocol, RFC 826) fait le lien, **seulement en IPv4** (IPv6 utilise NDP, un autre mécanisme fondé sur ICMPv6).
+
+1. Le poste vérifie d'abord si la destination est **dans son réseau** (grâce à son masque). Si oui, il cherche la MAC de la destination. Sinon, il cherche la MAC de sa **passerelle**.
+2. Il regarde dans son **cache ARP**. Si l'adresse y est, il l'utilise.
+3. Sinon il diffuse une **requête ARP** à `ff:ff:ff:ff:ff:ff` : « Qui a 192.168.1.1 ? Réponds à 192.168.1.20 ».
+4. Seule la machine qui possède cette IP répond, **en unicast** : « 192.168.1.1 est à 3c:52:82:11:22:33 ».
+5. Le poste note la réponse dans son cache pour quelques minutes.
+
+Retiens bien : un poste ne fait **jamais** d'ARP vers un serveur Internet. Pour joindre `9.9.9.9`, il demande la MAC de sa passerelle, et la trame part vers le routeur.
+
+Une **ARP gratuite** (gratuitous ARP) est une annonce spontanée « mon IP est à ma MAC » : un poste l'envoie au démarrage pour détecter un conflit d'adresses. ARP n'a aucune authentification : un attaquant du LAN peut envoyer de fausses réponses et se placer au milieu des échanges (usurpation ARP, ARP spoofing). Les commutateurs professionnels ont une protection (inspection ARP dynamique).
+
+### Voir les adresses MAC et le cache ARP
+Sous Linux :
+```text
+$ ip link show enp0s3
+2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:3a:5c:e1 brd ff:ff:ff:ff:ff:ff
+$ ip neigh
+192.168.1.1 dev enp0s3 lladdr 3c:52:82:11:22:33 REACHABLE
+192.168.1.30 dev enp0s3 lladdr 08:00:27:aa:bb:cc STALE
+```
+`REACHABLE` : entrée confirmée récemment ; `STALE` : ancienne, elle sera revérifiée à la prochaine utilisation ; `FAILED` : personne n'a répondu. L'ancienne commande `arp -a` (paquet `net-tools`) affiche la même table.
+
+Sous Windows (`getmac /v` ou `ipconfig /all` donnent l'« Adresse physique » de chaque carte) :
+```text
+C:\> arp -a
+Interface : 192.168.1.20 --- 0x5
+  Adresse Internet      Adresse physique      Type
+  192.168.1.1           3c-52-82-11-22-33     dynamique
+  192.168.1.255         ff-ff-ff-ff-ff-ff     statique
+```
+Vider le cache : `sudo ip neigh flush all` sous Linux, `arp -d *` dans une invite de commandes Windows lancée en administrateur.
+
+### À toi de jouer
+1. Relève l'adresse MAC de ta carte réseau. Quel est son OUI ? Le bit U/L est-il à 1 ?
+2. Vide le cache ARP, fais un `ping` vers ta passerelle, puis affiche le cache. Que vois-tu apparaître ?
+3. Fais ensuite un `ping 9.9.9.9`. Une entrée `9.9.9.9` apparaît-elle dans le cache ARP ? Pourquoi ?
+4. Deux postes du LAN affichent la même MAC pour la passerelle `192.168.1.1`, mais un troisième affiche une MAC différente pour la même IP. Quelles sont les deux explications possibles ?
+
+### Correction
+1. Exemple : `08:00:27:3a:5c:e1`, OUI `08:00:27` (VirtualBox). Premier octet `08` = `00001000` en binaire : bit de poids faible 0 (unicast), bit suivant 0 (adresse universelle, du fabricant). Si ton adresse commence par exemple par `da` (`11011010`), le bit U/L vaut 1 : adresse locale, probablement aléatoire.
+2. Après le `ping`, une entrée pour l'IP de la passerelle apparaît avec sa MAC (`REACHABLE` sous Linux, `dynamique` sous Windows). Le ping a d'abord déclenché une requête ARP.
+3. Non. `9.9.9.9` n'est pas dans le réseau local : le poste a envoyé ses trames à la MAC de la passerelle, qu'il avait déjà. Le cache ARP ne contient que des voisins du même LAN.
+4. Soit deux machines ont reçu la même IP (conflit d'adresse, par exemple une IP fixe mal choisie), soit un poste du LAN fait de l'usurpation ARP. Il faut repérer à qui appartient la MAC suspecte (OUI, table MAC du commutateur) et vérifier vite, car la seconde hypothèse est un incident de sécurité.
+"""
+
+    codeblock "bash" {
+      title: "Observer ARP sous Linux"
+      code: """
+ip link show                 # adresses MAC des cartes (link/ether)
+sudo ip neigh flush all      # vider le cache ARP
+ping -c 1 192.168.1.1        # déclenche une requête ARP vers la passerelle
+ip neigh                     # la passerelle apparaît avec sa MAC
+sudo tcpdump -n -e -i enp0s3 arp   # voir passer les requêtes et réponses ARP (Ctrl+C pour arrêter)
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle est la taille d’une adresse MAC ?" {
+        - "32 bits"
+        + "48 bits"
+        - "64 bits"
+        - "128 bits"
+        explanation: "Une adresse MAC fait 48 bits, soit 6 octets. 32 bits est la taille d'une adresse IPv4, 128 bits celle d'une adresse IPv6."
+      }
+      question "Que représentent les 3 premiers octets d’une adresse MAC ?" {
+        - "le numéro de série de la carte"
+        + "l'OUI, l'identifiant du fabricant attribué par l'IEEE"
+        - "le numéro du réseau local"
+        - "le port du commutateur"
+        explanation: "Les 3 premiers octets forment l'OUI, attribué au fabricant par l'IEEE. Les 3 derniers sont choisis par le fabricant. La MAC ne contient aucune information sur le réseau."
+      }
+      question "Quelle est l’adresse MAC de diffusion ?" {
+        - "00:00:00:00:00:00"
+        - "01:00:5e:00:00:01"
+        + "ff:ff:ff:ff:ff:ff"
+        - "255.255.255.255"
+        explanation: "Tous les bits à 1 : ff:ff:ff:ff:ff:ff. 01:00:5e… est un préfixe de multicast IPv4, et 255.255.255.255 est l'adresse IPv4 de diffusion, pas une MAC."
+      }
+      question "À quoi sert le protocole ARP ?" {
+        - "à traduire un nom en adresse IP"
+        + "à trouver l'adresse MAC correspondant à une adresse IPv4 du réseau local"
+        - "à attribuer une adresse IP à un poste"
+        - "à trouver la route vers un réseau distant"
+        explanation: "ARP relie une IPv4 à une MAC dans le LAN. Le DNS traduit les noms, le DHCP attribue les adresses, le routage choisit le chemin."
+      }
+      question "Comment la requête ARP et la réponse ARP sont-elles envoyées ?" {
+        - "les deux en diffusion"
+        + "la requête en diffusion, la réponse en unicast"
+        - "la requête en unicast, la réponse en diffusion"
+        - "les deux en unicast vers la passerelle"
+        explanation: "Le demandeur ne connaît pas la MAC cherchée : il diffuse sa question. Celui qui possède l'IP connaît la MAC du demandeur (présente dans la requête) et lui répond directement."
+      }
+      question "Un poste 192.168.1.20/24 veut joindre 9.9.9.9. De quelle adresse demande-t-il la MAC ?" {
+        - "de 9.9.9.9"
+        + "de sa passerelle par défaut"
+        - "du serveur DNS"
+        - "de l'adresse de diffusion 192.168.1.255"
+        explanation: "9.9.9.9 n'est pas dans 192.168.1.0/24 : la trame doit aller au routeur. Le poste demande donc la MAC de la passerelle. ARP ne traverse jamais un routeur."
+      }
+      question "Sous Linux, quelle commande moderne affiche le cache ARP ?" {
+        - "ip route"
+        + "ip neigh"
+        - "ip addr flush"
+        - "ss -a"
+        explanation: "ip neigh (ou ip neighbour) affiche la table des voisins, c'est-à-dire le cache ARP en IPv4. ip route affiche les routes, ss les sockets. arp -a existe encore via net-tools mais est ancien."
+      }
+      question "Dans la sortie de ip neigh, que signifie l’état STALE ?" {
+        - "la machine est injoignable"
+        + "l'entrée est ancienne et sera revérifiée à la prochaine utilisation"
+        - "l'entrée a été saisie à la main"
+        - "l'adresse est en conflit"
+        explanation: "STALE signifie que l'entrée n'a pas été confirmée récemment ; elle reste utilisable et sera revérifiée. FAILED indique qu'aucune réponse n'a été reçue, PERMANENT une entrée statique."
+      }
+      question "Quel protocole joue le rôle d’ARP en IPv6 ?" {
+        - "ARPv6"
+        - "DHCPv6"
+        + "NDP (Neighbor Discovery), fondé sur ICMPv6"
+        - "RARP"
+        explanation: "IPv6 n'utilise pas ARP : la découverte des voisins (NDP, RFC 4861) utilise des messages ICMPv6. ARPv6 n'existe pas, DHCPv6 attribue des adresses."
+      }
+      question "Quelle valeur EtherType porte une trame ARP ?" {
+        - "0x0800"
+        + "0x0806"
+        - "0x86DD"
+        - "0x8100"
+        explanation: "ARP utilise 0x0806. 0x0800 est IPv4, 0x86DD IPv6, 0x8100 signale une étiquette de VLAN 802.1Q."
+      }
+      question "Pourquoi l’usurpation ARP (ARP spoofing) est-elle possible ?" {
+        - "parce que ARP est chiffré avec une clé faible"
+        + "parce que ARP n'authentifie pas les réponses"
+        - "parce que les adresses MAC font 48 bits"
+        - "parce que le routeur relaie ARP sur Internet"
+        explanation: "Un poste accepte une réponse ARP sans vérifier qui l'envoie. Un attaquant du même LAN peut donc annoncer sa MAC pour l'IP de la passerelle. ARP n'est ni chiffré ni relayé par les routeurs."
+      }
+      question "L’adresse MAC da:a1:19:42:7c:05 apparaît sur un téléphone. Que peut-on en déduire ?" {
+        - "c'est une adresse de diffusion"
+        - "c'est une adresse de multicast"
+        + "le bit U/L est à 1 : adresse administrée localement, probablement aléatoire"
+        - "le fabricant est forcément Apple"
+        explanation: "da = 11011010 : bit de poids faible 0 (unicast), bit suivant 1 (locale). Les téléphones utilisent ces adresses aléatoires en Wi-Fi ; l'OUI ne désigne alors aucun fabricant."
+      }
+    }
+  }
+
+  module "adresses-ip-ping" {
+    title: "Chapitre 5 : adresse IP, passerelle, ipconfig, ip et ping"
+    duration: "40min"
+    content: """
+### Ce qu'il faut à un poste pour communiquer
+Pour sortir de son réseau, un poste IPv4 a besoin de **quatre informations**, fournies en général par le serveur DHCP :
+| Paramètre | Exemple | Rôle |
+|---|---|---|
+| adresse IP | 192.168.1.20 | identifie le poste au niveau réseau |
+| masque | 255.255.255.0 (/24) | dit quelle partie de l'adresse désigne le réseau |
+| passerelle par défaut | 192.168.1.1 | routeur à qui confier les paquets pour les autres réseaux |
+| serveur(s) DNS | 192.168.1.1 ou 9.9.9.9 | traduit les noms en adresses |
+
+Une adresse **IPv4** fait 32 bits (4 octets en décimal : `192.168.1.20`). Une adresse **IPv6** fait 128 bits (`2001:db8::20`). Contrairement à la MAC, l'adresse IP est **logique** : elle dépend du réseau où le poste est branché et change quand il change de réseau. Le cours « Adressage IPv4 et sous-réseaux » détaille les masques ; ici, retiens seulement qu'avec un `/24`, deux adresses qui commencent par les mêmes 3 octets sont dans le même réseau.
+
+Quelques adresses à reconnaître tout de suite :
+• `127.0.0.1` : la boucle locale (loopback), c'est la machine elle-même ;
+• `10.x.x.x`, `172.16.x.x` à `172.31.x.x`, `192.168.x.x` : adresses **privées** (RFC 1918), utilisables dans un LAN, jamais routées sur Internet ;
+• `169.254.x.x` : adresse que le poste se donne tout seul quand il n'a reçu aucune réponse DHCP (APIPA). C'est un **symptôme de panne**, pas une configuration normale.
+
+### Relever la configuration sous Windows
+```text
+C:\> ipconfig
+Carte Ethernet Ethernet :
+   Suffixe DNS propre à la connexion. . . :
+   Adresse IPv4. . . . . . . . . . . . . .: 192.168.1.20
+   Masque de sous-réseau. . . . . . . . . : 255.255.255.0
+   Passerelle par défaut. . . . . . . . . : 192.168.1.1
+```
+• `ipconfig /all` ajoute l'adresse physique (MAC), le serveur DHCP, les serveurs DNS et la durée du bail.
+• `ipconfig /release` puis `ipconfig /renew` : rendre puis redemander une adresse au DHCP.
+• `ipconfig /flushdns` : vider le cache DNS du poste.
+• En PowerShell : `Get-NetIPConfiguration` donne l'essentiel en une fois.
+
+### Relever la configuration sous Linux
+```text
+$ ip -br a
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+enp0s3           UP             192.168.1.20/24 fe80::a00:27ff:fe3a:5ce1/64
+$ ip route
+default via 192.168.1.1 dev enp0s3 proto dhcp src 192.168.1.20 metric 100
+192.168.1.0/24 dev enp0s3 proto kernel scope link src 192.168.1.20 metric 100
+$ resolvectl status | grep 'DNS Servers'
+Current DNS Server: 192.168.1.1
+       DNS Servers: 192.168.1.1
+```
+`ip a` (ou `ip addr`) montre le détail des adresses, `ip -br a` un résumé d'une ligne par carte. La ligne `default via` de `ip route` est la passerelle. Sur une Debian sans `systemd-resolved`, les serveurs DNS se lisent dans `/etc/resolv.conf`. L'ancienne commande `ifconfig` (net-tools) n'est plus installée par défaut.
+
+### Tester avec ping
+`ping` envoie des messages **ICMP Echo Request** (type 8) et attend des **Echo Reply** (type 0). ICMP est un protocole de couche 3 qui sert aux messages de contrôle et d'erreur ; il n'a pas de port.
+
+Sous Linux, `ping` tourne jusqu'à `Ctrl+C` ; on limite avec `-c` :
+```text
+$ ping -c 3 192.168.1.1
+PING 192.168.1.1 (192.168.1.1) 56(84) bytes of data.
+64 bytes from 192.168.1.1: icmp_seq=1 ttl=64 time=0.612 ms
+64 bytes from 192.168.1.1: icmp_seq=2 ttl=64 time=0.540 ms
+64 bytes from 192.168.1.1: icmp_seq=3 ttl=64 time=0.587 ms
+
+--- 192.168.1.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+```
+`56(84)` : 56 octets de données, 84 avec les en-têtes ICMP (8) et IP (20). Sous Windows, `ping` envoie 4 requêtes de 32 octets par défaut, et `ping -t` tourne en continu :
+```text
+C:\> ping 192.168.1.1
+Réponse de 192.168.1.1 : octets=32 temps<1ms TTL=64
+```
+
+### Lire les réponses de ping
+• `time` / `temps` : aller-retour en millisecondes. Moins de 1 ms en LAN filaire, quelques ms en Wi-Fi, 10 à 50 ms vers un serveur en France.
+• `ttl` : valeur restante à l'arrivée. Linux et macOS partent de 64, Windows de 128. Une réponse avec `TTL=118` vient probablement d'une machine Windows à 10 routeurs, ou d'un équipement qui part de 128.
+• `Destination Host Unreachable` (Linux) ou « Impossible de joindre l'hôte de destination » (Windows), venant **de ta propre adresse** : la requête ARP n'a pas eu de réponse, la machine visée est absente du LAN.
+• Pas de réponse (`Délai d'attente de la demande dépassé` sous Windows) : la machine est éteinte, un routeur ne sait pas aller plus loin, ou un **pare-feu bloque l'ICMP**. Le pare-feu de Windows bloque par défaut les ping entrants : un ping sans réponse ne prouve donc pas qu'une machine est éteinte.
+
+### L'ordre des tests
+1. `ping 127.0.0.1` : la pile TCP/IP du poste fonctionne.
+2. `ping` de sa propre adresse IP : la carte est configurée.
+3. `ping` de la passerelle : le LAN fonctionne (couches 1 à 3 locales).
+4. `ping 9.9.9.9` : la sortie vers Internet fonctionne.
+5. `ping example.com` : le DNS fonctionne.
+
+### À toi de jouer
+1. Relève sur ton poste : IP, masque, passerelle, DNS, MAC. Indique la commande utilisée.
+2. Un poste Windows affiche `Adresse IPv4 : 169.254.34.12` et pas de passerelle. Que s'est-il passé ? Quelles commandes lances-tu ?
+3. `ping 192.168.1.1` répond, `ping 9.9.9.9` répond, `ping example.com` affiche « La requête Ping n'a pas pu trouver l'hôte example.com ». Où est la panne ?
+4. Un `ping` vers un serveur affiche `ttl=55`. Combien de routeurs le paquet a-t-il probablement traversés au retour, et quel système tourne sur le serveur ?
+
+### Correction
+1. Windows : `ipconfig /all` donne tout (« Adresse physique », « Adresse IPv4 », « Masque », « Passerelle », « Serveurs DNS »). Linux : `ip -br a` (IP et masque), `ip route` (passerelle), `resolvectl status` ou `cat /etc/resolv.conf` (DNS), `ip link` (MAC).
+2. Le poste n'a reçu aucune réponse du serveur DHCP et s'est donné une adresse APIPA. Vérifie le câble ou le Wi-Fi, puis `ipconfig /release` et `ipconfig /renew`. Si le problème persiste : serveur DHCP arrêté, étendue pleine, ou VLAN mal configuré sur le port du commutateur.
+3. La connectivité IP est bonne jusqu'à Internet ; c'est la résolution de noms. Vérifie les serveurs DNS reçus (`ipconfig /all`) et teste-les avec `nslookup example.com`.
+4. Valeur de départ la plus proche au-dessus de 55 : 64. 64 − 55 = 9 routeurs. Le serveur tourne probablement sous Linux ou un système qui part de 64. C'est une estimation : les valeurs de départ peuvent être modifiées.
+"""
+
+    quiz {
+      pick: 5
+      question "Un poste Windows a l’adresse 169.254.12.40. Que signifie-t-elle ?" {
+        - "c'est une adresse publique attribuée par l'opérateur"
+        + "le poste n'a obtenu aucune réponse DHCP et s'est attribué une adresse APIPA"
+        - "c'est l'adresse de la boucle locale"
+        - "le poste est correctement configuré en IP fixe"
+        explanation: "169.254.0.0/16 est la plage APIPA : le poste se la donne quand le DHCP ne répond pas. C'est un symptôme de panne. La boucle locale est 127.0.0.1."
+      }
+      question "Sous Linux, quelle commande affiche la passerelle par défaut ?" {
+        - "ip neigh"
+        + "ip route"
+        - "ip link"
+        - "ss -t"
+        explanation: "ip route affiche la table de routage ; la ligne default via donne la passerelle. ip neigh affiche le cache ARP, ip link les cartes et leur MAC."
+      }
+      question "Quelle commande Windows affiche les serveurs DNS et l’adresse MAC des cartes ?" {
+        - "ipconfig"
+        + "ipconfig /all"
+        - "ipconfig /renew"
+        - "ping -a"
+        explanation: "ipconfig seul n'affiche que l'IP, le masque et la passerelle. /all ajoute l'adresse physique, le DHCP et les DNS. /renew redemande une adresse."
+      }
+      question "Quel type de message ICMP envoie la commande ping ?" {
+        + "Echo Request (type 8)"
+        - "Echo Reply (type 0)"
+        - "Destination Unreachable (type 3)"
+        - "Time Exceeded (type 11)"
+        explanation: "ping envoie des Echo Request de type 8 et attend des Echo Reply de type 0. Le type 3 signale une destination injoignable, le type 11 un TTL tombé à zéro."
+      }
+      question "Sous Linux, comment limiter ping à 4 envois ?" {
+        - "ping -n 4 192.168.1.1"
+        + "ping -c 4 192.168.1.1"
+        - "ping -t 4 192.168.1.1"
+        - "ping /4 192.168.1.1"
+        explanation: "Sous Linux, -c (count) fixe le nombre de requêtes. -n 4 est la syntaxe Windows. Sous Windows, -t fait tourner ping en continu."
+      }
+      question "Une réponse de ping indique TTL=128 depuis une machine du même LAN. Quel système tourne probablement dessus ?" {
+        - "Linux"
+        + "Windows"
+        - "un commutateur de couche 2"
+        - "impossible, le TTL vaut toujours 64"
+        explanation: "Windows envoie ses paquets avec un TTL initial de 128, Linux et macOS avec 64. Dans le même LAN, aucun routeur ne l'a diminué. Un commutateur de couche 2 ne modifie pas le TTL."
+      }
+      question "ping 192.168.1.50 affiche Destination Host Unreachable depuis ta propre adresse 192.168.1.20. Que s’est-il passé ?" {
+        - "le serveur DNS ne répond pas"
+        - "un routeur d'Internet a rejeté le paquet"
+        + "la requête ARP pour 192.168.1.50 n'a reçu aucune réponse dans le LAN"
+        - "le pare-feu de 192.168.1.50 bloque l'ICMP"
+        explanation: "Le message vient de ton poste : il n'a pas pu trouver la MAC de la cible, donc aucune trame n'est partie. Un pare-feu qui bloque l'ICMP donnerait un simple délai dépassé, car l'ARP aurait répondu."
+      }
+      question "Un ping vers un serveur Windows du LAN ne répond pas, mais le partage de fichiers de ce serveur fonctionne. Explication la plus probable ?" {
+        - "le serveur est éteint"
+        - "le câble du serveur est abîmé"
+        + "le pare-feu Windows du serveur bloque les requêtes ICMP entrantes"
+        - "le DNS est en panne"
+        explanation: "Si le partage répond, le serveur est allumé et joignable. Le pare-feu Windows bloque par défaut les Echo Request entrants : un ping sans réponse ne prouve pas qu'une machine est absente."
+      }
+      question "Quelle adresse n’est PAS une adresse privée RFC 1918 ?" {
+        - "10.20.30.40"
+        - "172.20.1.1"
+        - "192.168.0.254"
+        + "172.32.1.1"
+        explanation: "Les plages privées sont 10.0.0.0/8, 172.16.0.0/12 (172.16 à 172.31) et 192.168.0.0/16. 172.32.1.1 est hors de 172.16 à 172.31 : c'est une adresse publique."
+      }
+      question "Dans PING 192.168.1.1 56(84) bytes of data, d’où viennent les 28 octets d’écart ?" {
+        - "de l'en-tête Ethernet"
+        + "des en-têtes ICMP (8 octets) et IPv4 (20 octets)"
+        - "de l'en-tête TCP"
+        - "du FCS et du préambule"
+        explanation: "56 octets de données + 8 d'en-tête ICMP + 20 d'en-tête IP = 84. ping n'utilise pas TCP, et l'en-tête Ethernet n'est pas compté dans cette valeur."
+      }
+      question "Dans quel ordre tester la connectivité d’un poste qui n’accède à rien ?" {
+        - "nom de domaine, puis 9.9.9.9, puis passerelle"
+        + "127.0.0.1, puis sa propre IP, puis la passerelle, puis 9.9.9.9, puis un nom"
+        - "passerelle, puis nom de domaine, puis 127.0.0.1"
+        - "uniquement un nom de domaine, cela suffit"
+        explanation: "On part du plus proche : pile locale, carte, LAN, sortie Internet, puis DNS. Chaque test qui réussit élimine une couche. Tester un nom en premier mélange les causes possibles."
+      }
+      question "Sur un poste Windows, quelles commandes redemandent une adresse au serveur DHCP ?" {
+        - "ipconfig /flushdns puis ipconfig /registerdns"
+        + "ipconfig /release puis ipconfig /renew"
+        - "arp -d puis ping"
+        - "netstat -r puis ipconfig /all"
+        explanation: "/release rend le bail, /renew en demande un nouveau. /flushdns vide le cache DNS et n'a rien à voir avec l'adresse IP."
+      }
+    }
+  }
+
+  module "ports-tcp-udp" {
+    title: "Chapitre 6 : ports, sockets, TCP et UDP"
+    duration: "40min"
+    content: """
+### Pourquoi des ports
+L'adresse IP amène le paquet à la bonne **machine**. Mais sur un serveur tournent plusieurs services (web, SSH, DNS…) et sur un poste plusieurs applications (navigateur, messagerie, mises à jour). Le **port**, un nombre de 0 à 65535 écrit dans l'en-tête TCP ou UDP, désigne l'**application**.
+
+Les ports sont classés par l'IANA (RFC 6335) :
+| Plage | Nom | Usage |
+|---|---|---|
+| 0 à 1023 | ports systèmes (bien connus) | services standard ; sous Linux, il faut des droits root pour écouter dessus |
+| 1024 à 49151 | ports enregistrés (utilisateur) | applications déclarées auprès de l'IANA (3389 RDP, 3306 MySQL…) |
+| 49152 à 65535 | ports dynamiques (éphémères) | ports source choisis par le client |
+
+Le client choisit son **port source** au hasard dans une plage dynamique : 49152 à 65535 sous Windows, 32768 à 60999 par défaut sous Linux. Le port de destination est celui du service.
+
+### Les ports à connaître
+| Port | Transport | Service |
+|---|---|---|
+| 20, 21 | TCP | FTP (données, commandes) |
+| 22 | TCP | SSH, SFTP |
+| 23 | TCP | Telnet (non chiffré, à éviter) |
+| 25 | TCP | SMTP (entre serveurs de messagerie) |
+| 53 | UDP et TCP | DNS |
+| 67, 68 | UDP | DHCP (serveur, client) |
+| 80 | TCP | HTTP |
+| 110 / 995 | TCP | POP3 / POP3 sur TLS |
+| 123 | UDP | NTP (heure) |
+| 143 / 993 | TCP | IMAP / IMAP sur TLS |
+| 161 | UDP | SNMP |
+| 443 | TCP (et UDP pour HTTP/3) | HTTPS |
+| 445 | TCP | SMB (partage de fichiers Windows) |
+| 587 | TCP | soumission de courrier par les clients |
+| 3389 | TCP | RDP (Bureau à distance) |
+
+### Le socket
+Un **socket** est l'extrémité d'une communication : une adresse IP + un protocole + un port. Une connexion TCP est identifiée par cinq valeurs (le « 5-tuple ») : protocole, IP source, port source, IP destination, port destination. Exemple :
+```text
+TCP  192.168.1.20:51874  →  93.184.215.14:443
+```
+Si tu ouvres trois onglets vers le même site, il y a trois connexions avec trois ports source différents : c'est ce qui permet au poste de distinguer les réponses.
+
+### TCP : fiable et connecté
+**TCP** (RFC 9293, qui remplace la RFC 793) garantit que les données arrivent **complètes, dans l'ordre et sans doublon** :
+• il numérote les octets (numéros de **séquence**) ;
+• le récepteur **acquitte** (ACK) ce qu'il a reçu ; ce qui n'est pas acquitté est renvoyé ;
+• il régule le débit (fenêtre, contrôle de congestion).
+
+Avant d'échanger, TCP ouvre une connexion par la **poignée de main en trois temps** (three-way handshake) :
+```text
+Client                                Serveur (port 443, état LISTEN)
+  ── SYN, seq=x ─────────────────────▶
+  ◀──────────── SYN-ACK, seq=y, ack=x+1 ──
+  ── ACK, ack=y+1 ───────────────────▶      connexion ESTABLISHED
+```
+La fermeture se fait avec des segments **FIN** (chaque côté ferme son sens) ; un segment **RST** coupe brutalement. Les indicateurs (flags) de TCP sont : SYN, ACK, FIN, RST, PSH, URG, et ECE, CWR pour la gestion de congestion.
+
+Si le port visé est **fermé** (aucun programme n'écoute), le serveur répond au SYN par un **RST** : le client affiche « connexion refusée ». Si un **pare-feu jette** le SYN sans répondre, le client attend puis affiche « délai dépassé » (timeout). Cette différence aide beaucoup au diagnostic.
+
+### UDP : simple et rapide
+**UDP** (RFC 768) envoie des datagrammes **sans connexion, sans accusé de réception, sans remise en ordre**. Son en-tête fait 8 octets. Il convient quand :
+• l'échange est court (une question, une réponse : DNS, DHCP, NTP) ;
+• le temps réel compte plus qu'une perte (voix sur IP, visioconférence, jeux) ;
+• l'application gère elle-même la fiabilité (QUIC, base de HTTP/3, fonctionne sur UDP 443).
+
+Vers un port UDP fermé, la machine répond en général par un message ICMP « port injoignable » (type 3, code 3).
+
+| | TCP | UDP |
+|---|---|---|
+| connexion | oui (poignée de main) | non |
+| fiabilité, ordre | oui | non |
+| en-tête | 20 octets minimum | 8 octets |
+| usages | web, SSH, messagerie, fichiers | DNS, DHCP, NTP, voix, vidéo |
+
+### Voir les sockets : ss et netstat
+Sous Linux, `ss` remplace `netstat` :
+```text
+$ ss -tlnp
+State   Recv-Q  Send-Q   Local Address:Port   Peer Address:Port  Process
+LISTEN  0       128            0.0.0.0:22          0.0.0.0:*      users:(("sshd",pid=612,fd=3))
+LISTEN  0       511          127.0.0.1:80          0.0.0.0:*      users:(("nginx",pid=840,fd=6))
+```
+Options : `-t` TCP, `-u` UDP, `-l` sockets en écoute seulement, `-a` tous (écoute et établis), `-n` numéros au lieu des noms de services, `-p` processus (nécessite `sudo` pour ceux des autres utilisateurs). `0.0.0.0:22` écoute sur toutes les adresses ; `127.0.0.1:80` n'écoute que sur la boucle locale, donc **inaccessible depuis le réseau**.
+
+Sous Windows, `netstat -ano` (`-a` tout, `-n` numérique, `-o` numéro de processus, PID) ; `netstat -b`, en administrateur, donne le nom du programme. Les titres de colonnes sont traduits selon la langue du système, mais les états restent `LISTENING`, `ESTABLISHED`, `TIME_WAIT` :
+```text
+  TCP    0.0.0.0:3389         0.0.0.0:0            LISTENING       1180
+  TCP    192.168.1.20:51874   93.184.215.14:443    ESTABLISHED     7344
+```
+En PowerShell : `Get-NetTCPConnection -State Listen`.
+
+### À toi de jouer
+1. Liste les ports TCP en écoute sur ton poste avec `ss -tlnp` ou `netstat -ano`. Pour deux d'entre eux, retrouve le programme et dis s'il est joignable depuis le réseau.
+2. Ouvre un site en HTTPS puis relance `ss -tn` (ou `netstat -n`). Repère la connexion : IP et port de chaque côté.
+3. Un collègue a installé un serveur web de test ; depuis son poste, `curl http://127.0.0.1` répond, mais depuis le tien, `curl http://192.168.1.40` affiche « Connection refused ». `ss -tlnp` sur sa machine montre `127.0.0.1:80`. Explique et corrige.
+4. Pour chaque service, choisis TCP ou UDP et justifie : transfert d'un fichier de 2 Go, appel vidéo, synchronisation de l'heure.
+
+### Correction
+1. Exemple Linux : `0.0.0.0:22` avec `sshd` : SSH, joignable depuis toutes les interfaces (si le pare-feu le permet). `127.0.0.1:631` avec `cupsd` : le service d'impression local, joignable seulement depuis la machine. Sous Windows, relie le PID de la dernière colonne au programme avec le Gestionnaire des tâches (onglet Détails) ou `tasklist /fi "PID eq 1180"`.
+2. Une ligne du type `ESTAB 0 0 192.168.1.20:51874 93.184.215.14:443` : ton IP et un port dynamique d'un côté, l'IP du serveur et le port 443 de l'autre.
+3. Le serveur n'écoute que sur la boucle locale : un SYN arrivant sur `192.168.1.40:80` ne trouve aucun programme, et la machine répond par un RST, d'où « connexion refusée ». Il faut le configurer pour écouter sur `0.0.0.0:80` (ou sur `192.168.1.40:80`), le redémarrer, puis vérifier que le pare-feu autorise le port 80.
+4. Fichier de 2 Go : TCP, aucun octet ne doit manquer. Appel vidéo : UDP, une image perdue vaut mieux qu'un retard. Heure : UDP (NTP, port 123), un échange court de quelques paquets.
+"""
+
+    quiz {
+      pick: 5
+      question "Quel est le rôle d’un numéro de port ?" {
+        - "identifier la carte réseau"
+        - "identifier le réseau local"
+        + "désigner l'application ou le service sur une machine"
+        - "indiquer le nombre de routeurs à traverser"
+        explanation: "L'IP désigne la machine, le port désigne l'application (80 pour le serveur web, 22 pour SSH). La carte est identifiée par la MAC, le nombre de routeurs est limité par le TTL."
+      }
+      question "Quel port et quel protocole utilise HTTPS classique ?" {
+        - "80/TCP"
+        + "443/TCP"
+        - "443/ICMP"
+        - "8080/UDP"
+        explanation: "HTTPS utilise le port 443 en TCP. HTTP/3 utilise aussi UDP 443 via QUIC. 80 est HTTP non chiffré ; ICMP n'a pas de ports."
+      }
+      question "Quel service utilise le port 22 ?" {
+        - "Telnet"
+        - "FTP"
+        + "SSH"
+        - "SMTP"
+        explanation: "22 = SSH (et SFTP qui passe par SSH). Telnet = 23, FTP = 20 et 21, SMTP = 25."
+      }
+      question "Quel est l’ordre des segments de la poignée de main TCP ?" {
+        - "SYN, ACK, FIN"
+        + "SYN, SYN-ACK, ACK"
+        - "ACK, SYN, SYN-ACK"
+        - "SYN, RST, ACK"
+        explanation: "Le client envoie SYN, le serveur répond SYN-ACK, le client confirme par ACK. FIN sert à fermer, RST à couper ou à refuser."
+      }
+      question "Un client envoie un SYN vers un port où aucun programme n’écoute. Que répond la machine ?" {
+        - "un SYN-ACK"
+        + "un RST"
+        - "un FIN"
+        - "rien, jamais"
+        explanation: "Un port TCP fermé répond par RST : le client affiche « connexion refusée ». L'absence totale de réponse signale plutôt un pare-feu qui jette le paquet, d'où un délai dépassé."
+      }
+      question "Quelle caractéristique appartient à UDP ?" {
+        - "il renvoie automatiquement les données perdues"
+        - "il ouvre une connexion avant d'envoyer"
+        + "il envoie sans connexion et sans accusé de réception"
+        - "son en-tête fait au moins 20 octets"
+        explanation: "UDP est sans connexion et sans garantie de livraison, avec un en-tête de 8 octets. La retransmission et la poignée de main sont des propriétés de TCP."
+      }
+      question "Quelle plage de ports l’IANA réserve-t-elle aux ports dynamiques (éphémères) ?" {
+        - "0 à 1023"
+        - "1024 à 49151"
+        + "49152 à 65535"
+        - "32768 à 60999"
+        explanation: "La RFC 6335 définit 49152 à 65535 comme ports dynamiques ; Windows l'applique. 32768 à 60999 est la plage par défaut de Linux, pas celle de l'IANA. 0 à 1023 sont les ports systèmes."
+      }
+      question "Que montre la commande ss -tlnp ?" {
+        - "toutes les connexions UDP établies"
+        + "les sockets TCP en écoute, en numérique, avec le processus"
+        - "la table de routage"
+        - "le cache ARP"
+        explanation: "-t TCP, -l écoute, -n numérique, -p processus. Pour l'UDP il faut -u ; la table de routage se lit avec ip route et le cache ARP avec ip neigh."
+      }
+      question "ss -tlnp affiche 127.0.0.1:3306 pour MySQL. Que peut-on en déduire ?" {
+        - "MySQL est joignable depuis tout le réseau"
+        + "MySQL n'accepte que les connexions venant de la machine elle-même"
+        - "MySQL est arrêté"
+        - "le port 3306 est bloqué par le routeur"
+        explanation: "127.0.0.1 est la boucle locale : seuls les programmes de la machine peuvent s'y connecter. C'est un bon réglage de sécurité pour une base utilisée par une application locale. 0.0.0.0 signifierait toutes les interfaces."
+      }
+      question "Sous Windows, quelle commande liste les connexions avec le numéro de processus (PID) ?" {
+        - "ipconfig /all"
+        - "netstat -r"
+        + "netstat -ano"
+        - "arp -a"
+        explanation: "-a toutes les connexions et ports en écoute, -n en numérique, -o avec le PID. netstat -r affiche la table de routage."
+      }
+      question "Quels services utilisent UDP ?" {
+        - "SSH et HTTPS"
+        + "DHCP et NTP"
+        - "SMTP et IMAP"
+        - "RDP et SMB"
+        explanation: "DHCP (67/68) et NTP (123) utilisent UDP : échanges courts, sans connexion. SSH, HTTPS, SMTP, IMAP, SMB et RDP (dans son mode de base) utilisent TCP."
+      }
+      question "Combien de valeurs identifient une connexion TCP de façon unique ?" {
+        - "2 : IP source et IP destination"
+        - "3 : IP destination, port destination, protocole"
+        + "5 : protocole, IP source, port source, IP destination, port destination"
+        - "1 : le numéro de séquence"
+        explanation: "Le 5-tuple distingue deux onglets ouverts vers le même site : seul le port source change. Avec l'IP seule, le poste ne saurait pas à quel onglet remettre la réponse."
+      }
+      question "Quel port utilise le Bureau à distance Windows (RDP) ?" {
+        - "445"
+        - "22"
+        + "3389"
+        - "5900"
+        explanation: "RDP écoute sur 3389. 445 est SMB (partage de fichiers), 22 SSH, 5900 VNC. Exposer 3389 directement sur Internet est une cause fréquente d'intrusion."
+      }
+    }
+  }
+
+  module "wireshark" {
+    title: "Chapitre 7 : lire une capture Wireshark simple"
+    duration: "40min"
+    content: """
+### Ce que fait un analyseur de trames
+**Wireshark** (gratuit, Windows, Linux, macOS) enregistre les trames qui passent par une carte réseau et les **décode couche par couche**. C'est la meilleure façon de voir l'encapsulation pour de vrai. En ligne de commande, on utilise `tcpdump` ou `tshark` (la version texte de Wireshark).
+
+Cadre légal : capture **uniquement** sur ton propre poste, ton labo ou un réseau dont tu es l'administrateur avec autorisation. Intercepter les communications d'autrui est un délit (article 226-15 du Code pénal). Sur un commutateur, tu ne vois d'ailleurs que tes propres trames et les diffusions.
+
+Installation sous Debian/Ubuntu : `sudo apt install wireshark` ; le programme d'installation propose de laisser capturer les utilisateurs du groupe `wireshark` (ajoute-toi avec `sudo usermod -aG wireshark $USER`, puis reconnecte-toi). Sous Windows, l'installateur ajoute Npcap, le pilote de capture.
+
+### L'écran en trois zones
+1. **La liste des trames** : colonnes `No.`, `Time`, `Source`, `Destination`, `Protocol`, `Length`, `Info`.
+2. **Le détail** de la trame choisie, une ligne repliable par couche : `Frame`, `Ethernet II`, `Internet Protocol Version 4`, `Transmission Control Protocol`, puis l'application.
+3. **Les octets bruts** en hexadécimal. Cliquer sur un champ du détail surligne ses octets.
+
+La colonne `Protocol` affiche le protocole **le plus haut** reconnu : une trame qui contient une requête DNS apparaît comme `DNS`, même si elle contient aussi Ethernet, IP et UDP.
+
+### Filtres d'affichage
+On tape le filtre dans la barre verte au-dessus de la liste :
+| Filtre | Affiche |
+|---|---|
+| `arp` | les trames ARP |
+| `icmp` | les ping |
+| `dns` | les requêtes et réponses DNS |
+| `ip.addr == 192.168.1.20` | tout ce qui vient de cette IP ou y va |
+| `tcp.port == 443` | le trafic TCP vers ou depuis le port 443 |
+| `tcp.flags.syn == 1 && tcp.flags.ack == 0` | les tentatives d'ouverture de connexion |
+| `tcp.flags.reset == 1` | les connexions refusées ou coupées |
+
+Ne confonds pas avec les **filtres de capture** (syntaxe BPF, celle de `tcpdump`), qu'on saisit avant de lancer la capture : `host 192.168.1.20`, `port 53`, `arp`. Ils limitent ce qui est enregistré.
+
+### Une capture commentée
+Le poste `192.168.1.20` ouvre `http://192.168.1.40` (serveur du LAN, cache ARP vide) :
+```text
+No. Source          Destination     Protocol Info
+1   08:00:27:3a:5c:e1 Broadcast     ARP  Who has 192.168.1.40? Tell 192.168.1.20
+2   08:00:27:aa:bb:cc 08:00:27:3a:5c:e1 ARP 192.168.1.40 is at 08:00:27:aa:bb:cc
+3   192.168.1.20    192.168.1.40    TCP  51874 → 80 [SYN] Seq=0 Win=64240 Len=0 MSS=1460
+4   192.168.1.40    192.168.1.20    TCP  80 → 51874 [SYN, ACK] Seq=0 Ack=1 Win=65160 Len=0 MSS=1460
+5   192.168.1.20    192.168.1.40    TCP  51874 → 80 [ACK] Seq=1 Ack=1 Win=64256 Len=0
+6   192.168.1.20    192.168.1.40    HTTP GET / HTTP/1.1
+7   192.168.1.40    192.168.1.20    TCP  80 → 51874 [ACK] Seq=1 Ack=78 Win=65152 Len=0
+8   192.168.1.40    192.168.1.20    HTTP HTTP/1.1 200 OK  (text/html)
+```
+Lecture :
+• trames 1 et 2 : ARP. La requête part en diffusion, la réponse en unicast. Pas d'adresse IP dans les colonnes Source/Destination : ARP est sous IP ;
+• trames 3 à 5 : la poignée de main TCP. Port source 51874 (dynamique), port destination 80. Wireshark affiche des numéros de séquence **relatifs** (qui partent de 0) pour faciliter la lecture ; les vrais numéros sont aléatoires ;
+• trame 6 : la requête HTTP. Dans le détail, on voit les 4 couches : `Ethernet II`, `IPv4`, `TCP`, `Hypertext Transfer Protocol` ;
+• trame 7 : `Ack=78` : le serveur confirme avoir reçu 77 octets (de 1 à 77), la taille de la requête ;
+• trame 8 : la réponse. Un clic droit puis **Suivre → Flux TCP** (Follow TCP Stream) affiche tout le dialogue en texte.
+
+En HTTPS, tu verrais la poignée de main TCP, puis `TLS` (`Client Hello`, `Server Hello`…), mais le contenu serait illisible : c'est le but du chiffrement.
+
+### Reconnaître une panne dans une capture
+• SYN, puis `[RST, ACK]` du serveur : port fermé, aucun service n'écoute.
+• SYN répété plusieurs fois (`[TCP Retransmission]`) sans réponse : un pare-feu jette les paquets, ou la machine est injoignable.
+• Requêtes ARP répétées sans réponse : la machine est absente du LAN ou dans un autre VLAN.
+• Requête DNS suivie de `No such name` : le nom n'existe pas.
+
+### À toi de jouer
+1. Lance une capture sur ta carte, puis dans un terminal : vide le cache ARP, fais `ping -c 2` (ou `ping -n 2`) vers ta passerelle. Arrête la capture et filtre avec `arp || icmp`. Combien de trames ? Lesquelles sont en diffusion ?
+2. Dans une trame ICMP, ouvre le détail : relève l'EtherType, le TTL et le champ Protocol de l'en-tête IPv4.
+3. Dans la capture d'exemple ci-dessus, la trame 4 aurait pu être `80 → 51874 [RST, ACK]`. Qu'est-ce que cela aurait signifié ?
+4. Filtre une capture de navigation avec `dns`. Quel port et quel protocole de transport utilisent les requêtes ?
+
+### Correction
+1. Une requête ARP (diffusion, `Who has 192.168.1.1?`), une réponse ARP (unicast), puis 2 Echo Request et 2 Echo Reply : 6 trames. Seule la requête ARP est en diffusion (destination `Broadcast`, soit `ff:ff:ff:ff:ff:ff`). Il peut y avoir des ARP de plus, car le routeur vérifie parfois à son tour ta MAC.
+2. `Type: IPv4 (0x0800)` dans Ethernet II ; `Time to Live: 64` (Linux) ou 128 (Windows) dans la requête ; `Protocol: ICMP (1)`.
+3. Le serveur est joignable mais aucun programme n'écoute sur le port 80 : le serveur web est arrêté ou écoute sur un autre port ou une autre adresse.
+4. Port de destination 53 en UDP (`User Datagram Protocol, Src Port: 5xxxx, Dst Port: 53`). Les réponses reviennent du port 53 vers le port dynamique du poste.
+"""
+
+    codeblock "bash" {
+      title: "Capturer en ligne de commande avec tcpdump (Linux)"
+      code: """
+sudo tcpdump -i enp0s3 -n arp or icmp            # afficher ARP et ping en direct
+sudo tcpdump -i enp0s3 -n 'tcp port 80'          # trafic web non chiffré
+sudo tcpdump -i enp0s3 -n -w capture.pcap port 53   # enregistrer le DNS dans un fichier
+wireshark capture.pcap                           # ouvrir le fichier dans Wireshark
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quel filtre d’affichage Wireshark montre uniquement le trafic DNS ?" {
+        - "port 53"
+        + "dns"
+        - "udp == 53"
+        - "filter dns"
+        explanation: "Le filtre d'affichage dns sélectionne les messages DNS. port 53 est un filtre de capture (syntaxe BPF), et udp == 53 n'est pas une syntaxe valide."
+      }
+      question "Quel filtre d’affichage montre tout ce qui concerne l’adresse 192.168.1.20 ?" {
+        - "host 192.168.1.20"
+        + "ip.addr == 192.168.1.20"
+        - "ip = 192.168.1.20"
+        - "mac.addr == 192.168.1.20"
+        explanation: "ip.addr == correspond à l'adresse source ou destination. host 192.168.1.20 est la syntaxe des filtres de capture BPF, pas d'affichage."
+      }
+      question "Dans la colonne Protocol, une trame affiche DNS. Que contient-elle ?" {
+        - "uniquement des données DNS, sans en-têtes"
+        + "Ethernet, IP, UDP et un message DNS : Wireshark affiche le protocole le plus haut"
+        - "une trame ARP mal décodée"
+        - "un segment TCP sans données"
+        explanation: "La colonne Protocol montre le protocole de plus haut niveau reconnu. Les couches inférieures sont présentes et visibles dans le panneau de détail."
+      }
+      question "Une capture montre un SYN du client puis un [RST, ACK] du serveur. Diagnostic ?" {
+        - "la connexion s'est établie normalement"
+        - "un pare-feu jette silencieusement les paquets"
+        + "le serveur est joignable mais aucun service n'écoute sur ce port"
+        - "le DNS a échoué"
+        explanation: "RST en réponse au SYN signifie port fermé. Un pare-feu qui jette les paquets ne produit aucune réponse : on verrait des retransmissions du SYN."
+      }
+      question "Une capture montre le même SYN retransmis plusieurs fois, sans aucune réponse. Cause probable ?" {
+        + "un pare-feu jette les paquets, ou la machine est injoignable"
+        - "le port est fermé et le serveur répond RST"
+        - "la connexion est établie"
+        - "le client utilise UDP"
+        explanation: "Sans aucune réponse, le client retransmet son SYN puis abandonne (délai dépassé). Un port fermé répondrait RST immédiatement."
+      }
+      question "Pourquoi les trames ARP n’ont-elles pas d’adresse IP dans les colonnes Source et Destination ?" {
+        - "parce que Wireshark ne sait pas décoder ARP"
+        + "parce que ARP est transporté directement dans Ethernet, sans en-tête IP"
+        - "parce que ARP est chiffré"
+        - "parce que les adresses IP sont masquées pour la confidentialité"
+        explanation: "ARP n'est pas encapsulé dans IP : il est porté par une trame Ethernet d'EtherType 0x0806. Les adresses IP sont dans le contenu ARP (visible dans Info), pas dans un en-tête IP."
+      }
+      question "Pourquoi Wireshark affiche-t-il Seq=0 pour le premier SYN ?" {
+        - "parce que TCP commence toujours à 0"
+        + "parce que Wireshark affiche par défaut des numéros de séquence relatifs"
+        - "parce que la connexion a échoué"
+        - "parce que le SYN ne contient pas de numéro"
+        explanation: "Le vrai numéro de séquence initial est aléatoire ; Wireshark le ramène à 0 pour faciliter la lecture. Le champ brut est visible dans le détail (raw)."
+      }
+      question "Quelle fonction de Wireshark affiche tout le dialogue d’une connexion sous forme de texte ?" {
+        - "Statistiques → Hiérarchie des protocoles"
+        + "Suivre → Flux TCP (Follow TCP Stream)"
+        - "Éditer → Préférences"
+        - "Capture → Options"
+        explanation: "Suivre le flux TCP reconstitue les données échangées dans les deux sens. Utile en HTTP ; en HTTPS, le contenu reste chiffré."
+      }
+      question "Tu captures sur ton poste branché à un commutateur. Que vois-tu en temps normal ?" {
+        - "tout le trafic de tous les postes du LAN"
+        + "tes propres trames et les diffusions du LAN"
+        - "seulement le trafic du routeur"
+        - "rien, la capture est impossible sur un commutateur"
+        explanation: "Le commutateur n'envoie sur ton port que les trames qui te sont destinées et les diffusions. Voir le trafic des autres demande un port miroir configuré par l'administrateur."
+      }
+      question "Dans une capture HTTPS, que peux-tu lire en clair ?" {
+        - "le contenu complet des pages et les mots de passe"
+        + "les en-têtes Ethernet, IP et TCP, mais pas le contenu applicatif chiffré par TLS"
+        - "rien du tout, même pas les adresses IP"
+        - "seulement les adresses MAC"
+        explanation: "TLS chiffre les données applicatives. Les en-têtes des couches 2 à 4 restent lisibles, car les équipements en ont besoin pour acheminer les paquets."
+      }
+      question "Quel filtre d’affichage montre les tentatives d’ouverture de connexion TCP (premier segment) ?" {
+        - "tcp.flags.ack == 1"
+        + "tcp.flags.syn == 1 && tcp.flags.ack == 0"
+        - "tcp.flags.fin == 1"
+        - "tcp.flags.reset == 1"
+        explanation: "Le premier segment a SYN à 1 et ACK à 0. Le SYN-ACK du serveur a les deux à 1. FIN indique une fermeture et RST un refus ou une coupure."
+      }
+      question "Capturer le trafic du réseau Wi-Fi de tes voisins pour t’entraîner est :" {
+        - "autorisé si le réseau n'est pas protégé par un mot de passe"
+        - "autorisé si tu ne gardes pas les fichiers"
+        + "interdit : intercepter les communications d'autrui est un délit"
+        - "autorisé pour un usage scolaire"
+        explanation: "L'interception de correspondances est punie par le Code pénal, quelle que soit la protection du réseau. On s'entraîne sur son propre poste ou son labo."
+      }
+    }
+  }
+
+  module "diagnostic" {
+    title: "Chapitre 8 : diagnostiquer une panne couche par couche"
+    duration: "35min"
+    content: """
+### La méthode
+Face à « ça ne marche pas », on ne teste pas au hasard. On **remonte les couches** depuis le bas : chaque test réussi prouve que tout ce qui est en dessous fonctionne. On note chaque résultat.
+
+| Couche | Question | Linux | Windows |
+|---|---|---|---|
+| 1 Physique | le lien est-il établi ? | `ip -br link` (`UP`, `LOWER_UP`) | `Get-NetAdapter` (Status `Up`), voyants |
+| 2 Liaison | le poste voit-il ses voisins ? | `ip neigh` | `arp -a` |
+| 3 Réseau | adresse, passerelle, routage ? | `ip -br a`, `ip route`, `ping` | `ipconfig /all`, `ping`, `tracert` |
+| 4 Transport | le port répond-il ? | `ss -tlnp` (serveur), `nc -vz hôte port` (client) | `Test-NetConnection hôte -Port 443` |
+| 7 Application | le service répond-il bien ? DNS ? | `curl -v`, `dig` | navigateur, `nslookup`, `Resolve-DnsName` |
+
+`traceroute` (Linux, paquet du même nom) et `tracert` (Windows) affichent les routeurs traversés : ils envoient des paquets avec un TTL de 1, 2, 3… et chaque routeur qui fait tomber le TTL à 0 répond par un message ICMP « délai dépassé » (Time Exceeded). La liste des réponses donne le chemin.
+
+### Test-NetConnection et nc
+Sous Windows, PowerShell :
+```text
+PS> Test-NetConnection 192.168.1.40 -Port 80
+ComputerName     : 192.168.1.40
+RemoteAddress    : 192.168.1.40
+RemotePort       : 80
+InterfaceAlias   : Ethernet
+SourceAddress    : 192.168.1.20
+TcpTestSucceeded : True
+```
+Sous Linux, avec `netcat` (paquet `netcat-openbsd`) :
+```text
+$ nc -vz 192.168.1.40 80
+Connection to 192.168.1.40 80 port [tcp/http] succeeded!
+```
+Ces deux outils tentent une vraie poignée de main TCP : ils prouvent qu'un programme écoute et qu'aucun pare-feu ne bloque, ce qu'un `ping` ne prouve pas.
+
+### Trois cas réels
+**Cas 1. Un poste d'une salle n'accède à rien.** `ip -br link` affiche `enp0s3 DOWN`. Couche 1 : câble, prise murale, port du commutateur désactivé. Inutile de regarder le DNS.
+
+**Cas 2. Un poste a une adresse, mais seulement le LAN fonctionne.** `ping 192.168.1.1` répond, `ping 9.9.9.9` ne répond pas. `ip route` ne montre aucune ligne `default` : la passerelle manque (IP fixe mal saisie, DHCP sans option routeur). Couche 3.
+
+**Cas 3. Le site intranet ne s'ouvre plus.** `ping intranet.lycee.internal` répond avec la bonne IP (DNS et couche 3 OK). `Test-NetConnection intranet.lycee.internal -Port 443` donne `TcpTestSucceeded : False`. Sur le serveur, `ss -tlnp` ne montre plus rien sur `:443` : le service web est arrêté. Couche 4/7, côté serveur.
+
+### Les erreurs classiques
+• Conclure « la machine est éteinte » parce qu'elle ne répond pas au ping : le pare-feu bloque peut-être l'ICMP.
+• Chercher une panne DNS alors que le poste est en `169.254.x.x`.
+• Oublier qu'un service qui écoute sur `127.0.0.1` est invisible depuis le réseau.
+• Tester depuis le serveur lui-même (`curl http://localhost`) et conclure que les clients y ont accès.
+• Modifier plusieurs choses à la fois : on ne sait plus laquelle a réparé (ou cassé).
+
+### À toi de jouer
+Pour chaque situation, indique la couche en cause, la commande qui le prouve et la correction.
+1. `ipconfig /all` montre `Adresse IPv4 : 192.168.1.57`, `Masque : 255.255.255.0`, `Passerelle : 192.168.2.1`.
+2. Un poste Linux : `ping 9.9.9.9` répond, `curl https://example.com` affiche `Could not resolve host: example.com`.
+3. Une imprimante réseau ne répond plus. `arp -a` sur le poste ne la montre pas après un `ping` qui échoue avec « Impossible de joindre l'hôte de destination ».
+4. Un client se plaint que le serveur SSH ne répond pas. `nc -vz 192.168.1.40 22` attend longtemps puis affiche `Connection timed out`, alors que `ping 192.168.1.40` répond.
+
+### Correction
+1. Couche 3 : la passerelle `192.168.2.1` n'est pas dans le réseau du poste (`192.168.1.0/24`). Le poste ne peut pas la joindre (aucune ARP possible). `ping 192.168.2.1` échoue. Correction : passerelle `192.168.1.1` (ou l'adresse réelle du routeur dans ce réseau).
+2. Couche 7, résolution de noms : la connectivité IP marche. `resolvectl status` ou `cat /etc/resolv.conf` pour voir le DNS utilisé, puis `dig example.com`. Correction : bon serveur DNS dans la configuration DHCP ou réseau.
+3. Couche 1 ou 2 : l'imprimante ne répond même pas à ARP. Elle est éteinte, débranchée, a changé d'adresse IP, ou est dans un autre VLAN. Vérifier son écran de configuration et le port du commutateur.
+4. Couche 4 avec un pare-feu : la machine est joignable (ping), mais le SYN vers le port 22 n'obtient aucune réponse (sinon on aurait « connexion refusée » si le port était fermé). Un pare-feu filtre le port 22 : vérifier les règles du serveur (`sudo nft list ruleset` ou `sudo ufw status`) et du réseau.
+"""
+
+    quiz {
+      pick: 5
+      question "Par quelle couche commence-t-on un diagnostic méthodique ?" {
+        + "la couche physique"
+        - "la couche application"
+        - "la couche transport"
+        - "peu importe l'ordre"
+        explanation: "On remonte depuis la couche 1 : si le lien est coupé, tous les tests plus hauts échouent pour la même raison. Commencer par l'application mélange les causes."
+      }
+      question "Comment fonctionne traceroute (ou tracert) ?" {
+        - "il demande la liste des routeurs au serveur DNS"
+        + "il envoie des paquets avec un TTL croissant ; chaque routeur où le TTL tombe à 0 répond par ICMP Time Exceeded"
+        - "il lit la table de routage de chaque routeur"
+        - "il envoie un seul ping et mesure son temps"
+        explanation: "TTL 1 : le premier routeur répond ; TTL 2 : le deuxième ; etc. La liste des réponses ICMP Time Exceeded dessine le chemin."
+      }
+      question "Quelle commande PowerShell teste si le port 443 d’un serveur accepte une connexion TCP ?" {
+        - "ping serveur -p 443"
+        + "Test-NetConnection serveur -Port 443"
+        - "ipconfig /port 443"
+        - "Get-NetAdapter -Port 443"
+        explanation: "Test-NetConnection avec -Port tente une poignée de main TCP et affiche TcpTestSucceeded. ping n'utilise pas de port, ipconfig et Get-NetAdapter n'ont pas cette option."
+      }
+      question "Un poste a l’IP 192.168.1.57/24 et la passerelle 192.168.2.1. Quel symptôme observe-t-on ?" {
+        - "tout fonctionne"
+        + "le LAN fonctionne, mais rien hors du réseau local"
+        - "aucune machine du LAN n'est joignable"
+        - "seul le DNS échoue"
+        explanation: "La passerelle n'appartient pas au réseau 192.168.1.0/24 : le poste ne peut pas lui envoyer de trame. Les voisins du LAN restent joignables directement."
+      }
+      question "nc -vz 192.168.1.40 22 affiche Connection refused. Que peut-on en conclure ?" {
+        - "un pare-feu jette les paquets"
+        + "la machine est joignable mais aucun programme n'écoute sur le port 22"
+        - "la machine est éteinte"
+        - "le DNS ne connaît pas 192.168.1.40"
+        explanation: "Connection refused = RST reçu : la machine a répondu, mais le port est fermé. Un pare-feu qui jette les paquets provoque un délai dépassé, et aucune résolution de nom n'est en jeu avec une IP."
+      }
+      question "Un ping vers un serveur répond, mais nc -vz serveur 22 finit par Connection timed out. Cause la plus probable ?" {
+        - "le câble du serveur est débranché"
+        - "le service SSH est arrêté et répond RST"
+        + "un pare-feu filtre le port 22 sans répondre"
+        - "l'adresse MAC du serveur a changé"
+        explanation: "Le ping prouve que la machine est joignable. Un délai dépassé sur le port 22 indique que le SYN est jeté : c'est la signature d'un filtrage, pas d'un port fermé (qui répondrait RST)."
+      }
+      question "Sous Linux, quelle commande montre si la carte réseau a un lien physique actif ?" {
+        - "ip route"
+        + "ip -br link"
+        - "ss -tlnp"
+        - "dig"
+        explanation: "ip -br link affiche l'état de chaque interface (UP, DOWN, LOWER_UP signale la présence du lien). ip route montre les routes, ss les sockets, dig interroge le DNS."
+      }
+      question "Un poste Linux répond à ping 9.9.9.9 mais curl affiche Could not resolve host. Quelle couche est en cause ?" {
+        - "couche 1"
+        - "couche 2"
+        - "couche 3"
+        + "la résolution de noms, au niveau application"
+        explanation: "Le ping vers une IP publique prouve que les couches 1 à 3 fonctionnent jusqu'à Internet. L'échec porte sur la traduction du nom par le DNS, un service applicatif."
+      }
+      question "Pourquoi curl http://localhost sur le serveur ne prouve-t-il pas que les clients du réseau y ont accès ?" {
+        + "parce que le test passe par la boucle locale et ne traverse ni la carte, ni le pare-feu, ni le réseau"
+        - "parce que curl ne sait pas utiliser HTTP"
+        - "parce que localhost est toujours bloqué"
+        - "parce que localhost désigne la passerelle"
+        explanation: "localhost (127.0.0.1) reste dans la machine. Un service qui n'écoute que sur 127.0.0.1, ou un pare-feu qui bloque l'extérieur, passerait ce test et resterait inaccessible aux clients."
+      }
+      question "Pourquoi éviter de modifier plusieurs réglages à la fois pendant un dépannage ?" {
+        - "parce que les équipements redémarrent à chaque modification"
+        + "parce qu'on ne sait plus quelle modification a réparé ou cassé le réseau"
+        - "parce que c'est interdit par la norme OSI"
+        - "parce que les journaux sont effacés"
+        explanation: "Un changement à la fois, suivi d'un test : on identifie la vraie cause et on peut revenir en arrière. C'est aussi ce qui permet de documenter correctement l'incident."
+      }
+      question "Un poste ne voit pas l’imprimante dans arp -a après un ping qui échoue avec Impossible de joindre l’hôte de destination. Où chercher ?" {
+        - "dans la configuration DNS du poste"
+        + "côté imprimante et réseau local : alimentation, câble, adresse IP, VLAN"
+        - "dans la table de routage d'Internet"
+        - "dans le pare-feu du serveur web"
+        explanation: "Aucune réponse ARP : la machine n'est pas présente dans le LAN avec cette IP. Le DNS et Internet ne sont pas en jeu pour une IP locale."
+      }
+      question "Quelle sortie prouve qu’un poste Linux n’a pas de passerelle par défaut ?" {
+        - "ip neigh est vide"
+        + "ip route ne contient aucune ligne commençant par default"
+        - "ss -tlnp ne montre rien"
+        - "ping 127.0.0.1 échoue"
+        explanation: "La route par défaut s'affiche sous la forme default via 192.168.1.1. Si elle manque, le poste ne sait pas sortir de son réseau. Un cache ARP vide est normal au démarrage."
+      }
+    }
+  }
+
+  module "synthese" {
+    title: "Chapitre 9 : synthèse, suivre une requête web de bout en bout"
+    duration: "40min"
+    content: """
+### Le scénario
+Au lycée, un poste Linux du CDI doit afficher l'intranet. Tu vas suivre la requête de bout en bout, en relevant à chaque étape la couche, l'adresse utilisée et la commande qui le prouve. Tu peux reproduire le labo avec deux machines virtuelles Debian dans un même réseau interne : un « poste » et un « serveur » sur lequel tu installes un serveur web (`sudo apt install nginx`).
+
+```text
+Poste CDI 192.168.1.20/24 ── Commutateur ── Serveur intranet 192.168.1.40 (nginx, port 80)
+                                  │
+                           Routeur 192.168.1.1 ── Internet
+DNS : 192.168.1.1, nom intranet.lycee.internal → 192.168.1.40
+```
+
+### Étape 1 : la configuration du poste (couche 3)
+`ip -br a`, `ip route`, `resolvectl status`. Note l'IP, le masque, la passerelle et le DNS. Vérifie que le serveur est dans le même réseau que le poste.
+
+### Étape 2 : le nom (application)
+`resolvectl query intranet.lycee.internal` (ou `getent hosts intranet.lycee.internal`). Résultat attendu : `192.168.1.40`. Dans ton labo sans DNS, ajoute la ligne `192.168.1.40 intranet.lycee.internal` dans `/etc/hosts` du poste.
+
+### Étape 3 : la MAC du serveur (couche 2)
+Le serveur est dans le même réseau : le poste fait une ARP pour `192.168.1.40` (et non pour la passerelle). `ip neigh` après le premier échange le confirme.
+
+### Étape 4 : le port (couche 4)
+Sur le serveur : `sudo ss -tlnp | grep ':80'` doit montrer `nginx` sur `0.0.0.0:80`. Depuis le poste : `nc -vz 192.168.1.40 80`.
+
+### Étape 5 : la page (application) et la capture
+Lance une capture (`sudo tcpdump -i enp0s3 -n -w intranet.pcap host 192.168.1.40`), vide le cache ARP, puis `curl -v http://intranet.lycee.internal/`. Arrête la capture et ouvre-la dans Wireshark. Tu dois retrouver : ARP, poignée de main TCP, `GET /`, `200 OK`, puis la fermeture par des FIN.
+
+### Étape 6 : le compte rendu
+Remplis un tableau d'une ligne par couche : ce qui est vérifié, la commande, le résultat obtenu.
+
+### À toi de jouer
+Réalise les étapes 1 à 6, puis réponds :
+1. Dans ta capture, quelles adresses MAC et IP portent la trame du `GET /` ?
+2. Si l'intranet était hébergé dans un autre réseau (`10.0.5.40`), quelles adresses MAC porterait cette trame à la sortie du poste ?
+3. Sur le serveur, tu remplaces `listen 80;` par `listen 127.0.0.1:80;` dans la configuration de nginx et tu recharges. Que montrent `ss -tlnp` et `nc -vz` depuis le poste ?
+4. Tu actives un pare-feu sur le serveur qui jette tout le trafic entrant vers le port 80. Que montre la capture côté poste ?
+
+### Correction
+1. MAC source : celle du poste ; MAC destination : celle du serveur ; IP source `192.168.1.20`, IP destination `192.168.1.40` ; port source dynamique (par exemple 51874), port destination 80.
+2. MAC source : le poste ; MAC destination : la **passerelle** `192.168.1.1`. Les IP restent `192.168.1.20` → `10.0.5.40`. Le routeur reconstruira la trame vers le réseau `10.0.5.0`.
+3. `ss -tlnp` montre `127.0.0.1:80`. Depuis le poste, le SYN arrive sur `192.168.1.40:80`, où rien n'écoute : RST, et `nc` affiche « Connection refused ». Remettre `listen 80;`, vérifier avec `sudo nginx -t`, puis `sudo systemctl reload nginx`.
+4. Des SYN répétés (`[TCP Retransmission]`) sans réponse, puis `curl` abandonne avec un délai dépassé. ARP fonctionne toujours (couche 2), ping peut répondre si l'ICMP reste autorisé.
+
+Tableau type pour le compte rendu :
+| Couche | Vérifié | Commande | Résultat |
+|---|---|---|---|
+| 1 | lien actif | `ip -br link` | `UP` |
+| 2 | MAC du serveur | `ip neigh` | `192.168.1.40 … REACHABLE` |
+| 3 | IP, passerelle, joignabilité | `ip -br a`, `ip route`, `ping -c 2 192.168.1.40` | 0 % de perte |
+| 4 | port 80 ouvert | `nc -vz 192.168.1.40 80` | `succeeded!` |
+| 7 | nom et page | `getent hosts …`, `curl -v …` | `192.168.1.40`, `HTTP/1.1 200 OK` |
+
+### Pour aller plus loin
+• ISO/IEC 7498-1, modèle de référence OSI, ISO (version gratuite : recommandation UIT-T X.200) : https://www.itu.int/rec/T-REC-X.200
+• RFC 1122, Requirements for Internet Hosts, IETF : https://www.rfc-editor.org/rfc/rfc1122
+• RFC 9293, Transmission Control Protocol, et RFC 768, User Datagram Protocol, IETF : https://www.rfc-editor.org/rfc/rfc9293
+• RFC 826, An Ethernet Address Resolution Protocol, IETF : https://www.rfc-editor.org/rfc/rfc826
+• Registre des numéros de ports (Service Name and Transport Protocol Port Number Registry), IANA : https://www.iana.org/assignments/service-names-port-numbers
+• Wireshark User's Guide, Wireshark Foundation : https://www.wireshark.org/docs/wsug_html_chunked/ ; pages de manuel ip(8) et ss(8) : https://man7.org/linux/man-pages/
+"""
+
+    codeblock "bash" {
+      title: "Recette complète depuis le poste Linux"
+      code: """
+ip -br link                                   # couche 1 : UP
+ip -br a ; ip route                           # couche 3 : 192.168.1.20/24, default via 192.168.1.1
+getent hosts intranet.lycee.internal          # nom : 192.168.1.40
+ping -c 2 192.168.1.40                        # couche 3 : 0% packet loss
+ip neigh show 192.168.1.40                    # couche 2 : lladdr ... REACHABLE
+nc -vz 192.168.1.40 80                        # couche 4 : succeeded!
+curl -sI http://intranet.lycee.internal/ | head -n 1   # couche 7 : HTTP/1.1 200 OK
+"""
+    }
+
+    quiz {
+      pick: 10
+      question "Un poste 192.168.1.20/24 envoie une requête à 10.0.5.40. Quelle MAC de destination porte la trame à la sortie du poste ?" {
+        - "celle de 10.0.5.40"
+        + "celle de la passerelle 192.168.1.1"
+        - "ff:ff:ff:ff:ff:ff"
+        - "celle du serveur DNS"
+        explanation: "La destination est hors du réseau local : la trame va au routeur. L'IP de destination reste 10.0.5.40, seule la MAC désigne le prochain saut."
+      }
+      question "Dans quel ordre se produisent les échanges quand un poste ouvre http://intranet.lycee.internal pour la première fois (cache vide, serveur dans le LAN) ?" {
+        - "TCP, DNS, ARP, HTTP"
+        + "DNS, ARP, poignée de main TCP, HTTP"
+        - "HTTP, TCP, ARP, DNS"
+        - "ARP, HTTP, DNS, TCP"
+        explanation: "Il faut d'abord l'IP (DNS), puis la MAC correspondante (ARP), puis ouvrir la connexion (SYN, SYN-ACK, ACK), et enfin envoyer GET. La requête DNS elle-même peut nécessiter une ARP vers le serveur DNS ou la passerelle."
+      }
+      question "Quelle couche OSI ajoute les adresses IP source et destination ?" {
+        - "couche 2"
+        + "couche 3"
+        - "couche 4"
+        - "couche 7"
+        explanation: "La couche réseau (IP) ajoute l'en-tête avec les adresses IP. La couche 2 ajoute les MAC, la couche 4 les ports."
+      }
+      question "Une trame Ethernet transporte un segment TCP vers le port 80. Quelles valeurs trouve-t-on dans les champs EtherType et Protocole IPv4 ?" {
+        - "0x0806 et 17"
+        + "0x0800 et 6"
+        - "0x86DD et 1"
+        - "0x0800 et 17"
+        explanation: "IPv4 = 0x0800, TCP = 6. 0x0806 est ARP, 17 est UDP, 1 est ICMP et 0x86DD IPv6."
+      }
+      question "Quel équipement lit l’adresse IP de destination pour choisir un chemin vers un autre réseau ?" {
+        - "le concentrateur"
+        - "le commutateur de couche 2"
+        + "le routeur"
+        - "le point d'accès"
+        explanation: "Le routeur travaille en couche 3 avec sa table de routage. Commutateur et point d'accès travaillent avec les MAC, le hub ne lit rien."
+      }
+      question "Un service écoute sur 127.0.0.1:80. Que voit un client du LAN qui s’y connecte sur l’IP du serveur ?" {
+        - "la page s'affiche normalement"
+        + "connexion refusée, car rien n'écoute sur l'adresse réseau du serveur"
+        - "un délai dépassé à cause du DNS"
+        - "une erreur ARP"
+        explanation: "La boucle locale n'est accessible que depuis la machine. Le SYN reçu sur l'IP du réseau ne trouve aucun socket : le serveur répond RST."
+      }
+      question "Une requête DNS de 40 octets part en UDP sur IPv4. Quelle est la taille du paquet IP ?" {
+        - "48 octets"
+        + "68 octets"
+        - "80 octets"
+        - "82 octets"
+        explanation: "40 + 8 (UDP) + 20 (IPv4) = 68 octets. 48 oublie l'en-tête IP, 80 compte un en-tête TCP au lieu d'UDP, 82 ajoute l'en-tête Ethernet (qui ne fait pas partie du paquet IP)."
+      }
+      question "Pourquoi un commutateur envoie-t-il une requête ARP sur tous ses ports ?" {
+        - "parce qu'il ne lit jamais les adresses"
+        + "parce qu'elle est adressée à ff:ff:ff:ff:ff:ff, la diffusion"
+        - "parce que ARP est un protocole de couche 3"
+        - "parce qu'il ne connaît pas l'adresse IP demandée"
+        explanation: "Une trame de diffusion est recopiée sur tous les ports. Le commutateur ne regarde pas l'IP demandée dans ARP : il décide uniquement d'après la MAC de destination."
+      }
+      question "Quel outil prouve qu’un port TCP est ouvert et accessible, ce que ping ne prouve pas ?" {
+        - "ipconfig /all"
+        - "arp -a"
+        + "nc -vz hôte port ou Test-NetConnection hôte -Port port"
+        - "ip neigh"
+        explanation: "Ces outils tentent une vraie connexion TCP. ping utilise ICMP, sans port : il ne dit rien sur un service. ipconfig et arp affichent des configurations locales."
+      }
+      question "Quels flags TCP Wireshark affiche-t-il pour le deuxième segment d’une poignée de main réussie ?" {
+        - "[SYN]"
+        + "[SYN, ACK]"
+        - "[ACK]"
+        - "[RST, ACK]"
+        explanation: "Le serveur répond SYN-ACK : il accepte et envoie son propre numéro de séquence. Le premier segment est [SYN], le troisième [ACK] ; [RST, ACK] serait un refus."
+      }
+      question "Quelle couche correspond à la couche internet du modèle TCP/IP ?" {
+        - "couche 2 OSI"
+        + "couche 3 OSI"
+        - "couche 4 OSI"
+        - "couches 5 à 7 OSI"
+        explanation: "La couche internet (IP, ICMP) correspond à la couche réseau, la 3e de l'OSI. La couche accès réseau couvre 1 et 2, la couche application 5 à 7."
+      }
+      question "Une réponse de ping indique ttl=54. Combien de routeurs le paquet a-t-il probablement traversés ?" {
+        - "54"
+        + "10, si la machine est partie de 64"
+        - "74"
+        - "aucun, le TTL ne change pas"
+        explanation: "La valeur de départ la plus proche au-dessus de 54 est 64 (Linux) : 64 − 54 = 10 routeurs. Chaque routeur retire 1 au TTL."
+      }
+      question "Une capture montre des requêtes ARP Who has 192.168.1.50? répétées, sans aucune réponse. Diagnostic ?" {
+        - "le DNS ne connaît pas l'adresse"
+        - "le port 80 est fermé"
+        + "aucune machine n'utilise 192.168.1.50 dans ce réseau local (éteinte, débranchée ou autre VLAN)"
+        - "le routeur bloque l'ARP vers Internet"
+        explanation: "ARP ne reçoit de réponse que si une machine du même LAN a cette IP. Le DNS et les ports ne sont pas encore en jeu à ce stade."
+      }
+      question "Pourquoi TCP est-il choisi pour le web et le transfert de fichiers ?" {
+        - "parce qu'il a l'en-tête le plus court"
+        - "parce qu'il n'ouvre pas de connexion"
+        + "parce qu'il garantit des données complètes, dans l'ordre et sans doublon"
+        - "parce qu'il est le seul à utiliser des ports"
+        explanation: "TCP numérote, acquitte et retransmet. UDP a l'en-tête le plus court (8 octets) et utilise aussi des ports, mais sans garantie de livraison."
+      }
+      question "Quelle adresse indique qu’un poste n’a reçu aucune réponse DHCP ?" {
+        - "192.168.1.20"
+        - "127.0.0.1"
+        + "169.254.40.12"
+        - "10.0.0.1"
+        explanation: "La plage 169.254.0.0/16 (APIPA) est auto-attribuée faute de DHCP. 127.0.0.1 est la boucle locale, les autres sont des adresses privées ordinaires."
+      }
+      question "Quelle commande Linux affiche les sockets TCP en écoute avec le programme associé ?" {
+        - "ip neigh"
+        - "ip route"
+        + "sudo ss -tlnp"
+        - "ping -c 4"
+        explanation: "ss -t (TCP) -l (écoute) -n (numérique) -p (processus) ; sudo permet de voir les processus des autres utilisateurs, comme nginx ou sshd."
+      }
+      question "Dans un réseau commuté, que fait un routeur d’une trame de diffusion reçue sur son interface LAN ?" {
+        - "il la transmet sur Internet"
+        - "il la recopie sur toutes ses interfaces"
+        + "il la traite si elle le concerne, mais ne la fait pas suivre vers les autres réseaux"
+        - "il la renvoie à l'émetteur"
+        explanation: "Le routeur délimite le domaine de diffusion. Il répond par exemple à une ARP qui demande son adresse, mais ne propage pas la diffusion."
+      }
+      question "Quel service utilise le port 53 en UDP et en TCP ?" {
+        - "DHCP"
+        - "NTP"
+        + "DNS"
+        - "SNMP"
+        explanation: "Le DNS utilise le port 53 en UDP pour la plupart des questions et en TCP pour les grosses réponses. DHCP utilise 67/68, NTP 123, SNMP 161, tous en UDP."
+      }
+      question "Combien d’octets d’en-têtes ajoutent TCP, IPv4 et Ethernet (FCS compris), sans options ?" {
+        - "40"
+        - "48"
+        + "58"
+        - "62"
+        explanation: "TCP 20 + IPv4 20 + en-tête Ethernet 14 + FCS 4 = 58 octets. Le préambule de 8 octets n'est en général pas compté dans la trame."
+      }
+      question "Un client voit Connection timed out vers un serveur web qui répond au ping. Quelle vérification fais-tu en premier côté serveur ?" {
+        - "le cache ARP du client"
+        + "les règles du pare-feu sur le port 80 ou 443"
+        - "le câble du client"
+        - "le serveur DHCP"
+        explanation: "Le ping prouve la joignabilité ; un délai dépassé (pas de RST) sur le port web désigne un filtrage. Un service arrêté donnerait connexion refusée."
+      }
+    }
+  }
+}

@@ -1,0 +1,2782 @@
+tdc-version: 2
+type: course
+
+course "python-advanced" {
+  title: "Python : aller plus loin"
+  description: """
+Ce cours prend la suite des premiers scripts Python et te fait écrire des outils d'administration propres, testés et réutilisables. Il s'adresse aux élèves de BTS SIO (SISR et SLAM), BTS CIEL, BUT informatique et réseaux, et à toute personne qui veut automatiser son travail sur un petit parc.
+
+À la fin, tu sauras :
+• écrire des compréhensions de listes et de dictionnaires, des fonctions avec *args, **kwargs, arguments nommés et lambda ;
+• modéliser des données avec des classes et des dataclasses ;
+• découper un projet en modules et paquets, l'isoler dans un environnement virtuel et figer ses dépendances avec pip ;
+• lire et écrire du JSON et du CSV sans perdre les accents ni les lignes ;
+• extraire des informations d'un journal avec le module re ;
+• interroger une API HTTP avec urllib ou requests, avec délai d'attente et gestion des erreurs ;
+• tester un port TCP et écrire un petit client et un petit serveur avec socket ;
+• écrire des tests avec pytest et annoter ton code avec des types vérifiés par mypy ;
+• construire un vrai script d'administration avec os, pathlib, subprocess et argparse.
+
+Chaque chapitre contient un exemple complet, un exercice avec sa correction et une banque de questions tirées au hasard. Les exemples fonctionnent avec Python 3.11 ou plus récent (Debian 12 fournit Python 3.11, Ubuntu 24.04 Python 3.12) et, sauf mention contraire, sous Windows 10/11.
+
+Prérequis : les bases de Python (variables, if, for, fonctions, listes, dictionnaires, try/except), l'usage courant du terminal, et la notion d'adresse IP et de port.
+"""
+  category: "python"
+  level: "intermediate"
+  duration: "7h"
+  icon: "Code"
+  keywords: ["python", "compréhension", "lambda", "kwargs", "classe", "dataclass", "module", "venv", "pip", "json", "csv", "regex", "requests", "urllib", "socket", "pytest", "typage", "mypy", "pathlib", "subprocess", "argparse"]
+
+  module "comprehensions-fonctions" {
+    title: "Chapitre 1 : compréhensions, *args, **kwargs et lambda"
+    duration: "35min"
+    content: """
+### Pourquoi aller plus loin
+Un script d'administration manipule surtout des collections : une liste de postes, un dictionnaire de ports, les lignes d'un journal. Python offre des écritures courtes et lisibles pour les transformer. Elles ne servent pas à « faire joli » : elles réduisent le nombre de lignes où une erreur peut se cacher.
+
+### Les compréhensions de listes
+Une compréhension (comprehension) construit une nouvelle liste à partir d'un itérable, en une expression :
+
+```python
+carres = [x * x for x in range(5)]
+print(carres)                      # [0, 1, 4, 9, 16]
+
+pairs = [n for n in range(10) if n % 2 == 0]
+print(pairs)                       # [0, 2, 4, 6, 8]
+```
+
+Elle se lit de gauche à droite : « la valeur `x * x` pour chaque `x` de `range(5)` ». Le `if` final filtre. C'est l'équivalent exact de :
+
+```python
+carres = []
+for x in range(5):
+    carres.append(x * x)
+```
+
+Pour choisir une valeur selon une condition, l'expression conditionnelle se place **avant** le `for` :
+
+```python
+etats = ["UP" if code == 0 else "DOWN" for code in [0, 1, 0]]
+# ['UP', 'DOWN', 'UP']
+```
+
+### Dictionnaires, ensembles et générateurs
+La même syntaxe existe avec des accolades et des parenthèses :
+
+```python
+ports = {"ssh": 22, "http": 80, "https": 443}
+par_numero = {num: nom for nom, num in ports.items()}
+# {22: 'ssh', 80: 'http', 443: 'https'}
+
+longueurs = {len(m) for m in ["ssh", "http", "dns"]}
+# {3, 4}  : un ensemble, sans doublon ni ordre garanti
+
+total = sum(x * x for x in range(1000000))
+```
+
+La dernière forme, entre parenthèses, est une **expression génératrice** (generator expression) : elle ne construit pas la liste en mémoire, elle produit les valeurs une à une. Un générateur ne se parcourt **qu'une seule fois** :
+
+```python
+g = (x * x for x in range(3))
+print(sum(g))   # 5
+print(sum(g))   # 0 : le générateur est déjà épuisé
+```
+
+Règle pratique : une compréhension doit tenir sur une ou deux lignes. Si tu as besoin de deux `for` imbriqués et de trois conditions, une boucle classique sera plus lisible.
+
+### Paramètres de fonction : valeurs par défaut et arguments nommés
+```python
+def connecter(hote, port=22, *, delai=5):
+    return hote, port, delai
+
+connecter("srv")                 # ('srv', 22, 5)
+connecter("srv", 2222)           # ('srv', 2222, 5)
+connecter("srv", delai=3)        # ('srv', 22, 3)
+connecter("srv", 22, 3)          # TypeError
+```
+
+Le `*` seul dans la signature impose que tout ce qui suit soit passé **par nom** (keyword-only). L'appel `connecter("srv", 22, 3)` échoue avec `connecter() takes from 1 to 2 positional arguments but 3 were given`. On évite ainsi qu'un lecteur confonde un délai et un port.
+
+### Le piège de la valeur par défaut mutable
+La valeur par défaut est évaluée **une seule fois**, à la définition de la fonction. Si c'est une liste, elle est partagée entre les appels :
+
+```python
+def ajoute(x, liste=[]):
+    liste.append(x)
+    return liste
+
+print(ajoute(1))   # [1]
+print(ajoute(2))   # [1, 2]  : la liste du premier appel a été réutilisée
+```
+
+La bonne écriture utilise `None` :
+
+```python
+def ajoute(x, liste=None):
+    if liste is None:
+        liste = []
+    liste.append(x)
+    return liste
+```
+
+### *args et **kwargs
+`*args` récupère les arguments positionnels en trop dans un **tuple**, `**kwargs` les arguments nommés en trop dans un **dictionnaire**. Les noms `args` et `kwargs` sont une convention ; ce sont les étoiles qui comptent.
+
+```python
+def journal(niveau, *messages, **contexte):
+    print(niveau, messages, contexte)
+
+journal("INFO", "démarrage", "ok", hote="srv01", pid=812)
+# INFO ('démarrage', 'ok') {'hote': 'srv01', 'pid': 812}
+```
+
+À l'appel, les étoiles font l'inverse : elles **déplient** une liste ou un dictionnaire.
+
+```python
+options = {"port": 2222, "delai": 3}
+cible = ["srv"]
+connecter(*cible, port=2222, delai=3)
+connecter("srv", **options)
+```
+
+L'ordre dans une signature est toujours : positionnels, `*args`, arguments nommés seuls, `**kwargs`.
+
+### lambda et le paramètre key
+Une `lambda` est une petite fonction anonyme réduite à **une seule expression**. Son usage principal : le paramètre `key` de `sorted`, `min`, `max`.
+
+```python
+postes = [("pc03", 4), ("pc01", 16), ("pc02", 8)]
+print(sorted(postes, key=lambda p: p[1], reverse=True))
+# [('pc01', 16), ('pc02', 8), ('pc03', 4)]
+
+print(max(postes, key=lambda p: p[1]))   # ('pc01', 16)
+```
+
+`sorted` renvoie une **nouvelle** liste ; `liste.sort()` trie sur place et renvoie `None`. Le tri de Python est stable : deux éléments égaux pour la clé gardent leur ordre d'origine, ce qui permet de trier en plusieurs passes. Si la lambda devient longue, écris une fonction avec `def` : elle aura un nom et pourra être testée.
+
+### À toi de jouer
+Tu disposes de l'inventaire suivant :
+
+```python
+inventaire = [
+    {"nom": "pc01", "salle": "B12", "ram": 8,  "os": "Windows 11"},
+    {"nom": "pc02", "salle": "B12", "ram": 4,  "os": "Windows 10"},
+    {"nom": "pc03", "salle": "B14", "ram": 16, "os": "Debian 12"},
+    {"nom": "pc04", "salle": "B14", "ram": 4,  "os": "Windows 10"},
+]
+```
+
+1. Avec une compréhension, construis la liste des noms des postes qui ont moins de 8 Go de RAM.
+2. Construis un dictionnaire `{nom: os}`.
+3. Affiche les postes triés par RAM décroissante, puis par nom en cas d'égalité.
+4. Écris une fonction `filtre(inventaire, **criteres)` qui renvoie les postes dont tous les champs correspondent aux critères : `filtre(inventaire, salle="B14", ram=4)` doit renvoyer seulement `pc04`.
+
+### Correction
+1. `[p["nom"] for p in inventaire if p["ram"] < 8]` donne `['pc02', 'pc04']`.
+2. `{p["nom"]: p["os"] for p in inventaire}` donne `{'pc01': 'Windows 11', 'pc02': 'Windows 10', 'pc03': 'Debian 12', 'pc04': 'Windows 10'}`.
+3. La clé peut renvoyer un tuple ; on met la RAM en négatif pour l'avoir décroissante tout en gardant le nom croissant :
+```python
+for p in sorted(inventaire, key=lambda p: (-p["ram"], p["nom"])):
+    print(p["nom"], p["ram"])
+# pc03 16, pc01 8, pc02 4, pc04 4
+```
+4. On parcourt les critères reçus dans le dictionnaire `criteres` :
+```python
+def filtre(inventaire, **criteres):
+    return [p for p in inventaire
+            if all(p.get(cle) == val for cle, val in criteres.items())]
+
+print([p["nom"] for p in filtre(inventaire, salle="B14", ram=4)])   # ['pc04']
+```
+`all()` renvoie `True` si tous les éléments sont vrais (et `True` pour une séquence vide : sans critère, tous les postes sont renvoyés). `p.get(cle)` évite une `KeyError` si le critère porte sur un champ absent.
+"""
+
+    codeblock "python" {
+      title: "Compter les échecs de connexion par adresse"
+      code: """
+lignes = [
+    "Failed password for root from 203.0.113.5",
+    "Accepted password for alice from 192.168.10.21",
+    "Failed password for admin from 203.0.113.5",
+    "Failed password for root from 198.51.100.7",
+]
+
+echecs = [l.split()[-1] for l in lignes if l.startswith("Failed")]
+compte = {ip: echecs.count(ip) for ip in set(echecs)}
+
+for ip, n in sorted(compte.items(), key=lambda c: c[1], reverse=True):
+    print(f"{ip:<15} {n}")
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Que vaut [n * 2 for n in range(4) if n != 2] ?" {
+        - "[0, 2, 4, 6]"
+        + "[0, 2, 6]"
+        - "[2, 4, 6]"
+        - "[0, 2, 4]"
+        explanation: "range(4) donne 0, 1, 2, 3 ; le filtre retire 2 ; on double les autres : 0, 2, 6. L'erreur classique est d'oublier que le filtre porte sur n avant la multiplication."
+      }
+      question "Quel est le type de l’objet produit par (x for x in range(3)) ?" {
+        - "un tuple"
+        - "une liste"
+        + "un générateur"
+        - "un ensemble"
+        explanation: "Les parenthèses autour d'une compréhension créent une expression génératrice, pas un tuple. Pour un tuple, il faut écrire tuple(x for x in range(3))."
+      }
+      question "g = (x for x in range(3)) ; print(sum(g)) ; print(sum(g)). Qu’affiche le second print ?" {
+        - "3"
+        + "0"
+        - "une erreur StopIteration"
+        - "6"
+        explanation: "Un générateur ne se parcourt qu'une fois. Le premier sum l'épuise ; le second ne reçoit plus aucune valeur et renvoie 0, sans lever d'erreur."
+      }
+      question "Où place-t-on un « if … else » qui choisit la valeur produite dans une compréhension ?" {
+        + "avant le for : [a if c else b for x in s]"
+        - "après le for : [x for x in s if c else b]"
+        - "dans une lambda obligatoirement"
+        - "c'est impossible dans une compréhension"
+        explanation: "L'expression conditionnelle a if c else b fait partie de la valeur produite, donc avant le for. Le if placé après le for est un filtre et n'accepte pas de else."
+      }
+      question "def ajoute(x, l=[]): l.append(x); return l. Que renvoie le deuxième appel ajoute(2) après ajoute(1) ?" {
+        - "[2]"
+        + "[1, 2]"
+        - "une TypeError"
+        - "[2, 1]"
+        explanation: "La valeur par défaut est créée une seule fois, à la définition de la fonction. La même liste est réutilisée d'un appel à l'autre. On écrit l=None puis on crée la liste dans la fonction."
+      }
+      question "Dans def f(*args, **kwargs), de quel type est kwargs ?" {
+        - "un tuple"
+        - "une liste"
+        + "un dictionnaire"
+        - "un ensemble"
+        explanation: "**kwargs rassemble les arguments nommés supplémentaires dans un dictionnaire nom → valeur. *args rassemble les positionnels supplémentaires dans un tuple."
+      }
+      question "Que produit l’appel f(1, 2, port=22) si f est def f(*args, **kwargs): print(args, kwargs) ?" {
+        - "[1, 2] {'port': 22}"
+        + "(1, 2) {'port': 22}"
+        - "(1, 2, 22) {}"
+        - "une erreur : port n'est pas déclaré"
+        explanation: "Les positionnels vont dans le tuple args, l'argument nommé port va dans le dictionnaire kwargs. Il n'est pas nécessaire de déclarer port puisque **kwargs accepte tout nom."
+      }
+      question "Avec def connecter(hote, port=22, *, delai=5), quel appel provoque une TypeError ?" {
+        - "connecter(\"srv\", delai=3)"
+        - "connecter(\"srv\", 2222)"
+        + "connecter(\"srv\", 22, 3)"
+        - "connecter(hote=\"srv\")"
+        explanation: "L'étoile seule rend delai utilisable seulement par son nom. Passer un troisième argument positionnel lève « takes from 1 to 2 positional arguments but 3 were given »."
+      }
+      question "La liste cible contient le nom srv et le port 2222. Que fait l’étoile dans l’appel connecter(*cible) ?" {
+        - "elle passe la liste entière comme premier argument"
+        + "elle déplie la liste : connecter(\"srv\", 2222)"
+        - "elle multiplie les arguments"
+        - "elle rend les arguments facultatifs"
+        explanation: "À l'appel, * déplie un itérable en arguments positionnels et ** déplie un dictionnaire en arguments nommés. C'est l'opération inverse de *args dans une signature."
+      }
+      question "Quelle limite a une lambda par rapport à une fonction définie avec def ?" {
+        - "elle ne peut pas recevoir de paramètre"
+        + "son corps est une seule expression, sans instruction comme return ou une boucle for"
+        - "elle ne peut être appelée qu'une seule fois"
+        - "elle ne peut pas être passée à sorted"
+        explanation: "Une lambda contient une seule expression dont la valeur est renvoyée. Pas de return, pas de bloc. Pour plus, on écrit une fonction nommée avec def, plus lisible et testable."
+      }
+      question "Quelle différence entre sorted(liste) et liste.sort() ?" {
+        - "aucune, ce sont deux noms de la même fonction"
+        + "sorted renvoie une nouvelle liste ; sort trie sur place et renvoie None"
+        - "sort renvoie une nouvelle liste ; sorted trie sur place"
+        - "sorted ne sait pas trier des tuples"
+        explanation: "Écrire liste = liste.sort() est une erreur classique : la variable vaut alors None. sorted accepte aussi n'importe quel itérable, pas seulement une liste."
+      }
+      question "Comment trier des postes par RAM décroissante puis par nom croissant ?" {
+        - "sorted(p, key=lambda x: (x[\"ram\"], x[\"nom\"]), reverse=True)"
+        + "sorted(p, key=lambda x: (-x[\"ram\"], x[\"nom\"]))"
+        - "sorted(p, key=lambda x: x[\"ram\"] + x[\"nom\"])"
+        - "sorted(p, reverse=\"ram\")"
+        explanation: "Une clé tuple compare d'abord le premier élément puis le second. Mettre la RAM en négatif l'inverse sans inverser le nom. Avec reverse=True, les noms seraient aussi en ordre décroissant."
+      }
+    }
+  }
+
+  module "classes-objets" {
+    title: "Chapitre 2 : classes, objets et dataclasses"
+    duration: "40min"
+    content: """
+### Pourquoi des classes
+Jusqu'ici, un poste de l'inventaire était un dictionnaire : `{"nom": "pc01", "ram": 8}`. Ça marche, mais rien n'empêche d'écrire `p["rma"]` par erreur, et les fonctions qui travaillent sur un poste sont éparpillées dans le script. Une **classe** regroupe les données d'un objet (ses **attributs**) et les fonctions qui le manipulent (ses **méthodes**). Chaque poste devient une **instance** de la classe.
+
+### Une première classe
+```python
+class Poste:
+    def __init__(self, nom, ip, ram=8):
+        self.nom = nom
+        self.ip = ip
+        self.ram = ram
+        self.services = []
+
+    def ajouter_service(self, service):
+        self.services.append(service)
+
+    def est_sous_dimensionne(self, minimum=8):
+        return self.ram < minimum
+
+
+pc = Poste("pc01", "192.168.10.21", ram=4)
+pc.ajouter_service("ssh")
+print(pc.nom, pc.services, pc.est_sous_dimensionne())
+# pc01 ['ssh'] True
+```
+
+Ce qu'il faut retenir :
+• `class Poste:` définit le modèle ; `Poste("pc01", ...)` fabrique un objet.
+• `__init__` est appelée automatiquement à la création. Elle **initialise** l'objet ; elle ne renvoie rien.
+• `self` désigne l'objet en cours. Python le passe tout seul : `pc.ajouter_service("ssh")` équivaut à `Poste.ajouter_service(pc, "ssh")`. Oublier `self` dans la signature d'une méthode provoque `TypeError: ... takes 1 positional argument but 2 were given`.
+• Les attributs créés avec `self.x = ...` appartiennent à **chaque instance**. La liste `services` est donc propre à chaque poste, contrairement au piège de la valeur par défaut mutable vu au chapitre 1.
+
+### Attribut de classe ou attribut d'instance
+Une variable écrite directement dans le corps de la classe est **partagée** par toutes les instances :
+
+```python
+class Poste:
+    domaine = "lycee.internal"      # attribut de classe, commun à tous
+
+    def __init__(self, nom):
+        self.nom = nom              # attribut d'instance
+
+    def fqdn(self):
+        return f"{self.nom}.{self.domaine}"
+
+print(Poste("pc01").fqdn())         # pc01.lycee.internal
+```
+
+Ne mets jamais une liste vide en attribut de classe pour stocker des données propres à chaque objet : elle serait partagée par tous.
+
+### Afficher un objet : __str__ et __repr__
+Par défaut, `print(pc)` affiche quelque chose comme `<__main__.Poste object at 0x7f3a...>`. Deux **méthodes spéciales** (on dit aussi « méthodes dunder », pour double underscore) changent ce comportement :
+• `__repr__` : représentation pour le développeur, utilisée dans la console et dans les listes ;
+• `__str__` : texte pour l'utilisateur, utilisé par `print()` et `str()`. S'il est absent, Python utilise `__repr__`.
+
+```python
+class Poste:
+    def __init__(self, nom, ip):
+        self.nom, self.ip = nom, ip
+
+    def __repr__(self):
+        return f"Poste({self.nom!r}, {self.ip!r})"
+
+    def __str__(self):
+        return f"{self.nom} ({self.ip})"
+
+pc = Poste("pc01", "192.168.10.21")
+print(pc)        # pc01 (192.168.10.21)
+print([pc])      # [Poste('pc01', '192.168.10.21')]
+```
+
+### Héritage
+Une classe peut **hériter** d'une autre : elle récupère ses attributs et méthodes, et peut en **redéfinir** certaines. `super()` appelle la version de la classe parente.
+
+```python
+class Equipement:
+    def __init__(self, nom, ip):
+        self.nom, self.ip = nom, ip
+
+    def description(self):
+        return f"{self.nom} {self.ip}"
+
+class Commutateur(Equipement):
+    def __init__(self, nom, ip, nb_ports):
+        super().__init__(nom, ip)
+        self.nb_ports = nb_ports
+
+    def description(self):
+        return super().description() + f" ({self.nb_ports} ports)"
+
+sw = Commutateur("sw-b12", "192.168.10.2", 24)
+print(sw.description())               # sw-b12 192.168.10.2 (24 ports)
+print(isinstance(sw, Equipement))     # True
+```
+
+Si `Commutateur.__init__` oublie d'appeler `super().__init__(...)`, les attributs `nom` et `ip` n'existent pas et le premier accès lève une `AttributeError`. N'abuse pas de l'héritage : on hérite quand la phrase « un commutateur **est un** équipement » est vraie.
+
+### Propriétés
+Une **propriété** (`@property`) s'utilise comme un attribut mais exécute du code. Utile pour un calcul ou un contrôle :
+
+```python
+class Disque:
+    def __init__(self, total_go, utilise_go):
+        self.total_go, self.utilise_go = total_go, utilise_go
+
+    @property
+    def taux(self):
+        return round(100 * self.utilise_go / self.total_go, 1)
+
+d = Disque(500, 430)
+print(d.taux)     # 86.0  (pas de parenthèses)
+```
+
+### Les dataclasses
+Pour une classe qui sert surtout à **porter des données**, le module standard `dataclasses` écrit `__init__`, `__repr__` et `__eq__` à ta place à partir des annotations de type :
+
+```python
+from dataclasses import dataclass, field
+
+@dataclass
+class Poste:
+    nom: str
+    ip: str
+    ram: int = 8
+    services: list[str] = field(default_factory=list)
+
+a = Poste("pc01", "192.168.10.21")
+b = Poste("pc01", "192.168.10.21")
+print(a)          # Poste(nom='pc01', ip='192.168.10.21', ram=8, services=[])
+print(a == b)     # True : __eq__ compare les champs
+```
+
+Règles des dataclasses :
+• les champs sans valeur par défaut doivent venir **avant** ceux qui en ont une, sinon `TypeError: non-default argument 'ip' follows default argument 'ram'` (message de Python 3.12 et plus récents) ;
+• une liste ou un dictionnaire par défaut s'écrit avec `field(default_factory=list)` : écrire `services: list[str] = []` lève `ValueError: mutable default <class 'list'> for field services is not allowed: use default_factory` ;
+• `@dataclass(frozen=True)` rend les objets non modifiables : toute affectation lève `FrozenInstanceError`, et l'objet peut servir de clé de dictionnaire ;
+• les annotations ne sont **pas vérifiées** à l'exécution : `Poste("pc01", 42)` est accepté. Le contrôle des types se fait avec un outil comme mypy (chapitre 8).
+
+### À toi de jouer
+1. Écris une dataclass `Service` avec les champs `nom` (texte), `port` (entier) et `protocole` (texte, `"tcp"` par défaut).
+2. Écris une dataclass `Serveur` avec `nom`, `ip` et une liste `services` vide par défaut, et une méthode `ports()` qui renvoie la liste triée des ports.
+3. Crée un serveur `srv-web` (192.168.10.10) avec les services `https` (443) et `ssh` (22), puis affiche ses ports.
+4. Explique ce qui se passe si tu écris `services: list = []` dans la dataclass.
+
+### Correction
+```python
+from dataclasses import dataclass, field
+
+@dataclass
+class Service:
+    nom: str
+    port: int
+    protocole: str = "tcp"
+
+@dataclass
+class Serveur:
+    nom: str
+    ip: str
+    services: list[Service] = field(default_factory=list)
+
+    def ports(self):
+        return sorted(s.port for s in self.services)
+
+web = Serveur("srv-web", "192.168.10.10")
+web.services.append(Service("https", 443))
+web.services.append(Service("ssh", 22))
+print(web.ports())     # [22, 443]
+```
+4. La définition de la classe échoue immédiatement avec `ValueError: mutable default <class 'list'> for field services is not allowed: use default_factory`. Les dataclasses refusent ce piège : une liste par défaut serait partagée entre tous les serveurs. `field(default_factory=list)` crée une nouvelle liste à chaque objet.
+"""
+
+    codeblock "python" {
+      title: "Une hiérarchie d'équipements avec une méthode redéfinie"
+      code: """
+class Equipement:
+    def __init__(self, nom, ip):
+        self.nom = nom
+        self.ip = ip
+
+    def commande_sauvegarde(self):
+        raise NotImplementedError
+
+class RouteurCisco(Equipement):
+    def commande_sauvegarde(self):
+        return "copy running-config startup-config"
+
+class ServeurLinux(Equipement):
+    def commande_sauvegarde(self):
+        return "tar czf /root/etc.tgz /etc"
+
+parc = [RouteurCisco("r1", "192.168.10.1"), ServeurLinux("srv1", "192.168.10.10")]
+for e in parc:
+    print(f"{e.nom:<6} {e.commande_sauvegarde()}")
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "À quoi sert la méthode __init__ d’une classe ?" {
+        - "à détruire l’objet quand il n’est plus utilisé"
+        + "à initialiser les attributs de l’objet au moment de sa création"
+        - "à importer les modules dont la classe a besoin"
+        - "à renvoyer l’objet créé avec return"
+        explanation: "__init__ est appelée automatiquement après la création de l’objet pour lui donner ses attributs. Elle ne doit rien renvoyer : un return d’une valeur autre que None provoque une TypeError."
+      }
+      question "Que représente self dans une méthode ?" {
+        - "la classe elle-même"
+        + "l’instance sur laquelle la méthode est appelée"
+        - "le module courant"
+        - "un mot réservé qui rend l’attribut privé"
+        explanation: "pc.methode() est transformé en Classe.methode(pc) : self reçoit l’objet. Le nom self est une convention, mais le premier paramètre est obligatoire."
+      }
+      question "Une méthode est définie par def ping(): sans paramètre. Que se passe-t-il à l’appel pc.ping() ?" {
+        - "la méthode s’exécute normalement"
+        + "TypeError : la méthode reçoit l’objet en argument alors qu’elle n’en attend aucun"
+        - "AttributeError : ping n’existe pas"
+        - "la méthode renvoie None sans s’exécuter"
+        explanation: "Python passe toujours l’instance en premier argument. Sans self dans la signature, il y a un argument de trop : takes 0 positional arguments but 1 was given."
+      }
+      question "Une classe contient services = [] directement dans son corps, et chaque objet y ajoute ses services. Quel est le problème ?" {
+        - "aucun, chaque objet a sa propre liste"
+        + "la liste est un attribut de classe partagé par tous les objets"
+        - "la liste est vidée à chaque création d’objet"
+        - "Python refuse les listes dans une classe"
+        explanation: "Un attribut écrit dans le corps de la classe est partagé. Les données propres à chaque objet se créent dans __init__ avec self.services = []."
+      }
+      question "Quelle méthode spéciale est utilisée par print(objet) ?" {
+        + "__str__, ou __repr__ si __str__ est absente"
+        - "__init__"
+        - "__print__"
+        - "__repr__ uniquement"
+        explanation: "print appelle str(objet), qui utilise __str__. Si la classe ne la définit pas, Python se rabat sur __repr__. __print__ n’existe pas."
+      }
+      question "Dans une classe fille, à quoi sert super().__init__(nom, ip) ?" {
+        - "à créer une seconde instance de la classe parente"
+        + "à exécuter l’initialisation de la classe parente sur l’objet courant"
+        - "à empêcher l’héritage des méthodes"
+        - "à rendre la classe fille abstraite"
+        explanation: "super() donne accès aux méthodes de la classe parente pour le même objet. Sans cet appel, les attributs que le parent crée dans son __init__ n’existent pas."
+      }
+      question "sw est un Commutateur, classe fille de Equipement. Que renvoie isinstance(sw, Equipement) ?" {
+        - "False, car le type exact est Commutateur"
+        + "True"
+        - "une TypeError"
+        - "None"
+        explanation: "isinstance tient compte de l’héritage : un commutateur est aussi un équipement. Pour tester le type exact, on comparerait type(sw) is Equipement, ce qui donnerait False."
+      }
+      question "Avec @property def taux(self), comment lit-on la valeur ?" {
+        - "d.taux()"
+        + "d.taux"
+        - "d.get_taux()"
+        - "Disque.taux(d, True)"
+        explanation: "Une propriété s’utilise comme un attribut, sans parenthèses. Écrire d.taux() essaierait d’appeler le nombre renvoyé et lèverait une TypeError."
+      }
+      question "Quelles méthodes @dataclass génère-t-il par défaut ?" {
+        - "seulement __init__"
+        + "__init__, __repr__ et __eq__"
+        - "__init__, __str__ et __hash__ obligatoirement"
+        - "aucune, il vérifie seulement les types"
+        explanation: "Par défaut, une dataclass reçoit __init__, __repr__ et __eq__. Les méthodes de tri ne sont ajoutées qu’avec order=True."
+      }
+      question "Comment donner une liste vide par défaut à un champ de dataclass ?" {
+        - "services: list = []"
+        + "services: list = field(default_factory=list)"
+        - "services: list = None obligatoirement"
+        - "services: list = list"
+        explanation: "Une liste écrite directement en valeur par défaut est refusée (ValueError : mutable default). default_factory appelle list() à chaque création d’objet."
+      }
+      question "Une dataclass déclare nom: str puis on crée Poste(42). Que se passe-t-il à l’exécution ?" {
+        - "TypeError : 42 n’est pas un str"
+        + "l’objet est créé : les annotations ne sont pas vérifiées à l’exécution"
+        - "42 est converti en la chaîne \"42\""
+        - "ValueError : type invalide"
+        explanation: "Python ne contrôle pas les annotations. Un vérificateur comme mypy signale l’erreur avant l’exécution, mais l’interpréteur l’accepte."
+      }
+      question "Que provoque une affectation sur un objet créé par une dataclass frozen=True ?" {
+        - "la modification est faite silencieusement"
+        - "une copie modifiée est créée"
+        + "une exception FrozenInstanceError"
+        - "un avertissement seulement"
+        explanation: "frozen=True rend les champs non modifiables après la création. En échange, l’objet devient hachable et peut servir de clé de dictionnaire ou d’élément d’ensemble."
+      }
+    }
+  }
+
+  module "modules-venv-pip" {
+    title: "Chapitre 3 : modules, paquets, venv et pip"
+    duration: "35min"
+    content: """
+### Un module, c'est un fichier
+Tout fichier `.py` est un **module**. Son nom (sans `.py`) sert à l'importer. Découper un script en modules permet de réutiliser les fonctions et de les tester séparément.
+
+```text
+outil-parc/
+├── reseau.py
+└── main.py
+```
+
+```python
+# reseau.py
+PORTS_COURANTS = {"ssh": 22, "http": 80, "https": 443}
+
+def est_port_valide(port):
+    return 1 <= port <= 65535
+```
+
+```python
+# main.py
+import reseau
+from reseau import est_port_valide
+import json as js          # alias
+
+print(reseau.PORTS_COURANTS["ssh"])   # 22
+print(est_port_valide(70000))         # False
+```
+
+Évite `from module import *` : on ne sait plus d'où vient chaque nom, et un nom peut en écraser un autre sans prévenir.
+
+### Où Python cherche les modules
+À l'`import`, Python parcourt la liste `sys.path` dans l'ordre : d'abord le **dossier du script lancé**, puis les dossiers de `PYTHONPATH`, puis la bibliothèque standard et les paquets installés. Le premier module trouvé gagne.
+
+Conséquence classique : un fichier de ton projet nommé `json.py`, `socket.py` ou `random.py` **masque** le module standard du même nom. `import json` charge alors ton fichier, et tu obtiens une erreur du genre `AttributeError: module 'json' has no attribute 'loads'`. Ne nomme jamais un fichier comme un module standard.
+
+### Le garde if __name__ == "__main__"
+Quand un fichier est lancé directement, sa variable `__name__` vaut `"__main__"`. Quand il est importé, elle vaut le nom du module. Ce test permet d'avoir un fichier à la fois importable et exécutable :
+
+```python
+# reseau.py
+def est_port_valide(port):
+    return 1 <= port <= 65535
+
+if __name__ == "__main__":
+    # exécuté seulement avec : python3 reseau.py
+    print(est_port_valide(22))
+```
+
+Sans ce garde, le code de test s'exécuterait à chaque `import reseau`, y compris dans pytest.
+
+### Les paquets
+Un **paquet** (package) est un dossier de modules. On y place un fichier `__init__.py` (souvent vide), exécuté au premier import du paquet.
+
+```text
+outil-parc/
+├── parc/
+│   ├── __init__.py
+│   ├── reseau.py
+│   └── inventaire.py
+└── main.py
+```
+
+```python
+from parc.reseau import est_port_valide
+from parc import inventaire
+```
+
+À l'intérieur du paquet, `inventaire.py` peut importer son voisin par un import relatif : `from .reseau import est_port_valide`. Un fichier qui utilise un import relatif ne peut pas être lancé directement par son chemin ; on le lance comme module : `python3 -m parc.inventaire`.
+
+### Les environnements virtuels
+Installer des bibliothèques « dans le système » pose deux problèmes : deux projets peuvent avoir besoin de versions différentes, et on risque de casser les outils du système d'exploitation écrits en Python. Un **environnement virtuel** (venv) est un dossier qui contient son propre interpréteur et ses propres paquets, propre à un projet.
+
+Sous Debian/Ubuntu :
+
+```bash
+sudo apt install python3-venv          # le module venv est dans un paquet séparé
+cd outil-parc
+python3 -m venv .venv                  # crée l'environnement
+source .venv/bin/activate              # l'active : le prompt affiche (.venv)
+python -m pip install requests
+deactivate                             # revient au Python du système
+```
+
+Sous Windows (PowerShell) :
+
+```powershell
+py -m venv .venv
+.venv\Scripts\Activate.ps1
+python -m pip install requests
+```
+
+Si PowerShell refuse d'exécuter `Activate.ps1` (stratégie d'exécution), on peut autoriser les scripts locaux pour son compte avec `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`, ou appeler directement `.venv\Scripts\python.exe` sans activer.
+
+Activer n'est pas obligatoire : `.venv/bin/python script.py` utilise l'environnement directement, ce qui est pratique dans une tâche cron ou un service systemd. Le dossier `.venv` ne se copie pas d'une machine à l'autre et ne se met pas dans Git : on le recrée.
+
+### Debian 12 et Ubuntu 23.04+ : externally-managed-environment
+Sur ces systèmes, `pip install requests` hors d'un venv est refusé avec le message `error: externally-managed-environment`. C'est voulu (PEP 668) : le Python du système appartient au gestionnaire de paquets `apt`. Trois solutions propres :
+• installer la version empaquetée : `sudo apt install python3-requests` ;
+• créer un venv pour le projet (la solution normale pour tes scripts) ;
+• pour un outil en ligne de commande, `pipx install <outil>`, qui crée un venv par outil.
+
+L'option `--break-system-packages` désactive la protection : à éviter, elle peut casser des outils du système.
+
+### pip : installer, figer, reproduire
+```bash
+python -m pip install requests              # dernière version
+python -m pip install "requests==2.32.3"    # version exacte
+python -m pip list                          # paquets installés
+python -m pip show requests                 # version, dépendances, emplacement
+python -m pip freeze > requirements.txt     # fige toutes les versions
+python -m pip install -r requirements.txt   # réinstalle à l'identique ailleurs
+python -m pip uninstall requests
+```
+
+Écrire `python -m pip` plutôt que `pip` garantit que pip travaille pour l'interpréteur que tu crois utiliser. `pip freeze` produit des lignes `nom==version` ; c'est ce fichier `requirements.txt` que l'on versionne avec le code.
+
+Sécurité : un paquet installé exécute du code sur ta machine. Vérifie l'orthographe du nom (des paquets piégés imitent des noms connus, c'est le typosquatting), préfère des versions figées et n'installe jamais avec `sudo pip`.
+
+### À toi de jouer
+Tu prépares, sur un serveur Debian 12, l'outil de supervision du lycée.
+1. Crée le dossier `supervision`, un venv `.venv` dedans, installe `requests` et fige les dépendances.
+2. Tu organises le code en paquet `supervision/sonde/` avec un module `http.py` (tests des sites web) et un module `ping.py`. Pour essayer, tu lances `python3 sonde/ping.py`, qui importe `requests`. Quel problème risques-tu ? Propose un meilleur nom.
+3. Écris la ligne de crontab qui lance `main.py` toutes les 5 minutes avec le Python du venv, sans activer l'environnement.
+4. Un collègue lance `pip install requests` sur le serveur et obtient `externally-managed-environment`. Que lui réponds-tu ?
+
+### Correction
+1. Commandes :
+```bash
+sudo apt install python3-venv
+mkdir supervision && cd supervision
+python3 -m venv .venv
+.venv/bin/python -m pip install requests
+.venv/bin/python -m pip freeze > requirements.txt
+cat requirements.txt     # requests==..., urllib3==..., certifi==..., idna==..., charset-normalizer==...
+```
+`requests` tire ses dépendances (urllib3, certifi, idna, charset-normalizer) : `freeze` les fige aussi.
+2. Un module `http.py` dans le paquet est accessible comme `sonde.http`, ce qui ne pose pas de conflit en import absolu. Mais si tu lances un script qui se trouve **dans** `sonde/`, son dossier passe en tête de `sys.path` et `http.py` masque le module standard `http`, utilisé par `urllib` et `requests` : erreurs incompréhensibles garanties. Nomme-le `verif_http.py`.
+3. `*/5 * * * * cd /opt/supervision && /opt/supervision/.venv/bin/python main.py >> /var/log/supervision.log 2>&1` (en adaptant le chemin d'installation).
+4. C'est la protection PEP 668 de Debian 12 : on n'installe pas avec pip dans le Python du système. Soit `sudo apt install python3-requests`, soit un venv pour le projet. Pas de `--break-system-packages`.
+"""
+
+    codeblock "bash" {
+      title: "Recréer l'environnement d'un projet récupéré"
+      code: """
+git clone https://exemple.invalid/lycee/supervision.git
+cd supervision
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m pip list
+python main.py
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Que vaut __name__ dans un fichier lancé directement avec python3 fichier.py ?" {
+        - "le nom du fichier, fichier"
+        + "la chaîne \"__main__\""
+        - "None"
+        - "le chemin complet du fichier"
+        explanation: "Lancé directement, un module a pour nom __main__. Importé, il prend son nom de module. C’est ce qui permet le garde if __name__ == « __main__ »."
+      }
+      question "Ton projet contient un fichier json.py. Que se passe-t-il à import json dans main.py, situé dans le même dossier ?" {
+        - "Python charge le module standard json"
+        + "Python charge ton fichier json.py, qui masque le module standard"
+        - "Python lève une ImportError pour conflit de noms"
+        - "Python charge les deux modules"
+        explanation: "Le dossier du script est en tête de sys.path : ton json.py est trouvé en premier. Résultat typique : AttributeError: module json has no attribute loads."
+      }
+      question "Quel fichier transforme traditionnellement un dossier en paquet Python ?" {
+        - "setup.cfg"
+        + "__init__.py"
+        - "__main__.py"
+        - "requirements.txt"
+        explanation: "__init__.py, souvent vide, marque le dossier comme paquet et s’exécute au premier import. __main__.py sert à lancer un paquet avec python -m paquet."
+      }
+      question "Quelle commande crée un environnement virtuel nommé .venv sous Linux ?" {
+        - "pip install venv .venv"
+        + "python3 -m venv .venv"
+        - "virtualenv --create .venv"
+        - "source .venv/bin/activate"
+        explanation: "venv est un module de la bibliothèque standard, lancé avec -m. Sur Debian/Ubuntu, il faut le paquet python3-venv. activate sert à activer un venv déjà créé."
+      }
+      question "Comment active-t-on un venv .venv dans PowerShell sous Windows ?" {
+        - "lancer source .venv/bin/activate"
+        + "lancer le script Activate.ps1 du dossier .venv/Scripts"
+        - "lancer py -m activate .venv"
+        - "lancer la commande Set-Venv .venv"
+        explanation: "Sous Windows, les scripts sont dans Scripts et non bin. Si la stratégie d’exécution bloque le script, on peut appeler directement le python.exe du dossier Scripts."
+      }
+      question "Sur Debian 12, pip install requests hors venv affiche externally-managed-environment. Quelle est la bonne réaction ?" {
+        - "relancer avec sudo pip install requests"
+        - "ajouter --break-system-packages"
+        + "installer python3-requests avec apt, ou travailler dans un venv"
+        - "supprimer le fichier EXTERNALLY-MANAGED"
+        explanation: "La PEP 668 protège le Python du système, géré par apt. sudo, --break-system-packages ou la suppression du marqueur risquent de casser des outils du système."
+      }
+      question "À quoi sert python -m pip freeze > requirements.txt ?" {
+        - "à mettre à jour tous les paquets"
+        + "à enregistrer la liste des paquets installés avec leur version exacte"
+        - "à bloquer l’installation de nouveaux paquets"
+        - "à compiler le projet"
+        explanation: "freeze écrit des lignes nom==version. Le fichier se versionne et permet de réinstaller les mêmes versions avec pip install -r requirements.txt."
+      }
+      question "Pourquoi écrire python -m pip plutôt que pip ?" {
+        - "c’est plus rapide"
+        + "pip agit alors sur l’interpréteur exact que tu appelles"
+        - "pip seul ne fonctionne que sous Windows"
+        - "python -m pip installe en mode administrateur"
+        explanation: "Avec plusieurs Python sur la machine, la commande pip peut appartenir à un autre interpréteur. python -m pip lève l’ambiguïté."
+      }
+      question "Dans un paquet parc, que signifie from .reseau import est_port_valide ?" {
+        - "importer reseau depuis le dossier courant du terminal"
+        + "importer depuis le module reseau situé dans le même paquet"
+        - "importer un module caché"
+        - "importer la version locale plutôt que celle installée par pip"
+        explanation: "Le point désigne le paquet courant : c’est un import relatif. Il ne fonctionne que si le fichier est chargé comme partie du paquet, par exemple avec python -m parc.inventaire."
+      }
+      question "Comment lancer un script avec le Python d’un venv dans une tâche cron, sans l’activer ?" {
+        - "cron active tout seul le venv du dossier"
+        + "appeler directement /chemin/.venv/bin/python script.py"
+        - "écrire source activate dans la crontab sans chemin"
+        - "c’est impossible, il faut installer les paquets dans le système"
+        explanation: "L’interpréteur du venv sait où trouver ses paquets. Activer ne fait que modifier le PATH du shell courant, ce qui est inutile si on donne le chemin complet."
+      }
+      question "Pourquoi déconseille-t-on from reseau import * ?" {
+        - "c’est plus lent à l’exécution"
+        + "on ne sait plus d’où viennent les noms et ils peuvent en écraser d’autres"
+        - "c’est interdit depuis Python 3"
+        - "cela importe aussi les modules standard"
+        explanation: "L’import étoile déverse tous les noms publics du module dans l’espace courant. Une fonction locale ou importée avant peut être remplacée sans message."
+      }
+      question "Faut-il mettre le dossier .venv dans le dépôt Git du projet ?" {
+        - "oui, pour que les autres n’aient rien à installer"
+        + "non, on versionne requirements.txt et chacun recrée son venv"
+        - "oui, mais seulement sous Windows"
+        - "non, car Git refuse les dossiers cachés"
+        explanation: "Un venv contient des chemins absolus et des fichiers propres au système. Il n’est pas portable : on le recrée à partir de requirements.txt."
+      }
+    }
+  }
+
+  module "json-csv" {
+    title: "Chapitre 4 : lire et écrire du JSON et du CSV"
+    duration: "35min"
+    content: """
+### Toujours préciser l'encodage
+Un script d'administration échange des fichiers avec d'autres outils : export d'un tableur, réponse d'une API, rapport pour un collègue. La première source d'erreur est l'**encodage** des caractères. Sans paramètre `encoding`, `open()` utilise l'encodage par défaut du système : UTF-8 sous Linux, mais souvent une page de code comme cp1252 sous Windows. Un fichier qui contient `é` ouvert avec le mauvais encodage donne `UnicodeDecodeError` ou des caractères comme `Ã©`.
+
+Règle : écris toujours `encoding="utf-8"` et utilise `with`, qui ferme le fichier même en cas d'erreur.
+
+```python
+with open("rapport.txt", "w", encoding="utf-8") as f:
+    f.write("Salle B12 : 3 postes à réparer\n")
+```
+
+### JSON : correspondance des types
+Le JSON (RFC 8259) est le format d'échange des API web et de nombreux fichiers de configuration. Le module standard `json` convertit dans les deux sens :
+
+| JSON | Python |
+|---|---|
+| objet `{}` | `dict` |
+| tableau `[]` | `list` |
+| chaîne `"..."` | `str` |
+| nombre entier / réel | `int` / `float` |
+| `true` / `false` | `True` / `False` |
+| `null` | `None` |
+
+Quatre fonctions à connaître : `json.load(f)` lit depuis un fichier, `json.loads(texte)` depuis une chaîne ; `json.dump(obj, f)` écrit dans un fichier, `json.dumps(obj)` renvoie une chaîne. Le `s` final veut dire « string ».
+
+```python
+import json
+
+config = {"serveur": "srv-web", "ports": [22, 443], "école": "Lycée Jean Moulin", "actif": True}
+
+with open("config.json", "w", encoding="utf-8") as f:
+    json.dump(config, f, indent=2, ensure_ascii=False)
+
+with open("config.json", encoding="utf-8") as f:
+    relu = json.load(f)
+print(relu["ports"][1])     # 443
+```
+
+• `indent=2` produit un fichier lisible, avec retour à la ligne et indentation.
+• `ensure_ascii=False` garde les accents tels quels. Par défaut (`True`), `é` est écrit `\u00e9` : c'est du JSON valide, mais illisible pour un humain.
+
+### Les pièges du JSON
+• Le JSON exige des **guillemets doubles**. Le texte `{'a': 1}` (écrit avec `str()` d'un dictionnaire Python) n'est pas du JSON : `json.loads` lève `JSONDecodeError: Expecting property name enclosed in double quotes`.
+• Une chaîne vide ou une page HTML d'erreur donne `Expecting value: line 1 column 1 (char 0)`. C'est le message typique quand une API renvoie autre chose que du JSON.
+• `JSONDecodeError` est une sous-classe de `ValueError` : `except ValueError` l'attrape aussi.
+• Les clés d'un objet JSON sont **toujours des chaînes** : `{1: "a"}` relu devient `{"1": "a"}`.
+• Un tuple devient un tableau, mais un ensemble (`set`) ou un objet `datetime` ne sont pas convertibles : `TypeError: Object of type set is not JSON serializable`. Convertis-les d'abord (`list(...)`, `d.isoformat()`).
+
+### CSV : lire un export de tableur
+Le CSV (valeurs séparées) n'a pas de norme stricte unique ; la RFC 4180 décrit le format le plus courant. Le module `csv` gère pour toi les guillemets, les séparateurs à l'intérieur des champs et les retours à la ligne. Deux règles de la documentation Python :
+• ouvrir le fichier avec `newline=""`, sinon les retours à la ligne à l'intérieur d'un champ entre guillemets sont mal lus, et sous Windows chaque ligne écrite reçoit un `\r` en trop (lignes vides entre les lignes dans le tableur) ;
+• ne jamais découper une ligne avec `split(",")` : un champ comme `"Dupont, Marie"` serait coupé en deux.
+
+```python
+import csv
+
+with open("parc.csv", newline="", encoding="utf-8") as f:
+    for ligne in csv.DictReader(f, delimiter=";"):
+        print(ligne["nom"], ligne["ip"], int(ligne["ram"]))
+```
+
+`DictReader` utilise la **première ligne** comme noms de colonnes et renvoie chaque ligne suivante sous forme de dictionnaire. Toutes les valeurs sont des **chaînes** : il faut convertir avec `int()` ou `float()`.
+
+### Les exports d'un tableur français
+Un tableur réglé en français utilise souvent le **point-virgule** comme séparateur, car la virgule sert de séparateur décimal. Et l'export « CSV UTF-8 » d'Excel ajoute en tête de fichier une marque d'ordre des octets (BOM). Lu en `utf-8`, cette marque se colle au premier nom de colonne, qui devient `"\ufeffnom"` : `ligne["nom"]` lève alors une `KeyError`. La solution : `encoding="utf-8-sig"`, qui retire le BOM s'il existe et ne fait rien sinon.
+
+### Écrire un CSV
+```python
+import csv
+
+postes = [
+    {"nom": "pc01", "ip": "192.168.10.21", "etat": "OK"},
+    {"nom": "pc02", "ip": "192.168.10.22", "etat": "injoignable"},
+]
+
+with open("etat.csv", "w", newline="", encoding="utf-8-sig") as f:
+    w = csv.DictWriter(f, fieldnames=["nom", "ip", "etat"], delimiter=";")
+    w.writeheader()
+    w.writerows(postes)
+```
+
+Écrire en `utf-8-sig` permet à Excel d'ouvrir le fichier avec les accents corrects. Si un dictionnaire contient une clé absente de `fieldnames`, `DictWriter` lève une `ValueError`.
+
+### À toi de jouer
+Le fichier `comptes.csv`, exporté par la vie scolaire depuis un tableur, contient :
+
+```text
+nom;prenom;classe;mail
+Martin;Léa;BTS SIO 1;lea.martin@lycee.example
+Durand;Hugo;BTS SIO 2;hugo.durand@lycee.example
+Petit;Inès;BTS SIO 1;
+```
+
+1. Lis le fichier et affiche les élèves de `BTS SIO 1`. Tu obtiens `KeyError: 'nom'` alors que la colonne existe. Pourquoi, et comment corriger ?
+2. Construis un dictionnaire `{classe: [liste des identifiants]}` où l'identifiant est `prenom.nom` en minuscules.
+3. Enregistre-le dans `comptes.json`, lisible et avec les accents.
+4. Écris dans `sans_mail.csv` les élèves dont le mail est vide.
+
+### Correction
+1. Le fichier commence par un BOM : la première colonne s'appelle en réalité `\ufeffnom`. On ouvre avec `encoding="utf-8-sig"` et `delimiter=";"`.
+```python
+import csv, json
+
+with open("comptes.csv", newline="", encoding="utf-8-sig") as f:
+    eleves = list(csv.DictReader(f, delimiter=";"))
+
+print([e["prenom"] for e in eleves if e["classe"] == "BTS SIO 1"])   # ['Léa', 'Inès']
+```
+2. Avec `setdefault`, qui crée la liste la première fois :
+```python
+par_classe = {}
+for e in eleves:
+    ident = f"{e['prenom']}.{e['nom']}".lower()
+    par_classe.setdefault(e["classe"], []).append(ident)
+# {'BTS SIO 1': ['léa.martin', 'inès.petit'], 'BTS SIO 2': ['hugo.durand']}
+```
+3. Écriture :
+```python
+with open("comptes.json", "w", encoding="utf-8") as f:
+    json.dump(par_classe, f, indent=2, ensure_ascii=False)
+```
+4. Un champ vide est lu comme la chaîne `""`, qui est fausse dans un test :
+```python
+with open("sans_mail.csv", "w", newline="", encoding="utf-8-sig") as f:
+    w = csv.DictWriter(f, fieldnames=["nom", "prenom", "classe", "mail"], delimiter=";")
+    w.writeheader()
+    w.writerows(e for e in eleves if not e["mail"])
+```
+Remarque : les identifiants contiennent des accents (`léa.martin`). Pour un vrai compte informatique, il faudrait les retirer, par exemple avec `unicodedata.normalize("NFKD", texte)` puis en supprimant les caractères combinants.
+"""
+
+    codeblock "python" {
+      title: "Lire la réponse JSON enregistrée d'une API et la convertir en CSV"
+      code: """
+import csv
+import json
+
+with open("hotes.json", encoding="utf-8") as f:
+    hotes = json.load(f)      # [{"nom": "srv1", "ip": "192.168.10.10", "tags": ["web"]}, ...]
+
+with open("hotes.csv", "w", newline="", encoding="utf-8-sig") as f:
+    w = csv.writer(f, delimiter=";")
+    w.writerow(["nom", "ip", "tags"])
+    for h in hotes:
+        w.writerow([h["nom"], h["ip"], ",".join(h.get("tags", []))])
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle fonction lit du JSON depuis une chaîne de caractères ?" {
+        - "json.load"
+        + "json.loads"
+        - "json.read"
+        - "json.parse"
+        explanation: "Le s final signifie string : loads lit une chaîne, load lit un objet fichier. json.parse est le nom en JavaScript, pas en Python."
+      }
+      question "Comment est converti le littéral JSON null en Python ?" {
+        - "la chaîne \"null\""
+        - "0"
+        + "None"
+        - "False"
+        explanation: "null devient None, true et false deviennent True et False. Les confondre avec 0 ou une chaîne fausse les tests du type if valeur is None."
+      }
+      question "Que donne json.loads appliqué au texte {a: 1} dans lequel la clé a est entourée d’apostrophes ?" {
+        - "le dictionnaire avec la clé a"
+        + "une JSONDecodeError, car JSON exige des guillemets doubles"
+        - "une chaîne inchangée"
+        - "un dictionnaire vide"
+        explanation: "Le JSON n’accepte que les guillemets doubles. Ce texte ressemble à l’affichage d’un dictionnaire Python, ce n’est pas du JSON. On produit du JSON avec json.dumps, jamais avec str()."
+      }
+      question "Une requête renvoie une page HTML d’erreur et json.loads affiche Expecting value: line 1 column 1 (char 0). Que signifie ce message ?" {
+        - "le JSON contient une virgule en trop"
+        + "le texte reçu ne commence pas par une valeur JSON"
+        - "le fichier est en UTF-16"
+        - "le JSON est trop gros"
+        explanation: "Le décodeur attend une valeur dès le premier caractère. Une chaîne vide ou une page commençant par < donne exactement ce message. Il faut vérifier le code HTTP et le contenu reçu."
+      }
+      question "À quoi sert ensure_ascii=False dans json.dump ?" {
+        - "à refuser les caractères non ASCII"
+        + "à écrire les accents tels quels au lieu de séquences d’échappement"
+        - "à compresser le fichier"
+        - "à trier les clés"
+        explanation: "Par défaut, json échappe tout caractère non ASCII. Le résultat reste du JSON valide, mais illisible. Il faut alors aussi ouvrir le fichier en encoding utf-8."
+      }
+      question "Le dictionnaire d a pour seule clé l’entier 1. Que donne json.loads(json.dumps(d)) ?" {
+        - "exactement le dictionnaire d"
+        + "un dictionnaire dont la clé est la chaîne \"1\""
+        - "une TypeError"
+        - "une liste"
+        explanation: "Les clés d’un objet JSON sont toujours des chaînes. La clé entière 1 est écrite « 1 » et relue comme chaîne : l’aller-retour ne rend pas exactement l’objet d’origine."
+      }
+      question "Pourquoi ouvrir un fichier CSV avec le paramètre newline égal à la chaîne vide ?" {
+        - "pour supprimer les lignes vides"
+        + "pour laisser le module csv gérer lui-même les fins de ligne, y compris dans les champs entre guillemets"
+        - "pour lire le fichier plus vite"
+        - "pour imposer le format Unix"
+        explanation: "C’est la recommandation de la documentation : sans elle, un retour à la ligne dans un champ est mal lu, et sous Windows on obtient des lignes vides entre les lignes écrites."
+      }
+      question "Pourquoi ne pas découper une ligne CSV avec la méthode split sur la virgule ?" {
+        - "split ne fonctionne pas sur les chaînes longues"
+        + "un champ entre guillemets peut contenir une virgule et serait coupé en deux"
+        - "split supprime les accents"
+        - "split renvoie un tuple au lieu d’une liste"
+        explanation: "Le format CSV autorise un séparateur à l’intérieur d’un champ entre guillemets. Seul un vrai analyseur comme le module csv sait le gérer."
+      }
+      question "Avec csv.DictReader sans fieldnames, que devient la première ligne du fichier ?" {
+        - "elle est renvoyée comme première ligne de données"
+        + "elle fournit les noms de colonnes et n’est pas renvoyée comme donnée"
+        - "elle est ignorée complètement"
+        - "elle provoque une erreur si elle contient du texte"
+        explanation: "La première ligne sert de clés aux dictionnaires. Si on fournit fieldnames, elle est au contraire traitée comme une ligne de données."
+      }
+      question "Un export Excel « CSV UTF-8 » lu en utf-8 donne KeyError sur la première colonne. Quel encodage utiliser ?" {
+        - "latin-1"
+        - "ascii"
+        + "utf-8-sig"
+        - "utf-16"
+        explanation: "Excel ajoute un BOM en tête du fichier. Avec utf-8, il reste collé au premier nom de colonne. utf-8-sig le retire s’il est présent et se comporte comme utf-8 sinon."
+      }
+      question "Avec csv.DictReader, de quel type est la valeur lue dans une colonne ram qui contient 16 ?" {
+        - "int"
+        - "float"
+        + "str"
+        - "bytes"
+        explanation: "Le module csv ne devine pas les types : tout est texte. Comparer « 16 » > « 8 » donne False (ordre alphabétique) : il faut convertir avec int()."
+      }
+      question "Que se passe-t-il si on appelle json.dumps sur un ensemble (set) Python ?" {
+        - "il est converti en tableau JSON"
+        - "il est converti en objet JSON"
+        + "TypeError : Object of type set is not JSON serializable"
+        - "il est converti en chaîne"
+        explanation: "json ne sait convertir que dict, list, tuple, str, nombres, booléens et None. On convertit d’abord l’ensemble avec list() ou sorted()."
+      }
+    }
+  }
+
+  module "expressions-regulieres" {
+    title: "Chapitre 5 : extraire des informations avec re"
+    duration: "40min"
+    content: """
+### Quand utiliser une expression régulière
+Une **expression régulière** (regex, regular expression) décrit un motif de texte : « des chiffres, un point, des chiffres… ». Elle sert à **chercher**, **extraire** ou **remplacer** dans des journaux, des sorties de commandes ou des fichiers de configuration. Pour un test simple, les méthodes de chaîne suffisent et sont plus lisibles : `"Failed" in ligne`, `ligne.startswith("Nov")`, `ligne.split()`. On passe à `re` quand le motif varie.
+
+### Toujours une chaîne brute
+En Python, la barre oblique inverse a déjà un sens dans les chaînes (`"\n"` est un retour à la ligne). Les motifs s'écrivent donc en **chaîne brute** (raw string), préfixée par `r` : `r"\d+"`. Sans le `r`, certains motifs fonctionnent par chance, d'autres non (`"\b"` devient le caractère retour arrière), et Python 3.12 et plus récents affichent `SyntaxWarning: invalid escape sequence '\d'`.
+
+### Le vocabulaire minimal
+| Motif | Signification |
+|---|---|
+| `.` | n'importe quel caractère sauf le retour à la ligne |
+| `\d` / `\D` | un chiffre / tout sauf un chiffre |
+| `\w` | un caractère de mot : lettre (accents compris), chiffre ou `_` |
+| `\s` / `\S` | un espace blanc (espace, tabulation, retour) / tout sauf |
+| `[abc]`, `[0-9a-f]`, `[^;]` | un caractère de la liste, d'un intervalle, ou hors de la liste |
+| `*` `+` `?` | 0 ou plus, 1 ou plus, 0 ou 1 fois |
+| `{3}` `{1,3}` | exactement 3 fois, de 1 à 3 fois |
+| `^` `$` | début et fin de la chaîne (de chaque ligne avec `re.MULTILINE`) |
+| `\b` | frontière de mot |
+| `(...)` | groupe capturant |
+| `(?P<nom>...)` | groupe capturant nommé |
+| `(?:...)` | groupe non capturant |
+| `a|b` | a ou b |
+| `\.` | un vrai point (le point seul veut dire « n'importe quoi ») |
+
+### Les fonctions du module
+```python
+import re
+
+ligne = "Nov 26 10:02:11 srv sshd[812]: Failed password for root from 203.0.113.5 port 52144 ssh2"
+
+re.search(r"\d+\.\d+\.\d+\.\d+", ligne)    # cherche n'importe où : objet Match ou None
+re.match(r"\d+", ligne)                    # seulement au DÉBUT : None ici, la ligne commence par Nov
+re.fullmatch(r"\d{1,5}", "52144")         # la chaîne ENTIÈRE doit correspondre
+re.findall(r"\d+", "ports 22 et 443")      # ['22', '443'] : liste de toutes les occurrences
+re.sub(r"\d", "#", "pc01")                 # 'pc##' : remplacement
+re.split(r"[;,]\s*", "a, b;c")             # ['a', 'b', 'c']
+```
+
+Trois pièges classiques :
+• `search` et `match` renvoient `None` quand rien ne correspond. Écrire directement `re.search(...).group()` lève `AttributeError: 'NoneType' object has no attribute 'group'`. Teste toujours le résultat.
+• `match` ne cherche qu'au début ; pour valider une saisie complète, utilise `fullmatch`. `re.search(r"\d{1,3}", "1234")` trouve `123` alors que `re.fullmatch(r"\d{1,3}", "1234")` renvoie `None`.
+• Si le motif contient des groupes, `findall` renvoie les **groupes** et non la correspondance entière : `re.findall(r"(\d+)\.(\d+)", "1.2 et 3.4")` donne `[('1', '2'), ('3', '4')]`.
+
+### Extraire avec des groupes nommés
+```python
+motif = re.compile(
+    r"Failed password for (?:invalid user )?(?P<user>\S+) "
+    r"from (?P<ip>\d{1,3}(?:\.\d{1,3}){3}) port (?P<port>\d+)"
+)
+m = motif.search(ligne)
+if m:
+    print(m.group("user"), m["ip"], m["port"])   # root 203.0.113.5 52144
+    print(m.groupdict())                         # {'user': 'root', 'ip': '203.0.113.5', 'port': '52144'}
+```
+
+• `re.compile` prépare le motif une fois ; pratique quand on l'applique à des milliers de lignes et pour lui donner un nom.
+• `(?:invalid user )?` rend facultatif le texte que sshd ajoute pour un compte inexistant, sans créer de groupe.
+• Deux chaînes brutes côte à côte sont collées par Python : on peut couper un long motif sur plusieurs lignes.
+• Les groupes capturés sont toujours des **chaînes** : `int(m["port"])` pour un calcul.
+
+### Gourmand ou paresseux
+Les quantificateurs `*` et `+` sont **gourmands** (greedy) : ils prennent le plus de texte possible. Ajouter `?` les rend **paresseux** (lazy).
+
+```python
+re.search(r"<.+>", "<a><b>").group()     # '<a><b>'
+re.search(r"<.+?>", "<a><b>").group()    # '<a>'
+```
+
+Une regex ne valide pas tout : `\d{1,3}(?:\.\d{1,3}){3}` accepte `999.1.1.1`. Pour vérifier une adresse IP, extrais avec la regex puis valide avec le module standard `ipaddress` : `ipaddress.ip_address("999.1.1.1")` lève une `ValueError`.
+
+### Options utiles
+• `re.IGNORECASE` (ou `re.I`) : ignore la casse ;
+• `re.MULTILINE` (ou `re.M`) : `^` et `$` s'appliquent à chaque ligne d'un texte ;
+• `re.DOTALL` (ou `re.S`) : le point accepte aussi le retour à la ligne.
+
+```python
+re.findall(r"^error.*$", texte, re.I | re.M)
+```
+
+### Remplacer avec des références
+Dans `re.sub`, `\1` (ou `\g<nom>`) réutilise un groupe. Exemple : masquer la fin des adresses IP d'un journal avant de le transmettre, ce qui va dans le sens de la minimisation des données personnelles recommandée par la CNIL :
+
+```python
+re.sub(r"(\d{1,3}\.\d{1,3}\.\d{1,3})\.\d{1,3}", r"\1.xxx", "from 203.0.113.5 port 22")
+# 'from 203.0.113.xxx port 22'
+```
+
+### À toi de jouer
+Le fichier `auth.log` d'un serveur Debian contient notamment :
+
+```text
+Nov 26 10:02:11 srv sshd[812]: Failed password for root from 203.0.113.5 port 52144 ssh2
+Nov 26 10:02:15 srv sshd[812]: Failed password for invalid user admin from 203.0.113.5 port 52150 ssh2
+Nov 26 10:03:40 srv sshd[901]: Accepted publickey for alice from 192.168.10.21 port 50122 ssh2
+Nov 26 10:04:02 srv sshd[915]: Failed password for root from 198.51.100.7 port 40022 ssh2
+```
+
+1. Écris un motif compilé qui extrait l'utilisateur et l'IP des lignes `Failed password`, comptes inexistants compris.
+2. Compte les échecs par IP et affiche les IP qui ont au moins 2 échecs.
+3. Extrais la liste des utilisateurs qui se sont connectés avec succès (`Accepted`), quelle que soit la méthode (`password` ou `publickey`).
+4. Écris une fonction `est_nom_poste(nom)` qui accepte exactement `pc` suivi de 2 ou 3 chiffres (`pc01`, `pc120`) et refuse `pc1`, `xpc01`, `pc0123`.
+
+### Correction
+```python
+import re
+from collections import Counter
+
+ECHEC = re.compile(r"Failed password for (?:invalid user )?(?P<user>\S+) from (?P<ip>[\d.]+)")
+SUCCES = re.compile(r"Accepted (?:password|publickey) for (?P<user>\S+)")
+
+echecs = Counter()
+succes = []
+with open("auth.log", encoding="utf-8", errors="replace") as f:
+    for ligne in f:
+        if m := ECHEC.search(ligne):
+            echecs[m["ip"]] += 1
+        elif m := SUCCES.search(ligne):
+            succes.append(m["user"])
+
+print({ip: n for ip, n in echecs.items() if n >= 2})   # {'203.0.113.5': 2}
+print(succes)                                          # ['alice']
+
+def est_nom_poste(nom):
+    return re.fullmatch(r"pc\d{2,3}", nom) is not None
+```
+• `Counter` (module `collections`) est un dictionnaire qui compte ; une clé absente vaut 0.
+• `:=` (opérateur morse, Python 3.8+) affecte et teste dans la même expression.
+• `errors="replace"` évite qu'un octet invalide dans un journal arrête la lecture.
+• `fullmatch` est indispensable pour la question 4 : avec `search`, `xpc01` et `pc0123` seraient acceptés.
+"""
+
+    codeblock "python" {
+      title: "Lister les adresses IPv4 valides présentes dans un texte"
+      code: """
+import ipaddress
+import re
+
+texte = "srv 192.168.10.10, routeur 192.168.10.1, erreur 999.1.1.1"
+candidats = re.findall(r"\b\d{1,3}(?:\.\d{1,3}){3}\b", texte)
+
+valides = []
+for c in candidats:
+    try:
+        valides.append(ipaddress.ip_address(c))
+    except ValueError:
+        print("ignorée :", c)
+
+print(sorted(valides))
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Pourquoi écrit-on les motifs de re en chaîne brute, préfixée par r ?" {
+        - "pour que le motif soit compilé plus vite"
+        + "pour que Python laisse les barres obliques inverses intactes et les transmette à re"
+        - "pour rendre la recherche insensible à la casse"
+        - "pour lire le motif depuis un fichier"
+        explanation: "Dans une chaîne brute, une barre oblique inverse reste une barre oblique inverse. Sinon Python interprète certaines séquences lui-même (retour arrière pour b par exemple) et avertit des séquences inconnues."
+      }
+      question "Avec le motif brut \\d+ et le texte port 22, que renvoie re.match ?" {
+        - "un Match sur 22"
+        + "None"
+        - "la liste [\"22\"]"
+        - "une erreur"
+        explanation: "match ne cherche qu’au début de la chaîne, qui commence par p. Il faut re.search pour trouver 22 plus loin."
+      }
+      question "Avec le motif brut \\d+ et le texte ports 22 et 443, que renvoie re.findall ?" {
+        - "\"22\""
+        + "[\"22\", \"443\"]"
+        - "[22, 443]"
+        - "un objet Match"
+        explanation: "findall renvoie la liste de toutes les correspondances, sous forme de chaînes. Il faut convertir avec int pour obtenir des nombres."
+      }
+      question "Un motif contient deux groupes (\\d+)\\.(\\d+). Que renvoie findall sur le texte 1.2 et 3.4 ?" {
+        - "[\"1.2\", \"3.4\"]"
+        + "[(\"1\", \"2\"), (\"3\", \"4\")]"
+        - "[\"1\", \"2\", \"3\", \"4\"]"
+        - "None"
+        explanation: "Avec des groupes, findall renvoie les groupes et non la correspondance entière : un tuple par correspondance quand il y a plusieurs groupes. Un groupe non capturant (?:...) évite cet effet."
+      }
+      question "Le code re.search(motif, ligne).group() plante avec AttributeError: NoneType object has no attribute group. Pourquoi ?" {
+        - "le motif est mal compilé"
+        + "aucune correspondance n’a été trouvée et search a renvoyé None"
+        - "group() exige un numéro de groupe"
+        - "la ligne est trop longue"
+        explanation: "search renvoie None en cas d’échec. Il faut tester le résultat (if m:) avant d’appeler group()."
+      }
+      question "Quelle fonction utiliser pour vérifier qu’une saisie entière respecte un motif ?" {
+        - "re.search"
+        - "re.match"
+        + "re.fullmatch"
+        - "re.findall"
+        explanation: "fullmatch exige que toute la chaîne corresponde. search accepterait un motif trouvé au milieu, match un motif au début suivi de n’importe quoi."
+      }
+      question "Avec le motif brut <.+> et le texte <a><b>, que renvoie re.search(...).group() ?" {
+        - "\"<a>\""
+        + "\"<a><b>\""
+        - "\"<b>\""
+        - "None"
+        explanation: "Le + est gourmand : il prend le plus de texte possible avant le dernier >. La version paresseuse <.+?> s’arrête au premier > et donne <a>."
+      }
+      question "Comment récupère-t-on la valeur du groupe nommé (?P<ip>...) dans un Match m ?" {
+        - "m.ip"
+        + "m.group(\"ip\") ou m[\"ip\"]"
+        - "m.groups(\"ip\")"
+        - "m.get_ip()"
+        explanation: "group(nom) ou l’indexation m[nom] renvoient le texte capturé. groupdict() renvoie tous les groupes nommés dans un dictionnaire."
+      }
+      question "Que signifie (?:invalid user )? dans un motif ?" {
+        - "un groupe capturant obligatoire"
+        + "un groupe non capturant facultatif"
+        - "une assertion qui exclut ce texte"
+        - "un commentaire"
+        explanation: "(?:...) regroupe sans capturer, et le ? qui suit rend l’ensemble facultatif. Le motif accepte donc les lignes avec ou sans ce texte."
+      }
+      question "Le motif \\d{1,3}(?:\\.\\d{1,3}){3} accepte-t-il 999.1.1.1 ?" {
+        + "oui : il vérifie le format, pas les valeurs ; il faut valider ensuite avec ipaddress"
+        - "non, \\d{1,3} limite chaque nombre à 255"
+        - "non, car 999 a trois chiffres"
+        - "oui, car 999.1.1.1 est une adresse valide"
+        explanation: "Une regex compte des caractères, elle ne compare pas des valeurs. ipaddress.ip_address lève ValueError pour 999.1.1.1."
+      }
+      question "Quelle option fait que ^ correspond au début de chaque ligne d’un texte ?" {
+        - "re.IGNORECASE"
+        - "re.DOTALL"
+        + "re.MULTILINE"
+        - "re.VERBOSE"
+        explanation: "Sans MULTILINE, ^ ne correspond qu’au tout début du texte. DOTALL change le comportement du point, IGNORECASE la casse."
+      }
+      question "Que renvoie re.sub avec le motif brut \\d, le remplacement # et le texte pc01 ?" {
+        - "\"pc#1\""
+        + "\"pc##\""
+        - "\"##\""
+        - "[\"pc\", \"#\"]"
+        explanation: "sub remplace toutes les occurrences par défaut. Pour limiter le nombre de remplacements, on passe count=1."
+      }
+    }
+  }
+
+  module "http-api" {
+    title: "Chapitre 6 : requêtes HTTP avec urllib et requests"
+    duration: "35min"
+    content: """
+### Ce qu'il faut savoir de HTTP
+Une API web répond à des **requêtes HTTP** (RFC 9110). Une requête a une **méthode** (`GET` pour lire, `POST` pour créer, `PUT`/`PATCH` pour modifier, `DELETE` pour supprimer), une URL, des **en-têtes** (headers) et parfois un corps. La réponse porte un **code d'état** :
+
+| Code | Sens | Exemple de cause |
+|---|---|---|
+| 200 OK | succès | lecture réussie |
+| 201 Created | ressource créée | après un POST |
+| 204 No Content | succès sans corps | après un DELETE |
+| 301 / 302 | redirection | HTTP vers HTTPS, nouvelle adresse |
+| 400 Bad Request | requête mal formée | JSON invalide envoyé |
+| 401 Unauthorized | authentification absente ou invalide | jeton oublié ou expiré |
+| 403 Forbidden | authentifié mais pas autorisé | droits insuffisants |
+| 404 Not Found | ressource inconnue | faute dans l'URL |
+| 429 Too Many Requests | trop de requêtes | limite de débit de l'API |
+| 500 / 502 / 503 | erreur côté serveur | application plantée, service en maintenance |
+
+Retiens la logique : **2xx** succès, **3xx** redirection, **4xx** erreur du client (toi), **5xx** erreur du serveur.
+
+### Un serveur de test sur ta machine
+Pour t'entraîner sans dépendre d'Internet, Python fournit un petit serveur web qui sert les fichiers du dossier courant :
+
+```bash
+mkdir api-test && cd api-test
+echo '{"service": "intranet", "etat": "ok", "version": "2.4"}' > etat.json
+python3 -m http.server 8000 --bind 127.0.0.1
+```
+
+`http://127.0.0.1:8000/etat.json` renvoie alors ce JSON, et une URL inexistante renvoie 404. Ce serveur est fait pour le test : ne l'expose jamais sur un réseau.
+
+### urllib : sans rien installer
+Le module standard `urllib.request` suffit pour des besoins simples, ce qui est pratique sur un serveur où tu ne peux pas installer de paquet.
+
+```python
+import json
+import urllib.request
+from urllib.error import HTTPError, URLError
+
+url = "http://127.0.0.1:8000/etat.json"
+try:
+    with urllib.request.urlopen(url, timeout=5) as rep:
+        print(rep.status)                       # 200
+        donnees = json.load(rep)
+        print(donnees["etat"])                  # ok
+except HTTPError as e:
+    print("erreur HTTP", e.code)               # par exemple 404
+except URLError as e:
+    print("serveur injoignable :", e.reason)   # connexion refusée, nom inconnu...
+```
+
+Points importants :
+• `urlopen` **lève une exception** `HTTPError` pour les codes 4xx et 5xx ;
+• `HTTPError` est une sous-classe de `URLError` : il faut l'attraper **en premier** ;
+• sans `timeout`, l'appel peut attendre très longtemps un serveur muet.
+
+Pour ajouter des en-têtes, on construit un objet `Request` : `urllib.request.Request(url, headers={"Accept": "application/json"})`.
+
+### requests : plus confortable
+La bibliothèque `requests` n'est pas dans la bibliothèque standard : `python -m pip install requests` dans un venv, ou `sudo apt install python3-requests` sur Debian.
+
+```python
+import requests
+
+try:
+    r = requests.get("http://127.0.0.1:8000/etat.json", timeout=5)
+    r.raise_for_status()                 # lève HTTPError si le code est 4xx ou 5xx
+    donnees = r.json()
+    print(r.status_code, donnees["version"])
+except requests.exceptions.Timeout:
+    print("délai dépassé")
+except requests.exceptions.ConnectionError:
+    print("connexion impossible")
+except requests.exceptions.HTTPError as e:
+    print("erreur HTTP", e.response.status_code)
+```
+
+Ce qu'il faut savoir :
+• contrairement à urllib, `requests` **ne lève pas d'exception** sur un 404 : `r.status_code` vaut 404 et le script continue. D'où `raise_for_status()` ou un test de `r.ok` ;
+• **par défaut, requests n'a aucun délai d'attente** : sans `timeout`, ton script peut rester bloqué indéfiniment. Mets-en toujours un ; `timeout=(3.05, 10)` sépare le délai de connexion et le délai de lecture ;
+• `params={"salle": "B12"}` construit la chaîne de requête `?salle=B12` en encodant correctement les caractères spéciaux ;
+• `json={...}` dans un `post` envoie un corps JSON avec l'en-tête `Content-Type: application/json` ;
+• `r.headers` est un dictionnaire insensible à la casse : `r.headers["content-type"]` fonctionne ;
+• toutes les exceptions héritent de `requests.exceptions.RequestException`.
+
+### Authentification et secrets
+Beaucoup d'API demandent un **jeton** (token) dans l'en-tête `Authorization`. Ne l'écris **jamais** dans le code source : il finirait dans Git ou dans une capture d'écran. Lis-le dans une variable d'environnement :
+
+```python
+import os
+import requests
+
+jeton = os.environ["API_TOKEN"]          # KeyError claire si la variable manque
+r = requests.get("https://api.exemple.invalid/v1/postes",
+                 headers={"Authorization": f"Bearer {jeton}"},
+                 timeout=10)
+```
+
+### HTTPS et certificats
+Les deux bibliothèques **vérifient le certificat** du serveur en HTTPS. L'option `verify=False` de requests désactive cette vérification : le script accepte alors n'importe quel certificat et devient vulnérable à une interception (attaque de l'homme du milieu). Pour un serveur interne avec un certificat signé par l'autorité de l'établissement, donne plutôt le fichier de cette autorité : `verify="/etc/ssl/certs/ca-lycee.pem"`.
+
+### À toi de jouer
+Avec le serveur de test du chapitre (dossier `api-test`, port 8000) :
+1. Ajoute un fichier `postes.json` contenant une liste de trois postes avec `nom` et `salle`.
+2. Écris une fonction `recuperer(url)` qui renvoie le JSON décodé, ou `None` en affichant un message clair en cas de délai dépassé, de connexion refusée ou de code d'erreur. Utilise requests avec un délai de 5 secondes.
+3. Teste-la sur `/postes.json`, sur `/absent.json`, puis après avoir arrêté le serveur (Ctrl+C). Note le message obtenu dans chaque cas.
+4. Écris la même fonction avec urllib seulement.
+
+### Correction
+1. Par exemple : `[{"nom": "pc01", "salle": "B12"}, {"nom": "pc02", "salle": "B12"}, {"nom": "pc03", "salle": "B14"}]`.
+2. Avec requests :
+```python
+import requests
+
+def recuperer(url):
+    try:
+        r = requests.get(url, timeout=5)
+        r.raise_for_status()
+        return r.json()
+    except requests.exceptions.Timeout:
+        print("délai dépassé :", url)
+    except requests.exceptions.ConnectionError:
+        print("connexion impossible :", url)
+    except requests.exceptions.HTTPError as e:
+        print("erreur HTTP", e.response.status_code, ":", url)
+    except ValueError:
+        print("réponse qui n'est pas du JSON :", url)
+    return None
+```
+`Timeout` est testé avant `ConnectionError` car le délai de connexion dépassé (`ConnectTimeout`) hérite des deux. `ValueError` attrape une réponse non JSON (les versions récentes lèvent `requests.exceptions.JSONDecodeError`, qui en hérite).
+3. Résultats : la liste des trois postes ; `erreur HTTP 404` ; serveur arrêté : `connexion impossible` (la connexion est refusée immédiatement, il n'y a pas de délai à attendre).
+4. Avec urllib :
+```python
+import json, urllib.request
+from urllib.error import HTTPError, URLError
+
+def recuperer(url):
+    try:
+        with urllib.request.urlopen(url, timeout=5) as rep:
+            return json.load(rep)
+    except HTTPError as e:
+        print("erreur HTTP", e.code, ":", url)
+    except URLError as e:
+        print("connexion impossible :", e.reason)
+    except TimeoutError:
+        print("délai dépassé :", url)
+    except ValueError:
+        print("réponse qui n'est pas du JSON :", url)
+    return None
+```
+"""
+
+    codeblock "python" {
+      title: "Surveiller une liste de sites web et noter le temps de réponse"
+      code: """
+import requests
+
+SITES = ["https://www.example.com", "http://127.0.0.1:8000/etat.json"]
+
+for url in SITES:
+    try:
+        r = requests.get(url, timeout=(3.05, 10))
+        etat = r.status_code
+        duree = f"{r.elapsed.total_seconds() * 1000:.0f} ms"
+    except requests.exceptions.RequestException as e:
+        etat, duree = "ERREUR", type(e).__name__
+    print(f"{url:<40} {etat!s:<7} {duree}")
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Que signifie un code HTTP 403 ?" {
+        - "la ressource n’existe pas"
+        - "le serveur a planté"
+        + "le client est identifié ou non, mais n’a pas le droit d’accéder à la ressource"
+        - "la requête a réussi sans contenu"
+        explanation: "403 Forbidden : accès refusé. 401 indique une authentification absente ou invalide, 404 une ressource inconnue, 204 un succès sans corps."
+      }
+      question "Une API répond 503. De quel côté est le problème ?" {
+        - "du côté du client, la requête est mal formée"
+        + "du côté du serveur, le service est indisponible"
+        - "c’est une redirection"
+        - "le jeton a expiré"
+        explanation: "Les codes 5xx sont des erreurs du serveur ; 503 Service Unavailable signale une surcharge ou une maintenance. Les 4xx sont des erreurs du client."
+      }
+      question "Quel est le délai d’attente par défaut de requests.get sans paramètre timeout ?" {
+        - "5 secondes"
+        - "30 secondes"
+        + "aucun : la requête peut attendre indéfiniment"
+        - "60 secondes"
+        explanation: "La documentation de requests le précise : sans timeout explicite, il n’y a pas de délai. Un serveur qui ne répond pas bloque alors le script. Il faut toujours passer timeout."
+      }
+      question "requests.get renvoie une réponse 404. Que se passe-t-il si on n’appelle pas raise_for_status ?" {
+        - "une exception HTTPError est levée automatiquement"
+        + "aucune exception : status_code vaut 404 et le script continue"
+        - "requests réessaie trois fois"
+        - "la réponse est None"
+        explanation: "requests ne lève pas d’exception pour un code d’erreur HTTP. raise_for_status() ou un test de r.ok est nécessaire. C’est l’inverse d’urllib, dont urlopen lève HTTPError."
+      }
+      question "Avec urllib, pourquoi faut-il attraper HTTPError avant URLError ?" {
+        - "parce que URLError n’existe que sous Linux"
+        + "parce que HTTPError est une sous-classe de URLError et serait sinon capturée par le premier except"
+        - "parce que HTTPError est plus rapide"
+        - "l’ordre n’a aucune importance"
+        explanation: "Python prend le premier except qui correspond. Si except URLError vient d’abord, il attrape aussi les HTTPError et le code d’erreur n’est jamais traité à part."
+      }
+      question "Que fait l’option verify=False de requests ?" {
+        - "elle vérifie le certificat deux fois"
+        + "elle désactive la vérification du certificat TLS et expose à une interception"
+        - "elle désactive les redirections"
+        - "elle supprime le délai d’attente"
+        explanation: "Sans vérification, n’importe quel certificat est accepté : un attaquant placé sur le chemin peut se faire passer pour le serveur. Pour une autorité interne, on passe le chemin de son certificat à verify."
+      }
+      question "Où ranger le jeton d’une API utilisée par un script ?" {
+        - "dans une constante en haut du script"
+        - "dans un commentaire du code"
+        + "dans une variable d’environnement ou un fichier de secrets protégé, lu au démarrage"
+        - "dans l’URL, en paramètre de requête"
+        explanation: "Un secret dans le code finit dans Git, les sauvegardes ou les captures. Dans l’URL, il apparaît dans les journaux des serveurs et des proxys."
+      }
+      question "Que produit requests.get(url, params=p) si p associe la clé salle à la valeur B 12 ?" {
+        - "un corps JSON avec la clé salle"
+        + "une URL terminée par ?salle=B+12, avec l’espace encodé"
+        - "un en-tête HTTP salle"
+        - "une erreur, l’espace est interdit"
+        explanation: "params construit la chaîne de requête et encode les caractères spéciaux. Pour envoyer un corps JSON, on utilise json= dans un post."
+      }
+      question "Quelle exception regroupe toutes les erreurs de requests ?" {
+        - "requests.exceptions.HTTPError"
+        + "requests.exceptions.RequestException"
+        - "requests.exceptions.Timeout"
+        - "OSError uniquement"
+        explanation: "Timeout, ConnectionError, HTTPError et les autres héritent de RequestException. L’attraper en dernier évite qu’une erreur imprévue arrête un script de supervision."
+      }
+      question "Que fait la commande python3 -m http.server 8000 --bind 127.0.0.1 ?" {
+        - "elle installe un serveur Apache"
+        + "elle sert les fichiers du dossier courant en HTTP, accessible seulement depuis la machine"
+        - "elle teste si le port 8000 est ouvert sur Internet"
+        - "elle lance une API JSON automatique"
+        explanation: "http.server est un serveur de fichiers de test. --bind 127.0.0.1 limite l’écoute à la boucle locale. La documentation déconseille de l’utiliser en production."
+      }
+      question "Quel paramètre de requests.post envoie un dictionnaire en JSON avec le bon Content-Type ?" {
+        - "data="
+        + "json="
+        - "params="
+        - "body="
+        explanation: "json= sérialise le dictionnaire et ajoute Content-Type: application/json. data= envoie un formulaire encodé, params= modifie l’URL, body= n’existe pas."
+      }
+      question "Le serveur est arrêté. Quelle exception lève requests.get vers http://127.0.0.1:8000 ?" {
+        - "requests.exceptions.HTTPError"
+        + "requests.exceptions.ConnectionError"
+        - "requests.exceptions.Timeout après 5 secondes"
+        - "aucune, status_code vaut 0"
+        explanation: "Sans programme à l’écoute, le système refuse la connexion immédiatement : c’est une ConnectionError. Un Timeout apparaît quand un pare-feu jette les paquets sans répondre."
+      }
+    }
+  }
+
+  module "sockets" {
+    title: "Chapitre 7 : sockets TCP, tester un port et dialoguer"
+    duration: "35min"
+    content: """
+### Ce qu'est une socket
+Une **socket** est le point d'accès qu'un programme ouvre vers le réseau. Une connexion TCP est identifiée par quatre valeurs : IP et port source, IP et port destination. Quand un client se connecte, le système d'exploitation fait la poignée de main TCP (SYN, SYN-ACK, ACK) ; ton programme, lui, n'échange ensuite que des **octets**.
+
+Le module standard `socket` donne accès à cette interface, la même qu'en C. Deux familles et deux types suffisent pour commencer :
+• `AF_INET` (IPv4) ou `AF_INET6` (IPv6) ;
+• `SOCK_STREAM` (TCP, flux fiable et ordonné) ou `SOCK_DGRAM` (UDP, datagrammes indépendants).
+
+### Cadre légal
+Tester les ports d'une machine revient à faire un balayage (scan). Sur une machine qui ne t'appartient pas ou sans autorisation écrite de son responsable, c'est interdit : l'article 323-1 du Code pénal réprime l'accès ou le maintien frauduleux dans un système, et l'article 323-3-1 le fait de détenir ou de mettre à disposition, sans motif légitime, un programme conçu pour commettre ces atteintes. Les exercices se font sur `127.0.0.1`, tes machines virtuelles ou le réseau du labo.
+
+### Tester si un port TCP répond
+```python
+import socket
+
+def port_ouvert(hote, port, delai=2.0):
+    try:
+        with socket.create_connection((hote, port), timeout=delai):
+            return True
+    except OSError:
+        return False
+
+print(port_ouvert("127.0.0.1", 22))
+```
+
+`create_connection` résout le nom, essaie chaque adresse renvoyée (IPv4 ou IPv6) et renvoie une socket connectée. Les échecs sont tous des sous-classes de `OSError` :
+| Exception | Ce qui s'est passé | Ce que ça indique |
+|---|---|---|
+| `ConnectionRefusedError` | la machine a répondu par un refus (RST) | machine joignable, aucun service sur ce port |
+| `TimeoutError` (alias `socket.timeout`) | pas de réponse dans le délai | machine éteinte, ou pare-feu qui jette les paquets |
+| `socket.gaierror` | le nom n'a pas pu être résolu | problème DNS ou faute de frappe |
+
+Cette distinction est précieuse en dépannage : un **refus** prouve que la machine est joignable, un **délai dépassé** oriente vers un pare-feu ou une machine éteinte.
+
+La méthode `connect_ex` fait la même chose sans exception : elle renvoie `0` en cas de succès, sinon un numéro d'erreur (`111` pour « connexion refusée » sous Linux, `10061` sous Windows).
+
+### Un client qui lit une bannière
+Beaucoup de services s'annoncent dès la connexion : un serveur SSH envoie une ligne qui commence par `SSH-2.0-`, un serveur SMTP une ligne qui commence par `220`.
+
+```python
+import socket
+
+with socket.create_connection(("127.0.0.1", 22), timeout=3) as s:
+    banniere = s.recv(1024)
+    print(banniere.decode("utf-8", errors="replace").strip())
+# SSH-2.0-OpenSSH_9.2p1 Debian-2+deb12u3   (la version dépend de ton système)
+```
+
+Quatre règles à retenir :
+• `send` et `recv` manipulent des **bytes**, pas des chaînes : on encode avant d'envoyer (`"texte".encode()`), on décode à la réception ;
+• `recv(1024)` renvoie **au plus** 1024 octets, parfois moins. TCP est un flux : un message envoyé en une fois peut arriver en plusieurs morceaux, et deux messages peuvent arriver collés. Il faut un repère de fin, par exemple un retour à la ligne ;
+• `recv` renvoie `b""` (des bytes vides) quand l'autre côté a **fermé** la connexion. C'est le signal pour arrêter la boucle de lecture ;
+• `sendall` envoie tout le tampon, alors que `send` peut n'en envoyer qu'une partie.
+
+### Un petit serveur TCP
+Voici un serveur d'écho qui renvoie en majuscules chaque ligne reçue. Il écoute seulement sur la boucle locale.
+
+```python
+import socket
+
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as srv:
+    srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    srv.bind(("127.0.0.1", 5000))
+    srv.listen()
+    print("en écoute sur 127.0.0.1:5000")
+    while True:
+        conn, adresse = srv.accept()          # attend un client
+        with conn:
+            print("client :", adresse)
+            for ligne in conn.makefile("rb"):
+                conn.sendall(ligne.upper())
+```
+
+• `bind` choisit l'adresse et le port d'écoute. `0.0.0.0` écouterait sur toutes les interfaces : à éviter sans pare-feu.
+• `listen` met la socket en attente de connexions, `accept` renvoie une **nouvelle** socket par client.
+• `SO_REUSEADDR` évite l'erreur `OSError: [Errno 98] Address already in use` quand tu relances le serveur juste après l'avoir arrêté (Linux).
+• Sous Linux, un port inférieur à 1024 demande des droits d'administration ; on reste donc au-dessus pour les tests.
+• Ce serveur traite un client à la fois. Pour plusieurs clients simultanés, on utiliserait le module `socketserver`, des threads ou `asyncio`.
+
+Teste-le depuis un autre terminal avec `nc 127.0.0.1 5000` (paquet `netcat-openbsd` sur Debian), tape une ligne, elle revient en majuscules. Vérifie l'écoute avec `ss -tlnp | grep 5000` sous Linux ou `Get-NetTCPConnection -LocalPort 5000` sous Windows.
+
+### Et l'UDP ?
+En UDP, il n'y a pas de connexion : on envoie un datagramme avec `sendto(donnees, (hote, port))` et on reçoit avec `recvfrom(taille)`, qui renvoie les données et l'adresse de l'expéditeur. Un port UDP fermé ne « refuse » pas toujours de façon visible : l'absence de réponse ne prouve rien, ce qui rend les tests UDP moins fiables que les tests TCP.
+
+### À toi de jouer
+1. Écris un script `verif_ports.py` qui teste, sur `127.0.0.1`, les ports 22, 80, 443, 3306 et 5000, et affiche `ouvert`, `fermé (refus)` ou `filtré (délai)` pour chacun, avec un délai de 1 seconde.
+2. Lance le serveur d'écho du chapitre, puis relance ton script : quel port change d'état ?
+3. Écris un client qui se connecte au serveur d'écho, envoie `bonjour lycee` suivi d'un retour à la ligne, et affiche la réponse.
+4. Que se passe-t-il si tu envoies le texte sans retour à la ligne ?
+
+### Correction
+1. On distingue les exceptions, de la plus précise à la plus générale :
+```python
+import socket
+
+def etat_port(hote, port, delai=1.0):
+    try:
+        with socket.create_connection((hote, port), timeout=delai):
+            return "ouvert"
+    except ConnectionRefusedError:
+        return "fermé (refus)"
+    except TimeoutError:
+        return "filtré (délai)"
+    except OSError as e:
+        return f"erreur ({e})"
+
+for port in (22, 80, 443, 3306, 5000):
+    print(f"{port:>5} {etat_port('127.0.0.1', port)}")
+```
+Sur la boucle locale, un port sans service répond toujours par un refus : on n'obtient « filtré » que vers une machine protégée par un pare-feu qui jette les paquets.
+2. Le port 5000 passe de `fermé (refus)` à `ouvert`.
+3. Client :
+```python
+import socket
+
+with socket.create_connection(("127.0.0.1", 5000), timeout=3) as s:
+    s.sendall("bonjour lycee\n".encode("utf-8"))
+    print(s.recv(1024).decode("utf-8").strip())     # BONJOUR LYCEE
+```
+4. Le serveur lit ligne par ligne avec `makefile` : sans retour à la ligne, il attend la fin de la ligne et ne répond rien. Le client reste bloqué sur `recv` jusqu'au délai de 3 secondes, puis lève `TimeoutError`. C'est l'illustration du flux TCP : le **protocole applicatif** doit définir où finit un message.
+"""
+
+    codeblock "python" {
+      title: "Tester en parallèle un port sur toutes les machines d'un réseau du labo"
+      code: """
+import ipaddress
+import socket
+from concurrent.futures import ThreadPoolExecutor
+
+RESEAU = ipaddress.ip_network("192.168.56.0/28")   # réseau de TES machines virtuelles
+PORT = 22
+
+def teste(ip):
+    try:
+        with socket.create_connection((str(ip), PORT), timeout=0.5):
+            return ip, True
+    except OSError:
+        return ip, False
+
+with ThreadPoolExecutor(max_workers=16) as pool:
+    for ip, ouvert in pool.map(teste, RESEAU.hosts()):
+        if ouvert:
+            print(f"{ip} : port {PORT} ouvert")
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quel type de socket correspond à TCP ?" {
+        - "SOCK_DGRAM"
+        + "SOCK_STREAM"
+        - "SOCK_RAW"
+        - "AF_INET"
+        explanation: "SOCK_STREAM est un flux fiable et ordonné : TCP. SOCK_DGRAM correspond à UDP. AF_INET n’est pas un type mais la famille d’adresses IPv4."
+      }
+      question "Une connexion vers un port renvoie ConnectionRefusedError. Que peut-on en conclure ?" {
+        - "la machine est éteinte"
+        + "la machine est joignable mais aucun service n’écoute sur ce port"
+        - "le nom DNS est inconnu"
+        - "un pare-feu jette silencieusement les paquets"
+        explanation: "Un refus est une réponse active (segment RST) : la machine est donc là. Une machine éteinte ou un pare-feu qui jette les paquets provoquent plutôt un délai dépassé."
+      }
+      question "Une connexion TCP échoue avec TimeoutError au bout du délai. Quelle est l’explication la plus probable ?" {
+        - "aucun service n’écoute sur le port"
+        + "un pare-feu jette les paquets ou la machine ne répond pas"
+        - "le nom ne se résout pas"
+        - "le port est supérieur à 1024"
+        explanation: "Sans aucune réponse, le client attend jusqu’au délai. Un port fermé sur une machine joignable répond au contraire immédiatement par un refus."
+      }
+      question "Que renvoie recv quand l’autre extrémité a fermé la connexion ?" {
+        - "None"
+        + "des bytes vides, b suivi de deux guillemets"
+        - "une exception ConnectionClosed"
+        - "la chaîne EOF"
+        explanation: "recv renvoie b vide à la fermeture propre. C’est la condition d’arrêt d’une boucle de lecture. Une coupure brutale peut aussi lever ConnectionResetError."
+      }
+      question "Pourquoi faut-il appeler encode avant d’envoyer un texte sur une socket ?" {
+        - "pour chiffrer les données"
+        + "parce que send et sendall n’acceptent que des bytes"
+        - "pour compresser le message"
+        - "parce que TCP n’accepte que l’ASCII"
+        explanation: "Une socket transporte des octets. encode transforme la chaîne en bytes (UTF-8 par défaut), decode fait l’inverse à la réception. Ce n’est en rien un chiffrement."
+      }
+      question "Un client envoie deux messages de 10 octets. Le serveur appelle recv(1024) une fois. Que peut-il recevoir ?" {
+        - "toujours exactement le premier message"
+        + "le premier message, un morceau, ou les deux messages collés"
+        - "toujours 1024 octets"
+        - "une erreur, car 1024 est trop grand"
+        explanation: "TCP est un flux d’octets sans frontière de message. recv renvoie ce qui est disponible, au plus la taille demandée. Le protocole applicatif doit donc marquer la fin des messages."
+      }
+      question "Quelle est la différence entre send et sendall ?" {
+        - "sendall envoie à tous les clients connectés"
+        + "send peut n’envoyer qu’une partie des données, sendall insiste jusqu’à tout envoyer"
+        - "send est réservé à l’UDP"
+        - "aucune différence"
+        explanation: "send renvoie le nombre d’octets réellement envoyés, qui peut être inférieur à la taille demandée. sendall boucle jusqu’à tout envoyer ou lève une exception."
+      }
+      question "Dans un serveur, que renvoie srv.accept() ?" {
+        - "le nombre de clients en attente"
+        + "une nouvelle socket dédiée au client et son adresse"
+        - "True si un client est connecté"
+        - "les premières données envoyées par le client"
+        explanation: "accept bloque jusqu’à l’arrivée d’un client puis renvoie le couple (connexion, adresse). La socket d’écoute reste disponible pour les clients suivants."
+      }
+      question "Pourquoi active-t-on SO_REUSEADDR sur une socket serveur de test ?" {
+        - "pour accepter plusieurs clients en même temps"
+        + "pour pouvoir relancer le serveur aussitôt sans erreur Address already in use"
+        - "pour écouter sur toutes les interfaces"
+        - "pour chiffrer la connexion"
+        explanation: "Après l’arrêt, le port reste un moment réservé par les connexions en fin de vie (état TIME_WAIT). SO_REUSEADDR autorise un nouveau bind sur ce port."
+      }
+      question "Que renvoie connect_ex en cas de succès ?" {
+        - "True"
+        + "0"
+        - "1"
+        - "la socket connectée"
+        explanation: "connect_ex renvoie 0 si la connexion réussit, sinon un code d’erreur (111 pour un refus sous Linux, 10061 sous Windows), au lieu de lever une exception."
+      }
+      question "Ton serveur de test écoute avec bind sur 0.0.0.0. Quel est le risque ?" {
+        - "aucun, 0.0.0.0 n’est accessible que localement"
+        + "le service est joignable depuis toutes les interfaces, donc depuis le réseau"
+        - "le serveur ne démarre pas"
+        - "seul l’IPv6 est accepté"
+        explanation: "0.0.0.0 signifie toutes les adresses IPv4 de la machine. Pour un test, on écoute sur 127.0.0.1, accessible seulement depuis la machine elle-même."
+      }
+      question "Dans quel cadre as-tu le droit de lancer un test de ports ?" {
+        - "sur n’importe quel site public, tant que tu ne modifies rien"
+        + "sur tes propres machines ou avec l’autorisation écrite du responsable du système"
+        - "sur le réseau du lycée dès que tu y es connecté"
+        - "partout, si le test dure moins d’une minute"
+        explanation: "Sans autorisation, un balayage peut relever des articles 323-1 et suivants du Code pénal. Être connecté à un réseau ne donne pas le droit de le tester."
+      }
+    }
+  }
+
+  module "tests-typage" {
+    title: "Chapitre 8 : tester avec pytest et annoter les types"
+    duration: "40min"
+    content: """
+### Pourquoi tester un script d'administration
+Un script qui supprime de vieux fichiers, crée des comptes ou modifie une configuration agit sur de vraies machines. Une erreur de logique (un `<` à la place d'un `<=`, une date mal calculée) peut faire des dégâts. Un **test automatisé** est un petit programme qui appelle ta fonction avec des entrées connues et vérifie le résultat. On le relance après chaque modification : si un test échoue, tu le sais avant de lancer le script en production.
+
+Pour être testable, le code doit être découpé en **fonctions pures** autant que possible : elles reçoivent des données et renvoient un résultat, sans lire le clavier ni écrire sur le disque. La partie « entrées-sorties » reste mince, dans `main()`.
+
+### pytest en cinq minutes
+`pytest` est le cadre de test le plus utilisé en Python. Il s'installe dans le venv du projet : `python -m pip install pytest`.
+
+```python
+# reseau.py
+def port_valide(port: int) -> bool:
+    return 1 <= port <= 65535
+
+def masque_vers_prefixe(masque: str) -> int:
+    octets = [int(o) for o in masque.split(".")]
+    if len(octets) != 4:
+        raise ValueError(f"masque invalide : {masque}")
+    return sum(bin(o).count("1") for o in octets)
+```
+
+```python
+# test_reseau.py
+import pytest
+from reseau import port_valide, masque_vers_prefixe
+
+def test_port_valide_bornes():
+    assert port_valide(1)
+    assert port_valide(65535)
+
+def test_port_invalide():
+    assert not port_valide(0)
+    assert not port_valide(65536)
+
+def test_masque_classique():
+    assert masque_vers_prefixe("255.255.255.0") == 24
+
+def test_masque_mal_forme():
+    with pytest.raises(ValueError):
+        masque_vers_prefixe("255.255.0")
+```
+
+```bash
+python -m pytest            # découvre et lance les tests
+python -m pytest -v         # une ligne par test
+python -m pytest -k masque  # seulement les tests dont le nom contient « masque »
+python -m pytest -x         # s'arrête au premier échec
+```
+
+Les conventions de découverte : pytest cherche les fichiers `test_*.py` ou `*_test.py`, et dans ces fichiers les fonctions dont le nom commence par `test`. Un simple `assert` suffit : en cas d'échec, pytest affiche les deux valeurs comparées. Le résumé final ressemble à `4 passed in 0.02s` ou, en cas d'échec, `1 failed, 3 passed`.
+
+Un test qui échoue n'est pas une mauvaise nouvelle : il t'a évité un bug. Un bon test vérifie aussi les **cas limites** (0, 1, 65535, 65536, liste vide) et les **erreurs attendues** avec `pytest.raises`.
+
+### Plusieurs cas avec parametrize
+Pour éviter de copier dix fois le même test :
+
+```python
+import pytest
+from reseau import masque_vers_prefixe
+
+@pytest.mark.parametrize("masque, attendu", [
+    ("255.0.0.0", 8),
+    ("255.255.255.0", 24),
+    ("255.255.255.252", 30),
+    ("0.0.0.0", 0),
+])
+def test_masques(masque, attendu):
+    assert masque_vers_prefixe(masque) == attendu
+```
+
+Chaque ligne devient un test séparé, signalé individuellement en cas d'échec.
+
+### Tester du code qui touche aux fichiers : tmp_path
+Les **fixtures** sont des ressources que pytest prépare pour un test quand celui-ci les demande en paramètre. La fixture `tmp_path` fournit un dossier temporaire neuf (un objet `pathlib.Path`), propre à chaque test : on n'abîme jamais de vrais fichiers.
+
+```python
+def compter_lignes(chemin):
+    with open(chemin, encoding="utf-8") as f:
+        return sum(1 for _ in f)
+
+def test_compter_lignes(tmp_path):
+    fichier = tmp_path / "journal.log"
+    fichier.write_text("a\nb\nc\n", encoding="utf-8")
+    assert compter_lignes(fichier) == 3
+```
+
+### Les annotations de type
+Depuis Python 3.5, on peut **annoter** les paramètres et le retour d'une fonction. La syntaxe moderne (Python 3.10+) :
+
+```python
+def moyenne(valeurs: list[float]) -> float: ...
+def chercher(nom: str, parc: dict[str, str]) -> str | None: ...
+def lister(dossier: str, recursif: bool = False) -> list[str]: ...
+```
+
+• `list[str]`, `dict[str, int]`, `tuple[str, int]` décrivent le contenu des collections ;
+• `str | None` signifie « une chaîne ou None » (on voit aussi l'ancienne écriture `Optional[str]` du module `typing`) ;
+• `-> None` indique une fonction qui ne renvoie rien.
+
+Comme pour les dataclasses, **Python ne vérifie pas** ces annotations à l'exécution. Elles servent à la documentation, à l'autocomplétion de l'éditeur, et surtout à un **vérificateur statique** comme `mypy` (`python -m pip install mypy`) :
+
+```python
+# verif.py
+def port_valide(port: int) -> bool:
+    return 1 <= port <= 65535
+
+port_valide("22")
+```
+
+```text
+$ python -m mypy verif.py
+verif.py:4: error: Argument 1 to "port_valide" has incompatible type "str"; expected "int"  [arg-type]
+Found 1 error in 1 file (checked 1 source file)
+```
+
+L'erreur est trouvée **sans exécuter** le code. À l'exécution, Python aurait levé `TypeError: '<=' not supported between instances of 'int' and 'str'`, peut-être au milieu de la nuit, dans une tâche planifiée.
+
+Le cas le plus utile au quotidien : une fonction qui peut renvoyer `None`. mypy t'oblige à traiter ce cas avant d'utiliser la valeur, ce qui évite les `AttributeError: 'NoneType' object has no attribute ...`.
+
+### À toi de jouer
+1. Écris dans `outils.py` une fonction annotée `taille_lisible(octets: int) -> str` qui renvoie `"512 o"`, `"1.5 Kio"`, `"2.0 Mio"`, `"3.2 Gio"` (division par 1024, une décimale à partir de Kio). Une valeur négative doit lever `ValueError`.
+2. Écris `test_outils.py` avec un test paramétré couvrant 0, 512, 1536, 2 097 152 et 3 435 973 837, et un test pour la valeur négative.
+3. Lance `python -m pytest -v`, puis `python -m mypy outils.py`.
+4. Ajoute à la fin de `outils.py` la ligne `print(taille_lisible("1024"))`. Que dit mypy ? Que se passerait-il à l'exécution ?
+
+### Correction
+1. Fonction :
+```python
+def taille_lisible(octets: int) -> str:
+    if octets < 0:
+        raise ValueError("taille négative")
+    if octets < 1024:
+        return f"{octets} o"
+    valeur = float(octets)
+    for unite in ("Kio", "Mio", "Gio", "Tio"):
+        valeur /= 1024
+        if valeur < 1024 or unite == "Tio":
+            return f"{valeur:.1f} {unite}"
+    raise AssertionError("inatteignable")
+```
+2. Tests :
+```python
+import pytest
+from outils import taille_lisible
+
+@pytest.mark.parametrize("octets, attendu", [
+    (0, "0 o"),
+    (512, "512 o"),
+    (1536, "1.5 Kio"),
+    (2_097_152, "2.0 Mio"),
+    (3_435_973_837, "3.2 Gio"),
+])
+def test_taille_lisible(octets, attendu):
+    assert taille_lisible(octets) == attendu
+
+def test_taille_negative():
+    with pytest.raises(ValueError):
+        taille_lisible(-1)
+```
+3. pytest affiche `6 passed` (5 cas paramétrés et le test d'erreur). mypy affiche `Success: no issues found in 1 source file`.
+4. mypy signale `Argument 1 to "taille_lisible" has incompatible type "str"; expected "int"`. À l'exécution, la comparaison `"1024" < 0` lèverait `TypeError: '<' not supported between instances of 'str' and 'int'`. Le vérificateur trouve l'erreur avant qu'elle ne se produise.
+"""
+
+    codeblock "bash" {
+      title: "Lancer les tests et la vérification des types avant chaque modification"
+      code: """
+. .venv/bin/activate
+python -m pip install pytest mypy
+python -m pytest -q
+python -m mypy --strict outils.py
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quels fichiers pytest découvre-t-il par défaut ?" {
+        - "tous les fichiers .py du dossier"
+        + "les fichiers test_*.py ou *_test.py"
+        - "seulement le fichier tests.py"
+        - "les fichiers listés dans requirements.txt"
+        explanation: "pytest collecte les fichiers dont le nom suit test_*.py ou *_test.py, puis les fonctions dont le nom commence par test. Une fonction nommée verif_port ne serait pas lancée."
+      }
+      question "Comment vérifier avec pytest qu’une fonction lève bien une ValueError ?" {
+        - "assert f() == ValueError"
+        + "with pytest.raises(ValueError): f()"
+        - "try: f() except: pass"
+        - "pytest.check(ValueError, f)"
+        explanation: "pytest.raises est un gestionnaire de contexte : le test échoue si l’exception attendue n’est pas levée dans le bloc. Un try/except vide ferait passer le test même sans exception."
+      }
+      question "Que fait le décorateur @pytest.mark.parametrize ?" {
+        - "il lance le test en parallèle sur plusieurs processeurs"
+        + "il exécute la même fonction de test avec plusieurs jeux de valeurs"
+        - "il désactive un test"
+        - "il mesure la durée du test"
+        explanation: "Chaque jeu de paramètres devient un test séparé dans le rapport. On évite ainsi de copier le même test pour chaque cas."
+      }
+      question "Que fournit la fixture tmp_path à un test ?" {
+        - "le dossier courant du projet"
+        + "un dossier temporaire neuf, propre au test, sous forme de pathlib.Path"
+        - "le chemin du fichier de test"
+        - "le dossier /tmp partagé"
+        explanation: "tmp_path permet de créer et lire des fichiers sans toucher aux vrais. Le test la reçoit en déclarant simplement un paramètre nommé tmp_path."
+      }
+      question "Quelle option de pytest ne lance que les tests dont le nom contient masque ?" {
+        - "-v masque"
+        + "-k masque"
+        - "-x masque"
+        - "--only masque"
+        explanation: "-k filtre par expression sur les noms de tests. -v rend la sortie détaillée et -x arrête au premier échec."
+      }
+      question "Python vérifie-t-il l’annotation port: int quand on appelle la fonction avec une chaîne ?" {
+        - "oui, il lève TypeError dès l’appel"
+        + "non, les annotations ne sont pas vérifiées à l’exécution"
+        - "oui, il convertit la chaîne en entier"
+        - "seulement en mode optimisé python -O"
+        explanation: "Les annotations sont des indications. L’erreur n’apparaîtra que si le code utilise la valeur de façon incompatible. Un vérificateur statique comme mypy la trouve avant."
+      }
+      question "Que signifie l’annotation de retour str | None ?" {
+        - "la fonction renvoie une chaîne et None en même temps"
+        + "la fonction renvoie soit une chaîne, soit None"
+        - "la fonction ne renvoie jamais rien"
+        - "la fonction lève une exception si la chaîne est vide"
+        explanation: "La barre verticale décrit une union de types (Python 3.10+). On rencontre aussi Optional[str], qui veut dire la même chose."
+      }
+      question "Quelle annotation décrit un dictionnaire dont les clés sont des noms de postes et les valeurs des quantités de RAM entières ?" {
+        - "dict(str, int)"
+        + "dict[str, int]"
+        - "dict<str, int>"
+        - "{str: int}"
+        explanation: "Depuis Python 3.9, les collections standard acceptent les crochets : list[str], dict[str, int]. Les chevrons sont la syntaxe d’autres langages."
+      }
+      question "mypy affiche : Argument 1 to port_valide has incompatible type str; expected int. Que s’est-il passé ?" {
+        - "le programme a planté à l’exécution"
+        + "mypy a détecté, sans exécuter le code, un appel avec une chaîne là où un entier est annoncé"
+        - "la fonction port_valide n’existe pas"
+        - "il manque un import"
+        explanation: "mypy analyse le code source à partir des annotations. Il ne lance pas le programme. Cette erreur aurait produit une TypeError plus tard, à l’exécution."
+      }
+      question "Pourquoi sépare-t-on la logique (fonctions qui calculent) des entrées-sorties (clavier, fichiers, réseau) ?" {
+        - "pour que le script soit plus rapide"
+        + "pour pouvoir tester la logique avec des valeurs connues, sans dépendre du système"
+        - "parce que Python l’impose"
+        - "pour réduire la taille du fichier"
+        explanation: "Une fonction pure se teste en une ligne avec assert. Une fonction qui lit un vrai fichier ou un vrai serveur demande de préparer tout un environnement."
+      }
+      question "Le résumé de pytest affiche 1 failed, 5 passed. Que fais-tu ?" {
+        - "je supprime le test qui échoue"
+        + "je lis le détail de l’échec, qui montre les valeurs comparées, et je corrige le code ou le test"
+        - "je relance jusqu’à ce que tout passe"
+        - "j’ignore l’échec si la majorité passe"
+        explanation: "pytest affiche l’assertion qui a échoué avec les deux valeurs. Soit le code a un bug, soit le test est faux : dans les deux cas, il faut comprendre avant de corriger."
+      }
+      question "Quelle annotation indique qu’une fonction ne renvoie rien ?" {
+        - "-> void"
+        + "-> None"
+        - "-> False"
+        - "-> null"
+        explanation: "Une fonction sans return renvoie None : on l’annote -> None. void et null sont des mots d’autres langages."
+      }
+    }
+  }
+
+  module "scripts-administration" {
+    title: "Chapitre 9 : scripts d'administration avec os, pathlib, subprocess et argparse"
+    duration: "45min"
+    content: """
+### Ce qu'on attend d'un vrai outil
+Un script d'administration utilisé par d'autres (ou par toi dans six mois) doit : accepter des **options** au lieu de valeurs écrites en dur, fonctionner sous Linux et Windows quand c'est possible, **refuser d'agir** en cas de doute, renvoyer un **code de sortie** exploitable par cron ou la supervision, et laisser une **trace** de ce qu'il a fait.
+
+### pathlib : manipuler des chemins
+Le module `pathlib` représente un chemin par un objet `Path`. L'opérateur `/` assemble les morceaux avec le bon séparateur selon le système.
+
+```python
+from pathlib import Path
+
+conf = Path("/etc") / "ssh" / "sshd_config"
+print(conf)                      # /etc/ssh/sshd_config
+print(conf.name, conf.suffix)    # sshd_config  (pas d'extension, suffix vide)
+print(conf.parent)               # /etc/ssh
+print(conf.exists(), conf.is_file())
+
+journal = Path("/var/log/apt/history.log")
+print(journal.stem, journal.suffix)   # history .log
+
+maison = Path.home()                  # /home/eleve ou C:\Users\eleve
+sauv = maison / "sauvegardes"
+sauv.mkdir(parents=True, exist_ok=True)   # comme mkdir -p
+
+for f in Path("/var/log").glob("*.log"):      # dans le dossier seulement
+    print(f.name, f.stat().st_size)
+for f in Path("/var/log").rglob("*.gz"):      # récursif, sous-dossiers compris
+    print(f)
+
+texte = conf.read_text(encoding="utf-8")      # lit tout le fichier
+Path("rapport.txt").write_text("ok\n", encoding="utf-8")
+```
+
+Utile aussi : `f.stat().st_mtime` (date de dernière modification en secondes depuis 1970, à comparer avec `time.time()`), `f.unlink()` (supprime un fichier), `f.rename(cible)`.
+
+### os et shutil : le système
+```python
+import os
+import shutil
+
+print(os.name)                        # 'posix' (Linux, macOS) ou 'nt' (Windows)
+print(os.environ.get("HOME"))         # variable d'environnement, None si absente
+print(os.getenv("API_TOKEN", ""))     # avec une valeur par défaut
+print(os.cpu_count())
+
+total, utilise, libre = shutil.disk_usage("/")
+print(f"disque : {utilise / total:.0%} utilisé, {libre // 2**30} Gio libres")
+
+shutil.copy2("sshd_config", "sshd_config.bak")   # copie en gardant les dates
+print(shutil.which("ss"))             # chemin de la commande, ou None si absente
+```
+
+Sous Linux, `os.geteuid() == 0` indique que le script tourne en root (cette fonction n'existe pas sous Windows).
+
+### subprocess : lancer une commande
+Le module `subprocess` lance un autre programme. La fonction à connaître est `subprocess.run` :
+
+```python
+import subprocess
+
+r = subprocess.run(["systemctl", "is-active", "ssh"],
+                   capture_output=True, text=True, timeout=10)
+print(r.returncode)        # 0 si le service est actif
+print(r.stdout.strip())    # active, inactive, failed...
+```
+
+• La commande se passe en **liste** : un élément par argument, sans guillemets à gérer.
+• `capture_output=True` récupère la sortie dans `r.stdout` et `r.stderr` au lieu de l'afficher ; `text=True` les donne en `str` au lieu de `bytes`.
+• `timeout=10` tue la commande si elle dure trop et lève `subprocess.TimeoutExpired`.
+• `check=True` lève `subprocess.CalledProcessError` si le code de retour n'est pas 0. Sans `check`, une commande qui échoue passe inaperçue si tu ne lis pas `returncode`.
+• Si le programme n'existe pas, `run` lève `FileNotFoundError`.
+
+### La règle de sécurité : pas de shell=True avec une donnée externe
+Avec `shell=True`, la commande est une chaîne interprétée par le shell. Si elle contient une donnée venue de l'extérieur (argument, fichier, formulaire), un attaquant peut y glisser `; rm -rf ~` ou `$(...)` : c'est une **injection de commande** (OWASP la classe dans la famille des injections).
+
+```python
+nom = input("Fichier à afficher : ")
+subprocess.run(f"cat {nom}", shell=True)      # DANGEREUX : essaie « x; id »
+subprocess.run(["cat", "--", nom])            # sûr : nom est un seul argument
+```
+
+Avec une liste et sans shell, les caractères `;`, `|`, `$()` restent du texte ordinaire. Le `--` indique à `cat` que la suite n'est plus une option, même si le nom commence par `-`. Quand une fonction Python existe (`shutil.copy2`, `Path.unlink`, `shutil.disk_usage`), préfère-la à une commande externe : c'est plus portable et sans risque d'injection.
+
+### argparse : des options propres
+```python
+import argparse
+
+p = argparse.ArgumentParser(description="Nettoie les vieux journaux.")
+p.add_argument("dossier", help="dossier à nettoyer")
+p.add_argument("--jours", type=int, default=30, help="âge minimal en jours (30)")
+p.add_argument("-n", "--dry-run", action="store_true", help="afficher sans supprimer")
+args = p.parse_args()
+print(args.dossier, args.jours, args.dry_run)
+```
+
+• Un argument sans tiret est **positionnel** et obligatoire ; `--jours` est une **option**.
+• `type=int` convertit et vérifie : `--jours abc` affiche `error: argument --jours: invalid int value: 'abc'`.
+• `action="store_true"` crée un drapeau booléen. Le tiret de `--dry-run` devient un souligné : `args.dry_run`.
+• `choices=[...]` limite les valeurs permises.
+• `-h` ou `--help` affiche l'aide, générée automatiquement à partir des `help=`.
+• En cas d'erreur d'utilisation, argparse affiche l'usage et quitte avec le **code 2**.
+
+### Codes de sortie et journalisation
+Par convention, un programme renvoie **0** en cas de succès et une autre valeur en cas d'échec. `sys.exit(1)` termine le script avec le code 1 ; `echo $?` (Bash) ou `$LASTEXITCODE` (PowerShell) affiche le code de la dernière commande. Cron, systemd et les outils de supervision s'appuient sur ce code.
+
+Plutôt que des `print`, le module `logging` donne des messages horodatés avec un niveau (DEBUG, INFO, WARNING, ERROR, CRITICAL) :
+
+```python
+import logging
+
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s %(levelname)s %(message)s")
+logging.info("suppression de %s", "/var/log/ancien.log")
+logging.warning("disque à %d %%", 91)
+```
+
+Les messages de niveau inférieur à `level` sont ignorés : avec `INFO`, les `logging.debug(...)` n'apparaissent pas.
+
+### À toi de jouer
+Écris `nettoie_journaux.py` :
+1. Arguments : un dossier (obligatoire), `--jours` (entier, 30 par défaut), `--motif` (`*.log` par défaut), `-n/--dry-run`.
+2. Le script refuse un dossier inexistant (message clair, code 2) et refuse de travailler sur `/`, `/etc` ou le dossier personnel.
+3. Il parcourt les fichiers du dossier (sans sous-dossiers) correspondant au motif et plus vieux que `--jours`, et les supprime, ou les affiche seulement en mode `--dry-run`.
+4. Il journalise chaque action et termine avec le code 0 si tout s'est bien passé, 1 si une suppression a échoué.
+5. Prépare un dossier de test et vérifie le mode `--dry-run` avant tout essai réel.
+
+### Correction
+```python
+import argparse
+import logging
+import sys
+import time
+from pathlib import Path
+
+INTERDITS = {Path("/"), Path("/etc"), Path.home()}
+
+def vieux_fichiers(dossier: Path, motif: str, jours: int) -> list[Path]:
+    limite = time.time() - jours * 86400
+    return [f for f in dossier.glob(motif) if f.is_file() and f.stat().st_mtime < limite]
+
+def main() -> int:
+    p = argparse.ArgumentParser(description="Supprime les vieux journaux d'un dossier.")
+    p.add_argument("dossier", type=Path)
+    p.add_argument("--jours", type=int, default=30)
+    p.add_argument("--motif", default="*.log")
+    p.add_argument("-n", "--dry-run", action="store_true")
+    args = p.parse_args()
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+
+    dossier = args.dossier.resolve()
+    if not dossier.is_dir():
+        p.error(f"dossier introuvable : {dossier}")          # affiche l'usage, code 2
+    if dossier in INTERDITS:
+        p.error(f"refus de nettoyer {dossier}")
+
+    code = 0
+    for f in vieux_fichiers(dossier, args.motif, args.jours):
+        if args.dry_run:
+            logging.info("[simulation] supprimerait %s", f)
+            continue
+        try:
+            f.unlink()
+            logging.info("supprimé %s", f)
+        except OSError as e:
+            logging.error("échec sur %s : %s", f, e)
+            code = 1
+    return code
+
+if __name__ == "__main__":
+    sys.exit(main())
+```
+Test sans risque (Linux) :
+```bash
+mkdir -p /tmp/test-journaux && cd /tmp/test-journaux
+touch -d "40 days ago" ancien.log && touch recent.log
+python3 nettoie_journaux.py /tmp/test-journaux -n      # [simulation] supprimerait .../ancien.log
+python3 nettoie_journaux.py /tmp/test-journaux ; echo $?   # supprime ancien.log, code 0
+python3 nettoie_journaux.py /etc ; echo $?             # error: refus de nettoyer /etc, code 2
+```
+• `resolve()` rend le chemin absolu et suit les liens : `./..` ou un lien symbolique vers `/etc` ne contournent pas la liste des dossiers interdits.
+• `p.error()` affiche l'usage et le message, puis quitte avec le code 2, comme les erreurs d'argparse.
+• La fonction `vieux_fichiers` ne supprime rien : elle se teste facilement avec pytest et `tmp_path`.
+"""
+
+    codeblock "python" {
+      title: "Vérifier l'état de services systemd et l'espace disque, avec un code de sortie pour la supervision"
+      code: """
+import shutil
+import subprocess
+import sys
+
+SERVICES = ["ssh", "cron"]
+SEUIL_DISQUE = 0.90
+
+probleme = False
+for s in SERVICES:
+    r = subprocess.run(["systemctl", "is-active", s], capture_output=True, text=True, timeout=10)
+    etat = r.stdout.strip()
+    print(f"service {s:<6} {etat}")
+    if r.returncode != 0:
+        probleme = True
+
+total, utilise, libre = shutil.disk_usage("/")
+print(f"disque / {utilise / total:.0%}")
+if utilise / total > SEUIL_DISQUE:
+    probleme = True
+
+sys.exit(1 if probleme else 0)
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle est la valeur de l’attribut suffix du Path /var/log/apt/history.log ?" {
+        - "history.log"
+        + ".log"
+        - "log"
+        - "/var/log/apt"
+        explanation: "suffix renvoie l’extension avec son point. name donne history.log, stem donne history et parent donne /var/log/apt."
+      }
+      question "Comment créer un dossier et ses parents sans erreur s’il existe déjà, avec pathlib ?" {
+        - "Path(d).mkdir()"
+        + "Path(d).mkdir(parents=True, exist_ok=True)"
+        - "Path(d).create(recursive=True)"
+        - "os.mkdir(d, force=True)"
+        explanation: "parents=True crée les dossiers intermédiaires, exist_ok=True évite FileExistsError si le dossier existe : c’est l’équivalent de mkdir -p."
+      }
+      question "Quelle différence entre glob et rglob sur un Path ?" {
+        - "rglob accepte les expressions régulières"
+        + "rglob cherche aussi dans tous les sous-dossiers"
+        - "glob renvoie une liste, rglob un dictionnaire"
+        - "aucune"
+        explanation: "rglob(motif) équivaut à glob avec **/ devant le motif : la recherche est récursive. Les deux utilisent des motifs de type shell, pas des regex."
+      }
+      question "Pourquoi passer la commande à subprocess.run sous forme de liste plutôt que de chaîne avec shell=True ?" {
+        - "parce que c’est plus rapide à écrire"
+        + "parce que chaque argument reste un texte littéral, ce qui empêche l’injection de commandes"
+        - "parce que shell=True ne fonctionne pas sous Linux"
+        - "parce que la liste capture automatiquement la sortie"
+        explanation: "Sans shell, les caractères ; | $() d’un nom de fichier ne sont pas interprétés. Avec shell=True et une donnée externe, un attaquant peut ajouter ses propres commandes."
+      }
+      question "Une commande lancée par subprocess.run(cmd, check=True) se termine avec le code 3. Que se passe-t-il ?" {
+        - "rien, returncode vaut 3"
+        + "une exception CalledProcessError est levée"
+        - "une exception TimeoutExpired est levée"
+        - "la commande est relancée"
+        explanation: "check=True transforme tout code de retour non nul en exception. Sans check, il faut tester r.returncode soi-même."
+      }
+      question "À quoi servent capture_output=True et text=True dans subprocess.run ?" {
+        - "à afficher la sortie en couleur"
+        + "à récupérer stdout et stderr dans le résultat, sous forme de chaînes"
+        - "à écrire la sortie dans un fichier texte"
+        - "à masquer les erreurs"
+        explanation: "capture_output range les sorties dans r.stdout et r.stderr. text=True les décode en str ; sans lui, ce sont des bytes."
+      }
+      question "Que lève subprocess.run si la liste passée nomme un programme qui n’existe pas ?" {
+        - "CalledProcessError"
+        + "FileNotFoundError"
+        - "rien, returncode vaut 127"
+        - "PermissionError"
+        explanation: "Sans shell, Python ne trouve pas le programme et lève FileNotFoundError. Le code 127 est celui que renvoie un shell pour une commande introuvable, avec shell=True."
+      }
+      question "Avec argparse, une option déclarée --dry-run est accessible sous quel nom ?" {
+        - "args.dry-run"
+        + "args.dry_run"
+        - "args.dryrun"
+        - "args[\"--dry-run\"]"
+        explanation: "argparse remplace les tirets par des soulignés pour former un nom d’attribut valide en Python."
+      }
+      question "Un utilisateur lance le script avec --jours abc alors que type=int. Que se passe-t-il ?" {
+        - "args.jours vaut la chaîne abc"
+        - "args.jours vaut 0"
+        + "argparse affiche invalid int value et quitte avec le code 2"
+        - "une ValueError non gérée s’affiche"
+        explanation: "argparse vérifie la conversion lui-même, affiche l’usage et un message d’erreur clair, puis termine avec le code 2."
+      }
+      question "Quel code de sortie signale par convention qu’un programme s’est bien terminé ?" {
+        - "1"
+        + "0"
+        - "-1"
+        - "200"
+        explanation: "0 signifie succès, toute autre valeur un échec. cron, systemd et les outils de supervision se basent sur ce code. 200 est un code HTTP, pas un code de sortie."
+      }
+      question "Avec logging.basicConfig(level=logging.INFO), quel message n’est pas affiché ?" {
+        - "logging.warning(...)"
+        - "logging.error(...)"
+        + "logging.debug(...)"
+        - "logging.info(...)"
+        explanation: "Le niveau fixe un seuil : DEBUG est en dessous d’INFO, donc ignoré. WARNING, ERROR et CRITICAL sont au-dessus et s’affichent."
+      }
+      question "Que renvoie shutil.which appliqué à ss si la commande ss n’est pas installée ?" {
+        - "une chaîne vide"
+        - "une exception FileNotFoundError"
+        + "None"
+        - "False"
+        explanation: "which cherche la commande dans le PATH et renvoie son chemin, ou None. C’est un moyen propre de vérifier qu’un outil est présent avant de l’appeler."
+      }
+    }
+  }
+
+  module "synthese-audit-parc" {
+    title: "Chapitre 10 : synthèse, un outil d'audit de parc complet"
+    duration: "60min"
+    content: """
+### Le projet
+Le lycée te demande un outil qui, chaque matin, vérifie les serveurs et équipements de la salle de TP et produit un rapport. Tu vas réunir tout le cours dans un petit projet propre :
+• l'inventaire est un fichier CSV exporté d'un tableur (chapitre 4) ;
+• chaque équipement devient une dataclass (chapitre 2) ;
+• le projet est un paquet isolé dans un venv (chapitre 3) ;
+• les ports TCP sont testés avec des sockets (chapitre 7), les sites web avec requests (chapitre 6) ;
+• les noms sont validés par une regex (chapitre 5) ;
+• l'outil se pilote avec argparse, journalise et renvoie un code de sortie (chapitre 9) ;
+• la logique est testée avec pytest et vérifiée par mypy (chapitre 8).
+
+Travaille uniquement sur tes machines virtuelles ou `127.0.0.1` : tester des ports sur des machines qui ne t'appartiennent pas est interdit.
+
+### Étape 1 : l'arborescence et l'environnement
+```text
+audit-parc/
+├── .venv/                 (non versionné)
+├── requirements.txt
+├── inventaire.csv
+├── audit/
+│   ├── __init__.py
+│   ├── modele.py
+│   ├── sondes.py
+│   └── __main__.py
+└── tests/
+    └── test_modele.py
+```
+
+```bash
+mkdir -p audit-parc/audit audit-parc/tests && cd audit-parc
+touch audit/__init__.py
+python3 -m venv .venv
+.venv/bin/python -m pip install requests pytest mypy
+.venv/bin/python -m pip freeze > requirements.txt
+```
+
+### Étape 2 : l'inventaire
+```text
+nom;ip;ports;url
+srv-web;127.0.0.1;22,80;http://127.0.0.1:8000/etat.json
+srv-dns;192.168.56.10;22,53;
+sw-b12;192.168.56.2;22;
+```
+
+La colonne `ports` contient une liste séparée par des virgules à l'intérieur d'un champ : c'est possible parce que le séparateur du fichier est le point-virgule.
+
+### Étape 3 : le modèle (audit/modele.py)
+```python
+import csv
+import re
+from dataclasses import dataclass, field
+from pathlib import Path
+
+NOM_VALIDE = re.compile(r"[a-z][a-z0-9-]{1,30}")
+
+@dataclass
+class Equipement:
+    nom: str
+    ip: str
+    ports: list[int] = field(default_factory=list)
+    url: str | None = None
+
+def lire_ports(texte: str) -> list[int]:
+    ports = [int(p) for p in texte.split(",") if p.strip()]
+    for p in ports:
+        if not 1 <= p <= 65535:
+            raise ValueError(f"port hors limites : {p}")
+    return ports
+
+def charger(chemin: Path) -> list[Equipement]:
+    equipements = []
+    with open(chemin, newline="", encoding="utf-8-sig") as f:
+        for n, ligne in enumerate(csv.DictReader(f, delimiter=";"), start=2):
+            if not NOM_VALIDE.fullmatch(ligne["nom"]):
+                raise ValueError(f"ligne {n} : nom invalide {ligne['nom']!r}")
+            equipements.append(Equipement(
+                nom=ligne["nom"],
+                ip=ligne["ip"],
+                ports=lire_ports(ligne["ports"]),
+                url=ligne["url"] or None,
+            ))
+    return equipements
+```
+
+`enumerate(..., start=2)` donne le numéro de ligne réel dans le fichier (la ligne 1 est l'en-tête) : le message d'erreur sera utile à la personne qui corrige l'inventaire.
+
+### Étape 4 : les sondes (audit/sondes.py)
+```python
+import socket
+import requests
+
+def tester_port(ip: str, port: int, delai: float = 1.0) -> str:
+    try:
+        with socket.create_connection((ip, port), timeout=delai):
+            return "ouvert"
+    except ConnectionRefusedError:
+        return "fermé"
+    except TimeoutError:
+        return "filtré"
+    except OSError as e:
+        return f"erreur : {e.strerror or e}"
+
+def tester_url(url: str, delai: float = 5.0) -> str:
+    try:
+        r = requests.get(url, timeout=delai)
+        return str(r.status_code)
+    except requests.exceptions.RequestException as e:
+        return f"erreur : {type(e).__name__}"
+```
+
+### Étape 5 : le programme principal (audit/__main__.py)
+```python
+import argparse
+import json
+import logging
+import sys
+from dataclasses import asdict
+from pathlib import Path
+
+from .modele import charger
+from .sondes import tester_port, tester_url
+
+def main() -> int:
+    p = argparse.ArgumentParser(prog="audit", description="Audit du parc de la salle de TP.")
+    p.add_argument("inventaire", type=Path)
+    p.add_argument("-o", "--sortie", type=Path, default=Path("rapport.json"))
+    p.add_argument("--delai", type=float, default=1.0)
+    args = p.parse_args()
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+
+    try:
+        parc = charger(args.inventaire)
+    except (OSError, ValueError, KeyError) as e:
+        logging.error("inventaire illisible : %s", e)
+        return 2
+
+    rapport, anomalies = [], 0
+    for eq in parc:
+        ports = {p: tester_port(eq.ip, p, args.delai) for p in eq.ports}
+        web = tester_url(eq.url) if eq.url else None
+        ok = all(e == "ouvert" for e in ports.values()) and web in (None, "200")
+        anomalies += not ok
+        logging.log(logging.INFO if ok else logging.WARNING, "%s %s %s", eq.nom, ports, web or "")
+        rapport.append({**asdict(eq), "ports_etat": ports, "web": web, "ok": ok})
+
+    args.sortie.write_text(json.dumps(rapport, indent=2, ensure_ascii=False), encoding="utf-8")
+    logging.info("rapport écrit dans %s, %d anomalie(s)", args.sortie, anomalies)
+    return 1 if anomalies else 0
+
+if __name__ == "__main__":
+    sys.exit(main())
+```
+
+Lancement, depuis le dossier `audit-parc` :
+
+```bash
+.venv/bin/python -m audit inventaire.csv -o rapport.json ; echo "code $?"
+```
+
+• Le fichier `__main__.py` rend le paquet exécutable avec `python -m audit` ; les imports relatifs (`from .modele import ...`) fonctionnent parce qu'on lance le paquet et non le fichier.
+• `asdict` (module `dataclasses`) convertit la dataclass en dictionnaire, sérialisable en JSON.
+• `anomalies += not ok` ajoute 1 quand `ok` est faux : `True` vaut 1 dans un calcul.
+• Les clés entières du dictionnaire `ports` deviendront des chaînes dans le JSON (chapitre 4).
+• Codes de sortie : 0 tout va bien, 1 au moins une anomalie, 2 inventaire illisible. Une tâche planifiée ou un outil de supervision peut s'en servir pour alerter.
+
+### Étape 6 : les tests (tests/test_modele.py)
+```python
+import pytest
+from audit.modele import charger, lire_ports
+
+def test_lire_ports():
+    assert lire_ports("22,80, 443") == [22, 80, 443]
+    assert lire_ports("") == []
+
+def test_port_hors_limites():
+    with pytest.raises(ValueError):
+        lire_ports("22,70000")
+
+def test_charger(tmp_path):
+    f = tmp_path / "inv.csv"
+    f.write_text("nom;ip;ports;url\nsrv1;10.0.0.1;22;\n", encoding="utf-8")
+    parc = charger(f)
+    assert parc[0].nom == "srv1" and parc[0].ports == [22] and parc[0].url is None
+
+def test_nom_invalide(tmp_path):
+    f = tmp_path / "inv.csv"
+    f.write_text("nom;ip;ports;url\nSRV 1;10.0.0.1;22;\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="ligne 2"):
+        charger(f)
+```
+
+```bash
+.venv/bin/python -m pytest -v
+.venv/bin/python -m mypy audit
+```
+
+`int(" 443")` accepte les espaces autour du nombre, d'où le résultat du premier test. `match=` vérifie, avec une regex, le texte du message d'erreur.
+
+### À toi de jouer
+1. Monte le projet complet, lance `python3 -m http.server 8000 --bind 127.0.0.1` dans un dossier qui contient `etat.json` (chapitre 6), puis exécute l'audit. Lis le rapport JSON et le code de sortie.
+2. Arrête le serveur web et relance l'audit : qu'est-ce qui change dans les journaux, le rapport et le code de sortie ?
+3. Ajoute une option `--csv` qui écrit aussi un résumé `nom;ok;anomalies` lisible par Excel.
+4. Planifie l'audit chaque jour ouvré à 7 h 30 avec cron, en utilisant le Python du venv.
+
+### Correction
+1. Avec le serveur web lancé et sans SSH sur la machine, `srv-web` signale le port 22 `fermé`, le port 80 `fermé` (le serveur de test écoute sur 8000) et `web` vaut `"200"`. Les machines `192.168.56.x` absentes donnent `filtré` (ou une erreur « No route to host » selon le réseau). Le code de sortie est 1. Le rapport contient une entrée par équipement avec `"ok": false` pour ceux qui ont un problème.
+2. Le champ `web` de `srv-web` devient `erreur : ConnectionError` et un avertissement apparaît dans le journal. Le code de sortie reste 1.
+3. Dans `main()`, ajoute `p.add_argument("--csv", type=Path)` puis, après la boucle :
+```python
+if args.csv:
+    with open(args.csv, "w", newline="", encoding="utf-8-sig") as f:
+        w = csv.writer(f, delimiter=";")
+        w.writerow(["nom", "ok", "anomalies"])
+        for r in rapport:
+            fautes = [f"{p}:{e}" for p, e in r["ports_etat"].items() if e != "ouvert"]
+            if r["web"] not in (None, "200"):
+                fautes.append(f"web:{r['web']}")
+            w.writerow([r["nom"], "oui" if r["ok"] else "non", ", ".join(fautes)])
+```
+(sans oublier `import csv` en haut du fichier).
+4. `crontab -e` puis :
+```text
+30 7 * * 1-5 cd /opt/audit-parc && .venv/bin/python -m audit inventaire.csv -o /var/lib/audit/rapport.json >> /var/log/audit-parc.log 2>&1
+```
+Les champs sont minute, heure, jour du mois, mois, jour de la semaine ; `1-5` désigne du lundi au vendredi. Le dossier `/var/lib/audit` doit exister et être accessible en écriture par l'utilisateur de la crontab.
+
+### Bilan du cours
+Tu sais maintenant écrire un outil Python qui ressemble à ceux des équipes d'exploitation : découpé en modules, isolé dans un venv aux versions figées, configurable en ligne de commande, prudent face aux erreurs réseau, sûr face aux injections, testé et typé. Pour progresser, reprends un de tes scripts existants et applique-lui, une par une, les règles de ce cours.
+
+### Pour aller plus loin
+• Documentation officielle de Python 3 (tutoriel et bibliothèque standard : json, csv, re, socket, subprocess, pathlib, argparse, logging, dataclasses), Python Software Foundation : https://docs.python.org/fr/3/
+• Python Packaging User Guide, dont « Install packages in a virtual environment » et la spécification des environnements gérés en externe (PEP 668), PyPA : https://packaging.python.org
+• Documentation de Requests, en particulier les sections Timeouts et SSL Cert Verification : https://requests.readthedocs.io
+• Documentation de pytest : https://docs.pytest.org et documentation de mypy : https://mypy.readthedocs.io
+• OWASP Top 10, catégorie Injection, et OWASP Cheat Sheet « OS Command Injection Defense », OWASP Foundation : https://owasp.org
+• RFC 9110 (HTTP Semantics) et RFC 8259 (JSON), IETF : https://www.rfc-editor.org
+"""
+
+    codeblock "bash" {
+      title: "Chaîne complète : environnement, tests, typage puis audit"
+      code: """
+cd audit-parc
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -m pytest -q && .venv/bin/python -m mypy audit
+.venv/bin/python -m audit inventaire.csv -o rapport.json
+echo "code de sortie : $?"
+"""
+    }
+
+    quiz {
+      pick: 10
+      question "Que vaut {p: p * 2 for p in [1, 2]} ?" {
+        - "[2, 4]"
+        + "{1: 2, 2: 4}"
+        - "{2, 4}"
+        - "{1, 2, 2, 4}"
+        explanation: "Une compréhension entre accolades avec deux-points crée un dictionnaire : la clé p et la valeur p * 2. Sans deux-points, ce serait un ensemble."
+      }
+      question "Dans def f(a, *args, b=1, **kwargs), quel paramètre ne peut être passé que par son nom ?" {
+        - "a"
+        - "args"
+        + "b"
+        - "aucun"
+        explanation: "Un paramètre placé après *args ne peut plus recevoir de valeur positionnelle : tout est absorbé par args. b est donc un argument nommé seulement."
+      }
+      question "Pourquoi le projet d’audit utilise-t-il field(default_factory=list) pour le champ ports ?" {
+        - "pour que la liste soit triée"
+        + "pour que chaque équipement reçoive sa propre liste vide"
+        - "pour convertir les ports en entiers"
+        - "pour rendre le champ obligatoire"
+        explanation: "Une liste par défaut partagée serait modifiée par tous les objets. Les dataclasses refusent d’ailleurs une liste écrite directement en valeur par défaut."
+      }
+      question "Que permet le fichier __main__.py dans le paquet audit ?" {
+        - "de déclarer le dossier comme paquet"
+        + "de lancer le paquet avec python -m audit"
+        - "d’installer les dépendances"
+        - "de lancer les tests"
+        explanation: "python -m audit exécute audit/__main__.py comme partie du paquet, ce qui permet les imports relatifs. Le marqueur de paquet est __init__.py."
+      }
+      question "Un collègue récupère le projet. Quelle séquence recrée l’environnement à l’identique ?" {
+        - "copier le dossier .venv depuis ta machine"
+        + "python3 -m venv .venv puis .venv/bin/python -m pip install -r requirements.txt"
+        - "sudo pip install requests pytest mypy"
+        - "pip freeze puis pip install"
+        explanation: "Un venv n’est pas portable ; on le recrée et on réinstalle les versions figées dans requirements.txt. sudo pip est refusé sur Debian 12 et risque de casser le système."
+      }
+      question "L’inventaire est ouvert avec encoding utf-8-sig. Pourquoi ?" {
+        - "pour lire les fichiers plus vite"
+        + "pour retirer la marque BOM qu’ajoute un export Excel en CSV UTF-8"
+        - "pour accepter le point-virgule"
+        - "pour lire les fichiers en latin-1"
+        explanation: "Sans cela, le BOM reste collé au premier nom de colonne et ligne[nom] lève KeyError. utf-8-sig se comporte comme utf-8 si le BOM est absent."
+      }
+      question "Pourquoi le nom de chaque équipement est-il vérifié avec fullmatch plutôt qu’avec search ?" {
+        - "fullmatch est plus rapide"
+        + "fullmatch exige que tout le nom respecte le motif, search accepterait un nom qui ne fait que le contenir"
+        - "search ne fonctionne pas avec re.compile"
+        - "fullmatch ignore la casse"
+        explanation: "search trouverait par exemple srv-web au début de srv-web;rm et accepterait ce nom. Une validation doit porter sur la chaîne entière, d’où fullmatch."
+      }
+      question "Dans le rapport JSON, le port 22 apparaît comme clé entre guillemets dans ports_etat. Pourquoi est-ce une chaîne ?" {
+        - "parce que le CSV contenait du texte"
+        + "parce que les clés d’un objet JSON sont toujours des chaînes"
+        - "parce que asdict convertit tout en chaîne"
+        - "c’est une erreur du programme"
+        explanation: "json.dumps convertit les clés entières en chaînes, le format JSON n’ayant pas d’autre type de clé. À la relecture, il faut reconvertir avec int si besoin."
+      }
+      question "tester_port renvoie filtré pour un équipement. Que vérifies-tu en premier ?" {
+        - "le nom DNS de l’équipement"
+        + "que la machine est allumée et qu’aucun pare-feu ne jette les paquets"
+        - "que le service écoute bien sur le port"
+        - "la version de Python"
+        explanation: "filtré correspond à TimeoutError : aucune réponse dans le délai. Un service absent sur une machine joignable donnerait un refus immédiat, donc fermé."
+      }
+      question "Pourquoi tester_url passe-t-elle toujours un timeout à requests.get ?" {
+        - "pour accélérer les sites rapides"
+        + "parce que requests n’a aucun délai par défaut et pourrait bloquer tout l’audit"
+        - "parce que le serveur l’exige"
+        - "pour réessayer automatiquement"
+        explanation: "Sans timeout, un serveur qui accepte la connexion sans répondre bloque le script indéfiniment, et le rapport du matin n’est jamais produit."
+      }
+      question "Dans tester_url, pourquoi attraper requests.exceptions.RequestException ?" {
+        - "pour masquer toutes les erreurs Python"
+        + "pour traiter en une fois délai, connexion refusée et autres erreurs réseau de requests"
+        - "parce que c’est la seule exception de requests"
+        - "pour lever une HTTPError sur les codes 404"
+        explanation: "Toutes les exceptions de requests en héritent. Le script note l’erreur dans le rapport et passe à l’équipement suivant au lieu de s’arrêter."
+      }
+      question "Un collègue propose de tester les ports en lançant nc -z avec l’IP lue dans le CSV, par subprocess.run et shell=True. Quel est le risque ?" {
+        - "aucun, le CSV est un fichier interne"
+        + "une injection de commande si une cellule contient par exemple un point-virgule suivi d’une commande"
+        - "nc n’existe pas sous Linux"
+        - "le test serait plus lent"
+        explanation: "Avec shell=True, le contenu du CSV est interprété par le shell. Un inventaire modifié par erreur ou par malveillance exécuterait des commandes. La socket Python évite tout appel externe."
+      }
+      question "Que renvoie l’audit comme code de sortie si l’inventaire contient une ligne avec le port 70000 ?" {
+        - "0"
+        - "1"
+        + "2"
+        - "70000"
+        explanation: "lire_ports lève ValueError, attrapée dans main qui journalise inventaire illisible et renvoie 2. Le code 1 est réservé aux anomalies d’équipements."
+      }
+      question "Pourquoi les tests utilisent-ils la fixture tmp_path pour charger ?" {
+        - "parce que charger ne fonctionne que dans /tmp"
+        + "pour écrire un petit inventaire de test dans un dossier temporaire sans toucher au vrai fichier"
+        - "pour accélérer pytest"
+        - "pour tester les droits d’accès"
+        explanation: "Chaque test reçoit un dossier neuf. On y prépare exactement le cas à tester, y compris des fichiers volontairement faux."
+      }
+      question "Que vérifie pytest.raises(ValueError, match=...) avec le motif ligne 2 ?" {
+        - "que la fonction renvoie la chaîne ligne 2"
+        + "qu’une ValueError est levée et que son message correspond au motif ligne 2"
+        - "que le fichier a deux lignes"
+        - "que l’erreur se produit à la ligne 2 du test"
+        explanation: "match applique re.search au texte de l’exception. Le test vérifie ainsi que le message aide vraiment à trouver la ligne fautive."
+      }
+      question "mypy signale : Item None of str | None has no attribute lower. Que faut-il faire ?" {
+        - "supprimer l’annotation"
+        + "tester que la valeur n’est pas None avant d’appeler lower"
+        - "remplacer str | None par Any partout"
+        - "ignorer, cela ne peut pas arriver"
+        explanation: "La valeur peut être None (une URL absente, par exemple). mypy oblige à traiter ce cas, qui provoquerait sinon une AttributeError à l’exécution."
+      }
+      question "Quelle ligne de crontab lance l’audit du lundi au vendredi à 7 h 30 ?" {
+        - "7 30 * * 1-5 commande"
+        + "30 7 * * 1-5 commande"
+        - "30 7 1-5 * * commande"
+        - "* 7:30 * * 1-5 commande"
+        explanation: "L’ordre des champs est minute, heure, jour du mois, mois, jour de la semaine. 1-5 dans le dernier champ désigne lundi à vendredi."
+      }
+      question "Pourquoi la tâche cron appelle-t-elle .venv/bin/python plutôt que python3 ?" {
+        - "parce que cron ne connaît pas python3"
+        + "pour utiliser l’interpréteur du venv, qui voit requests et les versions figées"
+        - "pour lancer le script en root"
+        - "pour activer le mode débogage"
+        explanation: "Le python3 du système ne voit pas les paquets installés dans le venv. Appeler directement l’interpréteur du venv évite d’avoir à l’activer."
+      }
+      question "Comment sont transmis les résultats de l’audit à un outil de supervision qui lance le script ?" {
+        - "uniquement par le fichier JSON"
+        + "par le code de sortie : 0 tout va bien, 1 anomalie, 2 inventaire illisible"
+        - "par une exception Python"
+        - "par la valeur affichée en dernier"
+        explanation: "Le code de sortie est le moyen standard qu’utilisent cron, systemd et les sondes de supervision pour savoir si un programme a réussi."
+      }
+      question "Avant de tester les ports des machines de l’inventaire, que dois-tu t’assurer ?" {
+        - "que les machines sont sur Internet"
+        + "qu’elles t’appartiennent ou que le responsable du réseau t’a autorisé par écrit"
+        - "que le test dure moins de cinq minutes"
+        - "que tu utilises un VPN"
+        explanation: "Un test de ports sans autorisation peut constituer une infraction (articles 323-1 et suivants du Code pénal). Dans un établissement, l’autorisation vient du responsable du système d’information."
+      }
+    }
+  }
+}

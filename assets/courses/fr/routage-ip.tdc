@@ -1,0 +1,1899 @@
+tdc-version: 2
+type: course
+
+course "routage-ip" {
+  title: "Routage IP : statique et dynamique"
+  description: """
+Ce cours explique comment un paquet IP passe d'un réseau à un autre, puis te fait lire des tables de routage, écrire des routes statiques sous Linux, Windows et Cisco, configurer la traduction d'adresses (NAT et PAT) et découvrir les protocoles de routage dynamique RIP et OSPF. Il s'adresse aux élèves de bac pro CIEL, BTS SIO SISR, BTS CIEL et BUT réseaux, et à toute personne qui administre un petit réseau découpé en plusieurs sous-réseaux.
+
+À la fin, tu sauras :
+• expliquer ce que fait un routeur à chaque paquet (TTL, trame réécrite, choix de la sortie) ;
+• lire une table de routage sous Linux (ip route), Windows (route print) et Cisco (show ip route) ;
+• appliquer la règle du préfixe le plus long et prévoir la route choisie pour n'importe quelle destination ;
+• ajouter, rendre persistante et supprimer une route statique sur les trois systèmes, y compris une route par défaut de secours ;
+• suivre un chemin avec traceroute et tracert et interpréter les étoiles, les boucles et les messages ICMP ;
+• configurer un NAT et un PAT (masquerade sous Linux, overload sous Cisco) et une redirection de port ;
+• décrire le fonctionnement de RIP et d'OSPF, leurs métriques, et le rôle de la distance administrative ;
+• diagnostiquer méthodiquement une panne de routage, en pensant toujours à la route de retour.
+
+Le cours s'appuie sur un labo que tu peux monter avec trois ou quatre machines virtuelles Debian (deux d'entre elles jouent le rôle de routeurs), ou avec un simulateur comme Packet Tracer ou GNS3 pour les commandes Cisco. Chaque chapitre contient au moins un exercice pratique corrigé et une banque de questions tirées au hasard.
+
+Prérequis : adressage IPv4, masques et notation CIDR (savoir que 192.168.10.0/24 va de .0 à .255), notions de modèle TCP/IP et d'ARP, utilisation courante du terminal Linux (sudo, éditer un fichier).
+"""
+  category: "network"
+  level: "intermediate"
+  duration: "6h"
+  icon: "Router"
+  keywords: ["routage", "routeur", "table de routage", "passerelle par défaut", "préfixe le plus long", "route statique", "ip route", "route print", "traceroute", "tracert", "nat", "pat", "masquerade", "rip", "ospf", "distance administrative", "métrique", "cisco"]
+
+  module "role-routeur" {
+    title: "Chapitre 1 : le rôle du routeur et la table de routage"
+    duration: "35min"
+    content: """
+### Pourquoi il faut des routeurs
+Dans un même réseau local (un même sous-réseau IP), deux postes se parlent directement : l'émetteur trouve l'adresse MAC du destinataire par ARP, puis le commutateur transporte la trame. Dès que le destinataire est dans **un autre réseau IP**, cette méthode ne marche plus : ARP ne traverse pas les réseaux. Il faut un équipement qui possède une patte dans chaque réseau et qui fait passer les paquets de l'un à l'autre : le **routeur**.
+
+Un routeur peut être un boîtier dédié (Cisco, Juniper, MikroTik), un pare-feu (pfSense, OPNsense, Stormshield), un commutateur de niveau 3, une box Internet, ou simplement un PC Linux sur lequel on a activé le transfert de paquets. Le principe est le même partout.
+
+### Ce que fait un routeur à chaque paquet
+Pour chaque paquet reçu, le routeur :
+1. retire l'en-tête de la trame Ethernet reçue (il ne garde que le paquet IP) ;
+2. lit l'**adresse IP de destination** ;
+3. cherche dans sa **table de routage** la meilleure route vers cette destination ;
+4. **décrémente le TTL** (time to live) d'au moins 1 ; s'il tombe à 0, il jette le paquet et renvoie à l'émetteur un message ICMP « Time Exceeded » ;
+5. recalcule la somme de contrôle de l'en-tête IP (elle change puisque le TTL a changé) ;
+6. construit une **nouvelle trame** pour l'interface de sortie : adresse MAC source = la sienne, adresse MAC destination = celle du prochain saut (trouvée par ARP) ;
+7. envoie la trame.
+
+À retenir : **les adresses MAC changent à chaque saut, les adresses IP source et destination restent les mêmes** de bout en bout (sauf si un NAT intervient, voir chapitre 5). Si aucune route ne correspond, le routeur jette le paquet et renvoie un ICMP « Destination Unreachable ».
+
+Le routeur ne s'occupe que de l'aller. Le paquet de réponse est un paquet indépendant, routé à son tour par chaque équipement selon **sa propre table**. Une grande partie des pannes vient de là : l'aller passe, le retour n'a pas de route.
+
+### La table de routage
+Une table de routage est une liste de lignes. Chaque ligne (une **route**) contient :
+| Champ | Signification | Exemple |
+|---|---|---|
+| Destination | un réseau, sous forme adresse/préfixe | `192.168.30.0/24` |
+| Prochain saut (next hop) | l'adresse du routeur suivant, ou « directement connecté » | `10.0.12.2` |
+| Interface de sortie | la carte par laquelle envoyer | `enp0s8`, `Gi0/1` |
+| Métrique | le coût, pour départager deux routes de même origine | `100`, `[110/2]` |
+| Origine | d'où vient la route | connectée, statique, OSPF, RIP, DHCP |
+
+Les routes ont trois origines :
+• **directement connectées** : créées automatiquement dès qu'une interface a une adresse et est active. Une interface en `192.168.10.254/24` crée la route `192.168.10.0/24` ;
+• **statiques** : écrites à la main par l'administrateur ;
+• **dynamiques** : apprises auprès des autres routeurs par un protocole de routage (RIP, OSPF, BGP…).
+
+Un PC aussi a une table de routage, souvent minuscule : son réseau local (connecté) et une **route par défaut** vers la passerelle. C'est la même logique, à plus petite échelle.
+
+### Le labo du cours
+Tout le cours utilise le même réseau, celui d'un lycée :
+```text
+   LAN admin 192.168.10.0/24          LAN serveurs 192.168.30.0/24
+        PC-A .10                            SRV .10
+          |                                    |
+     .254 |                               .254 |
+        [ R1 ]------- 10.0.12.0/30 -------[ R2 ]
+     .254 |  .1                       .2
+          |        \
+   LAN élèves       \ 203.0.113.2/30
+   192.168.20.0/24   \
+        PC-B .10      FAI 203.0.113.1 ---> Internet
+```
+R1 a quatre interfaces : LAN admin, LAN élèves, liaison vers R2, sortie Internet. R2 a deux interfaces : liaison vers R1, LAN serveurs. Les adresses `203.0.113.0/24` sont réservées à la documentation (RFC 5737) : tu peux les utiliser dans un labo sans risque.
+
+### Lire une table sous Linux
+Sur PC-A (Debian), la commande `ip route` (ou `ip route show`) affiche :
+```text
+default via 192.168.10.254 dev enp0s3 proto dhcp src 192.168.10.10 metric 100
+192.168.10.0/24 dev enp0s3 proto kernel scope link src 192.168.10.10 metric 100
+```
+• `default` = `0.0.0.0/0`, la route par défaut ; `via` donne le prochain saut ;
+• `proto kernel scope link` = route connectée, créée par le noyau quand l'adresse a été posée : pas de `via`, la destination est joignable directement ;
+• `proto dhcp` = route apprise par DHCP ; une route ajoutée à la main avec `ip route add` porte `proto boot` (valeur par défaut, que `ip route` n'affiche pas ; `ip -d route` la montre), et `proto static` quand elle vient de la configuration de systemd-networkd ou de NetworkManager ;
+• `src` = adresse source préférée pour les paquets qui partent par cette route.
+
+### Lire une table sous Windows
+`route print -4` (ou `Get-NetRoute -AddressFamily IPv4` en PowerShell) affiche, entre autres :
+```text
+Itinéraires actifs :
+Destination réseau    Masque réseau  Adr. passerelle   Adr. interface Métrique
+          0.0.0.0          0.0.0.0   192.168.20.254    192.168.20.10     25
+     192.168.20.0    255.255.255.0         On-link     192.168.20.10    281
+```
+`On-link` signifie « directement connecté ». Windows ajoute aussi des routes d'hôte (`/32`), de diffusion et de multidiffusion : elles sont normales.
+
+### Lire une table sous Cisco
+`show ip route` sur R1 :
+```text
+Gateway of last resort is 203.0.113.1 to network 0.0.0.0
+
+S*    0.0.0.0/0 [1/0] via 203.0.113.1
+      10.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+C        10.0.12.0/30 is directly connected, GigabitEthernet0/2
+L        10.0.12.1/32 is directly connected, GigabitEthernet0/2
+C     192.168.10.0/24 is directly connected, GigabitEthernet0/0
+L     192.168.10.254/32 is directly connected, GigabitEthernet0/0
+S     192.168.30.0/24 [1/0] via 10.0.12.2
+      203.0.113.0/24 is variably subnetted, 2 subnets, 2 masks
+C        203.0.113.0/30 is directly connected, GigabitEthernet0/3
+L        203.0.113.2/32 is directly connected, GigabitEthernet0/3
+```
+Les lettres en début de ligne donnent l'origine : `C` connectée, `L` adresse locale du routeur (route d'hôte /32), `S` statique, `O` OSPF, `R` RIP, et `*` marque la route candidate par défaut. Entre crochets : `[distance administrative/métrique]`, détaillé au chapitre 6.
+
+### À toi de jouer
+1. Un paquet part de PC-A (`192.168.10.10`) vers SRV (`192.168.30.10`). Indique, sur le tronçon PC-A → R1 puis sur le tronçon R1 → R2, l'adresse IP source, l'adresse IP destination et à quel équipement appartient l'adresse MAC de destination.
+2. Le paquet quitte PC-A avec un TTL de 64. Quel TTL a-t-il en arrivant sur SRV ?
+3. Dans la table Cisco ci-dessus, combien de routes sont connectées (`C`) et combien sont statiques ? Le LAN élèves `192.168.20.0/24` y apparaît-il ? Qu'en conclus-tu ?
+4. Sur ta propre machine, affiche la table de routage (`ip route` ou `route print -4`) et repère la route par défaut, la passerelle et ton réseau connecté.
+
+### Correction
+1. Tronçon PC-A → R1 : IP source `192.168.10.10`, IP destination `192.168.30.10`, MAC destination = celle de l'interface `192.168.10.254` de R1 (PC-A a fait un ARP sur sa passerelle, pas sur SRV). Tronçon R1 → R2 : IP inchangées, MAC source = interface `Gi0/2` de R1, MAC destination = interface `10.0.12.2` de R2.
+2. Chaque routeur retire 1 : R1 puis R2, donc **62** à l'arrivée. C'est ce que tu observeras avec `ping` : la valeur `ttl=62` dans la réponse indique (si l'autre machine part aussi de 64) que deux routeurs séparent les deux hôtes.
+3. Trois routes connectées (`10.0.12.0/30`, `192.168.10.0/24`, `203.0.113.0/30`), deux statiques (la route par défaut et `192.168.30.0/24`). Le LAN élèves n'apparaît pas : soit l'interface qui le porte est éteinte (`shutdown`) ou débranchée, soit elle n'a pas d'adresse. Une route connectée n'existe que si l'interface est **up/up** et adressée. Vérifie avec `show ip interface brief`.
+4. Résultat propre à ta machine. Ce que tu dois savoir dire : « mon réseau est 192.168.x.0/24, ma passerelle est 192.168.x.y, tout ce qui n'est pas mon réseau part vers elle ».
+"""
+
+    codeblock "bash" {
+      title: "Observer la table de routage et le voisinage sous Linux"
+      code: """
+# Table de routage IPv4 (forme courte et forme complète)
+ip route
+ip route show table main
+
+# Adresses des interfaces, une ligne par carte
+ip -br address
+
+# Cache ARP : les adresses MAC des voisins directs (dont la passerelle)
+ip neigh
+
+# Quelle route le noyau choisirait pour une destination donnée
+ip route get 192.168.30.10
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Que modifie un routeur dans un paquet qu’il fait suivre, en l’absence de NAT ?" {
+        - "l'adresse IP de destination"
+        - "l'adresse IP source"
+        + "le TTL et la somme de contrôle de l'en-tête IP"
+        - "rien du tout, le paquet est transmis tel quel"
+        explanation: "Le routeur décrémente le TTL et recalcule la somme de contrôle de l'en-tête. Les adresses IP restent identiques de bout en bout sans NAT. La trame Ethernet, elle, est entièrement reconstruite avec de nouvelles adresses MAC."
+      }
+      question "Sur le tronçon R1 → R2, à qui appartient l’adresse MAC de destination d’un paquet allant de PC-A vers SRV ?" {
+        - "à SRV"
+        - "à PC-A"
+        + "à l'interface de R2 sur la liaison 10.0.12.0/30"
+        - "à la passerelle de PC-A"
+        explanation: "L'adresse MAC de destination est toujours celle du prochain saut sur le lien en cours. R1 envoie à R2 ; c'est R2 qui, sur le LAN serveurs, mettra la MAC de SRV. La MAC de SRV n'est jamais connue de R1."
+      }
+      question "Que fait un routeur quand le TTL d’un paquet atteint 0 ?" {
+        - "il le remet à 64 et le transmet"
+        + "il le jette et renvoie un ICMP Time Exceeded à l'émetteur"
+        - "il le renvoie à l'expéditeur sans modification"
+        - "il le transmet sur toutes ses interfaces"
+        explanation: "Le TTL empêche un paquet de tourner indéfiniment dans une boucle. À 0, le paquet est détruit et un ICMP Time Exceeded est envoyé à la source. C'est ce mécanisme qu'utilise traceroute."
+      }
+      question "Quand une route directement connectée apparaît-elle dans la table d’un routeur ?" {
+        - "quand l'administrateur tape ip route"
+        - "quand un voisin l'annonce par OSPF"
+        + "dès qu'une interface est active et possède une adresse IP"
+        - "au redémarrage seulement"
+        explanation: "Le système crée la route connectée tout seul à partir de l'adresse et du masque de l'interface, à condition que celle-ci soit active (up/up sous Cisco). Une interface éteinte fait disparaître sa route connectée."
+      }
+      question "Dans la sortie Linux « 192.168.10.0/24 dev enp0s3 proto kernel scope link src 192.168.10.10 », que signifie proto kernel scope link ?" {
+        - "la route a été apprise par DHCP"
+        + "c'est une route connectée, créée par le noyau quand l'adresse a été posée"
+        - "c'est une route statique ajoutée par l'administrateur"
+        - "la route mène à l'interface de bouclage"
+        explanation: "proto kernel indique que le noyau a créé la route, et scope link qu'elle mène à des hôtes joignables directement sur le lien, sans passerelle. Une route apprise par DHCP porte proto dhcp ; une route ajoutée avec ip route add porte proto boot (non affiché par défaut), et une route venant de systemd-networkd ou NetworkManager proto static."
+      }
+      question "Sous Windows, que signifie On-link dans la colonne Adr. passerelle de route print ?" {
+        - "la passerelle est injoignable"
+        - "la route est persistante"
+        + "la destination est directement connectée, sans passerelle"
+        - "la route provient d'un protocole dynamique"
+        explanation: "On-link signifie que les hôtes de ce réseau sont joignables directement sur l'interface : le poste fait un ARP sur la destination elle-même. Les routes persistantes sont listées à part, dans la section Itinéraires persistants."
+      }
+      question "Dans « show ip route » sur Cisco, que désigne la lettre L ?" {
+        - "une route apprise par un protocole de type lien-état"
+        - "une route de secours"
+        + "l'adresse propre d'une interface du routeur, en /32"
+        - "une route vers le bouclage 127.0.0.0/8"
+        explanation: "Les lignes L (local) sont des routes d'hôte /32 vers les adresses du routeur lui-même. Chaque interface adressée crée une ligne C pour son réseau et une ligne L pour son adresse. OSPF apparaît avec la lettre O."
+      }
+      question "Un PC en 192.168.20.10/24 sans aucune passerelle configurée essaie de joindre 192.168.30.10. Que se passe-t-il ?" {
+        - "il fait un ARP pour 192.168.30.10 et l'obtient par le commutateur"
+        + "il n'a aucune route vers ce réseau et le paquet n'est pas envoyé (réseau injoignable)"
+        - "il envoie le paquet en diffusion à tout le réseau"
+        - "le commutateur trouve automatiquement le routeur"
+        explanation: "Sans route correspondante ni route par défaut, la pile IP refuse d'envoyer : sous Linux, ping affiche Network is unreachable. ARP ne sert qu'à joindre une adresse du réseau local ; un commutateur de niveau 2 ne route pas."
+      }
+      question "Un ping de PC-A vers SRV affiche ttl=62 dans les réponses. Si SRV envoie ses paquets avec un TTL initial de 64, combien de routeurs se trouvent sur le chemin de retour ?" {
+        - "un"
+        + "deux"
+        - "trois"
+        - "soixante-deux"
+        explanation: "64 - 62 = 2 : deux routeurs ont chacun retiré 1 au TTL de la réponse. Attention : le TTL initial dépend du système (64 pour Linux, 128 pour Windows, 255 pour beaucoup d'équipements réseau)."
+      }
+      question "Quelle est la seule information du paquet IP que le routeur utilise pour choisir la route ?" {
+        - "l'adresse IP source"
+        + "l'adresse IP de destination"
+        - "l'adresse MAC source"
+        - "le numéro de port TCP"
+        explanation: "Le routage classique se fait sur l'adresse IP de destination seule. Router selon la source ou le port existe (routage par politique), mais c'est une configuration particulière, pas le fonctionnement normal."
+      }
+      question "Le retour d’un ping est-il forcément routé par le même chemin que l’aller ?" {
+        - "oui, le routeur mémorise le chemin de l'aller"
+        - "oui, grâce au TTL"
+        + "non, chaque équipement route la réponse selon sa propre table"
+        - "non, la réponse est toujours envoyée en diffusion"
+        explanation: "Un routeur ne garde aucune trace du chemin d'un paquet. La réponse est un nouveau paquet, routé indépendamment. Si un routeur n'a pas de route vers le réseau d'origine, le retour échoue alors que l'aller a réussi."
+      }
+      question "Quelle commande Linux montre la route que le noyau utiliserait pour joindre 192.168.30.10 ?" {
+        - "ip neigh 192.168.30.10"
+        - "ip route add 192.168.30.10"
+        + "ip route get 192.168.30.10"
+        - "ip link show 192.168.30.10"
+        explanation: "ip route get fait le calcul de routage pour une destination et affiche la route, l'interface et l'adresse source retenues. ip neigh affiche le cache ARP, ip route add ajoute une route."
+      }
+    }
+  }
+
+  module "passerelle-prefixe" {
+    title: "Chapitre 2 : passerelle par défaut et règle du préfixe le plus long"
+    duration: "35min"
+    content: """
+### La passerelle par défaut
+La **passerelle par défaut** (default gateway) est le routeur à qui un hôte envoie tout ce qui ne correspond à aucune route plus précise. Elle correspond à la route `0.0.0.0/0`, qui couvre toutes les adresses.
+
+Trois règles à connaître par cœur :
+• la passerelle doit être **dans le même réseau** que l'hôte. Un PC en `192.168.10.10/24` ne peut pas avoir `192.168.20.254` comme passerelle : il ne saurait pas la joindre par ARP. Linux refuse d'ailleurs la route (`Error: Nexthop has invalid gateway.`) ;
+• une seule route par défaut active suffit. Deux passerelles sur deux cartes différentes, sans métriques réfléchies, donnent un comportement imprévisible ;
+• un **routeur** aussi a souvent une route par défaut, vers le fournisseur d'accès. Elle s'affiche alors sous Cisco comme « Gateway of last resort ».
+
+Comment l'hôte décide-t-il si une destination est locale ? Il compare le réseau de la destination au sien, avec **son** masque. Pour `192.168.10.10/24` : `192.168.10.77` est locale (ARP direct), `192.168.11.5` ne l'est pas (envoi à la passerelle). Un masque mal saisi fausse cette décision.
+
+### Plusieurs routes correspondent : laquelle gagne ?
+Une destination peut correspondre à plusieurs lignes de la table. Le routeur choisit toujours la route dont le **préfixe est le plus long** (longest prefix match), c'est-à-dire la plus précise. La route par défaut, en `/0`, est la moins précise de toutes : elle ne sert que si rien d'autre ne correspond.
+
+Exemple de table de R1 :
+| Destination | Prochain saut |
+|---|---|
+| `0.0.0.0/0` | `203.0.113.1` (FAI) |
+| `10.0.0.0/8` | `10.0.12.2` |
+| `192.168.0.0/16` | `10.0.12.2` |
+| `192.168.30.0/24` | `10.0.12.2` |
+| `192.168.30.128/25` | `192.168.10.200` |
+| `192.168.30.200/32` | `192.168.20.200` |
+
+Pour `192.168.30.200` : cinq lignes correspondent (`/0`, `/16`, `/24`, `/25` qui couvre `.128` à `.255`, et `/32`). La plus longue est `/32` : le paquet part vers `192.168.20.200`.
+Pour `192.168.30.50` : `/0`, `/16` et `/24` correspondent, pas `/25` (qui commence à `.128`). Gagnant : `/24`, via `10.0.12.2`.
+Pour `8.8.8.8` : seule la route par défaut correspond.
+
+### La méthode pour vérifier une correspondance
+Une destination correspond à une route `réseau/n` si ses **n premiers bits** sont égaux à ceux du réseau. En pratique :
+1. repère l'octet où se trouve la frontière du préfixe ;
+2. calcule la taille du bloc dans cet octet : 2^(8 × numéro d'octet − n), par exemple 128 pour un `/25`, 16 pour un `/20`, 4 pour un `/30` ;
+3. la plage commence au réseau indiqué et s'étend sur un bloc.
+
+Exemple : `172.16.32.0/20` couvre-t-il `172.16.45.9` ? Frontière dans le 3e octet, bloc de 2^(24−20) = 16 : la plage va de `172.16.32.0` à `172.16.47.255`. Oui, `45` est entre 32 et 47.
+
+Le préfixe l'emporte **avant** toute métrique ou distance administrative : une route statique `/16` ne bat jamais une route OSPF `/24` pour une adresse que les deux couvrent. Métrique et distance ne servent qu'à départager des routes **de même préfixe**.
+
+### Les routes d'hôte et les routes « trou noir »
+• Une route `/32` (route d'hôte) désigne une seule adresse. Elle sert à forcer le chemin vers un serveur précis.
+• Une route vers `blackhole` (Linux) ou `Null0` (Cisco) jette les paquets sans bruit. On l'utilise pour qu'un réseau résumé (par exemple `192.168.0.0/16`) dont certaines parties n'existent pas ne parte pas sur la route par défaut et ne crée pas de boucle avec le FAI.
+
+### Le résumé de routes
+Quand plusieurs réseaux contigus partent vers le même prochain saut, une seule route plus courte peut les remplacer. `192.168.20.0/24` et `192.168.21.0/24` sont résumés par `192.168.20.0/23`. `192.168.20.0/24` à `192.168.23.0/24` par `192.168.20.0/22`. Attention : `192.168.21.0/24` et `192.168.22.0/24` ne se résument **pas** en un `/23` (un `/23` commence toujours sur un troisième octet pair).
+
+### À toi de jouer
+Avec la table de R1 ci-dessus, indique le prochain saut pour chaque destination :
+1. `192.168.30.130`
+2. `192.168.31.4`
+3. `10.200.1.1`
+4. `172.16.0.1`
+5. `192.168.30.200`
+
+Puis :
+6. Un poste est configuré en `192.168.10.37/24`, passerelle `192.168.1.254`. Que se passe-t-il ?
+7. Donne la route résumée la plus précise pour `10.1.4.0/24`, `10.1.5.0/24`, `10.1.6.0/24` et `10.1.7.0/24`.
+
+### Correction
+1. `192.168.30.130` : `/0`, `/16`, `/24` et `/25` (plage `.128`–`.255`) correspondent. Le `/32` ne correspond pas (`.130` ≠ `.200`). Gagnant `/25` : **`192.168.10.200`**.
+2. `192.168.31.4` : `/24` (`192.168.30.x`) ne correspond pas. `/16` oui. Prochain saut **`10.0.12.2`**.
+3. `10.200.1.1` : seul `10.0.0.0/8` est plus précis que la route par défaut : **`10.0.12.2`**.
+4. `172.16.0.1` : aucune route spécifique, route par défaut : **`203.0.113.1`**.
+5. `192.168.30.200` : la route d'hôte `/32` gagne : **`192.168.20.200`**.
+6. La passerelle est hors du réseau du poste (`192.168.1.254` n'est pas dans `192.168.10.0/24`). Le poste communique avec son réseau local mais ne joint rien d'autre. Windows accepte souvent la saisie mais rien ne passe ; Linux refuse d'ajouter la route. Correction : passerelle `192.168.10.254`.
+7. Quatre réseaux consécutifs commençant à `4` (multiple de 4) : **`10.1.4.0/22`**, qui couvre `10.1.4.0` à `10.1.7.255`.
+"""
+
+    quiz {
+      pick: 5
+      question "Quelle route correspond à toutes les adresses IPv4 ?" {
+        - "255.255.255.255/32"
+        + "0.0.0.0/0"
+        - "127.0.0.0/8"
+        - "0.0.0.0/32"
+        explanation: "Un préfixe de longueur 0 ne fixe aucun bit : toutes les adresses correspondent. C'est la route par défaut. 0.0.0.0/32 ne désigne qu'une seule adresse, et 127.0.0.0/8 est le bouclage."
+      }
+      question "Une table contient 10.0.0.0/8 via A, 10.1.0.0/16 via B et 10.1.2.0/24 via C. Vers où part un paquet pour 10.1.2.9 ?" {
+        - "vers A, car c'est la première ligne"
+        - "vers B"
+        + "vers C, car /24 est le préfixe le plus long qui correspond"
+        - "vers les trois, en partage de charge"
+        explanation: "Les trois routes correspondent, et la plus précise gagne toujours : le /24. L'ordre d'affichage des lignes n'a aucune importance, et le partage de charge ne concerne que des routes de même préfixe."
+      }
+      question "Même table : 10.0.0.0/8 via A, 10.1.0.0/16 via B, 10.1.2.0/24 via C. Vers où part un paquet pour 10.1.3.9 ?" {
+        - "vers A"
+        + "vers B"
+        - "vers C"
+        - "il est jeté faute de route exacte"
+        explanation: "10.1.3.9 n'est pas dans 10.1.2.0/24. Il est dans 10.1.0.0/16 et dans 10.0.0.0/8 ; le /16 est plus long et gagne. Une correspondance exacte n'est jamais nécessaire, seulement un préfixe commun."
+      }
+      question "Un PC est en 192.168.10.37/24. Quelle passerelle est valide ?" {
+        - "192.168.1.254"
+        + "192.168.10.254"
+        - "192.168.11.1"
+        - "10.0.12.1"
+        explanation: "La passerelle doit appartenir au réseau de l'hôte, ici 192.168.10.0/24, pour être jointe par ARP. Les autres adresses sont dans d'autres réseaux et seraient injoignables."
+      }
+      question "Quelle plage couvre la route 172.16.32.0/20 ?" {
+        - "172.16.32.0 à 172.16.32.255"
+        - "172.16.32.0 à 172.16.63.255"
+        + "172.16.32.0 à 172.16.47.255"
+        - "172.16.0.0 à 172.16.47.255"
+        explanation: "Un /20 laisse 4 bits de réseau variables dans le 3e octet : bloc de 2^4 = 16. De 32 à 32+16-1 = 47. 172.16.32.0 à 172.16.63.255 serait un /19."
+      }
+      question "Une route statique 192.168.0.0/16 (distance 1) et une route OSPF 192.168.30.0/24 (distance 110) couvrent 192.168.30.5. Laquelle est utilisée ?" {
+        - "la statique, car sa distance administrative est plus faible"
+        + "la route OSPF, car son préfixe est plus long"
+        - "les deux en alternance"
+        - "aucune, il y a un conflit"
+        explanation: "Le préfixe le plus long est examiné en premier. La distance administrative ne départage que des routes vers exactement le même préfixe. C'est une erreur classique de penser que la statique gagne toujours."
+      }
+      question "Quelle route résume exactement 192.168.20.0/24 et 192.168.21.0/24 ?" {
+        - "192.168.20.0/22"
+        + "192.168.20.0/23"
+        - "192.168.21.0/23"
+        - "192.168.0.0/16"
+        explanation: "Deux /24 consécutifs dont le premier a un troisième octet pair forment un /23. 192.168.21.0/23 n'est pas une adresse de réseau valide (21 est impair), et un /22 couvrirait aussi 22 et 23."
+      }
+      question "Peut-on résumer 192.168.21.0/24 et 192.168.22.0/24 par un seul /23 ?" {
+        - "oui, par 192.168.21.0/23"
+        - "oui, par 192.168.22.0/23"
+        + "non, ils ne sont pas dans le même bloc /23"
+        - "oui, par 192.168.20.0/23"
+        explanation: "Les blocs /23 sont 20-21, 22-23, etc. 21 est dans le bloc 20-21 et 22 dans le bloc 22-23 : aucun /23 ne contient les deux sans en inclure d'autres. Il faudrait un /22 (20 à 23), qui couvre aussi 20 et 23."
+      }
+      question "À quoi sert une route vers Null0 (Cisco) ou blackhole (Linux) ?" {
+        - "à envoyer les paquets vers la route par défaut"
+        + "à jeter sans bruit le trafic vers un réseau qu'on ne veut pas faire suivre"
+        - "à tester une interface de bouclage"
+        - "à désactiver le routage"
+        explanation: "Une route vers Null0 ou blackhole supprime les paquets. Placée sur un résumé, elle évite que les parties inexistantes du résumé partent vers la route par défaut et créent une boucle avec le fournisseur d'accès."
+      }
+      question "Un PC en 192.168.10.10/24 envoie un paquet à 192.168.10.200. À qui envoie-t-il la trame ?" {
+        - "à sa passerelle par défaut"
+        + "directement à 192.168.10.200, après un ARP sur cette adresse"
+        - "en diffusion à tout le réseau"
+        - "au serveur DHCP"
+        explanation: "La destination est dans le même réseau que le PC (même /24) : il la joint directement. La passerelle ne sert qu'aux destinations hors du réseau local."
+      }
+      question "Un poste a le masque 255.255.0.0 au lieu de 255.255.255.0 (adresse 192.168.10.10, passerelle 192.168.10.254). Que se passe-t-il quand il veut joindre 192.168.30.10 ?" {
+        - "le paquet passe par la passerelle normalement"
+        + "il croit la destination locale, fait un ARP sans réponse et ne la joint pas"
+        - "il ne peut plus joindre sa passerelle"
+        - "il ne peut plus joindre Internet"
+        explanation: "Avec un /16, 192.168.30.10 semble faire partie du réseau local : le poste cherche sa MAC par ARP au lieu de passer par le routeur. Internet, en revanche, reste joignable via la passerelle, ce qui rend la panne déroutante."
+      }
+      question "Quelle est la route la plus précise qui résume 10.1.4.0/24 à 10.1.7.0/24 ?" {
+        - "10.1.4.0/23"
+        + "10.1.4.0/22"
+        - "10.1.0.0/21"
+        - "10.1.4.0/21"
+        explanation: "Quatre /24 consécutifs commençant sur un multiple de 4 forment un /22 (24 - 2). Un /23 n'en couvre que deux, un /21 en couvre huit (10.1.0.0 à 10.1.7.255)."
+      }
+    }
+  }
+
+  module "routes-statiques" {
+    title: "Chapitre 3 : routes statiques sous Linux, Windows et Cisco"
+    duration: "45min"
+    content: """
+### Quand utiliser une route statique
+Une route statique est simple, prévisible et ne consomme rien. Elle convient :
+• aux petits réseaux (quelques routeurs, peu de changements) ;
+• aux réseaux en cul-de-sac (stub), qui n'ont qu'une seule sortie : une route par défaut suffit ;
+• à une route de secours (route flottante) ;
+• à un serveur qui doit joindre un réseau d'administration par un autre routeur que sa passerelle.
+
+Sa limite : elle ne s'adapte pas. Si un lien tombe, la route reste en place (tant que l'interface de sortie est active) et le trafic part dans le vide. Au-delà d'une dizaine de réseaux, on passe au routage dynamique.
+
+### Transformer un Linux en routeur
+Par défaut, Linux ne fait pas suivre les paquets entre ses interfaces. Il faut activer le transfert IPv4 :
+```bash
+sudo sysctl -w net.ipv4.ip_forward=1          # immédiat, perdu au redémarrage
+echo 'net.ipv4.ip_forward = 1' | sudo tee /etc/sysctl.d/99-routage.conf
+sudo sysctl --system                           # recharge tous les fichiers de sysctl.d
+```
+Vérifie avec `sysctl net.ipv4.ip_forward` (doit afficher `= 1`). Sans cette option, un Linux à deux cartes répond lui-même aux pings sur ses deux adresses, mais ne fait rien passer d'un réseau à l'autre.
+
+### Routes statiques sous Linux
+```bash
+# ajouter une route vers le LAN serveurs par R2
+sudo ip route add 192.168.30.0/24 via 10.0.12.2 dev enp0s8
+# ajouter ou remplacer la route par défaut
+sudo ip route replace default via 203.0.113.1
+# route d'hôte et route trou noir
+sudo ip route add 192.168.30.200/32 via 10.0.12.2
+sudo ip route add blackhole 192.168.0.0/16
+# supprimer
+sudo ip route del 192.168.30.0/24
+```
+Ces commandes sont **immédiates mais temporaires** : elles disparaissent au redémarrage. Pour les rendre persistantes :
+• avec ifupdown (Debian, fichier `/etc/network/interfaces`), ajoute sous l'interface concernée :
+```text
+auto enp0s8
+iface enp0s8 inet static
+    address 10.0.12.1/30
+    up ip route add 192.168.30.0/24 via 10.0.12.2
+```
+• avec Netplan (Ubuntu, fichiers `/etc/netplan/*.yaml`) :
+```text
+network:
+  version: 2
+  ethernets:
+    enp0s8:
+      addresses: [10.0.12.1/30]
+      routes:
+        - to: 192.168.30.0/24
+          via: 10.0.12.2
+```
+puis `sudo netplan try` (revient en arrière tout seul si tu ne confirmes pas : utile à distance) et `sudo netplan apply`.
+• avec NetworkManager : `nmcli connection modify "Connexion filaire 1" +ipv4.routes "192.168.30.0/24 10.0.12.2"` puis `nmcli connection up "Connexion filaire 1"`.
+
+Attention à distance (SSH) : supprimer ou remplacer la route par laquelle passe ta propre connexion te coupe. Prépare un accès console avant de toucher à la route par défaut d'une machine distante.
+
+### Routes statiques sous Windows
+En invite de commandes **lancée en administrateur** :
+```text
+route print -4
+route add 192.168.30.0 mask 255.255.255.0 192.168.10.254 metric 10
+route -p add 192.168.30.0 mask 255.255.255.0 192.168.10.254
+route delete 192.168.30.0 mask 255.255.255.0
+```
+• `mask` donne le masque en notation pointée (pas de `/24`) ; s'il est omis, Windows prend `255.255.255.255` (route d'hôte) ;
+• `-p` (persistent) enregistre la route dans le registre pour qu'elle survive au redémarrage. Les routes persistantes apparaissent dans la section « Itinéraires persistants » de `route print` ;
+• `if <numéro>` force l'interface (le numéro est dans la liste du haut de `route print`).
+
+Si le réseau de destination contient des bits à 1 hors du masque (`route add 192.168.30.5 mask 255.255.255.0 …`), Windows refuse : `Route: bad gateway address netmask`.
+
+En PowerShell, les commandes équivalentes sont :
+```text
+Get-NetRoute -AddressFamily IPv4
+New-NetRoute -DestinationPrefix "192.168.30.0/24" -InterfaceIndex 12 -NextHop 192.168.10.254
+Find-NetRoute -RemoteIPAddress 192.168.30.10
+Remove-NetRoute -DestinationPrefix "192.168.30.0/24"
+```
+`Find-NetRoute` joue le rôle de `ip route get` : il montre la route et l'adresse source choisies.
+
+### Routes statiques sous Cisco IOS
+En mode configuration globale :
+```text
+R1(config)# ip route 192.168.30.0 255.255.255.0 10.0.12.2
+R1(config)# ip route 0.0.0.0 0.0.0.0 203.0.113.1
+R1(config)# ip route 192.168.0.0 255.255.0.0 Null0
+R1(config)# no ip route 192.168.30.0 255.255.255.0 10.0.12.2
+```
+Le prochain saut peut être une adresse (recommandé sur Ethernet) ou une interface de sortie. Sur un lien Ethernet, préférer l'adresse, ou les deux (`ip route 192.168.30.0 255.255.255.0 GigabitEthernet0/2 10.0.12.2`). Sur un commutateur de niveau 3, il faut d'abord activer le routage : `ip routing`.
+
+Vérification : `show ip route`, `show ip route static`, `show ip route 192.168.30.10` (détail de la route choisie). N'oublie pas `copy running-config startup-config` (ou `write memory`) : sinon tout est perdu au redémarrage.
+
+### La route statique flottante
+Une route **flottante** est une route de secours dont la distance administrative est volontairement plus haute que celle de la route principale. Elle reste invisible tant que la principale existe, et prend le relais quand celle-ci disparaît.
+```text
+R1(config)# ip route 0.0.0.0 0.0.0.0 203.0.113.1
+R1(config)# ip route 0.0.0.0 0.0.0.0 198.51.100.1 5
+```
+La seconde route (distance 5) ne s'installe que si la première disparaît, par exemple quand l'interface vers `203.0.113.1` tombe. Limite : si l'interface reste active mais que la box du FAI ne répond plus, la route principale reste en place et la bascule ne se fait pas. Il faut alors un suivi actif (IP SLA chez Cisco), hors programme ici.
+
+Sous Linux, l'équivalent est une seconde route de **métrique** plus élevée : `ip route add default via 198.51.100.1 metric 200`.
+
+### La route de retour
+Toute route statique a besoin de son symétrique. Si R1 sait joindre `192.168.30.0/24` par R2, R2 doit savoir joindre `192.168.10.0/24` et `192.168.20.0/24` par R1. Comme R2 est en cul-de-sac (une seule sortie), le plus simple est une route par défaut vers R1 :
+```text
+R2(config)# ip route 0.0.0.0 0.0.0.0 10.0.12.1
+```
+
+### À toi de jouer
+Dans le labo, R1 et R2 sont des Debian. Les interfaces sont adressées, `ip_forward` est activé sur les deux, et rien ne passe entre PC-A et SRV.
+1. Écris les commandes `ip route` à taper sur R1 et sur R2 pour que PC-A (`192.168.10.10`), PC-B (`192.168.20.10`) et SRV (`192.168.30.10`) se joignent, et pour que tout le monde sorte vers Internet par le FAI `203.0.113.1`.
+2. Rends la route de R1 vers le LAN serveurs persistante avec ifupdown.
+3. Un poste Windows du LAN admin doit joindre le réseau d'administration `172.20.0.0/16` par le routeur `192.168.10.250`, alors que sa passerelle reste `192.168.10.254`. Écris la commande persistante.
+4. Écris les mêmes routes que la question 1 si R1 et R2 sont des routeurs Cisco.
+
+### Correction
+1. Sur R1 : `ip route add 192.168.30.0/24 via 10.0.12.2` et `ip route add default via 203.0.113.1` (les LAN admin et élèves sont connectés). Sur R2 : `ip route add default via 10.0.12.1` (une seule sortie, donc une route par défaut couvre les LAN admin, élèves et Internet). Pour Internet, le routage seul ne suffit pas : les adresses privées doivent être traduites par R1 (NAT, chapitre 5), sinon les réponses ne reviennent jamais. Vérification depuis PC-A : `ping -c 3 192.168.30.10`, puis `traceroute -n 192.168.30.10` qui doit montrer `192.168.10.254` puis `10.0.12.2` puis `192.168.30.10`.
+2. Dans `/etc/network/interfaces` de R1, sous `iface enp0s8 inet static` : `up ip route add 192.168.30.0/24 via 10.0.12.2`. Test : `sudo systemctl restart networking` (en console, pas en SSH par cette interface) ou un redémarrage, puis `ip route`.
+3. `route -p add 172.20.0.0 mask 255.255.0.0 192.168.10.250` dans une invite administrateur. Contrôle : `route print -4`, la route doit apparaître dans les itinéraires actifs et dans les itinéraires persistants.
+4. R1 : `ip route 192.168.30.0 255.255.255.0 10.0.12.2` et `ip route 0.0.0.0 0.0.0.0 203.0.113.1`. R2 : `ip route 0.0.0.0 0.0.0.0 10.0.12.1`. Puis `copy running-config startup-config` sur chacun.
+"""
+
+    codeblock "bash" {
+      title: "R1 sous Debian : transfert de paquets et routes statiques"
+      code: """
+# Activer le routage de façon persistante
+echo 'net.ipv4.ip_forward = 1' | sudo tee /etc/sysctl.d/99-routage.conf
+sudo sysctl --system
+sysctl net.ipv4.ip_forward              # attendu : net.ipv4.ip_forward = 1
+
+# Routes vers le LAN serveurs et vers Internet
+sudo ip route add 192.168.30.0/24 via 10.0.12.2
+sudo ip route replace default via 203.0.113.1
+
+# Route de secours par un second accès (métrique plus élevée).
+# Suppose une seconde interface adressée dans 198.51.100.0/24,
+# sinon le noyau refuse : Error: Nexthop has invalid gateway.
+sudo ip route add default via 198.51.100.1 metric 200
+
+# Contrôle
+ip route
+ip route get 192.168.30.10
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quelle commande active immédiatement le transfert de paquets IPv4 sous Linux ?" {
+        - "ip link set ip_forward on"
+        + "sysctl -w net.ipv4.ip_forward=1"
+        - "systemctl enable ip-forward"
+        - "ip route forward enable"
+        explanation: "Le paramètre noyau net.ipv4.ip_forward contrôle le routage. sysctl -w le change immédiatement ; pour qu'il survive au redémarrage, il faut l'écrire dans un fichier de /etc/sysctl.d/. Les autres commandes n'existent pas."
+      }
+      question "Quelle commande Linux ajoute une route vers 192.168.30.0/24 par le routeur 10.0.12.2 ?" {
+        - "ip route add 192.168.30.0 mask 255.255.255.0 10.0.12.2"
+        + "ip route add 192.168.30.0/24 via 10.0.12.2"
+        - "route add 192.168.30.0/24 gw 10.0.12.2 -p"
+        - "ip addr add 192.168.30.0/24 via 10.0.12.2"
+        explanation: "La syntaxe iproute2 est ip route add réseau/préfixe via prochain-saut. La forme avec mask est celle de Windows. ip addr add pose une adresse sur une interface, ce n'est pas une route."
+      }
+      question "Une route ajoutée avec ip route add sur Debian, sans autre action, que devient-elle au redémarrage ?" {
+        - "elle est conservée dans /etc/network/interfaces"
+        + "elle disparaît"
+        - "elle est conservée seulement si ip_forward vaut 1"
+        - "elle devient la route par défaut"
+        explanation: "ip route agit sur la table en mémoire du noyau. Pour la persistance, il faut l'écrire dans la configuration réseau : ligne up dans /etc/network/interfaces, routes dans Netplan, ou ipv4.routes dans NetworkManager."
+      }
+      question "Sous Windows, quelle option de route rend une route persistante au redémarrage ?" {
+        - "-f"
+        + "-p"
+        - "/save"
+        - "metric 1"
+        explanation: "route -p add enregistre la route dans le registre. -f vide la table de routage (hors routes d'hôte, bouclage et multidiffusion) : à ne pas confondre."
+      }
+      question "Sous Windows, route add 192.168.30.0 192.168.10.254 sans le mot mask : quel masque est utilisé ?" {
+        - "255.255.255.0, déduit de la classe"
+        - "0.0.0.0"
+        + "255.255.255.255, ce qui crée une route d'hôte"
+        - "le masque de l'interface"
+        explanation: "La documentation de Microsoft indique que le masque vaut 255.255.255.255 s'il est omis. La commande crée donc une route vers la seule adresse 192.168.30.0, ce qui n'est pas ce qu'on voulait."
+      }
+      question "Quelle commande Cisco crée une route par défaut vers 203.0.113.1 ?" {
+        - "ip default-gateway 203.0.113.1"
+        + "ip route 0.0.0.0 0.0.0.0 203.0.113.1"
+        - "ip route default 203.0.113.1"
+        - "route add 0.0.0.0/0 203.0.113.1"
+        explanation: "Sur un routeur, la route par défaut est une route statique vers 0.0.0.0 0.0.0.0. ip default-gateway ne sert que quand le routage est désactivé, par exemple sur un commutateur de niveau 2 pour son administration."
+      }
+      question "Qu’est-ce qu’une route statique flottante ?" {
+        - "une route qui change de prochain saut toutes les 30 secondes"
+        + "une route de secours avec une distance administrative plus élevée que la route principale"
+        - "une route apprise par RIP"
+        - "une route sans interface de sortie"
+        explanation: "La route flottante reste cachée tant que la route principale, de distance plus faible, est installée. Elle n'apparaît dans la table que lorsque la principale disparaît."
+      }
+      question "R1 a une route vers 192.168.30.0/24 via R2. Les pings de PC-A vers SRV échouent, ceux de R1 vers SRV aussi depuis son adresse 192.168.10.254, mais pas depuis 10.0.12.1. Que manque-t-il ?" {
+        - "ip_forward sur R1"
+        + "une route sur R2 vers 192.168.10.0/24 (route de retour)"
+        - "une passerelle sur PC-A"
+        - "une route sur R1 vers 10.0.12.0/30"
+        explanation: "R2 connaît 10.0.12.0/30 (connecté) mais pas 192.168.10.0/24 : il ne sait pas renvoyer les réponses. Une route par défaut vers 10.0.12.1 sur R2 règle le problème."
+      }
+      question "Sous Windows, quelle cmdlet PowerShell montre la route et l’adresse source utilisées pour joindre une destination ?" {
+        - "Get-NetIPAddress"
+        - "Test-NetConnection -TraceRoute"
+        + "Find-NetRoute -RemoteIPAddress"
+        - "Get-NetNeighbor"
+        explanation: "Find-NetRoute calcule le choix de route pour une adresse distante, comme ip route get sous Linux. Get-NetNeighbor affiche le cache ARP, Test-NetConnection teste une connexion."
+      }
+      question "Sur un commutateur Cisco de niveau 3, les routes statiques sont acceptées mais rien n’est routé entre les VLAN. Quelle commande manque probablement ?" {
+        - "no shutdown"
+        + "ip routing"
+        - "ip default-gateway"
+        - "switchport mode trunk"
+        explanation: "Sur beaucoup de commutateurs de niveau 3, le routage IP est désactivé par défaut. ip routing l'active ; sans elle, le commutateur se comporte comme un simple hôte."
+      }
+      question "Tu administres un serveur en SSH. Quel est le risque de taper ip route del default ?" {
+        - "aucun, la connexion SSH utilise l'adresse MAC"
+        + "couper ta propre session si tu n'es pas dans le même réseau que le serveur"
+        - "effacer le fichier /etc/network/interfaces"
+        - "désactiver ip_forward"
+        explanation: "Si ton poste est dans un autre réseau, les réponses du serveur passent par la route par défaut. La supprimer coupe la session. Prévois un accès console ou utilise une commande de retour automatique (netplan try)."
+      }
+      question "Quelle commande Netplan applique une configuration et revient en arrière seule si tu ne confirmes pas ?" {
+        - "netplan apply --safe"
+        + "netplan try"
+        - "netplan generate"
+        - "netplan rollback"
+        explanation: "netplan try applique la configuration puis attend une confirmation ; sans réponse, il restaure l'ancienne. C'est la bonne habitude à distance. netplan generate produit seulement les fichiers pour le moteur réseau."
+      }
+    }
+  }
+
+  module "traceroute" {
+    title: "Chapitre 4 : suivre le chemin avec traceroute et tracert"
+    duration: "30min"
+    content: """
+### Le principe : jouer avec le TTL
+`traceroute` (Linux) et `tracert` (Windows) découvrent les routeurs traversés en exploitant le TTL vu au chapitre 1 :
+1. le premier envoi part avec un TTL de 1 : le premier routeur le décrémente à 0, jette le paquet et renvoie un ICMP « Time Exceeded ». Son adresse apparaît en ligne 1 ;
+2. le deuxième envoi part avec un TTL de 2 : il meurt sur le deuxième routeur, qui se signale à son tour ;
+3. et ainsi de suite, jusqu'à ce que la destination réponde elle-même, ou jusqu'au nombre maximal de sauts.
+
+Chaque saut est sondé **trois fois** par défaut, d'où les trois durées par ligne : le temps aller-retour de chaque sonde, en millisecondes.
+
+### Les différences entre les outils
+| | `traceroute` (Linux) | `tracert` (Windows) |
+|---|---|---|
+| Sondes par défaut | UDP vers un port élevé (33434, puis +1 à chaque sonde) | ICMP Echo Request |
+| Sondes ICMP | `-I` (droits root) | par défaut |
+| Sondes TCP | `-T` (port 80 par défaut, droits root) | non |
+| Sans résolution de noms | `-n` | `/d` |
+| Sauts maximum (30 par défaut) | `-m 15` | `/h 15` |
+| Délai d'attente | `-w 2` (secondes, 5 par défaut) | `/w 2000` (millisecondes, 4000 par défaut) |
+
+Sous Debian, le paquet s'appelle `traceroute` (`sudo apt install traceroute`). `tracepath` (paquet `iputils-tracepath`) fonctionne sans droits root et indique aussi la MTU du chemin. Sous Windows, `pathping` combine un tracert et des statistiques de perte sur chaque saut (compte quelques minutes), et `Test-NetConnection 192.168.30.10 -TraceRoute` donne la liste des sauts en PowerShell.
+
+Pourquoi le choix du type de sonde compte : un pare-feu qui bloque l'UDP vers les ports élevés arrête `traceroute` mais pas `tracert`. Si le résultat semble bloqué, recommence avec un autre type (`-I` ou `-T -p 443`).
+
+### Lire un résultat
+```text
+$ traceroute -n 192.168.30.10
+traceroute to 192.168.30.10 (192.168.30.10), 30 hops max, 60 byte packets
+ 1  192.168.10.254  0.412 ms  0.380 ms  0.371 ms
+ 2  10.0.12.2  0.901 ms  0.887 ms  0.850 ms
+ 3  192.168.30.10  1.204 ms  1.190 ms  1.177 ms
+```
+• chaque ligne est un routeur, identifié par l'adresse de l'interface **par laquelle il a reçu** le paquet (celle tournée vers toi) ;
+• la dernière ligne est la destination ;
+• les temps augmentent en général avec la distance ; un saut isolé plus lent n'est pas forcément un problème (beaucoup de routeurs traitent les ICMP en basse priorité).
+
+### Les symptômes à reconnaître
+**Les étoiles.** `*` signifie « pas de réponse dans le délai ». Trois cas :
+• un routeur intermédiaire qui ne répond pas aux sondes, mais la suite s'affiche normalement : ce n'est pas une panne, ce routeur se tait simplement ;
+• des étoiles **jusqu'à la fin** à partir d'un saut : le paquet se perd après le dernier routeur qui a répondu (route manquante plus loin, pare-feu, lien coupé) ou les réponses ne reviennent pas ;
+• la destination ne répond pas mais tout le chemin est visible : la machine existe peut-être, mais son pare-feu filtre les sondes.
+
+**La boucle.** Deux adresses qui se répètent en alternance :
+```text
+ 3  10.0.12.2  1.1 ms
+ 4  10.0.12.1  1.3 ms
+ 5  10.0.12.2  1.6 ms
+ 6  10.0.12.1  1.8 ms
+```
+R1 envoie vers R2 et R2 renvoie vers R1 : chacun croit que l'autre connaît la destination. Classique avec deux routes par défaut qui se pointent l'une l'autre. Un `ping` vers la même destination affiche alors `Time to live exceeded` (Linux) ou « TTL expiré lors du transit » (Windows).
+
+**Les annotations de Linux.** `!H` (hôte injoignable), `!N` (réseau injoignable), `!X` (communication interdite par un filtrage) : un routeur a répondu par un ICMP Destination Unreachable. Le dernier routeur affiché avant `!N` n'a pas de route vers la destination.
+
+### traceroute ne voit que l'aller
+Le chemin affiché est celui de l'aller. Le retour de chaque réponse peut prendre une autre route (routage asymétrique). Pour voir le retour, il faut lancer un traceroute depuis l'autre extrémité.
+
+Enfin, un `traceroute` vers Internet montre souvent des adresses privées ou partagées juste après la box : réseau interne de l'opérateur, ou CGNAT en `100.64.0.0/10` (RFC 6598). Ce n'est pas une erreur de ta configuration.
+
+### À toi de jouer
+1. Depuis PC-B (`192.168.20.10`, Linux), tu lances `traceroute -n 192.168.30.10` et obtiens :
+```text
+ 1  192.168.20.254  0.5 ms  0.4 ms  0.4 ms
+ 2  * * *
+ 3  * * *
+ ...
+30  * * *
+```
+Donne deux causes possibles et une commande pour trancher.
+2. Même destination, depuis PC-A sous Windows, `tracert -d 192.168.30.10` affiche toutes les étapes jusqu'à `192.168.30.10`. Que peux-tu en déduire sur la cause de la question 1 ?
+3. Que montre `traceroute -n 8.8.8.8` si R1 n'a pas de route par défaut et que tu le lances depuis PC-A ?
+4. Écris la commande Linux qui trace le chemin vers `192.168.30.10` en TCP sur le port 443, sans résolution de noms et avec 10 sauts au plus.
+
+### Correction
+1. R1 répond, puis plus rien. Causes possibles : (a) R1 n'a pas de route vers `192.168.30.0/24` (mais alors R1 renverrait plutôt `!N`, sauf si les ICMP sont filtrés) ; (b) R1 fait suivre le paquet mais R2 n'a pas de route de retour vers `192.168.20.0/24` : les réponses de R2 et de SRV ne reviennent jamais ; (c) un filtrage sur R1 ou R2 bloque les sondes UDP. Pour trancher : sur R1, `ip route get 192.168.30.10` ; sur R2, `ip route get 192.168.20.10`. Ou lancer `sudo tcpdump -ni enp0s8 icmp or udp` sur R2 pour voir si les sondes arrivent.
+2. Le chemin vers le LAN serveurs fonctionne depuis le LAN admin. La route aller sur R1 existe donc. Le problème est propre au LAN élèves : route de retour vers `192.168.20.0/24` absente sur R2 (il n'aurait que `192.168.10.0/24` en route spécifique et pas de route par défaut), ou filtrage du LAN élèves.
+3. Ligne 1 : `192.168.10.254`, suivie de `!N` (ou d'étoiles si R1 ne renvoie pas d'ICMP) : R1 n'a aucune route vers `8.8.8.8`. Côté PC, `ping 8.8.8.8` affiche `From 192.168.10.254 icmp_seq=1 Destination Net Unreachable`.
+4. `sudo traceroute -n -T -p 443 -m 10 192.168.30.10`
+"""
+
+    codeblock "bash" {
+      title: "Variantes utiles de traceroute et tracepath"
+      code: """
+sudo apt install traceroute iputils-tracepath
+
+traceroute -n 192.168.30.10              # UDP, sans résolution de noms
+sudo traceroute -n -I 192.168.30.10      # sondes ICMP, comme tracert
+sudo traceroute -n -T -p 443 example.com # sondes TCP vers le port 443
+traceroute -n -m 10 -w 2 192.168.30.10   # 10 sauts max, 2 s d'attente
+tracepath -n 192.168.30.10               # sans root, affiche la MTU du chemin
+
+# Windows (invite de commandes) :
+#   tracert -d -h 10 192.168.30.10
+#   pathping -n 192.168.30.10
+# PowerShell :
+#   Test-NetConnection 192.168.30.10 -TraceRoute
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quel mécanisme traceroute utilise-t-il pour découvrir les routeurs ?" {
+        - "il lit la table de routage de chaque routeur"
+        + "il envoie des paquets avec un TTL croissant et récolte les ICMP Time Exceeded"
+        - "il interroge les routeurs par SNMP"
+        - "il envoie des requêtes ARP de proche en proche"
+        explanation: "Le TTL de 1, puis 2, puis 3 fait expirer le paquet sur le premier, le deuxième, le troisième routeur, qui se signalent par un ICMP Time Exceeded. ARP ne traverse pas les routeurs."
+      }
+      question "Quel type de sonde tracert (Windows) envoie-t-il par défaut ?" {
+        - "UDP vers le port 33434"
+        + "ICMP Echo Request"
+        - "TCP SYN vers le port 80"
+        - "ARP"
+        explanation: "tracert utilise des ICMP Echo Request, comme ping. Le traceroute de Linux utilise par défaut de l'UDP vers des ports élevés à partir de 33434, ou de l'ICMP avec -I et du TCP avec -T."
+      }
+      question "Quelle option de traceroute (Linux) évite la résolution des adresses en noms ?" {
+        - "-d"
+        + "-n"
+        - "-r"
+        - "-q"
+        explanation: "-n affiche les adresses numériques et accélère le résultat. Sous Windows, l'équivalent est /d. -q change le nombre de sondes par saut."
+      }
+      question "Combien de sauts au plus traceroute et tracert explorent-ils par défaut ?" {
+        - "15"
+        - "16"
+        + "30"
+        - "64"
+        explanation: "Les deux outils s'arrêtent par défaut à 30 sauts ; on change cette limite avec -m (Linux) ou /h (Windows). 15 est la limite de RIP, 64 un TTL initial courant."
+      }
+      question "Un traceroute montre une étoile au saut 3, puis les sauts 4 à 7 jusqu’à la destination. Que conclure ?" {
+        - "le routeur 3 est en panne et le trafic passe ailleurs"
+        + "le routeur 3 ne répond pas aux sondes, mais il fait suivre le trafic normalement"
+        - "le chemin contient une boucle"
+        - "la destination est injoignable"
+        explanation: "Si les sauts suivants répondent, le paquet a bien traversé le routeur 3. Il se contente de ne pas envoyer d'ICMP Time Exceeded (filtrage ou limitation). Ce n'est pas une panne."
+      }
+      question "Un traceroute affiche en alternance 10.0.12.2 et 10.0.12.1 jusqu’au trentième saut. De quoi s’agit-il ?" {
+        - "d'un partage de charge entre deux liens"
+        + "d'une boucle de routage entre R1 et R2"
+        - "d'un routeur qui répond deux fois"
+        - "d'un fonctionnement normal du NAT"
+        explanation: "Chaque routeur renvoie le paquet à l'autre jusqu'à expiration du TTL : c'est une boucle, souvent due à deux routes par défaut qui se pointent l'une l'autre. Un ping affiche alors Time to live exceeded."
+      }
+      question "Dans une ligne de traceroute, que représentent les trois durées ?" {
+        - "le temps de traversée des trois interfaces du routeur"
+        + "le temps aller-retour de chacune des trois sondes envoyées à ce saut"
+        - "le TTL restant, la taille du paquet et la latence"
+        - "les temps minimum, moyen et maximum de tout le chemin"
+        explanation: "Chaque saut est sondé trois fois par défaut (option -q pour changer). Chaque valeur est le temps entre l'envoi de la sonde et la réception de la réponse de ce routeur."
+      }
+      question "Que signifie l’annotation !N après une adresse dans traceroute ?" {
+        - "la réponse n'a pas de nom DNS"
+        + "ce routeur a répondu que le réseau de destination est injoignable"
+        - "la sonde a été perdue"
+        - "le saut utilise le NAT"
+        explanation: "!N indique un ICMP Destination Unreachable de type réseau injoignable : le routeur n'a pas de route vers la destination. !H signifie hôte injoignable, !X communication interdite."
+      }
+      question "Quelle adresse un routeur affiche-t-il en général dans un traceroute ?" {
+        - "l'adresse de son interface de sortie vers la destination"
+        + "l'adresse de l'interface par laquelle il a reçu la sonde"
+        - "son adresse de bouclage"
+        - "l'adresse publique du NAT"
+        explanation: "Le routeur répond avec l'adresse de l'interface d'arrivée, tournée vers l'émetteur. C'est pour cela que tu vois 10.0.12.2 pour R2, et non 192.168.30.254."
+      }
+      question "Quelle commande Windows donne, pour chaque saut, un pourcentage de perte de paquets ?" {
+        - "tracert /p"
+        - "ping -t"
+        + "pathping"
+        - "netstat -r"
+        explanation: "pathping trace le chemin puis envoie de nombreuses sondes à chaque routeur pendant quelques minutes et calcule les pertes. netstat -r affiche la table de routage."
+      }
+      question "Un traceroute UDP s’arrête au premier routeur alors que tracert depuis un poste Windows du même réseau va jusqu’au bout. Explication la plus probable ?" {
+        - "le poste Linux n'a pas de passerelle"
+        + "un filtrage bloque les sondes UDP vers les ports élevés mais laisse passer l'ICMP"
+        - "le routeur ne fait pas suivre l'UDP en général"
+        - "traceroute ne fonctionne qu'en IPv6"
+        explanation: "Les deux outils n'envoient pas le même type de sonde. Relance traceroute avec -I (ICMP) ou -T (TCP) pour confirmer. Le premier saut répond, donc la passerelle est bonne."
+      }
+      question "Traceroute montre-t-il le chemin de retour des paquets ?" {
+        - "oui, les durées incluent le chemin du retour"
+        + "non, il montre seulement les routeurs de l'aller ; le retour peut être différent"
+        - "oui, avec l'option -r"
+        - "non, il ne montre que la destination"
+        explanation: "Les routeurs affichés sont ceux où le TTL expire à l'aller. Les réponses reviennent par le chemin que choisissent les tables des routeurs, qui peut être différent. Pour connaître le retour, on trace depuis l'autre côté."
+      }
+    }
+  }
+
+  module "nat-pat" {
+    title: "Chapitre 5 : NAT et PAT, sortir vers Internet et publier un service"
+    duration: "40min"
+    content: """
+### Pourquoi traduire les adresses
+Les réseaux internes utilisent des adresses **privées** (RFC 1918) :
+| Plage | Préfixe |
+|---|---|
+| `10.0.0.0` à `10.255.255.255` | `10.0.0.0/8` |
+| `172.16.0.0` à `172.31.255.255` | `172.16.0.0/12` |
+| `192.168.0.0` à `192.168.255.255` | `192.168.0.0/16` |
+
+Ces adresses ne sont pas routées sur Internet : un paquet qui arriverait sur Internet avec la source `192.168.10.10` ne pourrait pas recevoir de réponse. Le routeur de sortie remplace donc l'adresse privée par une adresse publique : c'est la **traduction d'adresses** (NAT, Network Address Translation, RFC 3022).
+
+### Les variantes
+• **NAT statique** (un pour un) : une adresse privée est toujours traduite par la même adresse publique. Utile pour un serveur qui doit être joint depuis Internet, mais il faut une adresse publique par machine.
+• **NAT dynamique** : un groupe (pool) d'adresses publiques est partagé ; chaque poste interne en reçoit une le temps de sa connexion. Rare aujourd'hui.
+• **PAT** (Port Address Translation), aussi appelé NAPT, NAT surchargé (overload) ou **masquerade** sous Linux : **une seule** adresse publique pour tous les postes, en traduisant aussi les **ports**. C'est ce que fait toute box Internet.
+• **Redirection de port** (port forwarding, DNAT) : un port de l'adresse publique est renvoyé vers une machine interne, pour publier un service.
+
+### Comment le PAT s'y retrouve
+Le routeur tient une **table de traduction** (table de suivi des connexions). Exemple avec R1, adresse publique `203.0.113.2` :
+| Interne (IP:port) | Externe après traduction | Destination |
+|---|---|---|
+| `192.168.10.10:51000` | `203.0.113.2:51000` | `198.51.100.7:443` |
+| `192.168.20.10:51000` | `203.0.113.2:1024` | `198.51.100.7:443` |
+Les deux postes ont choisi le même port source : le routeur change le second pour distinguer les flux. Quand la réponse revient sur `203.0.113.2:1024`, il retrouve `192.168.20.10:51000` dans sa table et traduit en sens inverse.
+
+Conséquences pratiques :
+• une connexion ne peut être **ouverte que de l'intérieur** vers l'extérieur ; un paquet qui arrive de l'extérieur sans entrée dans la table n'a nulle part où aller (sauf redirection de port) ;
+• le NAT n'est **pas un pare-feu** : il ne filtre rien par lui-même, il ne fait que traduire. Le filtrage se configure à part ;
+• les journaux d'un serveur sur Internet ne voient que l'adresse publique : pour retrouver le poste interne, il faut la table ou les journaux du routeur (date, heure, port).
+
+### Le vocabulaire Cisco
+| Terme | Sens | Exemple |
+|---|---|---|
+| inside local | adresse du poste interne, vue de l'intérieur | `192.168.10.10` |
+| inside global | adresse du poste interne, vue d'Internet | `203.0.113.2` |
+| outside global | adresse réelle du serveur externe | `198.51.100.7` |
+| outside local | adresse du serveur externe vue de l'intérieur (souvent identique) | `198.51.100.7` |
+
+### PAT sous Cisco
+```text
+R1(config)# interface GigabitEthernet0/0
+R1(config-if)# ip nat inside
+R1(config)# interface GigabitEthernet0/1
+R1(config-if)# ip nat inside
+R1(config)# interface GigabitEthernet0/3
+R1(config-if)# ip nat outside
+R1(config)# access-list 1 permit 192.168.10.0 0.0.0.255
+R1(config)# access-list 1 permit 192.168.20.0 0.0.0.255
+R1(config)# ip nat inside source list 1 interface GigabitEthernet0/3 overload
+```
+L'ACL désigne les adresses à traduire (elle utilise un masque générique : `0.0.0.255` pour un `/24`). Le mot `overload` active le PAT. Une redirection de port vers un serveur web interne (le LAN serveurs arrive sur R1 par `Gi0/2`, qui doit donc aussi être déclarée `ip nat inside`, sinon la réponse de SRV n'est pas re-traduite) :
+```text
+R1(config)# ip nat inside source static tcp 192.168.30.10 80 203.0.113.2 80
+```
+Vérification : `show ip nat translations` (la table), `show ip nat statistics` (compteurs). `clear ip nat translation *` vide les traductions dynamiques.
+
+### PAT sous Linux avec nftables
+Debian utilise nftables. Sur R1 (sortie `enp0s9` vers le FAI), un fichier `/etc/nftables.conf` minimal :
+```text
+table ip nat {
+    chain postrouting {
+        type nat hook postrouting priority srcnat; policy accept;
+        oifname "enp0s9" ip saddr { 192.168.10.0/24, 192.168.20.0/24, 192.168.30.0/24 } masquerade
+    }
+    chain prerouting {
+        type nat hook prerouting priority dstnat; policy accept;
+        iifname "enp0s9" tcp dport 80 dnat to 192.168.30.10:80
+    }
+}
+```
+Puis `sudo nft -c -f /etc/nftables.conf` (vérifie sans appliquer), `sudo systemctl enable --now nftables`, et `sudo nft list ruleset` pour contrôler.
+
+Le fichier fourni par Debian commence par `flush ruleset` : à chaque chargement, **tout** le jeu de règles en mémoire est effacé puis remplacé par le contenu du fichier. Sur une machine qui a déjà un pare-feu, intègre la table `nat` au fichier existant au lieu de l'écraser, sinon tu supprimes ton filtrage.
+
+`masquerade` prend automatiquement l'adresse actuelle de l'interface de sortie, ce qui convient à une adresse obtenue par DHCP. Avec iptables, l'équivalent historique est `iptables -t nat -A POSTROUTING -o enp0s9 -j MASQUERADE`.
+
+La table de suivi est visible avec `sudo conntrack -L` (paquet `conntrack`).
+
+### Quand le NAT est en cause
+• Le NAT se fait **après** le routage pour la sortie (postrouting) et **avant** pour une redirection (prerouting) : une redirection exige que le routeur sache ensuite joindre le serveur interne.
+• Le serveur interne publié par redirection doit avoir **R1 comme passerelle** : sinon il répond par un autre chemin, la réponse n'est pas re-traduite et le client externe la jette.
+• Deux sites reliés par un VPN qui utilisent tous deux `192.168.1.0/24` ne peuvent pas se joindre sans renumérotation ou NAT spécifique : d'où l'intérêt de choisir des plages moins courantes (`10.42.x.0/24`, `172.20.x.0/24`) en entreprise.
+• Le CGNAT (`100.64.0.0/10`) : certains opérateurs appliquent un second NAT chez eux. La box reçoit alors une adresse en `100.64.x.x` et toute redirection de port configurée sur la box est inefficace depuis Internet.
+
+### À toi de jouer
+1. Dans la table de traduction de R1, tu vois `192.168.20.10:49152 → 203.0.113.2:49152 → 198.51.100.7:443` et `192.168.10.10:49152 → 203.0.113.2:1025 → 198.51.100.7:443`. Une réponse arrive de `198.51.100.7:443` vers `203.0.113.2:1025`. À quelle machine et à quel port R1 la remet-il ?
+2. Écris la configuration Cisco qui fait du PAT pour les trois LAN du labo sur `Gi0/3`.
+3. Tu publies le serveur web `192.168.30.10:80` sur le port 8080 de l'adresse publique, avec nftables. Écris la règle. Depuis Internet, la connexion vers `203.0.113.2:8080` n'aboutit pas, alors que la règle compte des paquets (`nft list ruleset` montre des compteurs si tu as ajouté `counter`). Donne deux causes possibles.
+4. Un collègue dit : « on est derrière un NAT, donc on est protégés, pas besoin de pare-feu ». Que réponds-tu ?
+
+### Correction
+1. À `192.168.10.10`, port `49152`. Le port externe `1025` est la clé qui distingue les deux flux.
+2. `ip nat inside` sur `Gi0/0` et `Gi0/1` (LAN admin et élèves) ; `ip nat outside` sur `Gi0/3` ; le LAN serveurs arrive par `Gi0/2` (liaison vers R2), donc `ip nat inside` aussi sur `Gi0/2`. Puis : `access-list 1 permit 192.168.10.0 0.0.0.255`, `access-list 1 permit 192.168.20.0 0.0.0.255`, `access-list 1 permit 192.168.30.0 0.0.0.255`, `ip nat inside source list 1 interface GigabitEthernet0/3 overload`. Le réseau de liaison `10.0.12.0/30` n'a pas besoin d'être traduit sauf si R2 doit sortir lui-même.
+3. Règle dans la chaîne prerouting : `iifname "enp0s9" tcp dport 8080 dnat to 192.168.30.10:80`. Causes : (a) R1 ne fait pas suivre le paquet vers `192.168.30.0/24` (pas de route vers R2, `ip_forward` à 0, ou un filtrage dans la chaîne `forward`) ; (b) SRV répond par une autre passerelle, ou R2 n'a pas de route vers Internet par R1 : la réponse ne repasse pas par R1 et n'est pas re-traduite. Vérifie avec `sudo tcpdump -ni any port 80` sur SRV puis sur R1.
+4. Le PAT bloque de fait les connexions entrantes non sollicitées, mais ce n'est qu'un effet de bord : une redirection de port, l'UPnP activé sur la box, un poste interne compromis qui ouvre lui-même une connexion vers l'extérieur, ou une attaque depuis l'intérieur passent sans difficulté. Un pare-feu filtre explicitement ce qui est autorisé, dans les deux sens. L'ANSSI recommande un filtrage explicite, pas une protection par traduction.
+"""
+
+    quiz {
+      pick: 5
+      question "Laquelle de ces plages est privée selon la RFC 1918 ?" {
+        - "172.32.0.0/16"
+        + "172.16.0.0/12"
+        - "192.169.0.0/16"
+        - "100.64.0.0/10"
+        explanation: "Les trois plages privées sont 10.0.0.0/8, 172.16.0.0/12 (172.16 à 172.31) et 192.168.0.0/16. 172.32.x.x est public, et 100.64.0.0/10 est l'espace partagé du CGNAT (RFC 6598), pas une plage RFC 1918."
+      }
+      question "Qu’est-ce qui distingue le PAT d’un NAT statique ?" {
+        - "le PAT ne traduit que les adresses de destination"
+        + "le PAT partage une seule adresse publique entre de nombreux postes en traduisant aussi les ports"
+        - "le PAT fonctionne seulement en IPv6"
+        - "le PAT nécessite une adresse publique par poste"
+        explanation: "Le PAT (NAT surchargé, masquerade) distingue les flux par le port source traduit. Le NAT statique associe une adresse privée à une adresse publique fixe, une pour une."
+      }
+      question "Quel mot clé active le PAT dans la commande Cisco ip nat inside source list 1 interface Gi0/3 ?" {
+        - "static"
+        - "pool"
+        + "overload"
+        - "masquerade"
+        explanation: "overload permet à toutes les adresses de l'ACL de partager l'adresse de l'interface en traduisant les ports. masquerade est le terme de Linux (nftables, iptables)."
+      }
+      question "Dans le vocabulaire Cisco, comment s’appelle l’adresse publique qui représente un poste interne ?" {
+        - "inside local"
+        + "inside global"
+        - "outside local"
+        - "outside global"
+        explanation: "inside désigne le poste interne, global la vue depuis Internet : inside global = l'adresse publique après traduction. inside local est son adresse privée réelle."
+      }
+      question "Quelle règle nftables fait du PAT vers la sortie enp0s9 ?" {
+        - "iifname enp0s9 masquerade dans la chaîne prerouting"
+        + "oifname enp0s9 masquerade dans une chaîne de type nat attachée à postrouting"
+        - "oifname enp0s9 accept dans la chaîne forward"
+        - "dnat to enp0s9 dans la chaîne output"
+        explanation: "La traduction de la source se fait en postrouting, une fois l'interface de sortie connue : oifname enp0s9 masquerade. La chaîne prerouting sert au DNAT (redirections). forward filtre, il ne traduit pas."
+      }
+      question "Un serveur publié par redirection de port a pour passerelle un autre routeur que celui qui fait le NAT. Que se passe-t-il ?" {
+        - "tout fonctionne, la réponse est traduite par l'autre routeur"
+        + "la réponse sort par l'autre routeur sans être re-traduite, et le client externe la rejette"
+        - "le serveur ne reçoit jamais la requête"
+        - "le NAT bascule automatiquement en mode statique"
+        explanation: "La requête arrive bien (DNAT), mais la réponse doit repasser par le même routeur pour que la traduction inverse soit appliquée. Sinon elle part avec l'adresse privée ou une autre adresse publique, que le client ne reconnaît pas."
+      }
+      question "Le NAT est-il un pare-feu ?" {
+        - "oui, il bloque tout le trafic entrant et sortant"
+        + "non, il traduit des adresses ; le filtrage se configure à part"
+        - "oui, quand il est en mode overload"
+        - "oui, s'il est associé à une ACL standard"
+        explanation: "Le PAT empêche de fait les connexions entrantes non sollicitées, mais il ne filtre rien volontairement : redirections, UPnP et connexions ouvertes de l'intérieur passent. L'ACL du NAT Cisco choisit les adresses à traduire, elle ne filtre pas."
+      }
+      question "Quelle commande Cisco affiche la table des traductions en cours ?" {
+        - "show nat table"
+        + "show ip nat translations"
+        - "show ip route nat"
+        - "debug ip nat statistics"
+        explanation: "show ip nat translations liste les associations inside local / inside global / outside. show ip nat statistics donne des compteurs, et debug ip nat affiche chaque traduction en direct (à éviter en production)."
+      }
+      question "Quel masque générique faut-il dans l’ACL Cisco pour désigner 192.168.20.0/24 ?" {
+        - "255.255.255.0"
+        + "0.0.0.255"
+        - "0.0.0.0"
+        - "255.255.255.255"
+        explanation: "Les ACL Cisco utilisent un masque générique (wildcard), inverse du masque de sous-réseau : les bits à 0 doivent correspondre, ceux à 1 sont libres. Pour un /24, 0.0.0.255."
+      }
+      question "Ta box reçoit l’adresse 100.72.14.3 sur son interface Internet. Que peux-tu en conclure ?" {
+        - "la box est mal configurée"
+        + "ton opérateur applique un CGNAT ; une redirection de port sur la box ne sera pas joignable depuis Internet"
+        - "c'est une adresse publique ordinaire"
+        - "la box est en IPv6 seulement"
+        explanation: "100.64.0.0/10 est l'espace partagé réservé au CGNAT (RFC 6598). Un second NAT chez l'opérateur empêche les connexions entrantes, quelle que soit la configuration de la box."
+      }
+      question "Deux postes internes utilisent le même port source 51000 vers le même serveur web. Comment le routeur PAT distingue-t-il les réponses ?" {
+        - "par l'adresse MAC des postes"
+        - "il ne peut pas : l'une des deux connexions échoue"
+        + "il attribue un port source externe différent à l'une des deux connexions"
+        - "par le TTL des réponses"
+        explanation: "Le routeur change le port source si la combinaison est déjà prise, et note la correspondance dans sa table. La réponse arrive sur ce port externe, qui identifie le bon poste interne."
+      }
+      question "Quelle commande Linux affiche la table de suivi des connexions utilisée par le NAT ?" {
+        - "ip nat show"
+        - "nft list nat"
+        + "conntrack -L"
+        - "ss -nat"
+        explanation: "conntrack -L (paquet conntrack) liste les connexions suivies par le noyau, avec les adresses avant et après traduction. nft list ruleset montre les règles, pas les connexions."
+      }
+    }
+  }
+
+  module "routage-dynamique-rip" {
+    title: "Chapitre 6 : routage dynamique, métriques, distance administrative et RIP"
+    duration: "40min"
+    content: """
+### Pourquoi le routage dynamique
+Avec dix routeurs et trente réseaux, écrire et maintenir des routes statiques devient une source d'erreurs, et aucune ne se corrige seule quand un lien tombe. Un **protocole de routage dynamique** permet aux routeurs :
+• d'annoncer à leurs voisins les réseaux qu'ils connaissent ;
+• de calculer automatiquement le meilleur chemin ;
+• de **converger** (se remettre d'accord) quand la topologie change, en contournant une panne si un autre chemin existe.
+
+Le prix : du trafic de contrôle, de la mémoire et du calcul, une configuration à sécuriser (authentification des voisins), et un temps de convergence pendant lequel des paquets peuvent se perdre.
+
+### Les deux familles
+| | Vecteur de distance (distance vector) | État de liens (link state) |
+|---|---|---|
+| Ce que le routeur sait | ce que ses voisins lui disent (« je joins tel réseau à telle distance ») | une carte complète de sa zone |
+| Calcul | Bellman-Ford : on prend le voisin qui annonce le meilleur coût | Dijkstra (SPF) sur la carte |
+| Exemples | RIP, (EIGRP en est une version avancée, propre à Cisco) | OSPF, IS-IS |
+| Convergence | lente | rapide |
+| Taille de réseau | petite | moyenne à grande |
+
+Image courante : le vecteur de distance, c'est suivre des panneaux indicateurs ; l'état de liens, c'est avoir la carte routière.
+
+BGP, le protocole qui relie les opérateurs d'Internet entre eux, est un protocole **extérieur** (entre systèmes autonomes) de type vecteur de chemins. RIP et OSPF sont des protocoles **intérieurs** (IGP), utilisés au sein d'une même organisation.
+
+### La métrique
+La **métrique** est le coût d'une route selon un protocole. Plus elle est faible, meilleure est la route. Chaque protocole a la sienne :
+• RIP : le **nombre de sauts** (routeurs traversés), sans tenir compte du débit ;
+• OSPF : un **coût** calculé à partir du débit des liens ;
+• EIGRP : une combinaison de bande passante et de délai.
+
+La métrique ne sert qu'à comparer des routes **d'un même protocole**. Comparer une métrique RIP (3 sauts) à une métrique OSPF (coût 20) n'a aucun sens.
+
+### La distance administrative
+Quand deux sources différentes proposent une route vers **le même préfixe**, le routeur choisit selon la **distance administrative** (AD) : la confiance qu'il accorde à chaque source. Plus elle est faible, plus la source est crue. Valeurs par défaut chez Cisco :
+| Source | Distance |
+|---|---|
+| Connectée | 0 |
+| Statique | 1 |
+| eBGP | 20 |
+| EIGRP interne | 90 |
+| OSPF | 110 |
+| IS-IS | 115 |
+| RIP | 120 |
+| EIGRP externe | 170 |
+| iBGP | 200 |
+| Inconnue (jamais installée) | 255 |
+
+L'ordre de décision est donc toujours :
+1. le **préfixe le plus long** ;
+2. à préfixe égal, la **distance administrative** la plus faible ;
+3. à distance égale (même protocole), la **métrique** la plus faible ;
+4. à métrique égale, partage de charge sur plusieurs chemins (ECMP).
+
+Dans `show ip route`, la ligne `O 192.168.30.0/24 [110/2] via 10.0.12.2` se lit : appris par OSPF, distance 110, métrique 2.
+
+Sous Linux, il n'y a pas de distance administrative dans le noyau : la **métrique** (`metric`) de `ip route` départage les routes de même préfixe. Le démon de routage FRRouting, qui fait tourner RIP, OSPF ou BGP sur Linux, applique lui-même des distances proches de celles de Cisco avant d'installer ses routes.
+
+### RIP en pratique
+RIP (Routing Information Protocol) est le plus ancien et le plus simple. Version actuelle en IPv4 : **RIPv2** (RFC 2453). Ses caractéristiques :
+• métrique = nombre de sauts ; une route à **16** sauts est considérée comme **injoignable** (infini), donc un réseau RIP ne dépasse pas 15 sauts ;
+• chaque routeur envoie sa table complète toutes les **30 secondes**, en UDP port **520**, vers l'adresse multicast **224.0.0.9** (RIPv2) ;
+• une route qui n'est plus annoncée depuis **180 secondes** est déclarée expirée, puis supprimée 120 secondes plus tard ;
+• RIPv2 transporte le masque (classless) et accepte une authentification ; RIPv1 (diffusion, sans masque) est obsolète ;
+• version IPv6 : RIPng.
+
+Pour éviter les boucles, RIP utilise **l'horizon partagé** (split horizon : ne pas réannoncer une route au voisin qui l'a fournie) et l'**empoisonnement** (annoncer une route perdue avec la métrique 16).
+
+Son défaut principal se voit sur un réseau en triangle : RIP préfère un chemin de 1 saut à 100 Mbit/s à un chemin de 2 sauts à 10 Gbit/s, puisqu'il ne compte que les sauts.
+
+### Configurer RIPv2 sur Cisco
+```text
+R1(config)# router rip
+R1(config-router)# version 2
+R1(config-router)# no auto-summary
+R1(config-router)# network 192.168.10.0
+R1(config-router)# network 192.168.20.0
+R1(config-router)# network 10.0.0.0
+R1(config-router)# passive-interface GigabitEthernet0/0
+R1(config-router)# passive-interface GigabitEthernet0/1
+R1(config-router)# default-information originate
+```
+• `network` prend un réseau **par classe** (sans masque) : il active RIP sur les interfaces de ce réseau et annonce leurs réseaux connectés ;
+• `no auto-summary` empêche le résumé automatique aux frontières de classe, source d'erreurs avec des sous-réseaux discontinus ;
+• `passive-interface` : n'envoie plus de mises à jour sur les LAN de postes (inutile, et cela montre la topologie à qui écoute), mais continue d'annoncer ces réseaux aux vrais voisins. Attention : avec RIP, une interface passive **écoute toujours** les mises à jour reçues ; pour empêcher un poste d'injecter des routes, il faut en plus l'authentification de RIPv2 ou un filtrage des annonces reçues ;
+• `default-information originate` : R1 annonce sa route par défaut aux autres routeurs RIP.
+
+Vérification : `show ip protocols` (réseaux, interfaces passives, voisins), `show ip route rip`, `debug ip rip` (en labo).
+
+### À toi de jouer
+1. R1 reçoit trois propositions pour `192.168.30.0/24` : une route statique via `10.0.12.2`, une route OSPF de métrique 2 via `10.0.12.2`, une route RIP de métrique 1 via `10.0.13.2`. Laquelle est installée ? Et si l'administrateur supprime la route statique ?
+2. R1 a aussi une route RIP vers `192.168.30.128/25` via `10.0.13.2`. Vers où part un paquet pour `192.168.30.200` ?
+3. Tu veux une route statique de secours qui ne prenne le relais que si OSPF perd la route vers `192.168.30.0/24`. Quelle distance lui donnes-tu, et quelle est la commande ?
+4. Dans un réseau RIP en chaîne R1 – R2 – … – R17, R1 voit-il le LAN de R17 ? Pourquoi ?
+
+### Correction
+1. Même préfixe `/24` pour les trois : on compare les distances. Statique (1) < OSPF (110) < RIP (120) : la **statique** est installée. Sans elle, c'est la route **OSPF** (110), même si la métrique RIP (1) paraît plus petite : on ne compare pas des métriques de protocoles différents.
+2. Le `/25` est plus long que le `/24` et couvre `.200` : le paquet part **via `10.0.13.2`** (RIP), malgré la distance 120. Le préfixe passe avant la distance.
+3. Une distance plus grande que celle d'OSPF : par exemple 130. `ip route 192.168.30.0 255.255.255.0 10.0.14.2 130`. Elle reste cachée tant que la route OSPF (110) existe.
+4. Non. Le LAN de R17 est à 1 saut de R17, et R1 le verrait à 17 sauts. Dès 16 sauts la route est jugée injoignable : RIP ne convient pas à ce réseau.
+"""
+
+    quiz {
+      pick: 5
+      question "Quelle est la distance administrative par défaut d’OSPF chez Cisco ?" {
+        - "90"
+        + "110"
+        - "120"
+        - "1"
+        explanation: "OSPF vaut 110, RIP 120, EIGRP interne 90, statique 1, connectée 0. Ces valeurs viennent de la documentation de Cisco."
+      }
+      question "Deux routes vers 192.168.30.0/24 : une par RIP (métrique 2), une par OSPF (métrique 30). Laquelle est installée ?" {
+        - "RIP, car sa métrique est plus faible"
+        + "OSPF, car sa distance administrative (110) est plus faible que celle de RIP (120)"
+        - "les deux, en partage de charge"
+        - "aucune, il faut choisir manuellement"
+        explanation: "Entre deux protocoles, le routeur compare les distances administratives, pas les métriques, qui ne sont pas dans la même unité."
+      }
+      question "Quelle est la métrique utilisée par RIP ?" {
+        - "la bande passante du lien le plus lent"
+        + "le nombre de sauts"
+        - "un coût calculé à partir du débit"
+        - "le délai cumulé"
+        explanation: "RIP compte les routeurs traversés, sans regarder le débit. OSPF utilise un coût fondé sur le débit, EIGRP combine bande passante et délai."
+      }
+      question "Pour RIP, quelle métrique signifie qu’un réseau est injoignable ?" {
+        - "0"
+        - "15"
+        + "16"
+        - "255"
+        explanation: "16 représente l'infini (RFC 2453). La plus grande distance utilisable est donc 15 sauts."
+      }
+      question "Sur quel port et vers quelle adresse RIPv2 envoie-t-il ses mises à jour ?" {
+        - "TCP 179 vers 224.0.0.5"
+        + "UDP 520 vers 224.0.0.9"
+        - "UDP 520 vers 255.255.255.255"
+        - "protocole IP 89 vers 224.0.0.6"
+        explanation: "RIPv2 utilise l'UDP 520 et l'adresse multicast 224.0.0.9. RIPv1 utilisait la diffusion 255.255.255.255. TCP 179 est BGP, le protocole IP 89 et 224.0.0.5/6 sont OSPF."
+      }
+      question "À quelle fréquence un routeur RIP envoie-t-il ses mises à jour périodiques ?" {
+        - "toutes les 10 secondes"
+        + "toutes les 30 secondes"
+        - "toutes les 180 secondes"
+        - "seulement en cas de changement"
+        explanation: "RIP envoie sa table toutes les 30 secondes. 180 secondes est le délai au-delà duquel une route non réannoncée expire. OSPF, lui, n'envoie que les changements (plus un rafraîchissement lent)."
+      }
+      question "Que fait la commande passive-interface dans la configuration RIP d’une interface de LAN de postes ?" {
+        - "elle désactive l'interface"
+        - "elle retire le réseau de cette interface des annonces"
+        + "elle n'envoie plus de mises à jour sur cette interface, mais son réseau reste annoncé ailleurs"
+        - "elle accepte les routes sans authentification"
+        explanation: "Une interface passive ne parle plus le protocole, ce qui évite d'envoyer des annonces aux postes, mais son réseau est toujours annoncé aux vrais voisins par les autres interfaces."
+      }
+      question "Dans quel ordre un routeur choisit-il entre plusieurs routes candidates ?" {
+        - "distance administrative, puis préfixe, puis métrique"
+        + "préfixe le plus long, puis distance administrative, puis métrique"
+        - "métrique, puis préfixe, puis distance"
+        - "ordre d'apprentissage des routes"
+        explanation: "Le préfixe le plus long l'emporte toujours. Ensuite, à préfixe égal, la distance administrative départage les sources, puis la métrique départage les routes d'un même protocole."
+      }
+      question "Que signifie [120/3] dans la ligne R 192.168.30.0/24 [120/3] via 10.0.12.2 ?" {
+        - "120 secondes avant expiration, 3 voisins"
+        + "distance administrative 120, métrique 3 sauts"
+        - "métrique 120, distance 3"
+        - "délai 120 ms, 3 chemins"
+        explanation: "Le format est [distance administrative/métrique]. 120 est la distance de RIP, 3 le nombre de sauts pour atteindre le réseau."
+      }
+      question "Quel est le principe de l’horizon partagé (split horizon) ?" {
+        - "partager la charge sur deux chemins égaux"
+        + "ne pas réannoncer une route au voisin dont on l'a apprise"
+        - "diviser le réseau en zones"
+        - "annoncer les routes seulement sur les interfaces passives"
+        explanation: "Réannoncer une route à celui qui l'a donnée peut créer une boucle quand le réseau tombe : chacun croit que l'autre le connaît encore. L'horizon partagé l'interdit."
+      }
+      question "Pourquoi utilise-t-on no auto-summary dans RIPv2 sur Cisco ?" {
+        - "pour activer l'authentification"
+        + "pour empêcher le résumé automatique des sous-réseaux à la frontière de leur classe"
+        - "pour réduire la fréquence des mises à jour"
+        - "pour forcer RIPv1"
+        explanation: "Le résumé automatique annonce par exemple 10.0.0.0/8 au lieu de 10.0.12.0/30, ce qui casse les réseaux dont les sous-réseaux sont dispersés. no auto-summary transmet les préfixes exacts."
+      }
+      question "Quelle famille de protocoles construit une carte complète de la zone et la calcule avec l’algorithme de Dijkstra ?" {
+        - "vecteur de distance"
+        + "état de liens"
+        - "vecteur de chemins"
+        - "routage statique"
+        explanation: "Les protocoles à état de liens (OSPF, IS-IS) partagent la description des liens, puis chaque routeur calcule les plus courts chemins par Dijkstra (SPF). RIP est à vecteur de distance, BGP à vecteur de chemins."
+      }
+    }
+  }
+
+  module "ospf" {
+    title: "Chapitre 7 : introduction à OSPF"
+    duration: "40min"
+    content: """
+### Le principe d'OSPF
+OSPF (Open Shortest Path First, version 2 pour IPv4 : RFC 2328 ; version 3 pour IPv6 : RFC 5340) est le protocole intérieur à état de liens le plus répandu en entreprise. Il est normalisé, donc disponible sur tous les équipements (Cisco, Juniper, MikroTik, pfSense avec FRR, Linux avec FRRouting).
+
+Son fonctionnement en quatre temps :
+1. **Découverte des voisins** : chaque routeur envoie des paquets **Hello** sur ses interfaces OSPF, en multicast vers **224.0.0.5**. Deux routeurs qui s'entendent sur les paramètres deviennent voisins.
+2. **Échange des descriptions de liens** : les voisins s'échangent des LSA (link state advertisements) qui décrivent chaque routeur, ses liens et leurs coûts.
+3. **Base de données identique** : tous les routeurs d'une même zone obtiennent la même base (LSDB), c'est-à-dire la même carte.
+4. **Calcul** : chacun lance l'algorithme de Dijkstra (SPF) en se plaçant à la racine, et installe les meilleurs chemins dans sa table.
+
+Quand un lien tombe, seuls les changements sont diffusés, et chacun recalcule : la convergence prend en général quelques secondes, au lieu de plusieurs minutes avec RIP.
+
+Les paquets OSPF ne sont ni en TCP ni en UDP : ils sont transportés directement dans IP, avec le **numéro de protocole 89**. Un pare-feu entre deux routeurs OSPF doit donc laisser passer ce protocole, pas un port.
+
+### Le coût
+La métrique d'OSPF est le **coût**, la somme des coûts des interfaces de sortie le long du chemin. Par défaut :
+**coût = débit de référence / débit de l'interface**, avec un débit de référence de **100 Mbit/s** (Cisco et FRRouting).
+
+| Interface | Coût par défaut |
+|---|---|
+| 10 Mbit/s | 10 |
+| 100 Mbit/s | 1 |
+| 1 Gbit/s | 1 (arrondi, minimum 1) |
+| 10 Gbit/s | 1 |
+
+Problème visible : avec la référence par défaut, un lien à 100 Mbit/s et un lien à 10 Gbit/s ont le même coût. On relève donc la référence, **sur tous les routeurs de la même façon** :
+```text
+R1(config-router)# auto-cost reference-bandwidth 10000
+```
+(valeur en Mbit/s : 10 Gbit/s de référence, donc 1 Gbit/s coûte 10 et 10 Gbit/s coûte 1). On peut aussi fixer le coût d'une interface à la main : `ip ospf cost 50`.
+
+### Les zones
+Un domaine OSPF se découpe en **zones** (areas) pour limiter la taille de la carte et des calculs. La zone **0** (backbone) est obligatoire et toutes les autres zones doivent s'y raccorder. Un routeur qui a des interfaces dans deux zones est un ABR (area border router). Pour un réseau d'établissement, **une seule zone, la zone 0**, suffit : c'est ce que fait ce cours.
+
+### Identifiant du routeur
+Chaque routeur OSPF a un **identifiant** (router ID) de 32 bits écrit comme une adresse IP. Il est choisi ainsi : la valeur fixée par `router-id`, sinon la plus haute adresse d'une interface de bouclage (loopback), sinon la plus haute adresse d'une interface active. Fixe-le toujours à la main : deux routeurs avec le même identifiant provoquent des dysfonctionnements difficiles à comprendre.
+
+### Les conditions pour devenir voisins
+Deux routeurs ne deviennent voisins que s'ils ont, sur le lien qui les relie :
+• le même **réseau et masque** sur l'interface ;
+• la même **zone** ;
+• les mêmes **temporisateurs Hello et Dead** (par défaut 10 s et 40 s sur Ethernet) ;
+• la même **authentification** si elle est activée ;
+• des identifiants de routeur **différents** ;
+• une **MTU** identique (sinon ils restent bloqués à l'état EXSTART ou EXCHANGE).
+
+Les états à connaître : `INIT` (j'ai reçu un Hello), `2WAY` (on se voit mutuellement), `FULL` (bases synchronisées : c'est l'état normal d'une liaison point à point).
+
+Sur un réseau Ethernet partagé par plusieurs routeurs, OSPF élit un routeur désigné (**DR**) et un remplaçant (**BDR**) pour limiter les échanges : priorité la plus haute (1 par défaut, 0 = jamais DR), puis identifiant le plus haut. Les autres routeurs (DROTHER) restent en `2WAY` entre eux : c'est normal. Le DR et le BDR écoutent aussi **224.0.0.6**.
+
+### Configurer OSPF sur Cisco
+Pour R1 du labo (LAN admin, LAN élèves, liaison vers R2) :
+```text
+R1(config)# router ospf 1
+R1(config-router)# router-id 1.1.1.1
+R1(config-router)# network 192.168.10.0 0.0.0.255 area 0
+R1(config-router)# network 192.168.20.0 0.0.0.255 area 0
+R1(config-router)# network 10.0.12.0 0.0.0.3 area 0
+R1(config-router)# passive-interface GigabitEthernet0/0
+R1(config-router)# passive-interface GigabitEthernet0/1
+R1(config-router)# default-information originate
+```
+• le `1` de `router ospf 1` est un numéro de processus **local** : il n'a pas besoin d'être identique sur les voisins ;
+• `network` prend un **masque générique** (`0.0.0.3` pour un `/30`) et active OSPF sur toute interface dont l'adresse est dans la plage ;
+• `passive-interface` : pas de Hello vers les postes, réseau toujours annoncé ;
+• `default-information originate` : annonce la route par défaut de R1 (vers le FAI) aux autres. Les routes OSPF reçues apparaissent alors en `O*E2 0.0.0.0/0`.
+
+Vérifications :
+```text
+R1# show ip ospf neighbor
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+2.2.2.2           1   FULL/DR         00:00:35    10.0.12.2       GigabitEthernet0/2
+R1# show ip route ospf
+O     192.168.30.0/24 [110/2] via 10.0.12.2, 00:04:12, GigabitEthernet0/2
+```
+Le coût 2 = 1 (lien R1 → R2) + 1 (interface de R2 vers le LAN serveurs). `show ip ospf interface brief` liste les interfaces OSPF, leur zone, leur coût et leur état.
+
+### OSPF sous Linux avec FRRouting
+Sur Debian : `sudo apt install frr`, puis dans `/etc/frr/daemons`, passe `ospfd=no` à `ospfd=yes` et `sudo systemctl restart frr`. La configuration se fait dans le shell `sudo vtysh`, avec une syntaxe proche de Cisco, mais `network` prend un préfixe CIDR :
+```text
+configure terminal
+router ospf
+ ospf router-id 2.2.2.2
+ network 10.0.12.0/30 area 0
+ network 192.168.30.0/24 area 0
+exit
+interface enp0s9
+ ip ospf passive
+exit
+end
+write memory
+```
+Vérification : `show ip ospf neighbor` et `show ip route ospf` dans vtysh, et `ip route` dans le shell Linux (les routes apparaissent avec `proto ospf`).
+
+### Sécurité
+Un routeur qui accepte n'importe quel voisin peut recevoir de fausses routes : un poste malveillant sur un LAN annonce une route par défaut et attire tout le trafic. Deux protections simples : **interfaces passives** sur tous les réseaux de postes, et **authentification** des voisins (sous Cisco : `ip ospf authentication message-digest` et `ip ospf message-digest-key 1 md5 <clé>` sur l'interface ; les versions récentes proposent aussi une authentification HMAC-SHA par trousseau de clés).
+
+### À toi de jouer
+1. Écris la configuration OSPF Cisco de R2 (identifiant 2.2.2.2, liaison `10.0.12.0/30`, LAN serveurs `192.168.30.0/24` passif).
+2. `show ip ospf neighbor` est vide sur R1 et R2. L'un a `10.0.12.1/30`, l'autre `10.0.12.2/29`. Les Hello sont-ils échangés ? Pourquoi les routeurs ne deviennent-ils pas voisins ?
+3. On ajoute R3, relié à R1 par un lien à 1 Gbit/s et à R2 par un lien à 100 Mbit/s ; R1 – R2 est aussi à 100 Mbit/s. Avec la référence par défaut, quels sont les coûts ? Que change `auto-cost reference-bandwidth 10000` sur les trois routeurs ?
+4. Dans `show ip route` de R2, tu vois `O*E2 0.0.0.0/0 [110/1] via 10.0.12.1`. D'où vient cette route ?
+
+### Correction
+1. 
+```text
+router ospf 1
+ router-id 2.2.2.2
+ network 10.0.12.0 0.0.0.3 area 0
+ network 192.168.30.0 0.0.0.255 area 0
+ passive-interface GigabitEthernet0/1
+```
+(adapter le nom de l'interface du LAN serveurs). Avec OSPF, la route par défaut statique de R2 vers R1 devient inutile si R1 fait `default-information originate`.
+2. Les deux adresses sont bien dans le même réseau au sens de la plage, mais les **masques diffèrent** (`/30` contre `/29`). Sur un lien Ethernet, OSPF vérifie que le masque annoncé dans le Hello est identique : les Hello sont reçus mais ignorés, et l'adjacence ne se forme pas. Corrige le masque de R2 en `/30`. Autres vérifications si ce n'est pas le cas : zone, temporisateurs (`show ip ospf interface`), interface passive par erreur, protocole 89 filtré.
+3. Avec la référence à 100 Mbit/s, tous les liens coûtent 1 : chaque chemin vaut le nombre de liens traversés, et OSPF ne tient plus compte du débit. Avec la référence à 10 000 Mbit/s : lien 1 Gbit/s = 10, liens 100 Mbit/s = 100. Pour aller de R1 au LAN de R2, le chemin direct coûte 100 (+ LAN) et le chemin par R3 coûte 10 + 100 = 110 : le direct reste meilleur ici, mais l'écart reflète maintenant les débits.
+4. De R1 : il annonce sa route par défaut avec `default-information originate`. `O` = OSPF, `*` = candidate par défaut, `E2` = route externe de type 2 (injectée dans OSPF depuis une autre source, ici une route statique), dont la métrique (1) ne s'additionne pas le long du chemin.
+"""
+
+    codeblock "bash" {
+      title: "Installer FRRouting et activer OSPF sur un routeur Debian"
+      code: """
+sudo apt install frr
+sudo sed -i 's/^ospfd=no/ospfd=yes/' /etc/frr/daemons
+sudo systemctl restart frr
+
+# Configuration dans le shell de FRR
+sudo vtysh -c 'configure terminal' \
+           -c 'router ospf' \
+           -c 'ospf router-id 2.2.2.2' \
+           -c 'network 10.0.12.0/30 area 0' \
+           -c 'network 192.168.30.0/24 area 0' \
+           -c 'end' -c 'write memory'
+
+# Vérifications
+sudo vtysh -c 'show ip ospf neighbor'
+sudo vtysh -c 'show ip route ospf'
+ip route | grep 'proto ospf'
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Quel algorithme OSPF utilise-t-il pour calculer les meilleurs chemins ?" {
+        - "Bellman-Ford"
+        + "Dijkstra (SPF)"
+        - "Spanning Tree"
+        - "le nombre de sauts"
+        explanation: "OSPF construit une carte de la zone puis applique l'algorithme de Dijkstra, dit SPF (shortest path first). Bellman-Ford est utilisé par les protocoles à vecteur de distance comme RIP ; Spanning Tree concerne les commutateurs."
+      }
+      question "Comment les paquets OSPF sont-ils transportés ?" {
+        - "en UDP, port 520"
+        - "en TCP, port 179"
+        + "directement dans IP, protocole numéro 89"
+        - "en UDP, port 89"
+        explanation: "OSPF n'utilise ni TCP ni UDP : il a son propre numéro de protocole IP, 89. UDP 520 est RIP, TCP 179 est BGP."
+      }
+      question "Avec le débit de référence par défaut (100 Mbit/s), quel est le coût OSPF d’une interface à 1 Gbit/s ?" {
+        - "0,1"
+        + "1"
+        - "10"
+        - "100"
+        explanation: "Le calcul donne 0,1, mais le coût est un entier d'au moins 1. Les interfaces à 100 Mbit/s, 1 Gbit/s et 10 Gbit/s ont donc toutes le coût 1, d'où l'intérêt de relever la référence."
+      }
+      question "Quelle zone OSPF est obligatoire et sert de colonne vertébrale ?" {
+        - "la zone 1"
+        + "la zone 0"
+        - "la zone 255"
+        - "aucune, toutes les zones sont équivalentes"
+        explanation: "La zone 0 (backbone) relie toutes les autres zones. Un petit réseau peut n'utiliser qu'elle."
+      }
+      question "Deux routeurs OSPF reliés par Ethernet ne deviennent pas voisins. Lequel de ces écarts en est une cause ?" {
+        - "des numéros de processus différents (router ospf 1 et router ospf 2)"
+        + "des temporisateurs Hello différents (10 s et 30 s)"
+        - "des identifiants de routeur différents"
+        - "des priorités différentes"
+        explanation: "Hello et Dead doivent être identiques. Le numéro de processus est local, les identifiants doivent être différents, et la priorité ne sert qu'à l'élection du DR."
+      }
+      question "Quelle adresse multicast reçoivent tous les routeurs OSPF ?" {
+        - "224.0.0.9"
+        + "224.0.0.5"
+        - "224.0.0.6"
+        - "224.0.0.10"
+        explanation: "224.0.0.5 désigne tous les routeurs OSPF, 224.0.0.6 le DR et le BDR. 224.0.0.9 est RIPv2, 224.0.0.10 EIGRP."
+      }
+      question "Dans la commande network 10.0.12.0 0.0.0.3 area 0, que représente 0.0.0.3 ?" {
+        - "le numéro de la zone"
+        - "le masque de sous-réseau /3"
+        + "le masque générique correspondant à un /30"
+        - "le coût de l'interface"
+        explanation: "Cisco utilise un masque générique dans network : 0.0.0.3 laisse libres les 2 derniers bits, soit un /30. FRRouting accepte directement 10.0.12.0/30."
+      }
+      question "Quel est l’état normal d’une adjacence OSPF sur une liaison point à point entre deux routeurs ?" {
+        - "INIT"
+        - "2WAY"
+        - "EXSTART"
+        + "FULL"
+        explanation: "FULL signifie que les deux bases sont synchronisées. 2WAY est normal seulement entre deux DROTHER sur un réseau partagé. Rester en EXSTART ou EXCHANGE indique souvent une MTU différente."
+      }
+      question "Comment un routeur Cisco choisit-il son identifiant OSPF si router-id n’est pas configuré ?" {
+        - "au hasard au démarrage"
+        + "la plus haute adresse de bouclage, sinon la plus haute adresse d'interface active"
+        - "la plus basse adresse d'interface"
+        - "l'adresse MAC de la première interface"
+        explanation: "Ordre de choix : router-id, puis la plus haute adresse d'une loopback, puis la plus haute adresse d'une interface active. Le fixer à la main évite les surprises."
+      }
+      question "Que fait default-information originate dans la configuration OSPF de R1 ?" {
+        - "R1 accepte une route par défaut de ses voisins"
+        + "R1 annonce sa propre route par défaut aux autres routeurs OSPF"
+        - "R1 crée une route par défaut vers Null0"
+        - "R1 devient le DR"
+        explanation: "R1 diffuse la route par défaut qu'il possède (par exemple une statique vers le FAI). Les autres la reçoivent en O*E2 0.0.0.0/0 et n'ont plus besoin de route statique."
+      }
+      question "Pourquoi déclarer passives les interfaces OSPF tournées vers les postes ?" {
+        - "pour retirer ces réseaux de la table"
+        + "pour qu'aucun poste ne puisse devenir voisin et injecter de fausses routes"
+        - "pour accélérer le calcul SPF"
+        - "pour activer l'authentification"
+        explanation: "Une interface passive n'envoie ni n'accepte de Hello : aucune adjacence ne peut s'y former. Le réseau est malgré tout annoncé aux autres routeurs."
+      }
+      question "Pourquoi faut-il régler auto-cost reference-bandwidth de la même façon sur tous les routeurs ?" {
+        - "sinon les routeurs refusent de devenir voisins"
+        + "sinon les coûts calculés sont incohérents et les chemins choisis peuvent être mauvais"
+        - "parce que la valeur est transmise dans les Hello"
+        - "ce n'est pas nécessaire, chaque routeur peut avoir la sienne"
+        explanation: "Chaque routeur calcule le coût de ses propres interfaces. Avec des références différentes, un même débit vaut 1 ici et 100 là : la somme des coûts ne reflète plus rien. L'adjacence se forme quand même, l'erreur est donc silencieuse."
+      }
+    }
+  }
+
+  module "diagnostic" {
+    title: "Chapitre 8 : diagnostiquer une panne de routage et lire des tables"
+    duration: "45min"
+    content: """
+### Une méthode, toujours la même
+Devant « ça ne passe pas », on avance de proche en proche, du poste vers la destination, en vérifiant l'aller **et** le retour :
+1. **Le poste** : adresse, masque, passerelle (`ip -br a` et `ip route`, ou `ipconfig /all`). Une erreur de masque ou de passerelle explique beaucoup de pannes.
+2. **La passerelle** : `ping 192.168.10.254`. Si elle ne répond pas, le problème est local (câble, VLAN, adresse, pare-feu du poste). Regarde `ip neigh` : une entrée `FAILED` ou `INCOMPLETE` pour la passerelle signifie que l'ARP n'aboutit pas.
+3. **Le chemin** : `traceroute -n` ou `tracert -d` vers la destination. Note le **dernier routeur qui répond**.
+4. **Sur ce routeur** : a-t-il une route vers la destination (`ip route get`, `show ip route <adresse>`) ? fait-il suivre les paquets (`ip_forward`, `ip routing`) ? un filtrage les bloque-t-il ?
+5. **Le retour** : chaque routeur du chemin et la destination savent-ils joindre le **réseau d'origine** ? La destination a-t-elle la bonne passerelle ?
+6. **Les couches au-dessus** : si le ping passe mais pas l'application, regarde le pare-feu de la destination, le service (`ss -tlnp`), le DNS (chapitre DNS), le NAT.
+
+Ne change qu'une chose à la fois, et note ce que tu as changé.
+
+### Les messages à reconnaître
+| Message | Ce qu'il dit |
+|---|---|
+| `connect: Network is unreachable` (Linux) | le poste lui-même n'a aucune route : pas de passerelle |
+| `From 192.168.10.10 … Destination Host Unreachable` | l'ARP vers le prochain saut (ou l'hôte local) échoue : l'adresse de la ligne `From` est le poste lui-même |
+| `From 192.168.10.254 … Destination Net Unreachable` | ce routeur n'a pas de route vers la destination |
+| `From 10.0.12.2 … Time to live exceeded` | boucle de routage (ou chemin plus long que le TTL) |
+| `Délai d'attente de la demande dépassé` / pas de réponse sous Linux | le paquet ou la réponse se perd : route de retour absente, filtrage, hôte éteint |
+| `Impossible de joindre l'hôte de destination` (Windows) | message ICMP d'injoignabilité ; regarde l'adresse qui répond |
+
+L'adresse qui envoie le message d'erreur est un indice précieux : c'est l'équipement qui a constaté le problème.
+
+### Les pannes classiques
+**Route de retour absente.** L'aller arrive, la réponse ne repart pas. Symptôme : traceroute qui s'arrête juste après le dernier routeur bien configuré, ping sans réponse ni message d'erreur. Vérifie la table de chaque routeur vers le **réseau source**.
+
+**Routage asymétrique avec un pare-feu.** L'aller passe par le pare-feu A, le retour par le routeur B. Le pare-feu à états voit des réponses sans avoir vu l'ouverture de connexion (ou l'inverse) et les jette. Symptôme : le ping fonctionne parfois, mais les connexions TCP échouent.
+
+**Filtrage du chemin de retour sous Linux (rp_filter).** Avec `net.ipv4.conf.all.rp_filter = 1` (mode strict), Linux jette un paquet reçu sur une interface par laquelle il ne renverrait pas la réponse. Utile contre l'usurpation d'adresse, gênant en routage asymétrique. La valeur 2 (mode souple) accepte si une route existe par n'importe quelle interface.
+
+**ip_forward oublié.** Le routeur Linux répond aux pings sur toutes ses adresses, mais rien ne le traverse.
+
+**Deux routes par défaut.** Un poste à deux cartes (Wi-Fi et filaire, ou VPN) a deux passerelles : la plus faible métrique gagne, ce qui n'est pas toujours celle qu'on croit. `ip route` ou `route print -4` le montre immédiatement.
+
+**Boucle.** Deux routeurs qui se renvoient mutuellement la destination. traceroute la montre ; corrige la route la moins précise ou ajoute une route trou noir.
+
+**Interface tombée.** La route connectée disparaît, et les routes statiques qui en dépendent aussi. Sous Cisco, `show ip interface brief` doit afficher `up up` ; `administratively down` signifie un `shutdown` dans la configuration.
+
+### Les outils de chaque système
+| Besoin | Linux | Windows | Cisco |
+|---|---|---|---|
+| Table de routage | `ip route` | `route print -4`, `Get-NetRoute` | `show ip route` |
+| Route pour une adresse | `ip route get X` | `Find-NetRoute -RemoteIPAddress X` | `show ip route X` |
+| Cache ARP | `ip neigh` | `arp -a`, `Get-NetNeighbor` | `show ip arp` |
+| Chemin | `traceroute -n`, `tracepath` | `tracert -d`, `pathping` | `traceroute X` |
+| Interfaces | `ip -br a`, `ip -br link` | `ipconfig /all` | `show ip interface brief` |
+| Voir les paquets | `tcpdump -ni if` | Wireshark, `pktmon` | `debug` (en labo), SPAN |
+
+Une capture `tcpdump` tranche presque toutes les discussions : si les requêtes arrivent sur l'interface d'un routeur mais ne ressortent pas de l'autre côté, c'est ce routeur ; si elles ressortent mais qu'aucune réponse ne revient, c'est plus loin ou au retour.
+
+### Exercice de lecture 1 : une table Linux
+Sur un routeur Debian, `ip route` affiche :
+```text
+default via 203.0.113.1 dev enp0s9 proto static
+10.0.12.0/30 dev enp0s8 proto kernel scope link src 10.0.12.1
+10.0.13.0/30 dev enp0s10 proto kernel scope link src 10.0.13.1
+192.168.10.0/24 dev enp0s3 proto kernel scope link src 192.168.10.254
+192.168.30.0/24 via 10.0.12.2 dev enp0s8 proto ospf metric 20
+192.168.30.0/24 via 10.0.13.2 dev enp0s10 proto static metric 100
+192.168.40.0/23 via 10.0.13.2 dev enp0s10 proto ospf metric 20
+203.0.113.0/30 dev enp0s9 proto kernel scope link src 203.0.113.2
+```
+
+### Exercice de lecture 2 : une table Cisco
+```text
+Gateway of last resort is 10.0.12.1 to network 0.0.0.0
+
+O*E2  0.0.0.0/0 [110/1] via 10.0.12.1, 00:12:40, GigabitEthernet0/0
+      10.0.0.0/8 is variably subnetted, 3 subnets, 2 masks
+C        10.0.12.0/30 is directly connected, GigabitEthernet0/0
+L        10.0.12.2/32 is directly connected, GigabitEthernet0/0
+O        10.0.13.0/30 [110/2] via 10.0.12.1, 00:12:40, GigabitEthernet0/0
+O     192.168.10.0/24 [110/2] via 10.0.12.1, 00:12:40, GigabitEthernet0/0
+S     192.168.20.0/24 [1/0] via 10.0.12.1
+C     192.168.30.0/24 is directly connected, GigabitEthernet0/1
+L     192.168.30.254/32 is directly connected, GigabitEthernet0/1
+```
+
+### À toi de jouer
+Sur la table Linux (exercice 1) :
+1. Par où part un paquet vers `192.168.30.15` ? Pourquoi pas par l'autre route ?
+2. Par où part un paquet vers `192.168.41.8` ? et vers `192.168.42.8` ?
+3. Combien de routes connectées compte cette table ?
+
+Sur la table Cisco (exercice 2, routeur R2) :
+4. Quel est le coût total vers `192.168.10.0/24` ? Que signifie `00:12:40` ?
+5. Vers `192.168.20.0/24`, pourquoi la route est-elle statique et non OSPF, alors qu'OSPF tourne ?
+6. Où part un paquet vers `8.8.8.8` ?
+
+Panne :
+7. PC-B (`192.168.20.10`) joint Internet mais pas SRV (`192.168.30.10`). `ping 192.168.30.10` depuis PC-B : aucune réponse, aucun message. Depuis PC-A (`192.168.10.10`), le ping fonctionne. Sur R1, `ip route get 192.168.30.10` répond `192.168.30.10 via 10.0.12.2 dev enp0s8 src 10.0.12.1`. Propose la démarche et la cause la plus probable.
+
+### Correction
+1. Deux routes de même préfixe `/24` : le noyau prend la **métrique** la plus faible, `20`, donc **via `10.0.12.2` (enp0s8)**. La route statique de métrique 100 est une route de secours : elle servira si la route OSPF disparaît.
+2. `192.168.40.0/23` couvre `192.168.40.0` à `192.168.41.255` : `192.168.41.8` part **via `10.0.13.2`**. `192.168.42.8` n'est couvert par aucune route spécifique : **route par défaut, via `203.0.113.1`**.
+3. Quatre : `10.0.12.0/30`, `10.0.13.0/30`, `192.168.10.0/24`, `203.0.113.0/30` (les lignes `proto kernel scope link`).
+4. Coût **2** (`[110/2]` : distance 110, métrique 2). `00:12:40` est l'âge de la route : apprise il y a 12 minutes et 40 secondes. Un âge qui revient sans cesse à zéro signale une route instable (lien qui rebondit).
+5. Une route statique (distance 1) bat une route OSPF (distance 110) **de même préfixe**. Si R1 annonce aussi `192.168.20.0/24` en OSPF, cette annonce existe dans la base, mais la statique reste installée. Ce n'est pas une panne, mais c'est une route oubliée qu'il faudra supprimer pour qu'OSPF puisse réagir aux changements.
+6. Aucune route spécifique : **route par défaut apprise par OSPF, via `10.0.12.1`** (R1).
+7. Démarche : la passerelle de PC-B répond (Internet marche) ; l'aller vers SRV est routé sur R1 (`ip route get`). L'échec sans message d'erreur oriente vers le **retour**. Sur R2, `ip route get 192.168.20.10` (ou `show ip route 192.168.20.10`) : si aucune route ne couvre `192.168.20.0/24` et que R2 n'a pas de route par défaut, la réponse de SRV est jetée par R2. C'est la cause la plus probable, puisque `192.168.10.0/24` fonctionne. Autres pistes : SRV a un pare-feu qui n'autorise que `192.168.10.0/24`, ou un filtrage sur R1 entre le LAN élèves et le LAN serveurs. Confirmation : `tcpdump -ni enp0s9 icmp` sur R2 côté LAN serveurs montre les requêtes qui arrivent et les réponses de SRV ; côté liaison, aucune réponse ne sort. Correction : route vers `192.168.20.0/24` via `10.0.12.1` sur R2, ou route par défaut, ou annonce du LAN élèves par OSPF.
+"""
+
+    codeblock "bash" {
+      title: "Diagnostic pas à pas depuis un poste Linux, puis sur un routeur"
+      code: """
+# 1. Le poste
+ip -br address
+ip route
+# 2. La passerelle et l'ARP
+ping -c 3 192.168.10.254
+ip neigh show 192.168.10.254          # REACHABLE ou STALE = bon ; FAILED = ARP en échec
+# 3. Le chemin
+traceroute -n 192.168.30.10
+# 4. Sur le dernier routeur qui répond
+ip route get 192.168.30.10
+sysctl net.ipv4.ip_forward
+# 5. Le retour, sur le routeur suivant et sur la destination
+ip route get 192.168.10.10
+# Voir passer les paquets (Ctrl+C pour arrêter)
+sudo tcpdump -ni enp0s8 icmp
+"""
+    }
+
+    quiz {
+      pick: 5
+      question "Un ping depuis Linux affiche « connect: Network is unreachable ». Que manque-t-il le plus probablement ?" {
+        - "une route de retour sur le routeur distant"
+        + "une route sur le poste lui-même, souvent la route par défaut"
+        - "une entrée DNS"
+        - "l'activation d'ip_forward sur le poste"
+        explanation: "Ce message est produit localement, avant l'envoi : le poste n'a aucune route vers la destination. Une route de retour absente donne au contraire un silence, sans message."
+      }
+      question "Un ping affiche « From 192.168.10.254 icmp_seq=1 Destination Net Unreachable ». Que conclure ?" {
+        - "le poste n'a pas de passerelle"
+        + "la passerelle 192.168.10.254 n'a pas de route vers le réseau de destination"
+        - "la destination est éteinte"
+        - "il y a une boucle de routage"
+        explanation: "L'adresse après From est l'équipement qui a émis l'ICMP : ici le routeur. Net Unreachable signifie qu'il n'a trouvé aucune route. Une boucle donnerait Time to live exceeded."
+      }
+      question "Le ping vers un serveur distant n’obtient aucune réponse et aucun message d’erreur, alors que l’aller est bien routé jusqu’au dernier routeur. Que vérifies-tu en priorité ?" {
+        - "le câble du poste"
+        + "la route de retour vers le réseau source sur les routeurs et la passerelle du serveur"
+        - "le DNS"
+        - "la table ARP du poste"
+        explanation: "Le silence sans message d'erreur est le symptôme typique d'une réponse qui ne revient pas. Chaque équipement du retour doit connaître le réseau d'origine."
+      }
+      question "Un routeur Linux répond aux pings sur ses deux adresses, mais les postes des deux réseaux ne se joignent pas. Quelle est la première chose à vérifier ?" {
+        - "le DNS du routeur"
+        + "la valeur de net.ipv4.ip_forward"
+        - "le TTL des postes"
+        - "la version du noyau"
+        explanation: "Répondre lui-même aux pings ne demande pas de routage. Faire passer des paquets d'une interface à l'autre exige ip_forward à 1."
+      }
+      question "Sur une table Linux, deux routes vers 192.168.30.0/24 ont les métriques 20 et 100. Laquelle est utilisée ?" {
+        - "celle de métrique 100, la plus récente"
+        + "celle de métrique 20"
+        - "les deux en alternance"
+        - "aucune, il y a un conflit"
+        explanation: "À préfixe identique, le noyau Linux choisit la métrique la plus faible. La route de métrique 100 sert de secours si la première disparaît."
+      }
+      question "Sur Cisco, show ip interface brief affiche « administratively down down » pour Gi0/1. Que faut-il faire ?" {
+        - "changer le câble"
+        + "entrer dans l'interface et taper no shutdown"
+        - "ajouter une route statique"
+        - "redémarrer OSPF"
+        explanation: "administratively down signifie que l'interface est éteinte par la commande shutdown. Tant qu'elle l'est, sa route connectée n'existe pas. Un problème de câble donnerait down down sans le mot administratively."
+      }
+      question "Que fait le paramètre rp_filter en mode strict (valeur 1) sous Linux ?" {
+        - "il bloque tous les paquets ICMP"
+        + "il jette un paquet reçu sur une interface par laquelle le noyau ne renverrait pas la réponse"
+        - "il active le NAT"
+        - "il empêche les boucles de routage"
+        explanation: "Le filtrage du chemin de retour protège contre l'usurpation d'adresse source, mais il casse le routage asymétrique. La valeur 2 (souple) accepte dès qu'une route existe par une interface quelconque."
+      }
+      question "Dans « O 192.168.10.0/24 [110/2] via 10.0.12.1, 00:12:40 », que représente 00:12:40 ?" {
+        - "le délai de la dernière réponse"
+        + "depuis combien de temps la route est apprise"
+        - "la durée avant expiration"
+        - "l'heure de démarrage du routeur"
+        explanation: "C'est l'âge de la route. S'il revient régulièrement à zéro, la route disparaît et réapparaît : un lien instable est probable."
+      }
+      question "Une route 192.168.40.0/23 couvre-t-elle l’adresse 192.168.41.8 ?" {
+        - "non, seulement 192.168.40.0 à 192.168.40.255"
+        + "oui, elle couvre 192.168.40.0 à 192.168.41.255"
+        - "oui, elle couvre 192.168.40.0 à 192.168.43.255"
+        - "non, 41 est impair"
+        explanation: "Un /23 regroupe deux /24 consécutifs, ici 40 et 41. 192.168.42.x et 43.x ne sont pas couverts."
+      }
+      question "Le ping fonctionne mais les connexions TCP échouent ; l’aller passe par un pare-feu à états et le retour par un autre routeur. Comment s’appelle ce problème ?" {
+        - "une boucle de routage"
+        + "un routage asymétrique"
+        - "un conflit d'adresses"
+        - "une MTU trop grande"
+        explanation: "Le pare-feu ne voit qu'un sens de la connexion et rejette les paquets qui ne correspondent à aucun état connu. Il faut que l'aller et le retour passent par le même pare-feu."
+      }
+      question "ip neigh affiche « 192.168.10.254 dev enp0s3 FAILED ». Que signifie cet état ?" {
+        - "la passerelle refuse le ping"
+        + "les requêtes ARP vers la passerelle n'ont pas obtenu de réponse"
+        - "la route par défaut est absente"
+        - "le DNS ne répond pas"
+        explanation: "FAILED indique que la résolution ARP a échoué : la passerelle est injoignable au niveau 2 (câble, VLAN, adresse incorrecte). REACHABLE ou STALE indiquent une MAC connue."
+      }
+      question "Une route statique de R2 vers 192.168.20.0/24 masque l’annonce OSPF du même réseau. Pourquoi ?" {
+        - "OSPF ne peut pas annoncer de réseau en /24"
+        + "à préfixe égal, la distance administrative de la statique (1) est plus faible que celle d'OSPF (110)"
+        - "la statique a une meilleure métrique"
+        - "la statique a été apprise en premier"
+        explanation: "La statique l'emporte tant qu'elle existe. Elle empêche OSPF de réagir aux changements de topologie pour ce réseau : il faut la supprimer si le routage dynamique doit prendre le relais."
+      }
+    }
+  }
+
+  module "synthese" {
+    title: "Chapitre 9 : synthèse, mini-projet guidé"
+    duration: "60min"
+    content: """
+### Le projet
+Le lycée ouvre un bâtiment pour les enseignants. Tu dois étendre le labo, passer du routage statique à OSPF, garder une sortie Internet de secours, et rendre une recette et une page de documentation.
+
+Topologie cible :
+```text
+   LAN admin 192.168.10.0/24      LAN serveurs 192.168.30.0/24
+   LAN élèves 192.168.20.0/24           |
+            |                           |
+          [ R1 ]------ 10.0.12.0/30 ----[ R2 ]
+          / |  .1                    .2  |  .1
+FAI 203.0.113.1  \                       |
+ (secours         \ .1                   | 10.0.23.0/30
+  198.51.100.1)    10.0.13.0/30          |
+                     \ .2            .2  |
+                      `-------------[ R3 ]
+                                      |
+                           LAN profs 192.168.40.0/24
+```
+R1, R2 et R3 peuvent être des Debian avec FRRouting, des routeurs Cisco dans Packet Tracer ou GNS3, ou un mélange : OSPF est normalisé.
+
+### Étape 1 : le plan d'adressage
+Complète le tableau : pour chaque routeur, chaque interface, son adresse, son masque et son rôle. Règles : passerelles des LAN en `.254` ; sur chaque liaison `/30`, le routeur de plus petit numéro prend la première adresse utilisable et l'autre la seconde : `10.0.12.1` (R1) et `10.0.12.2` (R2), `10.0.13.1` (R1) et `10.0.13.2` (R3), `10.0.23.1` (R2) et `10.0.23.2` (R3). Un `/30` n'a que deux adresses utilisables : `.3` dans `10.0.13.0/30` est l'adresse de diffusion.
+
+### Étape 2 : adresses et transfert
+Adresse toutes les interfaces, active `ip_forward` (Linux) ou vérifie `ip routing` (commutateur de niveau 3). Vérifie qu'un ping vers chaque voisin direct fonctionne avant d'aller plus loin : sans voisins joignables, aucun protocole de routage ne marchera.
+
+### Étape 3 : OSPF dans la zone 0
+• identifiants : R1 `1.1.1.1`, R2 `2.2.2.2`, R3 `3.3.3.3` ;
+• toutes les liaisons et tous les LAN dans la zone 0 ;
+• interfaces des LAN de postes et de serveurs **passives** ;
+• référence de débit relevée de façon identique sur les trois routeurs ;
+• R1 annonce la route par défaut (`default-information originate`).
+Contrôle : `show ip ospf neighbor` sur chaque routeur montre deux voisins en `FULL`.
+
+### Étape 4 : la sortie Internet et le NAT
+Sur R1 : route par défaut vers `203.0.113.1`, route flottante vers `198.51.100.1` (distance 5 sous Cisco, métrique plus élevée sous Linux), PAT pour les quatre LAN sur l'interface de sortie. Supprime toutes les routes statiques internes du labo précédent : elles masqueraient OSPF.
+
+### Étape 5 : la recette
+| Test | Commande | Attendu |
+|---|---|---|
+| Voisins | `show ip ospf neighbor` sur R2 | `1.1.1.1` et `3.3.3.3` en `FULL` |
+| Route vers les profs | `ip route get 192.168.40.10` sur R1 | via `10.0.13.2` |
+| Bout en bout | `traceroute -n 192.168.40.10` depuis PC-A | `192.168.10.254`, `10.0.13.2`, `192.168.40.10` |
+| Internet | `ping -c 3 9.9.9.9` depuis un poste du LAN profs | réponses |
+| Traduction | `show ip nat translations` ou `conntrack -L` sur R1 | une entrée avec l'adresse du poste |
+| Secours interne | coupe le lien R1–R3, `traceroute` depuis PC-A vers le LAN profs | le chemin passe par R2 en quelques secondes |
+| Secours Internet | coupe l'interface vers `203.0.113.1` | la route flottante apparaît dans la table de R1 |
+| Interfaces passives | `sudo tcpdump -ni <if LAN> ip proto 89` sur un poste | aucun paquet OSPF |
+
+### Étape 6 : la documentation
+Une page : schéma, plan d'adressage, identifiants OSPF, référence de débit, emplacement des configurations (`/etc/frr/frr.conf`, `startup-config`), procédure pour ajouter un LAN (adresse sur le routeur, `network` dans OSPF, interface passive, ligne dans l'ACL du NAT), commandes de contrôle.
+
+### À toi de jouer
+Réalise le projet, étapes 1 à 6. Puis réponds à ces trois situations :
+1. Après ton travail, R3 apprend bien `192.168.10.0/24` mais pas `192.168.30.0/24`. R2 et R3 sont voisins en `FULL`.
+2. Les postes du LAN profs joignent tous les LAN internes, mais pas Internet. Les autres LAN sortent normalement.
+3. Tu coupes le lien R1–R3 : pendant une minute, les postes du LAN profs ne joignent plus rien, puis tout revient. Tu utilisais des routes statiques ou OSPF ?
+
+### Correction
+Points de contrôle :
+• étape 1 : aucune adresse de diffusion ni de réseau sur une interface (`10.0.13.3` est la diffusion de `10.0.13.0/30`) ;
+• étape 3 : sur Cisco, `network 10.0.13.0 0.0.0.3 area 0` (masque générique) ; sur FRR, `network 10.0.13.0/30 area 0` ; pas de `network` qui oublie une liaison ;
+• étape 4 : plus aucune ligne `S` vers un réseau interne dans `show ip route` ; la ligne `S*` vers `203.0.113.1` et, après coupure, la ligne `S*` vers `198.51.100.1` ;
+• étape 5 : chaque test a un résultat obtenu noté, et chaque écart expliqué.
+
+Situations :
+1. R2 n'annonce pas le LAN serveurs : il manque `network 192.168.30.0 0.0.0.255 area 0` sur R2, ou l'interface est éteinte. Le fait que l'interface soit passive n'empêche pas l'annonce. Vérifie `show ip ospf interface brief` sur R2 : l'interface du LAN serveurs doit y figurer.
+2. Les routes internes sont bonnes ; c'est le NAT. Le réseau `192.168.40.0/24` manque dans l'ACL (Cisco) ou dans l'ensemble `ip saddr` de la règle `masquerade` (nftables). Les paquets sortent avec l'adresse privée et les réponses ne reviennent jamais. Autre possibilité : la règle `forward` du pare-feu de R1 n'autorise pas ce réseau.
+3. Avec des routes statiques, rien ne serait revenu tout seul. Avec OSPF, la perte du lien est détectée immédiatement si l'interface passe à l'état down ; si l'interface reste active (lien coupé plus loin, par un commutateur intermédiaire), OSPF attend l'expiration du délai Dead (40 s par défaut), puis recalcule. La minute observée correspond à ce second cas. On peut réduire ce délai (temporisateurs plus courts, BFD), en sachant que tous les voisins doivent avoir les mêmes valeurs.
+
+### Pour aller plus loin
+• RFC 1812 (Requirements for IP Version 4 Routers), RFC 2328 (OSPF Version 2) et RFC 2453 (RIP Version 2), IETF : https://www.rfc-editor.org
+• RFC 1918, Address Allocation for Private Internets, et RFC 3022, Traditional IP Network Address Translator, IETF : https://www.rfc-editor.org/rfc/rfc1918
+• Pages de manuel ip-route(8) et traceroute(8), projet man-pages et Debian : https://man7.org/linux/man-pages/man8/ip-route.8.html
+• Documentation des commandes route et tracert, Microsoft Learn : https://learn.microsoft.com/windows-server/administration/windows-commands/route_ws2008
+• Documentation d'OSPF dans FRRouting, projet FRR : https://docs.frrouting.org/en/latest/ospfd.html
+• Distance administrative des routes, documentation de Cisco : https://www.cisco.com/c/en/us/support/docs/ip/border-gateway-protocol-bgp/15986-admin-distance.html
+"""
+
+    codeblock "bash" {
+      title: "Recette rapide depuis PC-A et sur R1 (Debian avec FRRouting)"
+      code: """
+# Depuis PC-A (LAN admin)
+ip route | grep default                        # default via 192.168.10.254
+traceroute -n 192.168.40.10                    # 192.168.10.254, 10.0.13.2, 192.168.40.10
+ping -c 3 9.9.9.9                              # sortie Internet par le NAT de R1
+
+# Sur R1
+sudo vtysh -c 'show ip ospf neighbor'          # 2.2.2.2 et 3.3.3.3 en Full
+ip route | grep 'proto ospf'                   # routes vers 192.168.30.0/24 et 192.168.40.0/24
+ip route get 192.168.40.10                     # via 10.0.13.2
+sudo nft list ruleset | grep masquerade        # règle de PAT présente
+sudo conntrack -L | head                       # traductions en cours
+"""
+    }
+
+    quiz {
+      pick: 10
+      question "Que modifie un routeur dans la trame quand il fait suivre un paquet ?" {
+        - "seulement l'adresse MAC de destination"
+        + "les adresses MAC source et destination, la trame est reconstruite"
+        - "rien, la trame est transmise telle quelle"
+        - "les adresses IP source et destination"
+        explanation: "La trame d'arrivée est retirée et une nouvelle est construite pour le lien de sortie : MAC source = celle du routeur, MAC destination = celle du prochain saut. Les adresses IP ne changent pas sans NAT."
+      }
+      question "Une table contient 0.0.0.0/0, 192.168.0.0/16 et 192.168.40.0/23. Quelle route sert pour 192.168.41.200 ?" {
+        - "0.0.0.0/0"
+        - "192.168.0.0/16"
+        + "192.168.40.0/23"
+        - "aucune"
+        explanation: "Les trois correspondent ; le /23 (192.168.40.0 à 192.168.41.255) est le plus long. C'est la règle du préfixe le plus long."
+      }
+      question "Quelle commande Windows ajoute une route persistante vers 172.20.0.0/16 par 192.168.10.250 ?" {
+        - "route add 172.20.0.0/16 192.168.10.250 -persistent"
+        + "route -p add 172.20.0.0 mask 255.255.0.0 192.168.10.250"
+        - "netsh route add 172.20.0.0 192.168.10.250"
+        - "route add -p 172.20.0.0 via 192.168.10.250"
+        explanation: "La syntaxe de Windows est route -p add destination mask masque passerelle, avec le masque en notation pointée. Elle doit être lancée dans une invite administrateur."
+      }
+      question "Quelle commande Cisco crée une route par défaut de secours vers 198.51.100.1 qui ne s’installe que si la principale disparaît ?" {
+        - "ip route 0.0.0.0 0.0.0.0 198.51.100.1 backup"
+        + "ip route 0.0.0.0 0.0.0.0 198.51.100.1 5"
+        - "ip route 0.0.0.0 0.0.0.0 198.51.100.1 metric 0"
+        - "ip default-gateway 198.51.100.1 secondary"
+        explanation: "Le nombre final est la distance administrative. 5 est plus grand que 1 (statique par défaut) : la route reste cachée tant que la principale existe. C'est une route flottante."
+      }
+      question "Sous Linux, quelle commande indique la route choisie pour 192.168.40.10 ?" {
+        - "ip route show 192.168.40.10"
+        + "ip route get 192.168.40.10"
+        - "ip neigh get 192.168.40.10"
+        - "route -n 192.168.40.10"
+        explanation: "ip route get fait le calcul de routage et affiche la route retenue, l'interface et l'adresse source. ip route show avec une adresse ne cherche que les routes de ce préfixe exact."
+      }
+      question "Un traceroute affiche R1, puis des étoiles jusqu’au 30e saut. Le premier suspect est :" {
+        - "le DNS du poste"
+        - "la passerelle du poste"
+        + "le routage après R1, à l'aller ou au retour (route manquante ou filtrage)"
+        - "la carte réseau du poste"
+        explanation: "R1 répond, donc le poste et sa passerelle fonctionnent. Les sondes se perdent ensuite, ou leurs réponses ne reviennent pas : il faut vérifier la route de R1 vers la destination et le retour sur le routeur suivant."
+      }
+      question "Qu’indique un traceroute où deux adresses se répètent en alternance ?" {
+        - "un équilibrage de charge"
+        + "une boucle de routage"
+        - "un NAT double"
+        - "un routeur qui filtre l'ICMP"
+        explanation: "Les deux routeurs se renvoient le paquet jusqu'à ce que son TTL expire. Il faut corriger la route qui renvoie à tort vers l'autre routeur."
+      }
+      question "À quoi sert le PAT sur le routeur de sortie d’un lycée ?" {
+        - "à chiffrer le trafic vers Internet"
+        + "à faire sortir tous les postes à adresse privée avec une seule adresse publique"
+        - "à attribuer des adresses aux postes"
+        - "à bloquer les sites interdits"
+        explanation: "Le PAT traduit les adresses privées et les ports vers une adresse publique partagée. Il ne chiffre rien, n'attribue pas d'adresses (c'est DHCP) et ne filtre pas."
+      }
+      question "Une redirection de port vers un serveur interne ne fonctionne pas : la requête arrive au serveur, la réponse ne revient pas au client. Cause probable ?" {
+        - "le DNS du client"
+        + "le serveur n'a pas le routeur NAT comme passerelle"
+        - "le port est trop élevé"
+        - "le NAT est en mode overload"
+        explanation: "La réponse doit repasser par le routeur qui a fait la traduction pour être re-traduite. Avec une autre passerelle, elle sort avec une mauvaise adresse source et le client l'ignore."
+      }
+      question "Quel numéro de protocole IP un pare-feu doit-il laisser passer entre deux routeurs OSPF ?" {
+        - "6"
+        - "17"
+        + "89"
+        - "520"
+        explanation: "OSPF est encapsulé directement dans IP avec le protocole 89. 6 est TCP, 17 UDP, et 520 est un port UDP (RIP), pas un numéro de protocole."
+      }
+      question "Une route statique et une route OSPF ont exactement le même préfixe. Laquelle est installée par défaut chez Cisco ?" {
+        - "la route OSPF, car elle est dynamique"
+        + "la statique, distance 1 contre 110"
+        - "celle qui a la meilleure métrique"
+        - "les deux en partage de charge"
+        explanation: "À préfixe égal, la distance administrative la plus faible gagne. Pour faire d'une statique une route de secours, il faut lui donner une distance supérieure à 110."
+      }
+      question "Pourquoi RIP ne convient-il pas à un réseau de 20 routeurs en chaîne ?" {
+        - "parce qu'il n'accepte que 10 voisins"
+        + "parce qu'une route à 16 sauts est considérée comme injoignable"
+        - "parce qu'il ne fonctionne pas sur Ethernet"
+        - "parce qu'il ne gère pas les masques"
+        explanation: "RIP limite le diamètre du réseau à 15 sauts, 16 valant l'infini. RIPv2 gère les masques ; c'est RIPv1 qui ne les transportait pas."
+      }
+      question "Deux routeurs OSPF restent bloqués à l’état EXSTART. Quelle est la cause la plus fréquente ?" {
+        - "des zones différentes"
+        + "une MTU différente sur les deux interfaces"
+        - "des numéros de processus différents"
+        - "l'absence de route par défaut"
+        explanation: "Les voisins se voient (Hello compatibles) mais l'échange des descriptions de base échoue quand les MTU diffèrent. Des zones différentes empêcheraient l'adjacence dès les Hello."
+      }
+      question "Avec la référence de débit relevée à 10 000 Mbit/s, quel est le coût OSPF d’une interface à 1 Gbit/s ?" {
+        - "1"
+        + "10"
+        - "100"
+        - "1000"
+        explanation: "10 000 / 1 000 = 10. Un lien à 100 Mbit/s coûte alors 100 et un lien à 10 Gbit/s coûte 1."
+      }
+      question "Un poste Linux à deux cartes réseau a deux routes par défaut de métriques 100 et 600. Que se passe-t-il ?" {
+        - "les deux sont utilisées en alternance"
+        + "seule la route de métrique 100 sert, l'autre est une route de secours"
+        - "le poste ne peut plus rien joindre"
+        - "la route de métrique 600 est prioritaire"
+        explanation: "Sous Linux, à préfixe égal, la plus faible métrique gagne. C'est le cas typique d'un portable branché en filaire (métrique 100) et en Wi-Fi (métrique 600 avec NetworkManager)."
+      }
+      question "PC-B joint Internet mais pas le LAN serveurs ; PC-A le joint. Aucun message d’erreur au ping. Où regardes-tu d’abord ?" {
+        - "la passerelle de PC-B"
+        - "le DNS de PC-B"
+        + "la route de R2 vers le réseau de PC-B"
+        - "le NAT de R1"
+        explanation: "La passerelle de PC-B fonctionne puisqu'Internet répond. Le LAN admin passe : l'aller vers les serveurs est routé. Le silence oriente vers le retour : R2 ne connaît sans doute pas le réseau du LAN élèves."
+      }
+      question "Une interface OSPF est déclarée passive sur le LAN profs. Le réseau 192.168.40.0/24 est-il annoncé aux autres routeurs ?" {
+        - "non, une interface passive est exclue d'OSPF"
+        + "oui, seuls les Hello sont supprimés sur cette interface"
+        - "seulement si l'interface est en zone 1"
+        - "seulement avec default-information originate"
+        explanation: "passive-interface empêche de former des voisinages sur l'interface, mais son réseau reste annoncé. C'est exactement ce qu'on veut sur un LAN de postes."
+      }
+      question "Quelle sortie traceroute correspond à un chemin normal de PC-A vers le LAN profs via R1 puis R3 ?" {
+        - "192.168.10.254, 192.168.40.254, 192.168.40.10"
+        + "192.168.10.254, 10.0.13.2, 192.168.40.10"
+        - "10.0.13.1, 10.0.13.2, 192.168.40.10"
+        - "192.168.40.10 seulement"
+        explanation: "Chaque routeur se présente avec l'adresse de l'interface par laquelle il a reçu la sonde : R1 avec 192.168.10.254, R3 avec 10.0.13.2 (côté liaison). La destination termine la liste."
+      }
+      question "Tu coupes un lien entre deux routeurs OSPF par un commutateur intermédiaire, les interfaces restent up. Au bout de combien de temps par défaut le voisin est-il déclaré perdu sur Ethernet ?" {
+        - "10 secondes"
+        + "40 secondes"
+        - "180 secondes"
+        - "immédiatement"
+        explanation: "Sans perte de lien physique, OSPF attend l'expiration du délai Dead, 40 s par défaut sur Ethernet (4 fois le Hello de 10 s). 180 s est le délai d'expiration d'une route RIP."
+      }
+      question "Quel est le rôle principal d’une table de routage ?" {
+        - "associer des adresses IP à des adresses MAC"
+        + "indiquer, pour chaque réseau de destination, le prochain saut et l'interface de sortie"
+        - "traduire les adresses privées en adresses publiques"
+        - "attribuer des adresses aux postes"
+        explanation: "La table de routage dit où envoyer chaque paquet. La correspondance IP / MAC est le rôle de la table ARP, la traduction celui du NAT, l'attribution celui de DHCP."
+      }
+    }
+  }
+}
