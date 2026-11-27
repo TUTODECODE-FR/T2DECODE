@@ -609,3 +609,84 @@ jobs:
           .\wingetcreate.exe submit --token $env:WINGET_TOKEN --prtitle "New version: $id version $ver" $dir
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           "winget : $id $ver soumis" >> $env:GITHUB_STEP_SUMMARY
+
+  google-play:
+    name: Google Play (test ouvert)
+    needs: publish-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      # Ignoré proprement tant que les secrets ne sont pas posés (voir docs/GOOGLE-PLAY.md).
+      PLAY_ON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON != '' && secrets.PLAY_KEYSTORE_BASE64 != '' }}
+      TAG: ${{ github.ref_name }}
+    steps:
+      - name: Conditions
+        id: cfg
+        run: |
+          if [ "$PLAY_ON" != true ]; then echo "::notice::secrets PLAY_* absents : Google Play ignoré"; exit 0; fi
+          if ! echo "$TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$'; then echo "::notice::tag $TAG non envoyé sur Google Play"; exit 0; fi
+          echo "on=true" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout repository
+        if: steps.cfg.outputs.on
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Set up Java JDK
+        if: steps.cfg.outputs.on
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Flutter
+        if: steps.cfg.outputs.on
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.44.1' # = .flutter-version
+
+      - name: Clé d'importation
+        if: steps.cfg.outputs.on
+        run: |
+          echo "$PLAY_KEYSTORE_BASE64" | base64 -d > android/app/release-keystore.jks
+          cat > android/key.properties <<KEY
+          storeFile=release-keystore.jks
+          storePassword=$PLAY_KEYSTORE_PASSWORD
+          keyAlias=$PLAY_KEY_ALIAS
+          keyPassword=$PLAY_KEY_PASSWORD
+          KEY
+        env:
+          PLAY_KEYSTORE_BASE64: ${{ secrets.PLAY_KEYSTORE_BASE64 }}
+          PLAY_KEYSTORE_PASSWORD: ${{ secrets.PLAY_KEYSTORE_PASSWORD }}
+          PLAY_KEY_ALIAS: ${{ secrets.PLAY_KEY_ALIAS }}
+          PLAY_KEY_PASSWORD: ${{ secrets.PLAY_KEY_PASSWORD }}
+
+      - name: App bundle
+        if: steps.cfg.outputs.on
+        run: |
+          flutter pub get
+          flutter build appbundle --release
+          # versionCode = B de pubspec (X.Y.Z+B) : augmente à chaque version (scripts/nouvelle-version.sh)
+          build=$(sed -n 's/^version: *[0-9.]*+\([0-9][0-9]*\) *$/\1/p' pubspec.yaml)
+          mkdir -p whatsnew
+          note=fastlane/metadata/android/en-US/changelogs/$build.txt
+          if [ -f "$note" ]; then head -c 500 "$note" > whatsnew/whatsnew-fr-FR; else echo "Version ${TAG#v}" > whatsnew/whatsnew-fr-FR; fi
+          cat whatsnew/whatsnew-fr-FR
+
+      - name: Envoi (piste beta = test ouvert)
+        if: steps.cfg.outputs.on
+        uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: org.t2decode.app
+          releaseFiles: build/app/outputs/bundle/release/app-release.aab
+          releaseName: ${{ github.ref_name }}
+          track: beta
+          status: completed
+          whatsNewDirectory: whatsnew
+          mappingFile: build/app/outputs/mapping/release/mapping.txt
+
+      - name: Résumé
+        if: steps.cfg.outputs.on
+        run: echo "Google Play - $TAG envoyé en test ouvert" >> "$GITHUB_STEP_SUMMARY"
