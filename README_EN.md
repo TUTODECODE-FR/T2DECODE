@@ -48,10 +48,10 @@ All links, always up to date: **[tutodecode.org/en/download](https://tutodecode.
 
 | System | Where | Notes |
 | :--- | :--- | :--- |
-| Windows 10/11 (64-bit) | [Installer](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest/download/T2DECODE-Windows-Setup.exe) or [portable version](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest/download/T2DECODE-Windows.zip) | Signed by TUTODECODE. "Install for me only" needs no administrator rights. |
-| macOS 10.15+ | [Mac App Store](https://apps.apple.com/app/id6762523276) or [disk image](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest/download/T2DECODE-macOS.dmg) | Disk image notarized by Apple. |
-| Linux (64-bit) | `sudo snap install t2decode` or [.tar.gz archive](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest/download/T2DECODE-Linux.tar.gz) | The Snap updates itself. |
-| Android | [Google Play](https://play.google.com/store/apps/details?id=org.tutodecode.t2decode), [F-Droid](https://f-droid.org/packages/org.t2decode.app/) or [APK](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest) | |
+| Windows 10/11 (64-bit) | [Installer](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest/download/T2DECODE-Windows-Setup.exe) (15 MB) or [portable version](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest/download/T2DECODE-Windows.zip) | Signed by TUTODECODE. "Install for me only" needs no administrator rights. If SmartScreen shows a warning: "More info", then "Run anyway". |
+| macOS 10.15+ | [Mac App Store](https://apps.apple.com/app/id6762523276) or [disk image](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest/download/T2DECODE-macOS.dmg) (24 MB) | Disk image notarized by Apple: drag T2DECODE to Applications. |
+| Linux (64-bit) | `sudo snap install t2decode` or [.tar.gz archive](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest/download/T2DECODE-Linux.tar.gz) (14 MB) | The Snap updates itself. Archive: see below. |
+| Android 7.0+ | [Google Play](https://play.google.com/store/apps/details?id=org.tutodecode.t2decode), [F-Droid](https://f-droid.org/packages/org.t2decode.app/) or [APK](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest) (25 MB) | F-Droid publishes each version a few days late. APK: see below. |
 
 Homebrew:
 
@@ -61,6 +61,37 @@ brew install --cask t2decode
 ```
 
 For schools (silent install, offline computers, no administrator rights): see **[tutodecode.org/en/schools](https://tutodecode.org/en/schools/)**.
+
+<details>
+<summary><strong>Android APK and Obtainium</strong></summary>
+
+- Recent phone: `app-arm64-v8a-release.apk`. Older 32-bit phone: `app-armeabi-v7a-release.apk`. Emulator or Intel Chromebook: `app-x86_64-release.apk`.
+- Android asks you to allow installs from your browser or file manager ("unknown sources"): allow it for that app only.
+- [Obtainium](https://github.com/ImranR98/Obtainium): add the URL `https://github.com/TUTODECODE-FR/T2DECODE` with the APK filter `arm64-v8a` (or your architecture).
+- APKs are signed with the TUTODECODE key, SHA-256 fingerprint `fd1397a33761d54fbc988ae009f7f7dc0d215b487729268367b86a537664ea7e`. Versions up to 1.0.8.2 used a temporary key: if the update is refused, uninstall and reinstall once.
+- Do not mix sources: a GitHub APK does not update the F-Droid version (different signatures), and Google Play is a separate app.
+
+</details>
+
+<details>
+<summary><strong>Linux archive (without Snap)</strong></summary>
+
+```bash
+mkdir -p ~/T2DECODE && tar -xzf T2DECODE-Linux.tar.gz -C ~/T2DECODE
+~/T2DECODE/T2DECODE
+```
+
+Requires GTK 3 and libsecret, already present on most desktops (Debian/Ubuntu: `sudo apt install libgtk-3-0 libsecret-1-0`).
+
+</details>
+
+## First test in 2 minutes
+
+1. Open T2DECODE, then the **Boîte à outils** (toolbox) from the home screen.
+2. Under **Simulateurs interactifs**, pick **Sous-réseaux IPv4** (IPv4 subnets).
+3. Work out the network and broadcast addresses, then press "Vérifier" (check): the correction shows the binary calculation.
+
+Next: **Terminal : missions** to practise Linux commands, or a course with its quiz.
 
 ## Verify the files
 

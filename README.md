@@ -48,10 +48,10 @@ Tous les liens, toujours à jour : **[tutodecode.org/telecharger](https://tutode
 
 | Système | Où | Remarque |
 | :--- | :--- | :--- |
-| Windows 10/11 (64 bits) | [Installateur](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest/download/T2DECODE-Windows-Setup.exe) ou [version portable](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest/download/T2DECODE-Windows.zip) | Signé par TUTODECODE. « Installer pour moi seulement » ne demande pas de droits administrateur. |
-| macOS 10.15+ | [Mac App Store](https://apps.apple.com/app/id6762523276) ou [image disque](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest/download/T2DECODE-macOS.dmg) | Image disque notarisée par Apple. |
-| Linux (64 bits) | `sudo snap install t2decode` ou [archive .tar.gz](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest/download/T2DECODE-Linux.tar.gz) | Le Snap se met à jour tout seul. |
-| Android | [Google Play](https://play.google.com/store/apps/details?id=org.tutodecode.t2decode), [F-Droid](https://f-droid.org/packages/org.t2decode.app/) ou [APK](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest) | |
+| Windows 10/11 (64 bits) | [Installateur](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest/download/T2DECODE-Windows-Setup.exe) (15 Mo) ou [version portable](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest/download/T2DECODE-Windows.zip) | Signé par TUTODECODE. « Installer pour moi seulement » ne demande pas de droits administrateur. Si SmartScreen affiche un avertissement : « Informations complémentaires » puis « Exécuter quand même ». |
+| macOS 10.15+ | [Mac App Store](https://apps.apple.com/app/id6762523276) ou [image disque](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest/download/T2DECODE-macOS.dmg) (24 Mo) | Image disque notarisée par Apple : glisser T2DECODE dans Applications. |
+| Linux (64 bits) | `sudo snap install t2decode` ou [archive .tar.gz](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest/download/T2DECODE-Linux.tar.gz) (14 Mo) | Le Snap se met à jour tout seul. Archive : voir plus bas. |
+| Android 7.0+ | [Google Play](https://play.google.com/store/apps/details?id=org.tutodecode.t2decode), [F-Droid](https://f-droid.org/packages/org.t2decode.app/) ou [APK](https://github.com/TUTODECODE-FR/T2DECODE/releases/latest) (25 Mo) | F-Droid publie chaque version avec quelques jours de retard. APK : voir plus bas. |
 
 Homebrew :
 
@@ -61,6 +61,37 @@ brew install --cask t2decode
 ```
 
 En établissement (installation silencieuse, postes sans Internet, sans droits administrateur) : voir **[tutodecode.org/etablissements](https://tutodecode.org/etablissements/)**.
+
+<details>
+<summary><strong>APK Android et Obtainium</strong></summary>
+
+- Téléphone récent : `app-arm64-v8a-release.apk`. Ancien téléphone 32 bits : `app-armeabi-v7a-release.apk`. Émulateur ou Chromebook Intel : `app-x86_64-release.apk`.
+- Android demande d'autoriser l'installation depuis le navigateur ou le gestionnaire de fichiers (« sources inconnues ») : accepte pour cette application seulement.
+- [Obtainium](https://github.com/ImranR98/Obtainium) : ajoute l'URL `https://github.com/TUTODECODE-FR/T2DECODE`, avec le filtre d'APK `arm64-v8a` (ou ton architecture).
+- Les APK sont signés par la clé TUTODECODE, empreinte SHA-256 `fd1397a33761d54fbc988ae009f7f7dc0d215b487729268367b86a537664ea7e`. Les versions jusqu'à 1.0.8.2 utilisaient une clé temporaire : si la mise à jour est refusée, désinstalle puis réinstalle une fois.
+- Ne mélange pas les sources : un APK GitHub ne met pas à jour la version F-Droid (signatures différentes), et Google Play est une application séparée.
+
+</details>
+
+<details>
+<summary><strong>Archive Linux (sans Snap)</strong></summary>
+
+```bash
+mkdir -p ~/T2DECODE && tar -xzf T2DECODE-Linux.tar.gz -C ~/T2DECODE
+~/T2DECODE/T2DECODE
+```
+
+Nécessite GTK 3 et libsecret, déjà présents sur la plupart des bureaux (Debian/Ubuntu : `sudo apt install libgtk-3-0 libsecret-1-0`).
+
+</details>
+
+## Premier test en 2 minutes
+
+1. Ouvre T2DECODE, puis la **Boîte à outils** depuis l'accueil.
+2. Dans **Simulateurs interactifs**, choisis **Sous-réseaux IPv4**.
+3. Calcule l'adresse réseau et le broadcast proposés, puis « Vérifier » : la correction détaille le calcul en binaire.
+
+Ensuite : **Terminal : missions** pour pratiquer les commandes Linux, ou un cours avec son questionnaire.
 
 ## Vérifier les fichiers
 
