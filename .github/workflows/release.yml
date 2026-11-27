@@ -40,8 +40,13 @@ jobs:
         run: flutter pub get
 
       - name: Configure Android Signing Key
-        if: env.ANDROID_KEYSTORE_BASE64 != ''
         run: |
+          # Sans clé stable, Gradle signe avec une clé debug jetable (différente à chaque run) :
+          # les mises à jour Android (Obtainium, installation par-dessus) échouent. On refuse.
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "::error::Secret ANDROID_KEYSTORE_BASE64 absent : APK non publiable (signature debug)."
+            exit 1
+          fi
           echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > android/app/release-keystore.jks
           cat > android/key.properties <<EOF
           storeFile=release-keystore.jks
@@ -54,6 +59,18 @@ jobs:
 
       - name: Build Android Release APKs
         run: flutter build apk --release --split-per-abi
+
+      - name: Verify Android signature is not a debug key
+        run: |
+          apksigner=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)apksigner
+          for apk in build/app/outputs/flutter-apk/*-release.apk; do
+            certs=$("$apksigner" verify --print-certs "$apk")
+            echo "$certs" | grep -E 'DN|SHA-256'
+            if echo "$certs" | grep -q 'CN=Android Debug'; then
+              echo "::error::$apk est signé avec une clé debug."
+              exit 1
+            fi
+          done
 
       - name: Build Linux Release
         run: |
