@@ -6,7 +6,7 @@
 /// pubspec.yaml n'accepte que `X.Y.Z+B` : même X.Y.Z et même B
 /// (vérifié par test/unit/app_version_test.dart).
 /// Mise à jour par scripts/nouvelle-version.sh.
-const String kAppVersion = '1.0.8.2+41';
+const String kAppVersion = '1.0.8.3+42';
 
 /// Version affichée (sans le numéro de build), ex. 1.0.7.1.
 String get kAppVersionName => kAppVersion.split('+').first;
