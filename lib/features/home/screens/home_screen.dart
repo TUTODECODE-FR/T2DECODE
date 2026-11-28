@@ -769,10 +769,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SizedBox(height: TdcAdaptive.space(context, 6)),
           Text(
-              'home.progress.chapters_ratio'.tr(namedArgs: {
-                'completed': '${prov.completedCount}',
-                'total': '${prov.totalChaptersCount}',
-              }),
+              'home.progress.chapters_ratio'.plural(prov.totalChaptersCount,
+                  namedArgs: {'completed': '${prov.completedCount}'},
+                  name: 'total'),
               style: TextStyle(
                   color: TdcColors.textMuted,
                   fontSize: TdcText.caption(context))),
@@ -1022,10 +1021,10 @@ class _HomeScreenState extends State<HomeScreen> {
             overflow: TextOverflow.ellipsis),
         SizedBox(height: TdcAdaptive.space(context, 5)),
         Text(
-            'home.sections.course_meta'.tr(namedArgs: {
-              'category': course.category.toUpperCase(),
-              'count': '$total',
-            }),
+            'home.sections.course_meta'.plural(total,
+                namedArgs: {'category': course.category.toUpperCase()},
+                name: 'count',
+                args: const []),
             style: TextStyle(
                 color: TdcColors.textMuted,
                 fontSize: TdcText.caption(context),
@@ -1112,10 +1111,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   overflow: TextOverflow.ellipsis),
               SizedBox(height: TdcAdaptive.space(context, 4)),
               Text(
-                  'home.sections.course_meta'.tr(namedArgs: {
-                    'category': course.category.toUpperCase(),
-                    'count': '$total',
-                  }),
+                  'home.sections.course_meta'.plural(total,
+                      namedArgs: {'category': course.category.toUpperCase()},
+                      name: 'count',
+                      args: const []),
                   style: TextStyle(
                       color: TdcColors.textMuted,
                       fontSize: TdcText.caption(context))),
@@ -1682,10 +1681,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 fontSize: TdcText.scale(context, 48),
                 fontWeight: FontWeight.bold)),
         Text(
-            'home.progress.chapters_ratio'.tr(namedArgs: {
-              'completed': '${prov.completedCount}',
-              'total': '${prov.totalChaptersCount}',
-            }),
+            'home.progress.chapters_ratio'.plural(prov.totalChaptersCount,
+                namedArgs: {'completed': '${prov.completedCount}'},
+                name: 'total'),
             style: TextStyle(
                 color: TdcColors.textSecondary,
                 fontSize: TdcText.caption(context))),

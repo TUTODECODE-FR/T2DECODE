@@ -4,6 +4,12 @@
 import 'dart:convert';
 import 'dart:io';
 
+// Localization/Translations are not exported publicly (see CODING_STANDARDS §4).
+// ignore: implementation_imports
+import 'package:easy_localization/src/localization.dart';
+// ignore: implementation_imports
+import 'package:easy_localization/src/translations.dart';
+import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_test/flutter_test.dart';
 
 const _dir = 'assets/translations';
@@ -236,5 +242,114 @@ void main() {
           reason: '${offenders.length} value(s) still contain $marker. '
               'First 20: ${offenders.take(20).toList()}');
     });
+  });
+
+  group('rendered home plurals', () {
+    // Mirrors the call shapes in home_screen.dart. Runs with the app's
+    // setting (ignorePluralRules: true) and with CLDR rules (false).
+    for (final ignoreRules in [true, false]) {
+      for (final lang in ['fr', 'en']) {
+        final fr = lang == 'fr';
+
+        String plural(
+          String key,
+          num n, {
+          Map<String, String>? namedArgs,
+          String? name,
+          List<String>? args,
+        }) =>
+            Localization.instance
+                .plural(key, n, namedArgs: namedArgs, name: name, args: args);
+
+        group('$lang, ignorePluralRules=$ignoreRules', () {
+          setUp(() {
+            Localization.load(Locale(lang),
+                translations: Translations(_load(lang)),
+                ignorePluralRules: ignoreRules);
+          });
+          tearDown(() {
+            Localization.load(const Locale('fr'),
+                translations: Translations(_load('fr')));
+          });
+
+          test('home.chapters_done', () {
+            final out = [0, 1, 2]
+                .map((n) => plural('home.chapters_done', n, name: 'n'))
+                .toList();
+            expect(
+                out,
+                fr
+                    ? [
+                        '0 chapitre terminé',
+                        '1 chapitre terminé',
+                        '2 chapitres terminés'
+                      ]
+                    : [
+                        '0 chapters completed',
+                        '1 chapter completed',
+                        '2 chapters completed'
+                      ]);
+          });
+
+          for (final key in [
+            'home.course_chapters_ratio',
+            'home.progress.chapters_ratio'
+          ]) {
+            test('$key renders each count once', () {
+              final arg =
+                  key == 'home.progress.chapters_ratio' ? 'completed' : 'done';
+              final out = [0, 1, 2]
+                  .map((t) =>
+                      plural(key, t, namedArgs: {arg: '0'}, name: 'total'))
+                  .toList();
+              expect(
+                  out,
+                  fr
+                      ? [
+                          '0 sur 0 chapitre',
+                          '0 sur 1 chapitre',
+                          '0 sur 2 chapitres'
+                        ]
+                      : [
+                          '0 out of 0 chapters',
+                          '0 out of 1 chapter',
+                          '0 out of 2 chapters'
+                        ]);
+            });
+          }
+
+          test('home.sections.course_meta', () {
+            final out = [0, 1, 2]
+                .map((c) => plural('home.sections.course_meta', c,
+                    namedArgs: {'category': 'LINUX'},
+                    name: 'count',
+                    args: const []))
+                .toList();
+            expect(
+                out,
+                fr
+                    ? [
+                        'LINUX · 0 chapitre',
+                        'LINUX · 1 chapitre',
+                        'LINUX · 2 chapitres'
+                      ]
+                    : [
+                        'LINUX · 0 chapters',
+                        'LINUX · 1 chapter',
+                        'LINUX · 2 chapters'
+                      ]);
+          });
+
+          test('home.sections.course_meta keeps a literal {} in the category',
+              () {
+            final out = plural('home.sections.course_meta', 5,
+                namedArgs: {'category': 'WEB{}'},
+                name: 'count',
+                args: const []);
+            expect(out, fr ? 'WEB{} · 5 chapitres' : 'WEB{} · 5 chapters');
+          });
+        });
+      }
+    }
   });
 }

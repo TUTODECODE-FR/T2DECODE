@@ -69,7 +69,11 @@
       "resume_btn": "Resume →"
     },
     "progress": {
-      "chapters_ratio": "{completed} out of {total} chapters",
+      "chapters_ratio": {
+        "zero": "{completed} out of {total} chapters",
+        "one": "{completed} out of {total} chapter",
+        "other": "{completed} out of {total} chapters"
+      },
       "overall": "Overall progress",
       "resume": "Resume progress",
       "start": "Ready to start",
@@ -106,7 +110,11 @@
     "sections": {
       "courses": "IT Pathways",
       "my_courses": "My courses",
-      "course_meta": "{category} · {count} chapters",
+      "course_meta": {
+        "zero": "{category} · {count} chapters",
+        "one": "{category} · {count} chapter",
+        "other": "{category} · {count} chapters"
+      },
       "simulations": "Professional Simulations",
       "my_progress": "My Progress",
       "tools_services": "Tools & Services",

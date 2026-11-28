@@ -43,9 +43,9 @@
       "other": "{} parcours"
     },
     "chapters_done": {
-      "zero": "{n} {n} chapitre terminé",
-      "one": "{n} {n} chapitre terminé",
-      "other": "{n} {n} chapitres terminés"
+      "zero": "{n} chapitre terminé",
+      "one": "{n} chapitre terminé",
+      "other": "{n} chapitres terminés"
     },
     "ai_models": {
       "zero": "{} modeles IA",
@@ -69,7 +69,11 @@
       "resume_btn": "Reprendre →"
     },
     "progress": {
-      "chapters_ratio": "{completed} sur {total} chapitres",
+      "chapters_ratio": {
+        "zero": "{completed} sur {total} chapitre",
+        "one": "{completed} sur {total} chapitre",
+        "other": "{completed} sur {total} chapitres"
+      },
       "overall": "Progression globale",
       "resume": "Reprendre la progression",
       "start": "Prêt à commencer",
@@ -79,9 +83,9 @@
       "keep_going": "Continuez votre apprentissage"
     },
     "course_chapters_ratio": {
-      "zero": "{done} sur {total} {total} chapitre",
-      "one": "{done} sur {total} {total} chapitre",
-      "other": "{done} sur {total} {total} chapitres"
+      "zero": "{done} sur {total} chapitre",
+      "one": "{done} sur {total} chapitre",
+      "other": "{done} sur {total} chapitres"
     },
     "ai_panel": {
       "title": "Tuteur IA",
@@ -106,7 +110,11 @@
     "sections": {
       "courses": "Parcours informatiques",
       "my_courses": "Mes parcours",
-      "course_meta": "{category} · {count} chapitres",
+      "course_meta": {
+        "zero": "{category} · {count} chapitre",
+        "one": "{category} · {count} chapitre",
+        "other": "{category} · {count} chapitres"
+      },
       "simulations": "Simulations Professionnelles",
       "my_progress": "Ma progression",
       "tools_services": "Outils & Services",
