@@ -709,11 +709,26 @@ class GhostLinkService extends ChangeNotifier {
           if (encrypted == null || encrypted.isEmpty) break;
           final decrypted = await _decrypt(encrypted);
           if (decrypted != null && decrypted.isNotEmpty) {
-            _handleDecryptedMessage(decrypted, senderIp);
-            // Send ACK
-            final msgId = (jsonDecode(decrypted) as Map<String, dynamic>)['id'];
-            if (msgId != null) {
-              _sendPacket(socket, {'type': 'ack', 'id': msgId}, encrypt: false);
+            final inner = jsonDecode(decrypted) as Map<String, dynamic>;
+            // File packets are always sent encrypted: handle them only from
+            // the decrypted payload. They are not ACKed (the sender never
+            // waits for one). Other inner types are ignored.
+            switch (inner['type']) {
+              case 'file_meta':
+                _handleFileMeta(inner, senderIp);
+                break;
+              case 'file_chunk':
+                _handleFileChunk(inner, senderIp);
+                break;
+              case null:
+                _handleDecryptedMessage(decrypted, senderIp);
+                // Send ACK
+                final msgId = inner['id'];
+                if (msgId != null) {
+                  unawaited(_sendPacket(socket, {'type': 'ack', 'id': msgId},
+                      encrypt: false));
+                }
+                break;
             }
           }
           break;
@@ -727,12 +742,6 @@ class GhostLinkService extends ChangeNotifier {
           break;
         case 'info_res':
           _handleSystemInfoResponse(data['data'], senderIp);
-          break;
-        case 'file_meta':
-          _handleFileMeta(data, senderIp);
-          break;
-        case 'file_chunk':
-          _handleFileChunk(data, senderIp);
           break;
       }
     } catch (e) {
