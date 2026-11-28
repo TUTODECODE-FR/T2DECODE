@@ -25,6 +25,9 @@ const String _broadcastAddr = '255.255.255.255';
 const Duration _announceInterval = Duration(seconds: 3);
 const Duration _peerTimeout = Duration(seconds: 10);
 
+// Max length of one incoming TCP line (a packet), about 1 MiB.
+const int _maxLineBytes = 1024 * 1024;
+
 // Rate-limiting UDP discovery : max paquets par IP sur 10 s.
 const int _maxUdpPacketsPerWindow = 15;
 const Duration _udpRateLimitWindow = Duration(seconds: 10);
@@ -649,28 +652,41 @@ class GhostLinkService extends ChangeNotifier {
 
   void _setupSocket(Socket socket, String remoteIp) {
     _activeSockets[remoteIp] = socket;
-    final buffer = StringBuffer();
-    socket.listen(
-      (bytes) async {
-        buffer.write(utf8.decode(bytes));
-        final raw = buffer.toString();
-        if (raw.contains('\n')) {
-          final lines = raw.split('\n');
-          for (var i = 0; i < lines.length - 1; i++) {
-            await _handleIncomingPacket(lines[i], remoteIp, socket);
-          }
-          buffer.clear();
-          if (lines.last.isNotEmpty) buffer.write(lines.last);
-        }
-      },
-      onDone: () {
-        _activeSockets.remove(remoteIp);
-      },
-      onError: (_) {
-        _activeSockets.remove(remoteIp);
-      },
-      cancelOnError: false,
-    );
+    // Bytes since the last newline: a peer must not make us buffer an
+    // unbounded line (the largest normal one is a 64 KB file chunk, encrypted
+    // and base64-encoded, i.e. ~120 KB). Checked per read, so the
+    // cap is about 1 MiB.
+    var lineBytes = 0;
+    socket
+        .cast<List<int>>()
+        .map((bytes) {
+          final nl = bytes.lastIndexOf(0x0A);
+          lineBytes =
+              nl == -1 ? lineBytes + bytes.length : bytes.length - nl - 1;
+          if (lineBytes <= _maxLineBytes) return bytes;
+          socket.destroy();
+          return const <int>[];
+        })
+        .transform(utf8.decoder)
+        .transform(const LineSplitter())
+        // asyncMap handles one line at a time, in order.
+        .asyncMap((line) => _handleIncomingPacket(line, remoteIp, socket))
+        .listen(
+          null,
+          onDone: () {
+            if (identical(_activeSockets[remoteIp], socket)) {
+              _activeSockets.remove(remoteIp);
+            }
+          },
+          onError: (_) {
+            // Socket error or invalid UTF-8: drop the connection.
+            if (identical(_activeSockets[remoteIp], socket)) {
+              _activeSockets.remove(remoteIp);
+            }
+            socket.destroy();
+          },
+          cancelOnError: false,
+        );
   }
 
   Future<void> _sendHandshake(Socket socket) async {
