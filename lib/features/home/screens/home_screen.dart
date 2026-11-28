@@ -879,8 +879,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     c.title.toLowerCase().contains('incident'))
                 .toList()
             : allCourses
-                .where((c) =>
-                    c.category.toUpperCase() == _selectedCategory.toUpperCase())
+                .where((c) => _categoryMatches(_selectedCategory, c.category))
                 .toList());
 
     final double itemHeight = crossAxisCount == 1
@@ -929,6 +928,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   curve: Curves.easeOutBack),
     );
   }
+
+  // Course data uses English category ids (`network`, `security`, ...) while
+  // the chip ids are French. A chip listed here also shows these data ids.
+  static const Map<String, Set<String>> _chipDataCategories = {
+    'RÉSEAU': {'network'},
+    'SÉCURITÉ': {'security'},
+  };
+
+  bool _categoryMatches(String chipId, String category) =>
+      category.toUpperCase() == chipId.toUpperCase() ||
+      (_chipDataCategories[chipId]?.contains(category.toLowerCase()) ?? false);
 
   Widget _buildCourseCard(BuildContext context, Course course, int index,
       CoursesProvider prov, bool horizontal) {
