@@ -257,7 +257,7 @@ class GhostLinkService extends ChangeNotifier {
   Future<void> _savePeers() async {
     final prefs = await SharedPreferences.getInstance();
     final pinned = _peers.values
-        .where((p) => p.isPinned == true)
+        .where((p) => p.isPinned)
         .map((p) => jsonEncode(p.toMap()))
         .toList();
     await prefs.setStringList(_prefKey, pinned);
