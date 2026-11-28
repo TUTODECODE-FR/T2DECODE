@@ -19,11 +19,54 @@
   "home": {
     "title": "Accueil",
     "tagline": "Apprendre. Construire. Comprendre.",
+    "loading": "Chargement…",
     "integrity_alert": "Alerte intégrité : certains assets semblent modifiés.",
     "banner": {
       "title": "APPRENDRE.\nCONSTRUIRE.\nCOMPRENDRE.",
       "subtitle": "Comprendre l’informatique. Créer ses propres outils. Reprendre le contrôle.",
-      "explore": "Explorer"
+      "explore": "Explorer",
+      "architecture": "ARCHITECTURE LOCALE SOUVERAINE · PRIVACY BY DESIGN"
+    },
+    "features": {
+      "air_gapped_title": "100% Air-Gapped",
+      "air_gapped_desc": "Fonctionnement autonome sans connexion Internet",
+      "local_ai_title": "IA & RAG Locaux",
+      "local_ai_desc": "Modèles LLM exécutés en local via Ollama",
+      "lan_p2p_title": "Réseau LAN P2P",
+      "lan_p2p_desc": "Messagerie chiffrée décentralisée Ghost Link",
+      "zero_telemetry_title": "Zéro Télémétrie",
+      "zero_telemetry_desc": "Aucun pistage, aucune collecte de données"
+    },
+    "courses_count": {
+      "zero": "{} parcours",
+      "one": "{} parcours",
+      "other": "{} parcours"
+    },
+    "chapters_done": {
+      "zero": "{n} {n} chapitre terminé",
+      "one": "{n} {n} chapitre terminé",
+      "other": "{n} {n} chapitres terminés"
+    },
+    "ai_models": {
+      "zero": "{} modeles IA",
+      "one": "{} modeles IA",
+      "other": "{} modeles IA"
+    },
+    "insights": {
+      "ai_optional": "IA locale optionnelle",
+      "global_search": "Recherche globale integree"
+    },
+    "onboarding": {
+      "start_here": "COMMENCEZ ICI",
+      "resume_caps": "REPRENDRE LA PROGRESSION",
+      "recommended": "⭐ Recommandé",
+      "choose_course": "Choisissez un parcours pour commencer.",
+      "first_steps": "Prenez en main l'environnement et remportez vos premiers +50 XP vers le rang Sysadmin.",
+      "tools_hint": "Accédez à vos outils, cours et simulations en quelques secondes.",
+      "next_step": "Étape suivante : {title} (+50 XP)",
+      "no_course_started": "0 parcours démarré",
+      "start_btn": "Commencer →",
+      "resume_btn": "Reprendre →"
     },
     "progress": {
       "chapters_ratio": "{completed} sur {total} chapitres",
@@ -32,7 +75,13 @@
       "start": "Prêt à commencer",
       "start_desc": "Choisis un parcours et commence directement depuis l'accueil.",
       "continue_btn": "Continuer",
-      "explore_btn": "Explorer"
+      "explore_btn": "Explorer",
+      "keep_going": "Continuez votre apprentissage"
+    },
+    "course_chapters_ratio": {
+      "zero": "{done} sur {total} {total} chapitre",
+      "one": "{done} sur {total} {total} chapitre",
+      "other": "{done} sur {total} {total} chapitres"
     },
     "ai_panel": {
       "title": "Tuteur IA",
@@ -46,6 +95,14 @@
       "desc": "Chat P2P chiffré sur votre réseau local.",
       "start": "Démarrer"
     },
+    "peers": {
+      "waiting": "En attente de pairs…"
+    },
+    "peers_connected": {
+      "zero": "{} pair connecté",
+      "one": "{} pair connecté",
+      "other": "{} pairs connectés"
+    },
     "sections": {
       "courses": "Parcours informatiques",
       "my_courses": "Mes parcours",
@@ -53,7 +110,45 @@
       "simulations": "Simulations Professionnelles",
       "my_progress": "Ma progression",
       "tools_services": "Outils & Services",
-      "start_first_course": "Commencez votre premier cours !"
+      "start_first_course": "Commencez votre premier cours !",
+      "refresh_external": "Actualiser les modules externes"
+    },
+    "categories": {
+      "all": "TOUS",
+      "incident": "🔥 MODE INCIDENT",
+      "linux": "LINUX",
+      "network": "RÉSEAU",
+      "security": "SÉCURITÉ",
+      "system": "SYSTÈME",
+      "cloud": "CLOUD",
+      "crypto": "CRYPTO",
+      "empty": "Aucun parcours dans la catégorie {category}"
+    },
+    "course": {
+      "completed": "Terminé",
+      "source_imported": "Importé (local)",
+      "source_official": "Officiel",
+      "tooltip_imported": "Cours importé depuis un fichier local. T2DECODE n’en revendique pas la paternité.",
+      "tooltip_official": "Cours fourni avec T2DECODE.",
+      "desc_imported": "Ajouté par vous (import).",
+      "desc_official": "Créé et fourni par T2DECODE."
+    },
+    "levels": {
+      "beginner": "Débutant",
+      "intermediate": "Intermédiaire",
+      "advanced": "Avancé"
+    },
+    "tools": {
+      "roadmap_sub": "Parcours & objectifs",
+      "tools_sub": "Diagnostic & Réseau",
+      "netkit_sub": "Outils Réseau Avançé",
+      "cheat_sheets_sub": "Mémos & commandes",
+      "ai_chat": "Chat IA",
+      "ai_chat_sub": "Posez vos questions",
+      "diagnostic": "Diagnostic",
+      "diagnostic_sub": "État du système local",
+      "ai_config": "Config IA",
+      "ai_config_sub": "Gérer Ollama"
     }
   },
   "common": {

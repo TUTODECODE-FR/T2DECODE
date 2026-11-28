@@ -19,11 +19,54 @@
   "home": {
     "title": "Home",
     "tagline": "Learn. Build. Understand.",
+    "loading": "Loading…",
     "integrity_alert": "Integrity alert: some assets appear to have been modified.",
     "banner": {
       "title": "LEARN.\nBUILD.\nUNDERSTAND.",
       "subtitle": "Understand computing. Build your own tools. Take back control.",
-      "explore": "Explore"
+      "explore": "Explore",
+      "architecture": "LOCAL, SOVEREIGN ARCHITECTURE · PRIVACY BY DESIGN"
+    },
+    "features": {
+      "air_gapped_title": "100% Air-Gapped",
+      "air_gapped_desc": "Works standalone, without an internet connection",
+      "local_ai_title": "Local AI & RAG",
+      "local_ai_desc": "LLMs run locally via Ollama",
+      "lan_p2p_title": "P2P LAN",
+      "lan_p2p_desc": "Encrypted, decentralized messaging with Ghost Link",
+      "zero_telemetry_title": "Zero Telemetry",
+      "zero_telemetry_desc": "No tracking, no data collection"
+    },
+    "courses_count": {
+      "zero": "{} courses",
+      "one": "{} course",
+      "other": "{} courses"
+    },
+    "chapters_done": {
+      "zero": "{n} chapters completed",
+      "one": "{n} chapter completed",
+      "other": "{n} chapters completed"
+    },
+    "ai_models": {
+      "zero": "{} AI models",
+      "one": "{} AI model",
+      "other": "{} AI models"
+    },
+    "insights": {
+      "ai_optional": "Optional local AI",
+      "global_search": "Built-in global search"
+    },
+    "onboarding": {
+      "start_here": "START HERE",
+      "resume_caps": "RESUME PROGRESS",
+      "recommended": "⭐ Recommended",
+      "choose_course": "Choose a course to get started.",
+      "first_steps": "Get familiar with the environment and earn your first +50 XP toward the Sysadmin rank.",
+      "tools_hint": "Access your tools, courses, and simulations in seconds.",
+      "next_step": "Next step: {title} (+50 XP)",
+      "no_course_started": "0 courses started",
+      "start_btn": "Start →",
+      "resume_btn": "Resume →"
     },
     "progress": {
       "chapters_ratio": "{completed} out of {total} chapters",
@@ -32,7 +75,13 @@
       "start": "Ready to start",
       "start_desc": "Choose a track and start directly from the home screen.",
       "continue_btn": "Continue",
-      "explore_btn": "Explore"
+      "explore_btn": "Explore",
+      "keep_going": "Keep learning"
+    },
+    "course_chapters_ratio": {
+      "zero": "{done} out of {total} chapters",
+      "one": "{done} out of {total} chapter",
+      "other": "{done} out of {total} chapters"
     },
     "ai_panel": {
       "title": "AI Tutor",
@@ -46,6 +95,14 @@
       "desc": "Encrypted P2P chat on your local network.",
       "start": "Start"
     },
+    "peers": {
+      "waiting": "Waiting for peers…"
+    },
+    "peers_connected": {
+      "zero": "{} peers connected",
+      "one": "{} peer connected",
+      "other": "{} peers connected"
+    },
     "sections": {
       "courses": "IT Pathways",
       "my_courses": "My courses",
@@ -53,7 +110,45 @@
       "simulations": "Professional Simulations",
       "my_progress": "My Progress",
       "tools_services": "Tools & Services",
-      "start_first_course": "Start your first course!"
+      "start_first_course": "Start your first course!",
+      "refresh_external": "Refresh external modules"
+    },
+    "categories": {
+      "all": "ALL",
+      "incident": "🔥 INCIDENT MODE",
+      "linux": "LINUX",
+      "network": "NETWORK",
+      "security": "SECURITY",
+      "system": "SYSTEM",
+      "cloud": "CLOUD",
+      "crypto": "CRYPTO",
+      "empty": "No courses in the {category} category"
+    },
+    "course": {
+      "completed": "Completed",
+      "source_imported": "Imported (local)",
+      "source_official": "Official",
+      "tooltip_imported": "Course imported from a local file. T2DECODE does not claim authorship of it.",
+      "tooltip_official": "Course included with T2DECODE.",
+      "desc_imported": "Added by you (imported).",
+      "desc_official": "Created and provided by T2DECODE."
+    },
+    "levels": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "tools": {
+      "roadmap_sub": "Learning paths & goals",
+      "tools_sub": "Diagnostics & networking",
+      "netkit_sub": "Advanced network tools",
+      "cheat_sheets_sub": "Reference & commands",
+      "ai_chat": "AI Chat",
+      "ai_chat_sub": "Ask questions",
+      "diagnostic": "Diagnostics",
+      "diagnostic_sub": "Local system status",
+      "ai_config": "AI Settings",
+      "ai_config_sub": "Manage Ollama"
     }
   },
   "common": {
