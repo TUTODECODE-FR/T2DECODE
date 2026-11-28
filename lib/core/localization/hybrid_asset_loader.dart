@@ -47,10 +47,8 @@ class HybridAssetLoader extends AssetLoader {
             jsonDecode(localStr) as Map<String, dynamic>;
 
         // 3. Fusionner : Les clés locales écrasent les clés de base (fr.json comble les trous)
-        final Map<String, dynamic> merged =
-            Map<String, dynamic>.from(baseTranslations);
-        _mergeDeep(merged, localTranslations);
-        return merged;
+        _mergeDeep(baseTranslations, localTranslations);
+        return baseTranslations;
       }
     } catch (e) {
       debugPrint(
