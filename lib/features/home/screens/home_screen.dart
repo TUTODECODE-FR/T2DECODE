@@ -37,8 +37,6 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _integrityChecked = false;
   String _selectedCategory = 'TOUS';
 
-  String _formatChapters(int n) => '$n chapitre${n > 1 ? "s" : ""}';
-
   bool get isSmall => MediaQuery.of(context).size.width < 360;
 
   @override
@@ -48,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // Configure shell on entry
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ShellProvider>().updateShell(
-        title: 'Accueil',
+        title: 'home.title'.tr(),
         showBackButton: false,
         actions: [],
       );
@@ -100,9 +98,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     duration: 1400.ms,
                     color: TdcColors.accent.withValues(alpha: 0.35)),
                 const SizedBox(height: 20),
-                const Text(
-                  'Chargement…',
-                  style: TextStyle(
+                Text(
+                  'home.loading'.tr(),
+                  style: const TextStyle(
                       color: TdcColors.textMuted,
                       fontSize: 13,
                       letterSpacing: 0.8),
@@ -285,7 +283,7 @@ class _HomeScreenState extends State<HomeScreen> {
           logo,
           SizedBox(height: TdcAdaptive.space(context, 24)),
           Text(
-            'APPRENDRE.\nCONSTRUIRE.\nCOMPRENDRE.',
+            'home.banner.title'.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               color: TdcColors.textPrimary,
@@ -297,7 +295,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SizedBox(height: TdcAdaptive.space(context, 20)),
           Text(
-            'Comprendre l’informatique. Créer ses propres outils. Reprendre le contrôle.',
+            'home.banner.subtitle'.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               color: TdcColors.textMuted,
@@ -367,7 +365,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'ARCHITECTURE LOCALE SOUVERAINE · PRIVACY BY DESIGN',
+                  'home.banner.architecture'.tr(),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: TdcColors.textPrimary,
@@ -388,26 +386,26 @@ class _HomeScreenState extends State<HomeScreen> {
               _buildFeaturePill(
                 context,
                 icon: Icons.air_outlined,
-                title: '100% Air-Gapped',
-                desc: 'Fonctionnement autonome sans connexion Internet',
+                title: 'home.features.air_gapped_title'.tr(),
+                desc: 'home.features.air_gapped_desc'.tr(),
               ),
               _buildFeaturePill(
                 context,
                 icon: Icons.memory_outlined,
-                title: 'IA & RAG Locaux',
-                desc: 'Modèles LLM exécutés en local via Ollama',
+                title: 'home.features.local_ai_title'.tr(),
+                desc: 'home.features.local_ai_desc'.tr(),
               ),
               _buildFeaturePill(
                 context,
                 icon: Icons.wifi_tethering_outlined,
-                title: 'Réseau LAN P2P',
-                desc: 'Messagerie chiffrée décentralisée Ghost Link',
+                title: 'home.features.lan_p2p_title'.tr(),
+                desc: 'home.features.lan_p2p_desc'.tr(),
               ),
               _buildFeaturePill(
                 context,
                 icon: Icons.block_outlined,
-                title: 'Zéro Télémétrie',
-                desc: 'Aucun pistage, aucune collecte de données',
+                title: 'home.features.zero_telemetry_title'.tr(),
+                desc: 'home.features.zero_telemetry_desc'.tr(),
               ),
             ],
           ),
@@ -476,22 +474,22 @@ class _HomeScreenState extends State<HomeScreen> {
               _buildInsightChip(
                 context,
                 icon: Icons.menu_book_outlined,
-                label: '${prov.courses.length} parcours',
+                label: 'home.courses_count'.plural(prov.courses.length),
                 tone: TdcColors.info,
               ),
               _buildInsightChip(
                 context,
                 icon: Icons.check_circle_outline,
                 label:
-                    '${prov.completedCount} ${_formatChapters(prov.completedCount)} terminé${prov.completedCount > 1 ? "s" : ""}',
+                    'home.chapters_done'.plural(prov.completedCount, name: 'n'),
                 tone: TdcColors.success,
               ),
               _buildInsightChip(
                 context,
                 icon: Icons.smart_toy_outlined,
                 label: _aiStatus?.running == true
-                    ? '${_aiStatus!.models.length} modeles IA'
-                    : 'IA locale optionnelle',
+                    ? 'home.ai_models'.plural(_aiStatus!.models.length)
+                    : 'home.insights.ai_optional'.tr(),
                 tone: _aiStatus?.running == true
                     ? TdcColors.info
                     : TdcColors.textMuted,
@@ -499,7 +497,7 @@ class _HomeScreenState extends State<HomeScreen> {
               _buildInsightChip(
                 context,
                 icon: Icons.search,
-                label: 'Recherche globale integree',
+                label: 'home.insights.global_search'.tr(),
                 tone: TdcColors.accent,
               ),
             ],
@@ -561,7 +559,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   children: [
                     Text(
-                      isNewUser ? 'COMMENCEZ ICI' : 'REPRENDRE LA PROGRESSION',
+                      isNewUser
+                          ? 'home.onboarding.start_here'.tr()
+                          : 'home.onboarding.resume_caps'.tr(),
                       style: TextStyle(
                         color: TdcColors.accent,
                         fontWeight: FontWeight.w900,
@@ -580,9 +580,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: TdcColors.accent.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: const Text(
-                          '⭐ Recommandé',
-                          style: TextStyle(
+                        child: Text(
+                          'home.onboarding.recommended'.tr(),
+                          style: const TextStyle(
                             color: TdcColors.accent,
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
@@ -598,7 +598,7 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(height: TdcAdaptive.space(context, TdcSpacing.sm)),
           Text(
             course == null
-                ? 'Choisissez un parcours pour commencer.'
+                ? 'home.onboarding.choose_course'.tr()
                 : course.title,
             style: TextStyle(
               color: TdcColors.textPrimary,
@@ -611,10 +611,11 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(height: TdcAdaptive.space(context, 6)),
           Text(
             isNewUser
-                ? 'Prenez en main l\'environnement et remportez vos premiers +50 XP vers le rang Sysadmin.'
+                ? 'home.onboarding.first_steps'.tr()
                 : (chapter == null
-                    ? 'Accédez à vos outils, cours et simulations en quelques secondes.'
-                    : 'Étape suivante : ${chapter.title} (+50 XP)'),
+                    ? 'home.onboarding.tools_hint'.tr()
+                    : 'home.onboarding.next_step'
+                        .tr(namedArgs: {'title': chapter.title})),
             style: TextStyle(
               color: TdcColors.textMuted,
               fontSize: TdcText.bodySmall(context),
@@ -637,8 +638,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: Text(
                   course == null
-                      ? '0 parcours démarré'
-                      : '$done sur $total ${_formatChapters(total)}',
+                      ? 'home.onboarding.no_course_started'.tr()
+                      : 'home.course_chapters_ratio'.plural(total,
+                          namedArgs: {'done': '$done'}, name: 'total'),
                   style: TextStyle(
                     color: TdcColors.textSecondary,
                     fontSize: TdcText.caption(context),
@@ -649,7 +651,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () => _resumeCourse(context, prov, course, chapter),
                 icon: Icon(isNewUser ? Icons.play_arrow : Icons.arrow_forward,
                     size: 16),
-                label: Text(isNewUser ? 'Commencer →' : 'Reprendre →'),
+                label: Text(isNewUser
+                    ? 'home.onboarding.start_btn'.tr()
+                    : 'home.onboarding.resume_btn'.tr()),
               ),
             ],
           ),
@@ -765,10 +769,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SizedBox(height: TdcAdaptive.space(context, 6)),
           Text(
-              'home.progress.chapters_ratio'.tr(namedArgs: {
-                'completed': '${prov.completedCount}',
-                'total': '${prov.totalChaptersCount}',
-              }),
+              'home.progress.chapters_ratio'.plural(prov.totalChaptersCount,
+                  namedArgs: {'completed': '${prov.completedCount}'},
+                  name: 'total'),
               style: TextStyle(
                   color: TdcColors.textMuted,
                   fontSize: TdcText.caption(context))),
@@ -810,7 +813,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icon(Icons.refresh,
                     size: TdcAdaptive.icon(context, 18),
                     color: TdcColors.textSecondary),
-                tooltip: 'Actualiser les modules externes',
+                tooltip: 'home.sections.refresh_external'.tr(),
                 onPressed: () => prov.reload(),
               ),
             ]),
@@ -827,7 +830,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.only(right: 8),
                 child: ChoiceChip(
                   label: Text(
-                    cat,
+                    _categoryLabel(cat),
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: isSel ? FontWeight.bold : FontWeight.w600,
@@ -896,7 +899,8 @@ class _HomeScreenState extends State<HomeScreen> {
             const Icon(Icons.search_off, size: 40, color: TdcColors.textMuted),
             const SizedBox(height: 12),
             Text(
-              'Aucun parcours dans la catégorie $_selectedCategory',
+              'home.categories.empty'.tr(
+                  namedArgs: {'category': _categoryLabel(_selectedCategory)}),
               style: const TextStyle(color: TdcColors.textMuted, fontSize: 13),
             ),
           ],
@@ -964,10 +968,12 @@ class _HomeScreenState extends State<HomeScreen> {
     final sourceColor = isImported ? TdcColors.coral : TdcColors.info;
     final sourceIcon =
         isImported ? Icons.file_upload_outlined : Icons.verified_outlined;
-    final sourceLabel = isImported ? 'Importé (local)' : 'Officiel';
+    final sourceLabel = isImported
+        ? 'home.course.source_imported'.tr()
+        : 'home.course.source_official'.tr();
     final sourceTooltip = isImported
-        ? 'Cours importé depuis un fichier local. T2DECODE n’en revendique pas la paternité.'
-        : 'Cours fourni avec T2DECODE.';
+        ? 'home.course.tooltip_imported'.tr()
+        : 'home.course.tooltip_official'.tr();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -987,8 +993,8 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (done == total && total > 0) ...[
-                  const TdcStatusBadge(
-                      label: 'Terminé',
+                  TdcStatusBadge(
+                      label: 'home.course.completed'.tr(),
                       color: TdcColors.success,
                       icon: Icons.check_circle),
                   const SizedBox(width: 8),
@@ -1015,10 +1021,10 @@ class _HomeScreenState extends State<HomeScreen> {
             overflow: TextOverflow.ellipsis),
         SizedBox(height: TdcAdaptive.space(context, 5)),
         Text(
-            'home.sections.course_meta'.tr(namedArgs: {
-              'category': course.category.toUpperCase(),
-              'count': '$total',
-            }),
+            'home.sections.course_meta'.plural(total,
+                namedArgs: {'category': course.category.toUpperCase()},
+                name: 'count',
+                args: const []),
             style: TextStyle(
                 color: TdcColors.textMuted,
                 fontSize: TdcText.caption(context),
@@ -1076,8 +1082,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final sourceIcon =
         isImported ? Icons.file_upload_outlined : Icons.verified_outlined;
     final sourceTooltip = isImported
-        ? 'Cours importé depuis un fichier local. T2DECODE n’en revendique pas la paternité.'
-        : 'Cours fourni avec T2DECODE.';
+        ? 'home.course.tooltip_imported'.tr()
+        : 'home.course.tooltip_official'.tr();
 
     return Row(
       children: [
@@ -1105,10 +1111,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   overflow: TextOverflow.ellipsis),
               SizedBox(height: TdcAdaptive.space(context, 4)),
               Text(
-                  'home.sections.course_meta'.tr(namedArgs: {
-                    'category': course.category.toUpperCase(),
-                    'count': '$total',
-                  }),
+                  'home.sections.course_meta'.plural(total,
+                      namedArgs: {'category': course.category.toUpperCase()},
+                      name: 'count',
+                      args: const []),
                   style: TextStyle(
                       color: TdcColors.textMuted,
                       fontSize: TdcText.caption(context))),
@@ -1213,12 +1219,12 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(children: [
               Tooltip(
                 message: course.keywords.contains('EXTERNAL')
-                    ? 'Cours importé depuis un fichier local. T2DECODE n’en revendique pas la paternité.'
-                    : 'Cours fourni avec T2DECODE.',
+                    ? 'home.course.tooltip_imported'.tr()
+                    : 'home.course.tooltip_official'.tr(),
                 child: TdcStatusBadge(
                   label: course.keywords.contains('EXTERNAL')
-                      ? 'Importé (local)'
-                      : 'Officiel',
+                      ? 'home.course.source_imported'.tr()
+                      : 'home.course.source_official'.tr(),
                   color: course.keywords.contains('EXTERNAL')
                       ? TdcColors.coral
                       : TdcColors.info,
@@ -1231,8 +1237,8 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: Text(
                   course.keywords.contains('EXTERNAL')
-                      ? 'Ajouté par vous (import).'
-                      : 'Créé et fourni par T2DECODE.',
+                      ? 'home.course.desc_imported'.tr()
+                      : 'home.course.desc_official'.tr(),
                   style: TextStyle(
                       color: TdcColors.textMuted,
                       fontSize: TdcText.bodySmall(context)),
@@ -1440,8 +1446,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(width: 6),
                   Text(
                     peers == 0
-                        ? 'En attente de pairs…'
-                        : '$peers pair${peers > 1 ? 's' : ''} connecté${peers > 1 ? 's' : ''}',
+                        ? 'home.peers.waiting'.tr()
+                        : 'home.peers_connected'.plural(peers),
                     style: TextStyle(
                         color:
                             peers > 0 ? TdcColors.accent : TdcColors.textMuted,
@@ -1537,40 +1543,44 @@ class _HomeScreenState extends State<HomeScreen> {
     return [
       _ToolItem(
           Icons.map,
-          'Roadmap',
-          'Parcours & objectifs',
+          'menu.roadmap'.tr(),
+          'home.tools.roadmap_sub'.tr(),
           const Color(0xFF8DA2A6),
           () => Navigator.pushNamed(context, '/roadmap')),
       _ToolItem(
           Icons.build,
-          'Outils',
-          'Diagnostic & Réseau',
+          'menu.tools'.tr(),
+          'home.tools.tools_sub'.tr(),
           const Color(0xFF8B9AA3),
           () => Navigator.pushNamed(context, '/tools')),
       _ToolItem(
           Icons.network_check,
-          'NetKit',
-          'Outils Réseau Avançé',
+          'menu.netkit'.tr(),
+          'home.tools.netkit_sub'.tr(),
           const Color(0xFF9B8E81),
           () => Navigator.pushNamed(context, '/netkit')),
       _ToolItem(
           Icons.description,
-          'Cheat Sheets',
-          'Mémos & commandes',
+          'menu.cheat_sheets'.tr(),
+          'home.tools.cheat_sheets_sub'.tr(),
           const Color(0xFF8A98A1),
           () => Navigator.pushNamed(context, '/cheat-sheets')),
-      _ToolItem(Icons.smart_toy, 'Chat IA', 'Posez vos questions',
-          const Color(0xFF8C8196), () => Navigator.pushNamed(context, '/ai')),
+      _ToolItem(
+          Icons.smart_toy,
+          'home.tools.ai_chat'.tr(),
+          'home.tools.ai_chat_sub'.tr(),
+          const Color(0xFF8C8196),
+          () => Navigator.pushNamed(context, '/ai')),
       _ToolItem(
           Icons.analytics,
-          'Diagnostic',
-          'État du système local',
+          'home.tools.diagnostic'.tr(),
+          'home.tools.diagnostic_sub'.tr(),
           const Color(0xFF7C92A8),
           () => Navigator.pushNamed(context, '/dashboard')),
       _ToolItem(
           Icons.settings,
-          'Config IA',
-          'Gérer Ollama',
+          'home.tools.ai_config'.tr(),
+          'home.tools.ai_config_sub'.tr(),
           const Color(0xFFB39A76),
           () => Navigator.pushNamed(context, '/ai-config')),
     ];
@@ -1671,10 +1681,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 fontSize: TdcText.scale(context, 48),
                 fontWeight: FontWeight.bold)),
         Text(
-            'home.progress.chapters_ratio'.tr(namedArgs: {
-              'completed': '${prov.completedCount}',
-              'total': '${prov.totalChaptersCount}',
-            }),
+            'home.progress.chapters_ratio'.plural(prov.totalChaptersCount,
+                namedArgs: {'completed': '${prov.completedCount}'},
+                name: 'total'),
             style: TextStyle(
                 color: TdcColors.textSecondary,
                 fontSize: TdcText.caption(context))),
@@ -1690,8 +1699,8 @@ class _HomeScreenState extends State<HomeScreen> {
         SizedBox(height: TdcAdaptive.space(context, TdcSpacing.sm)),
         Text(
             prov.completedCount == 0
-                ? 'Commencez votre premier cours !'
-                : 'Continuez votre apprentissage',
+                ? 'home.sections.start_first_course'.tr()
+                : 'home.progress.keep_going'.tr(),
             style: TextStyle(
                 color: TdcColors.textMuted, fontSize: TdcText.label(context))),
       ]),
@@ -1711,14 +1720,37 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  String _categoryLabel(String id) {
+    switch (id) {
+      case 'TOUS':
+        return 'home.categories.all'.tr();
+      case '🔥 MODE INCIDENT':
+        return 'home.categories.incident'.tr();
+      case 'LINUX':
+        return 'home.categories.linux'.tr();
+      case 'RÉSEAU':
+        return 'home.categories.network'.tr();
+      case 'SÉCURITÉ':
+        return 'home.categories.security'.tr();
+      case 'SYSTÈME':
+        return 'home.categories.system'.tr();
+      case 'CLOUD':
+        return 'home.categories.cloud'.tr();
+      case 'CRYPTO':
+        return 'home.categories.crypto'.tr();
+      default:
+        return id;
+    }
+  }
+
   String _levelLabel(String l) {
     switch (l.toLowerCase()) {
       case 'beginner':
-        return 'Débutant';
+        return 'home.levels.beginner'.tr();
       case 'intermediate':
-        return 'Intermédiaire';
+        return 'home.levels.intermediate'.tr();
       case 'advanced':
-        return 'Avancé';
+        return 'home.levels.advanced'.tr();
       default:
         return l;
     }
