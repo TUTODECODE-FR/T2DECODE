@@ -79,36 +79,17 @@ import 'core/services/tdc_open_listener.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'core/localization/hybrid_asset_loader.dart';
+import 'core/localization/locale_discovery.dart';
 
 Future<List<Locale>> _getDynamicLocales() async {
-  List<Locale> locales = const [
-    Locale('fr'),
-    Locale('en'),
-    Locale('es'),
-    Locale('de'),
-    Locale('ar'),
-    Locale('zh')
-  ].toList();
-
   try {
     final docDir = await getApplicationDocumentsDirectory();
     final transDir = Directory('${docDir.path}/T2DECODE/translations');
-    if (await transDir.exists()) {
-      final files = await transDir.list().toList();
-      for (var file in files) {
-        if (file is File && file.path.endsWith('.json')) {
-          final code = file.path.split('/').last.replaceAll('.json', '');
-          final loc = Locale(code);
-          if (!locales.contains(loc)) {
-            locales.add(loc);
-          }
-        }
-      }
-    }
+    return await discoverLocales(transDir);
   } catch (e) {
     debugPrint('Erreur scan traductions locales: $e');
   }
-  return locales;
+  return kBuiltInLocales.toList();
 }
 
 void main() async {
