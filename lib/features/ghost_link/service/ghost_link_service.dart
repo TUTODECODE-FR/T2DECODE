@@ -680,7 +680,7 @@ class GhostLinkService extends ChangeNotifier {
       'name': _localName,
       'v': 2, // Protocol version 2 (Hardened)
     };
-    socket.write('${jsonEncode(packet)}\\n');
+    socket.write('${jsonEncode(packet)}\n');
   }
 
   Future<void> _handleIncomingPacket(
@@ -856,9 +856,9 @@ class GhostLinkService extends ChangeNotifier {
       final raw = jsonEncode(packet);
       final encrypted = await _encrypt(raw);
       socket
-          .write('${jsonEncode({'type': 'secure_msg', 'data': encrypted})}\\n');
+          .write('${jsonEncode({'type': 'secure_msg', 'data': encrypted})}\n');
     } else {
-      socket.write('${jsonEncode(packet)}\\n');
+      socket.write('${jsonEncode(packet)}\n');
     }
   }
 
